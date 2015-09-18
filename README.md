@@ -19,4 +19,10 @@ Guix repository when tested and stable.
 
 Install the common workflow language tool cwltool with
 
-    env GUIX_PACKAGE_PATH=$genenetwork/guix-bioinformatics/ ./pre-inst-env guix package -i python2-cwltool
+    export GUIX_PACKAGE_PATH=$genenetwork/guix-bioinformatics/
+    guix package -i python2-cwltool
+    cwtool --version
+      1.0.20150916041152
+
+
+
