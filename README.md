@@ -15,7 +15,7 @@ or from the checked out Guix repo
 Some of these package definitions should make it upstream into the GNU
 Guix repository when tested and stable.
 
-## Specific packages
+## Install Common Workflow Language (CWL)
 
 Install the common workflow language tool cwltool with
 
@@ -24,5 +24,9 @@ Install the common workflow language tool cwltool with
     cwtool --version
       1.0.20150916041152
 
+## Install R/qtl
 
-
+    export GUIX_PACKAGE_PATH=$genenetwork/guix-bioinformatics/
+    guix package -i r-qtl r
+    R
+      library(qtl)
