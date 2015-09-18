@@ -32,7 +32,6 @@
     (build-system python-build-system)
     (propagated-inputs
      `(("python-schema-salad" ,python-schema-salad)
-       ("python-avro" ,python-avro)
        ))
     (inputs
       `(("python-setuptools" ,python-setuptools)))
@@ -67,7 +66,9 @@
        ("python-rdflib-jsonld" ,python-rdflib-jsonld)
        ("python-mistune" ,python-mistune)))
     (propagated-inputs
-     `(("python-rdflib-4.2" ,python-rdflib-4.2)))
+     `(("python-rdflib-4.2" ,python-rdflib-4.2)
+       ("python-avro" ,python-avro)
+       ))
     (home-page
       "https://github.com/common-workflow-language/common-workflow-language")
     (synopsis
