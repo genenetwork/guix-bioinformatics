@@ -1,6 +1,6 @@
 ;; Experimental packaging for the Common Workflow Language (started by Bruno)
 
-(define-module (cwl)
+(define-module (gn packages cwl)
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (gnu packages)
   #:use-module (gnu packages python)
