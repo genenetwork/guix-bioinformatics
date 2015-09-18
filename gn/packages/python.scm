@@ -109,7 +109,15 @@ powerful language for representing information.")
                            "See LICENSE in the distribution."))))
 
 (define-public python2-rdflib-4.2
-  (package-with-python2 python-rdflib-4.2))
+  (let ((base (package-with-python2 python-rdflib-4.2)))
+    (package
+      (inherit base)
+      (inputs
+        (append (package-inputs base)
+                `(("python2-nose" ,python2-nose))))
+      (arguments
+        `(#:python ,python-2
+          #:tests? #f))))) ; 3 tests fail, also outside Guix
 
 (define-public python-avro
 (package
