@@ -4,6 +4,7 @@
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (gnu packages)
   #:use-module (gnu packages python)
+  #:use-module (gnu packages rdf)
   #:use-module (gn packages python)
   #:use-module (guix download)
   #:use-module (guix packages)
@@ -99,9 +100,9 @@
       "Schema Annotations for Linked Avro Data (SALAD)")
     (license license:asl2.0)))
     
-(define-public python-rdflib
+(define-public python-rdflibx
   (package
-    (name "python-rdflib")
+    (name "python-rdflibx")
     (version "4.2.0")
     (source
       (origin

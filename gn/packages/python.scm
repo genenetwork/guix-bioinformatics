@@ -46,29 +46,3 @@
   #:use-module (guix build-system trivial)
   #:use-module (srfi srfi-1))
 
-(define-public python-rdflib
-(package
-  (name "python-rdflib")
-  (version "4.2.1")
-  (source
-    (origin
-      (method url-fetch)
-      (uri (string-append
-             "https://pypi.python.org/packages/source/r/rdflib/rdflib-"
-             version
-             ".tar.gz"))
-      (sha256
-        (base32
-          "1j082qr0h7pzr33divq3w4n3k9jpcmbkxnhkw8k3pvq6aqivs0pb"))))
-  (build-system python-build-system)
-  (inputs
-   `(("python-setuptools" ,python-setuptools)))
-  (propagated-inputs `(("python-pyparsing" ,python-pyparsing)
-                       ("python-isodate" ,python-isodate))
-  (home-page "https://github.com/RDFLib/rdflib")
-  (synopsis
-    "RDFLib is a Python library for working with RDF, a simple yet powerful language for representing information.")
-  (description
-    "RDFLib is a Python library for working with RDF, a simple yet powerful language for representing information.")
-  (license #f)))
-
