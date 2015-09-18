@@ -34,7 +34,10 @@
      `(("python-schema-salad" ,python-schema-salad)
        ))
     (inputs
-      `(("python-setuptools" ,python-setuptools)))
+     `(("python-setuptools" ,python-setuptools)
+       ("python-pyparsing" ,python-pyparsing)
+       ))
+    (arguments `(#:tests? #f)) ;; No tests.
     (home-page
       "https://github.com/common-workflow-language/common-workflow-language")
     (synopsis
@@ -68,6 +71,9 @@
     (propagated-inputs
      `(("python-rdflib-4.2" ,python-rdflib-4.2)
        ("python-avro" ,python-avro)
+       ("python-pyyaml" ,python-pyyaml)
+       ("python-requests" ,python-requests)
+       ("python-shellescape" ,python-shellescape)
        ))
     (home-page
       "https://github.com/common-workflow-language/common-workflow-language")
