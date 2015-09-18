@@ -38,7 +38,7 @@
      `(("python-schema-salad" ,python-schema-salad)
        ("python-html5lib" ,python-html5lib)
        ))
-    ;; (arguments `(#:tests? #f)) ;; No tests.
+    (arguments `(#:tests? #f)) ;; No tests.
     (home-page
       "https://github.com/common-workflow-language/common-workflow-language")
     (synopsis

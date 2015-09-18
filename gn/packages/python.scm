@@ -57,13 +57,13 @@
           (base32
             "121a876k49xl85jvikyh4hzvm34456ikw66cra5dfyr15br1qjll"))))
     (build-system python-build-system)
-    (arguments `(#:tests? #f)) ;; No tests.
     (inputs
       `(("python-setuptools" ,python-setuptools)))
     (propagated-inputs
      `(("python-rdflib-4.2" ,python-rdflib-4.2)
        ("python-pyparsing" ,python-pyparsing)
        ("python-html5lib" ,python-html5lib)
+       ("python-nose" ,python-nose)
 ))
     (home-page
       "https://github.com/RDFLib/rdflib-jsonld")
