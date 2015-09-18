@@ -30,12 +30,13 @@
           (base32
             "1kqxc6nvq4nr8qdv39ycdi6fhzaipgjpmbghsz94ij6jhf5r3dq2"))))
     (build-system python-build-system)
-    (propagated-inputs
-     `(("python-schema-salad" ,python-schema-salad)
-       ))
     (inputs
      `(("python-setuptools" ,python-setuptools)
        ("python-pyparsing" ,python-pyparsing)
+       ))
+    (propagated-inputs
+     `(("python-schema-salad" ,python-schema-salad)
+       ("python-html5lib" ,python-html5lib)
        ))
     (arguments `(#:tests? #f)) ;; No tests.
     (home-page

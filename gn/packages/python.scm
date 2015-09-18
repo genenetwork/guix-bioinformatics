@@ -63,6 +63,7 @@
     (propagated-inputs
      `(("python-rdflib-4.2" ,python-rdflib-4.2)
        ("python-pyparsing" ,python-pyparsing)
+       ("python-html5lib" ,python-html5lib)
 ))
     (home-page
       "https://github.com/RDFLib/rdflib-jsonld")
@@ -99,6 +100,7 @@
         ("python-isodate" ,python-isodate)
         ("python-pyparsing" ,python-pyparsing)
         ("python-setuptools" ,python-setuptools)))
+    (arguments `(#:tests? #f)) ;; No tests.
     (home-page "https://github.com/RDFLib/rdflib")
     (synopsis
       "Python RDF library")
@@ -114,7 +116,7 @@ powerful language for representing information.")
       (inherit base)
       (inputs
         (append (package-inputs base)
-                `(("python2-nose" ,python2-nose))))
+                `(("python-nose" ,python-nose))))
       (arguments
         `(#:python ,python-2
           #:tests? #f))))) ; 3 tests fail, also outside Guix
