@@ -60,6 +60,10 @@
     (arguments `(#:tests? #f)) ;; No tests.
     (inputs
       `(("python-setuptools" ,python-setuptools)))
+    (propagated-inputs
+     `(("python-rdflib-4.2" ,python-rdflib-4.2)
+       ("python-pyparsing" ,python-pyparsing)
+))
     (home-page
       "https://github.com/RDFLib/rdflib-jsonld")
     (synopsis
@@ -100,3 +104,26 @@ powerful language for representing information.")
     (license (license:non-copyleft "file://LICENSE"
                            "See LICENSE in the distribution."))))
 
+(define-public python-avro
+(package
+  (name "python-avro")
+  (version "1.7.7")
+  (source
+    (origin
+      (method url-fetch)
+      (uri (string-append
+             "https://pypi.python.org/packages/source/a/avro/avro-"
+             version
+             ".tar.gz"))
+      (sha256
+        (base32
+          "0n21lfclah7bmqnnqfqmpsrimz0s86qkxyn972jynq234n1lyynf"))))
+  (build-system python-build-system)
+  (inputs
+    `(("python-setuptools" ,python-setuptools)))
+  (home-page "http://hadoop.apache.org/avro")
+  (synopsis
+    "Avro is a serialization and RPC framework.")
+  (description
+    "Avro is a serialization and RPC framework.")
+  (license #f)))

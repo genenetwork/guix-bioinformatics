@@ -31,7 +31,9 @@
             "1kqxc6nvq4nr8qdv39ycdi6fhzaipgjpmbghsz94ij6jhf5r3dq2"))))
     (build-system python-build-system)
     (propagated-inputs
-     `(("python-schema-salad" ,python-schema-salad)))
+     `(("python-schema-salad" ,python-schema-salad)
+       ("python-avro" ,python-avro)
+       ))
     (inputs
       `(("python-setuptools" ,python-setuptools)))
     (home-page
@@ -63,10 +65,9 @@
       `(("python-cython" ,python-cython)
        ("python-setuptools" ,python-setuptools)
        ("python-rdflib-jsonld" ,python-rdflib-jsonld)
-       ("python-rdflib-4.2" ,python-rdflib-4.2)
        ("python-mistune" ,python-mistune)))
     (propagated-inputs
-     `(("python-rdflib" ,python-rdflib)))
+     `(("python-rdflib-4.2" ,python-rdflib-4.2)))
     (home-page
       "https://github.com/common-workflow-language/common-workflow-language")
     (synopsis
