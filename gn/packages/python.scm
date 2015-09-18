@@ -72,6 +72,10 @@
       "rdflib extension adding JSON-LD parser and serializer")
     (license license:bsd-3)))
 
+(define-public python2-rdflib-jsonld
+  (package-with-python2 python-rdflib-jsonld))
+
+
 (define-public python-rdflib-4.2
   (package
     (name "python-rdflib-4.2")
@@ -104,6 +108,9 @@ powerful language for representing information.")
     (license (license:non-copyleft "file://LICENSE"
                            "See LICENSE in the distribution."))))
 
+(define-public python2-rdflib-4.2
+  (package-with-python2 python-rdflib-4.2))
+
 (define-public python-avro
 (package
   (name "python-avro")
@@ -127,6 +134,9 @@ powerful language for representing information.")
   (description
     "Avro is a serialization and RPC framework.")
   (license #f)))
+
+(define-public python2-avro
+  (package-with-python2 python-avro))
 
 (define-public python-shellescape
 (package
@@ -153,3 +163,6 @@ powerful language for representing information.")
     "Shell escape a string to safely use it as a token in a shell command (backport of Python shlex.quote for Python versions 2.x & < 3.3)")
   (license expat))
 )
+
+(define-public python2-shellescape
+  (package-with-python2 python-shellescape))

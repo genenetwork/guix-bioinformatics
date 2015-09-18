@@ -46,7 +46,9 @@
       "Common workflow language reference implementation")
     (license license:asl2.0)))
 
-    
+(define-public python2-cwltool
+  (package-with-python2 python-cwltool))
+
 (define-public python-schema-salad
   (package
     (name "python-schema-salad")
@@ -83,3 +85,5 @@
       "Schema Annotations for Linked Avro Data (SALAD)")
     (license license:asl2.0)))
     
+(define-public python2-schema-salad
+  (package-with-python2 python-schema-salad))
