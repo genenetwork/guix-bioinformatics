@@ -38,7 +38,7 @@
      `(("python-schema-salad" ,python-schema-salad)
        ("python-html5lib" ,python-html5lib)
        ))
-    (arguments `(#:tests? #f)) ;; No tests.
+    (arguments `(#:tests? #f)) ;; CWL includes no tests.
     (home-page
       "https://github.com/common-workflow-language/common-workflow-language")
     (synopsis
@@ -65,7 +65,7 @@
           (base32
             "09axiiirq73s1cs21n8mkdslaca2gxc2mlayyl6yiaq98cfgfh37"))))
     (build-system python-build-system)
-    (arguments `(#:tests? #f)) ;; No tests.
+    (arguments `(#:tests? #f)) ;; CWL includes no tests.
     (inputs
       `(("python-cython" ,python-cython)
        ("python-setuptools" ,python-setuptools)
