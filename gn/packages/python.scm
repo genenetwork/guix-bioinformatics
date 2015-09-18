@@ -1,9 +1,5 @@
 (define-module (gn packages python)
-  #:use-module ((guix licenses)
-                #:select (asl2.0 bsd-4 bsd-3 bsd-2 non-copyleft cc0 x11 x11-style
-                          gpl2 gpl2+ gpl3+ lgpl2.0+ lgpl2.1 lgpl2.1+ lgpl3+ agpl3+
-                          isc psfl public-domain x11-style))
-  #:use-module ((guix licenses) #:select (expat zlib) #:prefix license:)
+  #:use-module ((guix licenses) #:prefix license:)
   #:use-module (gnu packages)
   #:use-module (gnu packages attr)
   #:use-module (gnu packages compression)
@@ -45,4 +41,62 @@
   #:use-module (guix build-system python)
   #:use-module (guix build-system trivial)
   #:use-module (srfi srfi-1))
+
+(define-public python-rdflib-jsonld
+  (package
+    (name "python-rdflib-jsonld")
+    (version "0.3")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (string-append
+               "https://pypi.python.org/packages/source/r/rdflib-jsonld/rdflib-jsonld-"
+               version
+               ".tar.gz"))
+        (sha256
+          (base32
+            "121a876k49xl85jvikyh4hzvm34456ikw66cra5dfyr15br1qjll"))))
+    (build-system python-build-system)
+    (arguments `(#:tests? #f)) ;; No tests.
+    (inputs
+      `(("python-setuptools" ,python-setuptools)))
+    (home-page
+      "https://github.com/RDFLib/rdflib-jsonld")
+    (synopsis
+      "rdflib extension adding JSON-LD parser and serializer")
+    (description
+      "rdflib extension adding JSON-LD parser and serializer")
+    (license license:bsd-3)))
+
+(define-public python-rdflib-4.2
+  (package
+    (name "python-rdflib-4.2")
+    (version "4.2.0")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (string-append
+              "https://pypi.python.org/packages/source/r/rdflib/rdflib-"
+              version
+              ".tar.gz"))
+        (patches
+          ;; The patch has no effect under Python 3.
+          (list (search-patch "python2-rdflib-drop-sparqlwrapper.patch")))
+        (sha256
+          (base32
+            "1h3f8yl9frjz8rsykjdjk83qsrcvld3qa7pkzh69s91h97ydl83l"))))
+    (build-system python-build-system)
+    (inputs
+      `(("python-html5lib" ,python-html5lib)
+        ("python-isodate" ,python-isodate)
+        ("python-pyparsing" ,python-pyparsing)
+        ("python-setuptools" ,python-setuptools)))
+    (home-page "https://github.com/RDFLib/rdflib")
+    (synopsis
+      "Python RDF library")
+    (description
+      "RDFLib is a Python library for working with RDF, a simple yet
+powerful language for representing information.")
+    (license (license:non-copyleft "file://LICENSE"
+                           "See LICENSE in the distribution."))))
 
