@@ -4,6 +4,7 @@
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (gnu packages)
   #:use-module (gnu packages python)
+  #:use-module (gn packages python)
   #:use-module (guix download)
   #:use-module (guix packages)
   #:use-module (guix git-download)
