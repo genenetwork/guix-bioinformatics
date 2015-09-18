@@ -28,6 +28,8 @@
           (base32
             "1kqxc6nvq4nr8qdv39ycdi6fhzaipgjpmbghsz94ij6jhf5r3dq2"))))
     (build-system python-build-system)
+    (propagated-inputs
+     `(("python-schema-salad" ,python-schema-salad)))
     (inputs
       `(("python-setuptools" ,python-setuptools)))
     (home-page
@@ -36,7 +38,7 @@
       "Common workflow language reference implementation")
     (description
       "Common workflow language reference implementation")
-    (license asl2.0)))
+    (license license:asl2.0)))
 
 (define-public python-rdflib-jsonld
   (package
@@ -53,6 +55,7 @@
           (base32
             "121a876k49xl85jvikyh4hzvm34456ikw66cra5dfyr15br1qjll"))))
     (build-system python-build-system)
+    (arguments `(#:tests? #f)) ;; No tests.
     (inputs
       `(("python-setuptools" ,python-setuptools)))
     (home-page
@@ -61,7 +64,7 @@
       "rdflib extension adding JSON-LD parser and serializer")
     (description
       "rdflib extension adding JSON-LD parser and serializer")
-    (license bsd-3)))
+    (license license:bsd-3)))
     
 (define-public python-schema-salad
   (package
@@ -87,15 +90,13 @@
        ("python-mistune" ,python-mistune)))
     (propagated-inputs
      `(("python-rdflib" ,python-rdflib)))
-    (native-inputs
-     `(("python-rdflib" ,python-rdflib)))
     (home-page
       "https://github.com/common-workflow-language/common-workflow-language")
     (synopsis
       "Schema Annotations for Linked Avro Data (SALAD)")
     (description
       "Schema Annotations for Linked Avro Data (SALAD)")
-    (license asl2.0)))
+    (license license:asl2.0)))
     
 (define-public python-rdflib
   (package
@@ -126,6 +127,6 @@
     (description
       "RDFLib is a Python library for working with RDF, a simple yet
 powerful language for representing information.")
-    (license (non-copyleft "file://LICENSE"
+    (license (license:non-copyleft "file://LICENSE"
                            "See LICENSE in the distribution."))))
 
