@@ -40,23 +40,3 @@
   #:use-module (gnu packages zip)
   #:use-module (srfi srfi-1))
 
-(define-public r-qtl
-  (package
-    (name "r-qtl")
-    (version "1.37-11")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (string-append
-              "mirror://cran/src/contrib/qtl_"
-              version ".tar.gz"))
-        (sha256
-          (base32
-           "0h20d36mww7ljp51pfs66xq33yq4b4fwq9nsh02dpmfhlaxgx1xi"))))
-    (build-system r-build-system)
-    (home-page "http://www.rqtl.org")
-    (synopsis "Tools for Analyzing QTL Experiments")
-    (description "Bio-statistics library for analysis of experimental
-crosses to identify genes (called quantitative trait loci, QTLs)
-contributing to variation in quantitative traits.")
-    (license license:gpl3+)))
