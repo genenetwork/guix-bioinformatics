@@ -31,13 +31,31 @@ Install the common workflow language tool cwltool with
 
 ## Install R/qtl
 
-    git clone https://github.com/genenetwork/guix-bioinformatics.git
-    export GUIX_PACKAGE_PATH=$PWD/guix-bioinformatics/
+R-qtl is part of main stream GNU Guix:
+
     guix package -i r-qtl r
     R
       library(qtl)
 
+# Development tips
+
+## Override individual packages
+
+The cheerful way of overriding a version of a package:
+
+    (use-modules (guix) (gnu packages emacs))
+
+    (package
+      (inherit emacs)
+      (name "emacs-snapshot")
+      (source "/path/to/some-file-or-directory.tar.gz"))
+
+and then run:
+
+    guix package --install-from-file=that-file.scm
+
+
 ## LICENSE
 
-These package descriptions are distributed by the same license as GNU
-Guix, i.e. GPL3+
+These package descriptions (so-called Guix expressions) are
+distributed by the same license as GNU Guix, i.e. GPL3+
