@@ -38,5 +38,44 @@
   #:use-module (gnu packages web)
   #:use-module (gnu packages xml)
   #:use-module (gnu packages zip)
+  #:use-module (gnu packages bootstrap)
   #:use-module (srfi srfi-1))
 
+(define-public my-deploy
+  (package
+    (name "my-deploy")
+    (version "0.0.1")
+    (source #f)
+    (build-system trivial-build-system)
+    (arguments
+     `(#:guile ,%bootstrap-guile
+       #:modules ((guix build utils))
+       #:builder
+       (let* ((out  (assoc-ref %outputs "out"))
+              (bash (assoc-ref %build-inputs "bash"))
+              (foo  (string-append out "/foo")))
+         (begin
+           (use-modules (guix build utils))
+           (mkdir out)
+           (call-with-output-file foo
+             (lambda (p)
+               (format p
+                       "#!~a~%echo \"${GUIX_FOO} ${GUIX_BAR}\"~%"
+                       bash)))
+           (chmod foo #o777)
+           ;; wrap-program uses `which' to find bash for the wrapper
+           ;; shebang, but it can't know about the bootstrap bash in
+           ;; the store, since it's not named "bash".  Help it out a
+           ;; bit by providing a symlink it this package's output.
+           (symlink bash (string-append out "/bash"))
+           (setenv "PATH" out)
+           (wrap-program foo `("GUIX_FOO" prefix ("hello")))
+           (wrap-program foo `("GUIX_BAR" prefix ("world")))
+           #t))))
+    (inputs `(("bash" ,(search-bootstrap-binary "bash"
+                                                (%current-system)))))
+
+    (home-page #f)
+    (synopsis #f)
+    (description #f)
+    (license #f)))
