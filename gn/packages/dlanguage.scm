@@ -77,41 +77,53 @@ place mostly on x86-32 and x86-64 Linux and that is where LDC works best.")
               (sha256
                (base32
                 "1jvilxx0rpqmkbja4m69fhd5g09697xq7vyqp2hz4hvxmmmv4j40"))))
-              ;; (method git-fetch)
-              ;; (uri (git-reference
-              ;;       (url "git://github.com/ldc-developers/ldc.git")
-              ;;       (commit (string-append "v" version))))
-              ;; (sha256
-              ;;  (base32
-              ;;   "1jvilxx0rpqmkbja4m69fhd5g09697xq7vyqp2hz4hvxmmmv4j40"))
-              ;; (file-name (string-append name "-" version "-checkout"))
-              ;; #t)) ;; Recursively get submodules as well.
     (build-system cmake-build-system)
     (supported-systems '("x86_64-linux" "i686-linux"))
-    (arguments `(#:tests? #f))
+    (arguments `(
+    #:tests? #f
+    #:phases
+    (modify-phases %standard-phases         
+    (add-after 'unpack 'unpack-phobos-source
+               (lambda* (#:key source inputs #:allow-other-keys)
+                        (begin
+                          (with-directory-excursion "runtime/phobos"
+                            (copy-file (assoc-ref inputs "phobos-src")
+                                       "phobos-src.tar.gz")
+                            (zero? (system* "tar" "xvzf" "phobos-src.tar.gz" "--strip-components=1")))
+    ))) ;; add-after
+    (add-after 'unpack 'unpack-druntime-source
+               (lambda* (#:key source inputs #:allow-other-keys)
+                        (begin
+                          (with-directory-excursion "runtime/druntime"
+                            (copy-file (assoc-ref inputs "druntime-src")
+                                       "druntime-src.tar.gz")
+                            (zero? (system* "tar" "xvzf" "druntime-src.tar.gz" "--strip-components=1")))
+    ))) ;; add-after
+
+    ) ;; modify-phases
+    )) ; arguments
+
     (inputs
      `( ("libconfig" ,libconfig)
-       ("libedit" ,libedit)))
+        ("libedit" ,libedit)))
     (native-inputs
      `(("llvm" ,llvm)
        ("clang" ,clang)
-       ("openjdk6-src"
+       ("phobos-src"  ;; runtime/phobos
         ,(origin
           (method url-fetch)
           (uri (string-append "https://github.com/ldc-developers/phobos/archive/ldc-v" version ".tar.gz"))
           (sha256
            (base32
             "0sgdj0536c4nb118yiw1f8lqy5d3g3lpg9l99l165lk9xy45l9z4"))))
+       ("druntime-src"  ;; runtime/druntime
+        ,(origin
+          (method url-fetch)
+          (uri (string-append "https://github.com/ldc-developers/druntime/archive/ldc-v" version ".tar.gz"))
+          (sha256
+           (base32
+            "0z4mkyddx6c4sy1vqgqvavz55083dsxws681qkh93jh1rpby9yg6"))))
       ))
-    ;; ("phobos" ,(origin
-    ;;              (method git-fetch)
-    ;;              (uri (get-reference
-    ;;                    (url "https://github.com/ldc-developers/phobos.git")
-    ;;                    (commit (string-append "ldc-v" version))))))
-    ;; (arguments
-    ;;  `(#:phases
-    ;;    'unpack
-    ;;    (lambda _ (system* "git submodules init --update"))))
     (home-page "https://github.com/ldc-developers/ldc")
     (synopsis "A compiler for the D programming language.")
     (description
