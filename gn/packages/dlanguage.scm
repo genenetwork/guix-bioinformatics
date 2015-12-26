@@ -78,23 +78,20 @@
 
     (add-after
      'unpack-phobos-source 'patch-phobos
-     (lambda _
+     (lambda* (#:key source inputs #:allow-other-keys)
        (substitute* "runtime/phobos/std/process.d"
                     (("/bin/sh") (which "sh"))
                     (("echo") (which "echo")))
        (substitute* "runtime/phobos/std/datetime.d"
-                    (("/usr/share/zoneinfo/")
-                     (string-append (assoc-ref inputs "tzdata")
-                                         "/share/zoneinfo")))
-       #t))
-
+                    (("/usr/share/zoneinfo/") (string-append (assoc-ref inputs "tzdata") "/share/zoneinfo")))
+       #t)) ;; add-after
 
     (add-after
      'unpack-dmd-testsuite-source 'patch-dmd-testsuite
      (lambda _
        (substitute* "tests/d2/dmd-testsuite/Makefile"
                     (("/bin/bash") (which "bash")))
-       #t))
+       #t)) ;; add-after
     
     ) ;; modify-phases
     )) ; arguments
@@ -102,7 +99,7 @@
     (inputs
      `( ("libconfig" ,libconfig)
         ("libedit" ,libedit)
-        ("tzdata" ,tzdata))  ;; for tests
+        ("tzdata" ,tzdata)))  ;; for tests
     (native-inputs
      `(("llvm" ,llvm)
        ("clang" ,clang)
