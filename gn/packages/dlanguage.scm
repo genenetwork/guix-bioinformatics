@@ -24,6 +24,7 @@
   #:use-module (gnu packages textutils)
   #:use-module (gnu packages libedit)
   #:use-module (gnu packages llvm)
+  #:use-module (gnu packages zip)
   #:use-module (guix git-download))
 
 (define-public ldc
@@ -41,14 +42,12 @@
     (supported-systems '("x86_64-linux" "i686-linux"))
     (arguments `(
       ;;  When #:tests? set to #t only the following tests FAILED:
-      ;;  223 - std.path (Failed)       ;; hobos/std/path.d(3083): ~root
-      ;;  235 - std.process (Failed)    ;; echo not found
-      ;;  238 - std.file (Failed)       ;; Not an executable file: /bin/sh
+      ;;  223 - std.path (Failed)       ;; phobos/std/path.d(3083): ~root
       ;;  243 - std.datetime (Failed)   ;; Directory /usr/share/zoneinfo/ does not exist.
       ;;  253 - std.socket (Failed)     ;; No service for epmap
-      ;;  662 - dmd-testsuite (Failed)  ;; /bin/bash: Command not found
+      ;;  662 - dmd-testsuite (Failed)  ;; unzip: command not found
       ;;  See ./build/Testing/Temporary/LastTest.log     
-    #:tests? #f
+    #:tests? #t
     #:phases
     (modify-phases %standard-phases         
     (add-after 'unpack 'unpack-phobos-source
@@ -76,6 +75,20 @@
                             (zero? (system* "tar" "xvzf" "dmd-testsuite-src.tar.gz" "--strip-components=1")))
     ))) ;; add-after
 
+    (add-after
+     'unpack-phobos-source 'patch-phobos
+     (lambda _
+       (substitute* "runtime/phobos/std/process.d"
+                    (("/bin/sh") (which "sh"))
+                    (("echo") (which "echo")))
+       #t))
+    (add-after
+     'unpack-dmd-testsuite-source 'patch-dmd-testsuite
+     (lambda _
+       (substitute* "tests/d2/dmd-testsuite/Makefile"
+                    (("/bin/bash") (which "bash")))
+       #t))
+    
     ) ;; modify-phases
     )) ; arguments
 
@@ -85,6 +98,7 @@
     (native-inputs
      `(("llvm" ,llvm)
        ("clang" ,clang)
+       ("unzip" ,unzip)
        ("phobos-src"  ;; runtime/phobos
         ,(origin
           (method url-fetch)
