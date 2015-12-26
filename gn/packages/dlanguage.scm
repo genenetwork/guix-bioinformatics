@@ -59,6 +59,14 @@
                                        "druntime-src.tar.gz")
                             (zero? (system* "tar" "xvzf" "druntime-src.tar.gz" "--strip-components=1")))
     ))) ;; add-after
+    (add-after 'unpack 'unpack-dmd-testsuite-source
+               (lambda* (#:key source inputs #:allow-other-keys)
+                        (begin
+                          (with-directory-excursion "tests/d2/dmd-testsuite"
+                            (copy-file (assoc-ref inputs "dmd-testsuite-src")
+                                       "dmd-testsuite-src.tar.gz")
+                            (zero? (system* "tar" "xvzf" "dmd-testsuite-src.tar.gz" "--strip-components=1")))
+    ))) ;; add-after
 
     ) ;; modify-phases
     )) ; arguments
@@ -83,6 +91,13 @@
           (sha256
            (base32
             "0z4mkyddx6c4sy1vqgqvavz55083dsxws681qkh93jh1rpby9yg6"))))
+       ("dmd-testsuite-src"  ;; runtime/druntime
+        ,(origin
+          (method url-fetch)
+          (uri (string-append "https://github.com/ldc-developers/dmd-testsuite/archive/ldc-v" version ".tar.gz"))
+          (sha256
+           (base32
+            "0yc6miidzgl9k33ygk7xcppmfd6kivqj02cvv4fmkbs3qz4yy3z1"))))
       ))
     (home-page "https://github.com/ldc-developers/ldc")
     (synopsis "LLVM compiler for the D programming language.")
