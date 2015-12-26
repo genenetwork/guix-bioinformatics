@@ -81,8 +81,6 @@
        (substitute* "runtime/phobos/std/process.d"
                     (("/bin/sh") (which "sh"))
                     (("echo") (which "echo")))
-       (substitute* "runtime/phobos/std/process.d"
-                    (("/usr/share/zoneinfo/") ("")))
        #t))
     (add-after
      'unpack-dmd-testsuite-source 'patch-dmd-testsuite
