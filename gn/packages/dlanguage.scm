@@ -26,46 +26,6 @@
   #:use-module (gnu packages llvm)
   #:use-module (guix git-download))
 
-(define-public ldc-phobos
-  (package
-    (name "ldc-phobos")
-    (version "0.16.1")
-    (source (origin
-              (method url-fetch)
-              (uri (string-append
-                    "https://github.com/ldc-developers/phobos/archive/ldc-v" version ".tar.gz"
-                    ))
-              (sha256
-               (base32
-                "0sgdj0536c4nb118yiw1f8lqy5d3g3lpg9l99l165lk9xy45l9z4"))))
-    (build-system cmake-build-system)
-    (supported-systems '("x86_64-linux" "i686-linux"))
-    (arguments `(#:tests? #f))
-    (inputs
-     `( ("libconfig" ,libconfig)
-       ("libedit" ,libedit)))
-    (native-inputs
-     `(("llvm" ,llvm)
-       ("clang" ,clang)))
-    ;; ("phobos" ,(origin
-    ;;              (method git-fetch)
-    ;;              (uri (get-reference
-    ;;                    (url "https://github.com/ldc-developers/phobos.git")
-    ;;                    (commit (string-append "ldc-v" version))))))
-    ;; (arguments
-    ;;  `(#:phases
-    ;;    'unpack
-    ;;    (lambda _ (system* "git submodules init --update"))))
-    (home-page "https://github.com/ldc-developers/ldc")
-    (synopsis "A compiler for the D programming language.")
-    (description
-     "LDC is a compiler for the D programming Language.  It is based on the
-latest DMD frontend and uses LLVM as backend.  LLVM provides a fast and modern
-backend for high quality code generation.  LDC is released under a BSD license
-with exceptions for the DMD frontend and code from GDC.  The development takes
-place mostly on x86-32 and x86-64 Linux and that is where LDC works best.")
-    (license license:bsd-3)))
-
 (define-public ldc
   (package
     (name "ldc")
@@ -125,7 +85,7 @@ place mostly on x86-32 and x86-64 Linux and that is where LDC works best.")
             "0z4mkyddx6c4sy1vqgqvavz55083dsxws681qkh93jh1rpby9yg6"))))
       ))
     (home-page "https://github.com/ldc-developers/ldc")
-    (synopsis "A compiler for the D programming language.")
+    (synopsis "LLVM compiler for the D programming language.")
     (description
      "LDC is a compiler for the D programming Language.  It is based on the
 latest DMD frontend and uses LLVM as backend.  LLVM provides a fast and modern
