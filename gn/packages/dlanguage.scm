@@ -45,7 +45,6 @@
       ;;  223 - std.path (Failed)       ;; phobos/std/path.d(3083): ~root
       ;;  243 - std.datetime (Failed)   ;; Directory /usr/share/zoneinfo/ does not exist.
       ;;  253 - std.socket (Failed)     ;; No service for epmap
-      ;;  662 - dmd-testsuite (Failed)  ;; unzip: command not found
       ;;  See ./build/Testing/Temporary/LastTest.log     
     #:tests? #t
     #:phases
@@ -81,6 +80,8 @@
        (substitute* "runtime/phobos/std/process.d"
                     (("/bin/sh") (which "sh"))
                     (("echo") (which "echo")))
+       (substitute* "runtime/phobos/std/process.d"
+                    (("/usr/share/zoneinfo/") ("")))
        #t))
     (add-after
      'unpack-dmd-testsuite-source 'patch-dmd-testsuite
