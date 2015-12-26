@@ -1,0 +1,55 @@
+Disable a few ldc tests.
+
+Patch by Pjotr Prins <pjotr.guix@thebird.nl>.
+
+--- a/runtime/phobos/std/path.d
++++ b/runtime/phobos/std/path.d
+@@ -3080,8 +3080,8 @@ unittest
+         }
+         else
+         {
+-            assert(expandTilde("~root") == "/root", expandTilde("~root"));
+-            assert(expandTilde("~root/") == "/root/", expandTilde("~root/"));
++            // assert(expandTilde("~root") == "/root", expandTilde("~root"));
++            // assert(expandTilde("~root/") == "/root/", expandTilde("~root/"));
+         }
+         assert(expandTilde("~Idontexist/hey") == "~Idontexist/hey");
+     }
+diff --git a/runtime/phobos/std/socket.d b/runtime/phobos/std/socket.d
+index b85d1c9..8d456c8 100644
+--- a/runtime/phobos/std/socket.d
++++ b/runtime/phobos/std/socket.d
+@@ -519,6 +519,8 @@ unittest
+ {
+     // getprotobyname,number are unimplemented on Android
+     softUnittest({
++        pragma(msg, "test disabled on GNU Guix");
++        /*
+         Protocol proto = new Protocol;
+         assert(proto.getProtocolByType(ProtocolType.TCP));
+         //writeln("About protocol TCP:");
+@@ -529,6 +531,7 @@ unittest
+         // }
+         assert(proto.name == "tcp");
+         assert(proto.aliases.length == 1 && proto.aliases[0] == "TCP");
++        */
+     });
+ }
+ 
+@@ -859,6 +862,8 @@ class InternetHost
+ 
+ unittest
+ {
++    pragma(msg, "test disabled on GNU Guix");
++/*
+     InternetHost ih = new InternetHost;
+ 
+     ih.getHostByAddr(0x7F_00_00_01);
+@@ -888,6 +893,7 @@ unittest
+         // {
+         //      writefln("aliases[%d] = %s", i, s);
+         // }
++*/
+     });
+ }
+ 
