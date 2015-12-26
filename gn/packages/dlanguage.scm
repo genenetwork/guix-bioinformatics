@@ -28,8 +28,6 @@
   #:use-module (gnu packages zip)
   #:use-module (guix git-download))
 
-
-
 (define-public ldc
   (package
     (name "ldc")
@@ -40,8 +38,7 @@
                     "https://github.com/ldc-developers/ldc/archive/v" version ".tar.gz"))
               (sha256
                (base32
-                "1jvilxx0rpqmkbja4m69fhd5g09697xq7vyqp2hz4hvxmmmv4j40"))
-              (patches (list (search-patch "ldc-disable-tests.patch")))))
+                "1jvilxx0rpqmkbja4m69fhd5g09697xq7vyqp2hz4hvxmmmv4j40"))))
     (build-system cmake-build-system)
     (supported-systems '("x86_64-linux" "i686-linux"))
     (arguments `(
@@ -58,8 +55,8 @@
                         (begin
                           (with-directory-excursion "runtime/phobos"
                             (copy-file (assoc-ref inputs "phobos-src")
-                                       "phobos-src.tar.gz")
-                            (zero? (system* "tar" "xvzf" "phobos-src.tar.gz" "--strip-components=1")))
+                                       "phobos-src.tar")
+                            (zero? (system* "tar" "xvf" "phobos-src.tar" "--strip-components=1")))
     ))) ;; add-after
     (add-after 'unpack 'unpack-druntime-source
                (lambda* (#:key source inputs #:allow-other-keys)
@@ -110,7 +107,9 @@
           (uri (string-append "https://github.com/ldc-developers/phobos/archive/ldc-v" version ".tar.gz"))
           (sha256
            (base32
-            "0sgdj0536c4nb118yiw1f8lqy5d3g3lpg9l99l165lk9xy45l9z4"))))
+            "0sgdj0536c4nb118yiw1f8lqy5d3g3lpg9l99l165lk9xy45l9z4"))
+          (patches (list (search-patch "ldc-disable-tests.patch")))))
+
        ("druntime-src"  ;; runtime/druntime
         ,(origin
           (method url-fetch)

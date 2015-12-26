@@ -2,8 +2,8 @@ Disable a few ldc tests.
 
 Patch by Pjotr Prins <pjotr.guix@thebird.nl>.
 
---- a/runtime/phobos/std/path.d
-+++ b/runtime/phobos/std/path.d
+--- a/std/path.d
++++ b/std/path.d
 @@ -3080,8 +3080,8 @@ unittest
          }
          else
@@ -15,10 +15,10 @@ Patch by Pjotr Prins <pjotr.guix@thebird.nl>.
          }
          assert(expandTilde("~Idontexist/hey") == "~Idontexist/hey");
      }
-diff --git a/runtime/phobos/std/socket.d b/runtime/phobos/std/socket.d
+diff --git a/std/socket.d b/std/socket.d
 index b85d1c9..8d456c8 100644
---- a/runtime/phobos/std/socket.d
-+++ b/runtime/phobos/std/socket.d
+--- a/std/socket.d
++++ b/std/socket.d
 @@ -519,6 +519,8 @@ unittest
  {
      // getprotobyname,number are unimplemented on Android
