@@ -1,20 +1,15 @@
 diff --git a/std/datetime.d b/std/datetime.d
-index 8e4ed3b..d904a49 100644
+index 8e4ed3b..1be9099 100644
 --- a/std/datetime.d
 +++ b/std/datetime.d
-@@ -28018,7 +28018,11 @@ public:
+@@ -28018,6 +28018,7 @@ public:
              The default directory where the TZ Database files are. It's empty
              for Windows, since Windows doesn't have them.
            +/
--        enum defaultTZDatabaseDir = "/usr/share/zoneinfo/";
 +          
-+        pragma(msg, "test disabled on GNU Guix");
-+
-+        // enum defaultTZDatabaseDir = "/usr/share/zoneinfo/";
-+        enum defaultTZDatabaseDir = "";
+         enum defaultTZDatabaseDir = "/usr/share/zoneinfo/";
      }
      else version(Windows)
-     {
 diff --git a/std/path.d b/std/path.d
 index 254d8f0..b0fc04d 100644
 --- a/std/path.d

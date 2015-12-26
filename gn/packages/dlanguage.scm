@@ -23,6 +23,7 @@
   #:use-module (guix download)
   #:use-module (guix build-system cmake)
   #:use-module (gnu packages textutils)
+  #:use-module (gnu packages base)
   #:use-module (gnu packages libedit)
   #:use-module (gnu packages llvm)
   #:use-module (gnu packages zip)
@@ -81,7 +82,13 @@
        (substitute* "runtime/phobos/std/process.d"
                     (("/bin/sh") (which "sh"))
                     (("echo") (which "echo")))
+       (substitute* "runtime/phobos/std/datetime.d"
+                    (("/usr/share/zoneinfo/")
+                     (string-append (assoc-ref inputs "tzdata")
+                                         "/share/zoneinfo")))
        #t))
+
+
     (add-after
      'unpack-dmd-testsuite-source 'patch-dmd-testsuite
      (lambda _
@@ -94,11 +101,12 @@
 
     (inputs
      `( ("libconfig" ,libconfig)
-        ("libedit" ,libedit)))
+        ("libedit" ,libedit)
+        ("tzdata" ,tzdata))  ;; for tests
     (native-inputs
      `(("llvm" ,llvm)
        ("clang" ,clang)
-       ("unzip" ,unzip)
+       ("unzip" ,unzip) ;; for tests
        ("phobos-src"  ;; runtime/phobos
         ,(origin
           (method url-fetch)
