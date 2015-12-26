@@ -18,6 +18,7 @@
 
 (define-module (gn packages dlanguage)
   #:use-module ((guix licenses) #:prefix license:)
+  #:use-module (gnu packages)
   #:use-module (guix packages)
   #:use-module (guix download)
   #:use-module (guix build-system cmake)
@@ -26,6 +27,8 @@
   #:use-module (gnu packages llvm)
   #:use-module (gnu packages zip)
   #:use-module (guix git-download))
+
+
 
 (define-public ldc
   (package
@@ -37,7 +40,8 @@
                     "https://github.com/ldc-developers/ldc/archive/v" version ".tar.gz"))
               (sha256
                (base32
-                "1jvilxx0rpqmkbja4m69fhd5g09697xq7vyqp2hz4hvxmmmv4j40"))))
+                "1jvilxx0rpqmkbja4m69fhd5g09697xq7vyqp2hz4hvxmmmv4j40"))
+              (patches (list (search-patch "ldc-disable-tests.patch")))))
     (build-system cmake-build-system)
     (supported-systems '("x86_64-linux" "i686-linux"))
     (arguments `(
