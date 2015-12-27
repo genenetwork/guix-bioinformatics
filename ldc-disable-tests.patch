@@ -1,6 +1,6 @@
 This patch fixes a failing unit test by feeding buildNormalizedPath to the
 tzdata properly. Three other tests are disables, one assumes /root and the
-two others use networking.
+two others use networking. Not bad out of almost 700 tests!
 
 by Pjotr Prins <pjotr.guix@thebird.nl>
 
