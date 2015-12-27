@@ -1,3 +1,9 @@
+This patch fixes a failing unit test by feeding buildNormalizedPath to the
+tzdata properly. Three other tests are disables, one assumes /root and the
+two others use networking.
+
+by Pjotr Prins <pjotr.guix@thebird.nl>
+
 diff --git a/std/datetime.d b/std/datetime.d
 index 8e4ed3b..6c15bc5 100644
 --- a/std/datetime.d

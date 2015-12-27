@@ -43,13 +43,6 @@
     (build-system cmake-build-system)
     (supported-systems '("x86_64-linux" "i686-linux"))
     (arguments `(
-      ;;  When #:tests? set to #t only the following tests FAILED:
-      ;;  243 - std.datetime (Failed)   ;; Directory /usr/share/zoneinfo/ does not exist.
-      ;;  See ./build/Testing/Temporary/LastTest.log for executing (individual) tests
-                 ;;  Note: Run cmake as an out of build directory
-                 ;;  in build:       cmake ../ldc-0.16.1
-                 ;;  and in runtime: cmake --build /tmp/nix-build-ldc-0.16.1.drv-4/build --target phobos2-ldc-unittest-debug -- -j 8
-                 ;;  run phobos2-test-runner-debug std.datetime
     #:tests? #t
     #:phases
     (modify-phases %standard-phases         
