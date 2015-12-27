@@ -1,5 +1,5 @@
 diff --git a/std/datetime.d b/std/datetime.d
-index 8e4ed3b..4a733e6 100644
+index 8e4ed3b..e4716aa 100644
 --- a/std/datetime.d
 +++ b/std/datetime.d
 @@ -28018,6 +28018,7 @@ public:
@@ -10,7 +10,15 @@ index 8e4ed3b..4a733e6 100644
          enum defaultTZDatabaseDir = "/usr/share/zoneinfo/";
      }
      else version(Windows)
-@@ -28076,7 +28077,7 @@ assert(tz.dstName == "PDT");
+@@ -28069,14 +28070,14 @@ assert(tz.dstName == "PDT");
+         import std.range : retro;
+         import std.format : format;
+ 
+-        name = strip(name);
++        name = "."+strip(name);
+ 
+         enforce(tzDatabaseDir.exists(), new DateTimeException(format("Directory %s does not exist.", tzDatabaseDir)));
+         enforce(tzDatabaseDir.isDir, new DateTimeException(format("%s is not a directory.", tzDatabaseDir)));
  
          immutable file = buildNormalizedPath(tzDatabaseDir, name);
  
