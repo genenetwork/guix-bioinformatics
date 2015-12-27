@@ -1,5 +1,5 @@
 diff --git a/std/datetime.d b/std/datetime.d
-index 8e4ed3b..26a4fbe 100644
+index 8e4ed3b..14eb032 100644
 --- a/std/datetime.d
 +++ b/std/datetime.d
 @@ -28018,6 +28018,7 @@ public:
@@ -15,7 +15,7 @@ index 8e4ed3b..26a4fbe 100644
          import std.format : format;
  
 -        name = strip(name);
-+        name = "." ~ strip(name);
++        name = "./" ~ strip(name);
  
          enforce(tzDatabaseDir.exists(), new DateTimeException(format("Directory %s does not exist.", tzDatabaseDir)));
          enforce(tzDatabaseDir.isDir, new DateTimeException(format("%s is not a directory.", tzDatabaseDir)));
