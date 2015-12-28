@@ -141,10 +141,8 @@
                (base32
                 "0v4z4qxa8ki9hlmdwlgslchvg21nqkkq6135nx6w63xikjffxcba"))))
     (build-system r-build-system)
-    (inputs
+    (propagated-inputs
      `(("r-rcppeigen" ,r-rcppeigen)))
-    ;;  (propagated-inputs
-    ;;  `(("ruby-nokogiri" ,ruby-nokogiri)))
     (synopsis "R/lmmlite")
     (description
      "R/lmmlite")
