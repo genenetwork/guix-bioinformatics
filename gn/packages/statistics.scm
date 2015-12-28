@@ -131,7 +131,7 @@
     (name "r-lmmlite")
     (version "0.1-9")
     (source (origin
-              ;; We use the git reference, because there's CRAN package
+              ;; We use the git reference, because there's no CRAN package (yet)
               (method git-fetch)
               (uri (git-reference
                     (url "https://github.com/kbroman/lmmlite.git")
