@@ -79,3 +79,42 @@
     (synopsis #f)
     (description #f)
     (license #f)))
+
+(define-public r-wgcna
+(package
+  (name "r-wgcna")
+  (version "1.48")
+  (source
+    (origin
+      (method url-fetch)
+      (uri (cran-uri "WGCNA" version))
+      (sha256
+        (base32
+          "18yl2v3s279saq318vd5hlwnqfm89rxmjjji778d2d26vviaf6bn"))))
+  (properties `((upstream-name . "WGCNA")))
+  (build-system r-build-system)
+  ;; (propagated-inputs
+    ;; `( ;; ("r-annotationdbi" ,r-annotationdbi)
+       ;; ("r-doparallel" ,r-doparallel)
+       ;; ("r-dynamictreecut" ,r-dynamictreecut)
+       ;; ("r-fastcluster" ,r-fastcluster)
+       ;; ("r-foreach" ,r-foreach)
+       ;; ("r-go.db" ,r-go.db)
+       ;; ("r-grdevices" ,r-grdevices)
+       ;; ("r-hmisc" ,r-hmisc)
+       ;; ("r-impute" ,r-impute)
+       ;; ("r-matrixstats" ,r-matrixstats)
+       ;; ("r-parallel" ,r-parallel)
+       ;; ("r-preprocesscore" ,r-preprocesscore)
+       ;; ("r-splines" ,r-splines)
+       ;; ("r-stats" ,r-stats)
+       ;; ("r-survival" ,r-survival)
+       ;; ("r-utils" ,r-utils)))
+  (home-page
+    "http://www.genetics.ucla.edu/labs/horvath/CoexpressionNetwork/Rpackages/WGCNA/")
+  (synopsis
+    "Weighted Correlation Network Analysis")
+  (description
+    "Functions necessary to perform Weighted Correlation Network Analysis on high-dimensional data.  Includes functions for rudimentary data cleaning, construction of correlation networks, module identification, summarization, and relating of variables and modules to sample traits.  Also includes a number of utility functions for data manipulation and visualization.")
+  (license license:gpl2+)))
+
