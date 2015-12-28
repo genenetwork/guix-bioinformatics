@@ -55,8 +55,9 @@
   (propagated-inputs
     `(("r-matrix" ,r-matrix)
       ("r-rcpp" ,r-rcpp)
-      ("r-stats" ,r-stats)
-      ("r-utils" ,r-utils)))
+      ;; ("r-stats" ,r-stats)
+      ;; ("r-utils" ,r-utils)
+      ))
   (home-page "http://eigen.tuxfamily.org")
   (synopsis
     "'Rcpp' Integration for the 'Eigen' Templated Linear Algebra Library")
@@ -80,15 +81,72 @@
   (build-system r-build-system)
   (propagated-inputs
     `(("r-graphics" ,r-graphics)
-      ("r-grid" ,r-grid)
+      ;; ("r-grid" ,r-grid)
       ("r-lattice" ,r-lattice)
-      ("r-methods" ,r-methods)
-      ("r-stats" ,r-stats)
-      ("r-utils" ,r-utils)))
+      ;; ("r-methods" ,r-methods)
+      ;; ("r-stats" ,r-stats)
+      ;;("r-utils" ,r-utils)
+      ))
   (home-page
     "http://Matrix.R-forge.R-project.org/")
   (synopsis
     "Sparse and Dense Matrix Classes and Methods")
   (description
     "Classes and methods for dense and sparse matrices and operations on them using 'LAPACK' and 'SuiteSparse'.")
-  (license gpl2+)))
+  (license license:gpl2+)))
+
+(define-public r-graphics
+(package
+  (name "r-graphics")
+  (version "2.0-13")
+  (source
+    (origin
+      (method url-fetch)
+      (uri (cran-uri "RGraphics" version))
+      (sha256
+        (base32
+          "10c6wiqh074bmbg2gwdscwp5kj8afs152ipv0byyqw5n2r8fw0w1"))))
+  (properties `((upstream-name . "RGraphics")))
+  (build-system r-build-system)
+  (propagated-inputs
+    `(;; ("r-datasets" ,r-datasets)
+      ("r-ggplot2" ,r-ggplot2)
+      ;; ("r-graphics" ,r-graphics)
+      ;; ("r-grdevices" ,r-grdevices)
+      ;; ("r-grid" ,r-grid)
+      ("r-lattice" ,r-lattice)
+      ;; ("r-methods" ,r-methods)
+      ;; ("r-stats" ,r-stats)
+      ))
+  (home-page
+    "http://www.stat.auckland.ac.nz/~paul/RG2e/index.html")
+  (synopsis
+    "Data and Functions from the Book R Graphics, Second Edition")
+  (description
+    "Data and Functions from the book R Graphics, Second Edition.  There is a function to produce each figure in the book, plus several functions, classes, and methods defined in Chapter 8.")
+  (license license:gpl2+)))
+
+(define-public r-lmmlite
+  (package
+    (name "r-lmmlite")
+    (version "0.1-9")
+    (source (origin
+              ;; We use the git reference, because there's CRAN package
+              (method git-fetch)
+              (uri (git-reference
+                    (url "https://github.com/kbroman/lmmlite.git")
+                    (commit "5b833d5")))
+              (file-name (string-append name "-" version "-checkout"))
+              (sha256
+               (base32
+                "0bnppjy96xiadrsrc9dp8y6wvdwnkfa930n7acrp0mqm4qywl2wl"))))
+    (build-system r-build-system)
+    (inputs
+     `(("r-rcppeigen" ,r-rcppeigen)))
+    ;;  (propagated-inputs
+    ;;  `(("ruby-nokogiri" ,ruby-nokogiri)))
+    (synopsis "R/lmmlite")
+    (description
+     "R/lmmlite")
+    (home-page "https://github.com/kbroman/")
+    (license license:asl2.0)))
