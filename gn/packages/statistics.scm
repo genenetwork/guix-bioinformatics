@@ -139,7 +139,7 @@
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-                "0bnppjy96xiadrsrc9dp8y6wvdwnkfa930n7acrp0mqm4qywl2wl"))))
+                "0v4z4qxa8ki9hlmdwlgslchvg21nqkkq6135nx6w63xikjffxcba"))))
     (build-system r-build-system)
     (inputs
      `(("r-rcppeigen" ,r-rcppeigen)))
