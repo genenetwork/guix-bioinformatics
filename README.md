@@ -19,51 +19,17 @@ or using a checked out Guix repo with
 Some (or most) of these package definitions should make it upstream
 into the GNU Guix repository when tested and stable.
 
-## LLVM D compiler
+## Module system
 
-Install with
+Install the module envirmonment with
 
     git clone https://github.com/genenetwork/guix-bioinformatics.git
     export GUIX_PACKAGE_PATH=$PWD/guix-bioinformatics/
-    guix package -i ldc
-    
-    ldc2 --version
+    guix package -i environment-modules
 
-    LDC - the LLVM D compiler (0.16.0):
-    based on DMD v2.067.1 and LLVM 3.6.2
-    Default target: x86_64-unknown-linux-gnu
-    Host CPU: corei7-avx
-    http://dlang.org - http://wiki.dlang.org/LDC
-    
-    Registered Targets:
-    aarch64    - AArch64 (little endian)
-    aarch64_be - AArch64 (big endian)
-    amdgcn     - AMD GCN GPUs
-    arm        - ARM
-    arm64      - ARM64 (little endian)
-    armeb      - ARM (big endian)
-    cpp        - C++ backend
-    hexagon    - Hexagon
-    mips       - Mips
-    mips64     - Mips64 [experimental]
-    mips64el   - Mips64el [experimental]
-    mipsel     - Mipsel
-    msp430     - MSP430 [experimental]
-    nvptx      - NVIDIA PTX 32-bit
-    nvptx64    - NVIDIA PTX 64-bit
-    ppc32      - PowerPC 32
-    ppc64      - PowerPC 64
-    ppc64le    - PowerPC 64 LE
-    r600       - AMD GPUs HD2XXX-HD6XXX
-    sparc      - Sparc
-    sparcv9    - Sparc V9
-    systemz    - SystemZ
-    thumb      - Thumb
-    thumbeb    - Thumb (big endian)
-    x86        - 32-bit X86: Pentium-Pro and above
-    x86-64     - 64-bit X86: EM64T and AMD64
-    xcore      - XCore
-
+    modulecmd --version
+      VERSION=3.2.10
+      DATE=2012-12-21
 
 ## Common Workflow Language (CWL)
 
@@ -76,6 +42,14 @@ Install the common workflow language tool cwltool with
     cwtool --version
       1.0.20150916041152
 
+## LLVM D compiler
+
+The LLVM D compiler was added to GNU Guix main stream!
+
+Install with
+
+    guix package -i ldc
+    
 ## R/qtl
 
 R-qtl is now part of main stream GNU Guix:
