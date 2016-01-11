@@ -4,9 +4,9 @@
   #:use-module (guix download)
   #:use-module (guix build-system cmake))
 
-(define-public pfff
+(define-public pfff-gn
   (package
-    (name "pfff")
+    (name "pfff-gn")
     (version "1.0")
     (source (origin
               (method url-fetch)
