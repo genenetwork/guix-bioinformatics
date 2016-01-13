@@ -22,6 +22,8 @@
   #:use-module (guix packages)
   #:use-module (guix download)
   #:use-module (guix build-system gnu)
+  #:use-module (gnu packages tcl)
+  #:use-module (gnu packages linux)
   #:use-module (gnu packages textutils)
   #:use-module (gnu packages base)
   #:use-module (gnu packages gnupg)
@@ -50,11 +52,13 @@
               ("openssl" ,openssl)
               ("munge" ,munge)
               ("perl" ,perl)
+              ("expect" ,expect)
               ("python" ,python)
+              ("linux-pam" , linux-pam)
               ))
     (build-system gnu-build-system)
     (arguments
-     `(#:tests? #f ; no test target
+     `(#:configure-flags '("--enable-pam")
        #:phases
        (modify-phases %standard-phases
          (add-before
@@ -63,7 +67,19 @@
             (substitute* "./doc/html/shtml2html.py"
                          (("#!/usr/bin/env python")
                           (string-append "#!" (which "python3"))))
-            )))))
+            (substitute* "src/common/env.c"
+                (("/usr/bin/env") (which "env")))
+            ;; (substitute* "configure"
+            ;;     (("/usr/bin/uname") (which "uname")))
+            ;; (substitute* "configure"
+            ;;     (("/usr/bin/hostname") (which "hostname")))
+            ;; (substitute* "./testsuite/expect/test4.1"
+            ;;              (("#!/usr/bin/env expect")
+            ;;               (string-append "#!" (which "expect"))))
+                                        ; --enable-pam
+            
+            ))
+          )))
 
     (home-page "http://www.schedmd.com/")
     (synopsis "Simple Linux Utility for Resource Management")
