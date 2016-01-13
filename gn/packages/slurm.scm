@@ -27,13 +27,15 @@
   #:use-module (gnu packages gnupg)
   #:use-module (gnu packages libedit)
   #:use-module (gnu packages llvm)
+  #:use-module (gnu packages perl)
+  #:use-module (gnu packages python)
   #:use-module (gnu packages tls)
   #:use-module (gnu packages zip)
   #:use-module (guix git-download))
 
 (define-public slurm-llnl
   (package
-    (name "slurm-lnll")
+    (name "slurm-llnl")
     (version "15-08-6-1")
     (source (origin
              (method url-fetch)
@@ -43,11 +45,26 @@
               (file-name (string-append name "-" version ".tar.gz"))
               (sha256
                (base32
-                "00m553aa277iarxj6dalmklyb64r7ias49bfwzbacsfg8h3kar8m"))))
+                "1h8al21blmrhma9r7qxkba2g5i74m3hrjc9a640j7px54szvg18v"))))
     (inputs `(
               ("openssl" ,openssl)
-              ("munge" ,munge)))
+              ("munge" ,munge)
+              ("perl" ,perl)
+              ("python" ,python)
+              ))
     (build-system gnu-build-system)
+    (arguments
+     `(#:tests? #f ; no test target
+       #:phases
+       (modify-phases %standard-phases
+         (add-before
+          'configure 'rewrite-usr-bin
+          (lambda* (#:key inputs #:allow-other-keys)
+            (substitute* "./doc/html/shtml2html.py"
+                         (("#!/usr/bin/env python")
+                          (string-append "#!" (which "python3"))))
+            )))))
+
     (home-page "http://www.schedmd.com/")
     (synopsis "Simple Linux Utility for Resource Management")
     (description
@@ -72,7 +89,13 @@ scheduling system for large and small Linux clusters.")
               ("libgcrypt" ,libgcrypt)
             ))
     (build-system gnu-build-system)
-    (home-page "?")
-    (synopsis #f)
-    (description #f)
+    (home-page "https://dun.github.io/munge/")
+    (synopsis "Scalable authentication service for creating and validating
+credentials on a cluster")
+    (description "Munge allows a process to authenticate the UID and
+GID of another local or remote process within a group of hosts having
+common users and groups.  These hosts form a security realm that is
+defined by a shared cryptographic key.  Clients within this security
+realm can create and validate credentials without the use of root
+privileges, reserved ports, or platform-specific methods.")
     (license license:gpl2+)))
