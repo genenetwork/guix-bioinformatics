@@ -19,6 +19,18 @@ or using a checked out Guix repo with
 Some (or most) of these package definitions should make it upstream
 into the GNU Guix repository when tested and stable.
 
+## Slurm and munge
+
+Install slurm with
+
+    git clone https://github.com/genenetwork/guix-bioinformatics.git
+    export GUIX_PACKAGE_PATH=$PWD/guix-bioinformatics/
+    guix package -i slurm-llnl
+
+    ~/.guix-profile/sbin/slurmd -C -D
+      ClusterName=(null) NodeName=selinunte CPUs=4 Boards=1 SocketsPerBoard=1 CoresPerSocket=2 ThreadsPerCore=2 RealMemory=7890 TmpDisk=29909
+
+
 ## Module system
 
 Install the module envirmonment with
