@@ -120,14 +120,15 @@
 
 
 (define-public genenetwork
-  (let ((commit "90417f439"))
+  (let ((commit "860bdcebd"))
   (package
     (name "genenetwork")
     (version (string-append "2.0." commit))
     (source (origin
              (method git-fetch)
              (uri (git-reference
-                   (url "https://github.com/genenetwork/genenetwork2.git")
+                   ;; (url "https://github.com/genenetwork/genenetwork2.git")
+                   (url "https://github.com/pjotrp/genenetwork2.git")
                    (commit commit)))
              (sha256
               (base32
@@ -136,6 +137,9 @@
               ("python" ,python-2
              )))
     (build-system python-build-system)
+    (arguments
+     `(#:python ,python-2
+       #:tests? #f))   ; no 'setup.py test'
     (home-page "http://genenetwork.org/")
     (synopsis "Full genenetwork services")
     (description "Genenetwork installation sumo.")
