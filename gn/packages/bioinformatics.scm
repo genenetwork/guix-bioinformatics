@@ -120,10 +120,10 @@
 
 
 (define-public genenetwork
-  (let ((commit "860bdcebd"))
+  (let ((commit "860bdcebde5cbb1898c26da80ac67207480c0803"))
   (package
     (name "genenetwork")
-    (version (string-append "2.0." commit))
+    (version (string-append "2.0.alpha." commit))
     (source (origin
              (method git-fetch)
              (uri (git-reference
