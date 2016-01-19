@@ -41,21 +41,18 @@
     (version "15-08-6-1")
     (source (origin
              (method url-fetch)
-             ;; https://github.com/SchedMD/slurm/archive/slurm-15-08-6-1.tar.gz
-              (uri (string-append "https://github.com/SchedMD/slurm/archive/slurm-"
-                                  version ".tar.gz"))
-              (file-name (string-append name "-" version ".tar.gz"))
-              (sha256
-               (base32
-                "1h8al21blmrhma9r7qxkba2g5i74m3hrjc9a640j7px54szvg18v"))))
-    (inputs `(
-              ("openssl" ,openssl)
+             (uri (string-append "https://github.com/SchedMD/slurm/archive/slurm-"
+                                 version ".tar.gz"))
+             (file-name (string-append name "-" version ".tar.gz"))
+             (sha256
+              (base32
+               "1h8al21blmrhma9r7qxkba2g5i74m3hrjc9a640j7px54szvg18v"))))
+    (inputs `(("openssl" ,openssl)
               ("munge" ,munge)
               ("perl" ,perl)
               ("expect" ,expect)
               ("python" ,python)
-              ("linux-pam" , linux-pam)
-              ))
+              ("linux-pam" , linux-pam)))
     (build-system gnu-build-system)
     (arguments
      `(#:configure-flags '("--enable-pam")
@@ -64,28 +61,16 @@
          (add-before
           'configure 'rewrite-usr-bin
           (lambda* (#:key inputs #:allow-other-keys)
-            (substitute* "./doc/html/shtml2html.py"
-                         (("#!/usr/bin/env python")
-                          (string-append "#!" (which "python3"))))
-            (substitute* "src/common/env.c"
-                (("/usr/bin/env") (which "env")))
-            ;; (substitute* "configure"
-            ;;     (("/usr/bin/uname") (which "uname")))
-            ;; (substitute* "configure"
-            ;;     (("/usr/bin/hostname") (which "hostname")))
-            ;; (substitute* "./testsuite/expect/test4.1"
-            ;;              (("#!/usr/bin/env expect")
-            ;;               (string-append "#!" (which "expect"))))
-                                        ; --enable-pam
-            
-            ))
-          )))
-
+                   (substitute* "./doc/html/shtml2html.py"
+                                (("#!/usr/bin/env python")
+                                 (string-append "#!" (which "python3"))))
+                   (substitute* "src/common/env.c"
+                                (("/usr/bin/env") (which "env"))))))))
     (home-page "http://www.schedmd.com/")
-    (synopsis "Simple Linux Utility for Resource Management")
+    (synopsis "Tool for cluster computing")
     (description
      "Fault-tolerant, and highly scalable cluster management and job
-scheduling system for large and small Linux clusters.")
+scheduling system for large and small clusters.")
     (license license:gpl2+)))
 
 (define-public munge
@@ -94,16 +79,14 @@ scheduling system for large and small Linux clusters.")
     (version "0.5.11")
     (source (origin
              (method url-fetch)
-             ;; https://github.com/dun/munge/archive/munge-0.5.11.tar.gz
-              (uri (string-append "https://github.com/dun/munge/archive/munge-"
-                                  version ".tar.gz"))
-              (file-name (string-append name "-" version ".tar.gz"))
-              (sha256
-               (base32
-                "0njplyalwwqh7xr7xc7klc6x06mq0ak8w2pxh85w8n4hxkmqqnf5"))))
+             (uri (string-append "https://github.com/dun/munge/archive/munge-"
+                                 version ".tar.gz"))
+             (file-name (string-append name "-" version ".tar.gz"))
+             (sha256
+              (base32
+               "0njplyalwwqh7xr7xc7klc6x06mq0ak8w2pxh85w8n4hxkmqqnf5"))))
     (inputs `(("openssl" ,openssl)
-              ("libgcrypt" ,libgcrypt)
-            ))
+              ("libgcrypt" ,libgcrypt)))
     (build-system gnu-build-system)
     (home-page "https://dun.github.io/munge/")
     (synopsis "Scalable authentication service for creating and validating
