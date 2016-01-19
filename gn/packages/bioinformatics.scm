@@ -131,11 +131,11 @@
                    (commit commit)))
              (sha256
               (base32
-               "0njplyalwwqh7xr7xc7klc6x06mq0ak8w2pxh85w8n4hxkmqqnf5"))))
+               "0k6i9h3j0vgx00qn0xnah0g52pzwq6wwxvsv1bd1b1mar5p9x11j"))))
     (inputs `(("nginx" ,nginx)
               ("python" ,python-2
              )))
-    (build-system trivial-build-system)
+    (build-system python-build-system)
     (home-page "http://genenetwork.org/")
     (synopsis "Full genenetwork services")
     (description "Genenetwork installation sumo.")
