@@ -118,3 +118,25 @@
     "Functions necessary to perform Weighted Correlation Network Analysis on high-dimensional data.  Includes functions for rudimentary data cleaning, construction of correlation networks, module identification, summarization, and relating of variables and modules to sample traits.  Also includes a number of utility functions for data manipulation and visualization.")
   (license license:gpl2+)))
 
+
+(define-public genenetwork
+  (let ((commit "90417f439"))
+  (package
+    (name "genenetwork")
+    (version (string-append "2.0." commit))
+    (source (origin
+             (method git-fetch)
+             (uri (git-reference
+                   (url "https://github.com/genenetwork/genenetwork2.git")
+                   (commit commit)))
+             (sha256
+              (base32
+               "0njplyalwwqh7xr7xc7klc6x06mq0ak8w2pxh85w8n4hxkmqqnf5"))))
+    (inputs `(("nginx" ,nginx)
+              ("python" ,python-2
+             )))
+    (build-system trivial-build-system)
+    (home-page "http://genenetwork.org/")
+    (synopsis "Full genenetwork services")
+    (description "Genenetwork installation sumo.")
+    (license license:agpl3+))))
