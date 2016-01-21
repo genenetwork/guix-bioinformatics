@@ -16,6 +16,7 @@
   #:use-module (gnu packages)
   #:use-module (gnu packages algebra)
   #:use-module (gnu packages base)
+  #:use-module (gnu packages bioinformatics)
   #:use-module (gnu packages boost)
   #:use-module (gnu packages compression)
   #:use-module (gnu packages cpio)
@@ -119,11 +120,11 @@
   (license license:gpl2+)))
 
 
-(define-public genenetwork
-  (let ((commit "860bdcebde5cbb1898c26da80ac67207480c0803"))
+(define-public genenetwork2
+  (let ((commit "9e9475053"))
   (package
-    (name "genenetwork")
-    (version (string-append "2.0.alpha." commit))
+    (name "genenetwork2")
+    (version (string-append "2.0." commit))
     (source (origin
              (method git-fetch)
              (uri (git-reference
@@ -132,10 +133,16 @@
                    (commit commit)))
              (sha256
               (base32
-               "0k6i9h3j0vgx00qn0xnah0g52pzwq6wwxvsv1bd1b1mar5p9x11j"))))
+               "1rzm0m596g2lh8vszfla2dz52frdzfhp0az7mrx2axmfqad90ywl"))))
     (inputs `(("nginx" ,nginx)
-              ("python" ,python-2
-             )))
+              ("python-setuptools" ,python2-setuptools)
+              ("python-scipy" ,python2-scipy)
+              ("python-numpy" ,python2-numpy)
+              ("python-pandas" ,python2-pandas)
+              ("python" ,python-2) ;; probably superfluous
+              ("plink" ,plink) ;; probably superfluous
+              ("r-qtl" ,r-qtl)
+              ))
     (build-system python-build-system)
     (arguments
      `(#:python ,python-2
