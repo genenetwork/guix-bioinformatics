@@ -19,6 +19,7 @@
   #:use-module (gnu packages bioinformatics)
   #:use-module (gnu packages boost)
   #:use-module (gnu packages compression)
+  #:use-module (gnu packages databases)
   #:use-module (gnu packages cpio)
   #:use-module (gnu packages file)
   #:use-module (gnu packages java)
@@ -135,7 +136,15 @@
              (sha256
               (base32
                "09hvy9mf4dnmkb8qg49viffzrxk53m2kr4r955m84dxaa5pdrjhd"))))
-    (inputs `(("nginx" ,nginx)
+    (propagated-inputs `(
+              ("python" ,python-2) ;; probably superfluous
+              ("r" ,r) 
+    ))
+    (inputs `(
+              ("mysql" ,mysql)
+              ("nginx" ,nginx)
+              ("python2-jinja2" ,python2-jinja2)
+              ("python2-sqlalchemy" ,python2-sqlalchemy)
               ("python2-setuptools" ,python2-setuptools)
               ("python2-scipy" ,python2-scipy)
               ("python2-numpy" ,python2-numpy)
@@ -144,7 +153,7 @@
               ("python2-redis" ,python2-redis)
               ("python2-requests" ,python2-requests)
               ("python2-simplejson" ,python2-simplejson)
-              ("python" ,python-2) ;; probably superfluous
+              ("python2-pyyaml" ,python2-pyyaml)
               ("plink" ,plink) 
               ("r-qtl" ,r-qtl)
               ))
