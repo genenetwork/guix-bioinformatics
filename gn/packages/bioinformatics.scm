@@ -147,6 +147,7 @@
               ("python2-sqlalchemy" ,python2-sqlalchemy)
               ("python2-setuptools" ,python2-setuptools)
               ("python2-scipy" ,python2-scipy)
+              ;; looks like python-numarray is not needed
               ("python2-numpy" ,python2-numpy)
               ("python2-pandas" ,python2-pandas)
               ("python2-passlib" ,python2-passlib)
@@ -154,6 +155,7 @@
               ("python2-requests" ,python2-requests)
               ("python2-simplejson" ,python2-simplejson)
               ("python2-pyyaml" ,python2-pyyaml)
+              ;; python-yolk is not needed
               ("plink" ,plink) 
               ("r-qtl" ,r-qtl)
               ))
