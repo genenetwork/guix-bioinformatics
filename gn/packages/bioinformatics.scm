@@ -120,6 +120,41 @@
     "Functions necessary to perform Weighted Correlation Network Analysis on high-dimensional data.  Includes functions for rudimentary data cleaning, construction of correlation networks, module identification, summarization, and relating of variables and modules to sample traits.  Also includes a number of utility functions for data manipulation and visualization.")
   (license license:gpl2+)))
 
+(define-public qtlreaper
+  (package
+    (name "qtlreaper")
+    (version "1.1.1")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append
+             "mirror://sourceforge/qtlreaper/qtlreaper-" version ".tar.gz"
+             ;; "http://downloads.sourceforge.net/project/qtlreaper/qtlreaper/1.1.1/qtlreaper-1.1.1.tar.gz?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fqtlreaper%2Ffiles%2Flatest%2Fdownload&ts=1358975786&use_mirror=iweb"))
+             ))
+       (file-name (string-append name "-" version ".tar.gz"))
+       (sha256
+        (base32
+         "0rbf030940nbbbkggdq2dxiy3c0jv8l4y3vvyfxhqimgj0qv3l1x"))))
+    (build-system python-build-system)
+    ;; (native-inputs
+    ;; `(("python-setuptools" ,python-setuptools)))
+    (arguments
+     `(#:python ,python-2
+       #:tests? #f))   ; no 'setup.py test'
+    (home-page "http://qtlreaper.sourceforge.net/")
+    (synopsis "Tool for scanning expression data for QTLs")
+    (description
+     "It is essentially the batch-oriented version of WebQTL. It
+requires, as input, expression data from members of a set of
+recombinant inbred lines and genotype information for the same
+lines.  It searches for an association between each expression trait
+and all genotypes and evaluates that association by a permutation
+test.  For the permutation test, it performs only as many permutations
+as are necessary to define the empirical P-value to a reasonable
+precision. It also performs bootstrap resampling to estimate the
+confidence region for the location of a putative QTL.")
+    (license license:gpl2)))
+
 
 (define-public genenetwork2
   (let ((commit "9e9475053"))
