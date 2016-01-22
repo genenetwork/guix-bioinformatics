@@ -124,21 +124,26 @@
   (let ((commit "9e9475053"))
   (package
     (name "genenetwork2")
-    (version (string-append "2.0." commit))
+    (version (string-append "2.0-" commit ))
     (source (origin
              (method git-fetch)
              (uri (git-reference
                    ;; (url "https://github.com/genenetwork/genenetwork2.git")
                    (url "https://github.com/pjotrp/genenetwork2.git")
                    (commit commit)))
+             (file-name (string-append name "-" commit)) 
              (sha256
               (base32
-               "1rzm0m596g2lh8vszfla2dz52frdzfhp0az7mrx2axmfqad90ywl"))))
+               "09hvy9mf4dnmkb8qg49viffzrxk53m2kr4r955m84dxaa5pdrjhd"))))
     (inputs `(("nginx" ,nginx)
-              ("python-setuptools" ,python2-setuptools)
-              ("python-scipy" ,python2-scipy)
-              ("python-numpy" ,python2-numpy)
-              ("python-pandas" ,python2-pandas)
+              ("python2-setuptools" ,python2-setuptools)
+              ("python2-scipy" ,python2-scipy)
+              ("python2-numpy" ,python2-numpy)
+              ("python2-pandas" ,python2-pandas)
+              ("python2-passlib" ,python2-passlib)
+              ("python2-redis" ,python2-redis)
+              ("python2-requests" ,python2-requests)
+              ("python2-simplejson" ,python2-simplejson)
               ("python" ,python-2) ;; probably superfluous
               ("plink" ,plink) 
               ("r-qtl" ,r-qtl)
