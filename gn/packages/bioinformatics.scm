@@ -140,7 +140,7 @@
               ("python-numpy" ,python2-numpy)
               ("python-pandas" ,python2-pandas)
               ("python" ,python-2) ;; probably superfluous
-              ("plink" ,plink) ;; probably superfluous
+              ("plink" ,plink) 
               ("r-qtl" ,r-qtl)
               ))
     (build-system python-build-system)
