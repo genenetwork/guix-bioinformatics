@@ -166,13 +166,13 @@ confidence region for the location of a putative QTL.")
     (source (origin
              (method git-fetch)
              (uri (git-reference
-                   (url "https://github.com/pjotrp/genenetwork.git")
+                   (url "https://github.com/genenetwork/genenetwork.git")
                    ;; (url "https://github.com/pjotrp/genenetwork.git")
                    (commit commit)))
              (file-name (string-append name "-" commit)) 
              (sha256
               (base32
-               "09hvy9mf4dnmkb8qg49viffzrxk53m2kr4r955m84dxaa5pdrjha"))))
+               "14fzfcm4vl20mlhxjslfa01i1nmxpk8lbxmfvpq6dyfc22ir62py"))))
     (propagated-inputs `(
               ("python" ,python-2) ;; probably superfluous
               ("r" ,r) 
