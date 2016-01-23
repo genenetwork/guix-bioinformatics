@@ -22,6 +22,7 @@
   #:use-module (gnu packages databases)
   #:use-module (gnu packages cpio)
   #:use-module (gnu packages file)
+  #:use-module (gnu packages graphviz)
   #:use-module (gnu packages java)
   #:use-module (gnu packages linux)
   #:use-module (gnu packages machine-learning)
@@ -155,6 +156,56 @@ precision. It also performs bootstrap resampling to estimate the
 confidence region for the location of a putative QTL.")
     (license license:gpl2)))
 
+
+(define-public genenetwork1
+  (let ((commit "d622c803b"))
+  (package
+    (name "genenetwork1")
+    (version (string-append "1.0-" commit ))
+    (source (origin
+             (method git-fetch)
+             (uri (git-reference
+                   (url "https://github.com/pjotrp/genenetwork.git")
+                   ;; (url "https://github.com/pjotrp/genenetwork.git")
+                   (commit commit)))
+             (file-name (string-append name "-" commit)) 
+             (sha256
+              (base32
+               "09hvy9mf4dnmkb8qg49viffzrxk53m2kr4r955m84dxaa5pdrjha"))))
+    (propagated-inputs `(
+              ("python" ,python-2) ;; probably superfluous
+              ("r" ,r) 
+    ))
+    (inputs `(
+              ;; graphviz-2.22.2  htmlgen  json  numarray-1.5.2  piddle  PIL  pp-1.5.7  pyx  pyXLWriter  svg
+              ("mysql" ,mysql)
+              ("nginx" ,nginx)
+              ("graphviz" ,graphviz)
+              ; ("python2-jinja2" ,python2-jinja2)
+              ; ("python2-sqlalchemy" ,python2-sqlalchemy)
+              ; ("python2-setuptools" ,python2-setuptools)
+              ; ("python2-scipy" ,python2-scipy)
+              ;; looks like python-numarray is not needed
+              ; ("python2-numpy" ,python2-numpy)
+              ; ("python2-pandas" ,python2-pandas)
+              ; ("python2-passlib" ,python2-passlib)
+              ; ("python2-redis" ,python2-redis)
+              ; ("python2-requests" ,python2-requests)
+              ; ("python2-simplejson" ,python2-simplejson)
+              ; ("python2-pyyaml" ,python2-pyyaml)
+              ;; python-yolk is not needed
+              ("python2-pil" ,python2-pil)
+              ("plink" ,plink) ;; gn1
+              ; ("r-qtl" ,r-qtl)
+              ))
+    (build-system python-build-system)
+    (arguments
+     `(#:python ,python-2
+       #:tests? #f))   ; no 'setup.py test'
+    (home-page "http://genenetwork.org/")
+    (synopsis "Full genenetwork services")
+    (description "Genenetwork installation sumo.")
+    (license license:agpl3+))))
 
 (define-public genenetwork2
   (let ((commit "9e9475053"))

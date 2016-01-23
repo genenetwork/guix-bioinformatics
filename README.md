@@ -30,7 +30,6 @@ Install slurm with
     ~/.guix-profile/sbin/slurmd -C -D
       ClusterName=(null) NodeName=selinunte CPUs=4 Boards=1 SocketsPerBoard=1 CoresPerSocket=2 ThreadsPerCore=2 RealMemory=7890 TmpDisk=29909
 
-
 ## Module system
 
 Install the module envirmonment with
@@ -43,6 +42,14 @@ Install the module envirmonment with
       VERSION=3.2.10
       DATE=2012-12-21
 
+## python2-numarray 1.5.2
+
+Install the module envirmonment with
+
+    git clone https://github.com/genenetwork/guix-bioinformatics.git
+    export GUIX_PACKAGE_PATH=$PWD/guix-bioinformatics/
+    guix package -i python2-numarray
+
 ## Common Workflow Language (CWL)
 
 Install the common workflow language tool cwltool with
@@ -54,11 +61,11 @@ Install the common workflow language tool cwltool with
     cwtool --version
       1.0.20150916041152
 
+# Packages moved from here to main line GNU Guix
+
 ## LLVM D compiler
 
 The LLVM D compiler was added to GNU Guix main stream!
-
-Install with
 
     guix package -i ldc
     
