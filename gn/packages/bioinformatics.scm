@@ -42,6 +42,7 @@
   #:use-module (gnu packages xml)
   #:use-module (gnu packages zip)
   #:use-module (gnu packages bootstrap)
+  #:use-module (gn packages python)
   #:use-module (srfi srfi-1))
 
 (define-public my-deploy
@@ -195,6 +196,7 @@ confidence region for the location of a putative QTL.")
               ; ("python2-pyyaml" ,python2-pyyaml)
               ;; python-yolk is not needed
               ("python2-pil" ,python2-pil)
+              ("python2-numarray" ,python2-numarray)
               ("plink" ,plink) ;; gn1
               ; ("r-qtl" ,r-qtl)
               ))
