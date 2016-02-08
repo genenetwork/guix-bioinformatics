@@ -178,6 +178,7 @@ confidence region for the location of a putative QTL.")
               ("r" ,r) 
     ))
     (inputs `(
+              ;; http://spring211.uthsc.edu/gn/thirdparty.tbz
               ;; graphviz-2.22.2  htmlgen  json  numarray-1.5.2  piddle  PIL  pp-1.5.7  pyx  pyXLWriter  svg
               ("mysql" ,mysql)
               ("nginx" ,nginx)
