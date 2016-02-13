@@ -273,79 +273,24 @@ powerful language for representing information.")
 (define-public python2-mysqlclient
   (package-with-python2 python-mysqlclient))
 
-(define-public python2-htmlgen-old
-(package
-  (name "python2-htmlgen-old")
-  (version "2.2.2")
-  (source (origin
-           (method url-fetch)
-           (uri (string-append
-                 "http://ftp.nl.debian.org/debian/pool/main/h/htmlgen/htmlgen_"
-version ".orig.tar.gz"))
-           (sha256
-            (base32
-             "186kb434q6z84g31ysvzi4kcfcvl3pmm57k4jlng4ccgls94x6wb"))
-           (patches (list
-                     (search-patch "python2-htmlgen-Applied-Deb-patch.patch")
-                     (search-patch "python2-htmlgen-Fix-test-for-random.patch")
-            ))))
-  (build-system gnu-build-system)
-  (outputs
-   '("out"))
-  (native-inputs `(("tar" ,tar)
-                   ("gzip" ,gzip)))
-  (inputs
-   `(("make" ,gnu-make)))
-  (propagated-inputs
-   `(("python2" ,python-2)))
-  (arguments
-   `(#:modules ((guix build utils))
-     #:builder
-     (let* ((source (assoc-ref %build-inputs "source"))
-            (tar    (assoc-ref %build-inputs "tar"))
-            (gzip   (assoc-ref %build-inputs "gzip"))
-            (output (assoc-ref %outputs "out"))
-            (srcdir (string-append output "/src"))
-            (lib (string-append (assoc-ref %outputs "out") "/lib/htmlgen"))
-            (python (string-append (assoc-ref %build-inputs "python2") "/bin/")))
-       (begin
-         (use-modules (guix build utils))
-         (setenv "PATH" (string-append gzip "/bin")) ;; for tar
-         ;; (setenv "PATH" (string-append python "/bin"))
-         (system* (string-append tar "/bin/tar") "xzf"
-                  source)
-         (chdir ,(string-append name "-" version))
-         (mkdir-p srcdir)
-         (lambda _
-           (system* "python" "-m" "compileall" "."))
-         (lambda _
-           (system* "make" "test"))
-         (mkdir-p lib)
-                                        ; (copy-file "." lib)
-         (copy-file "HTMLgen.pyc" lib)
-         ))))
-  (home-page
-    "https://packages.debian.org/unstable/python/python-htmlgen")
-  (synopsis "Python2 HTMLgen (somewhat defunkt project)")
-  (description #f)
-  (license #f)))
 
-(define-public python2-htmlgen
+(define-public python2-htmlgen-gn
 (package
-  (name "python2-htmlgen")
+  (name "python2-htmlgen-gn")
   (version "2.2.2")
   (source (origin
            (method url-fetch)
+           ;; http://files.genenetwork.org/software/contrib/htmlgen-2.2.2-gn.tar.gz
            (uri (string-append
-                 "http://ftp.nl.debian.org/debian/pool/main/h/htmlgen/htmlgen_"
-version ".orig.tar.gz"))
+                 "http://files.genenetwork.org/software/contrib/htmlgen-"
+version "-gn.tar.gz"))
            (sha256
             (base32
-             "186kb434q6z84g31ysvzi4kcfcvl3pmm57k4jlng4ccgls94x6wb"))
-           (patches (list
-                     (search-patch "python2-htmlgen-Applied-Deb-patch.patch")
-                     (search-patch "python2-htmlgen-Fix-test-for-random.patch")
-            ))))
+             "1lwsk56rymhrma46cbyh3g64ksmq1vsih3qkrc2vh0lpba825y7r"))
+           ;;(patches (list
+           ;;          (search-patch "python2-htmlgen-Applied-Deb-patch.patch")
+           ;;          (search-patch "python2-htmlgen-Fix-test-for-random.patch")
+            ))
   (build-system python-build-system)
   (outputs '("out"))
   (native-inputs
@@ -370,13 +315,17 @@ version ".orig.tar.gz"))
                          ;; (copy-file "HTMLgen.pyc" "HTMLgen2.pyc")
                          (install-file "HTMLgen.pyc" lib)
                          (install-file "HTMLgen2.pyc" lib)
+                         (install-file "imgsize.pyc" lib)
+                         (install-file "ImageH.pyc" lib)
+                         (install-file "ImagePaletteH.pyc" lib)
                          (install-file "__init__.pyc" lib)
               ))) ; install 
      ) ; phases
      #:tests? #f))
   (home-page
     "https://packages.debian.org/unstable/python/python-htmlgen")
-  (synopsis "Python2 HTMLgen (somewhat defunkt project)")
+  (synopsis "Genenetwork version of Python2 HTMLgen (defunkt
+project)")
   (description #f)
   (license #f)))
 
