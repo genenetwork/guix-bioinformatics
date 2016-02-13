@@ -79,6 +79,34 @@
 (define-public python2-flask
   (package-with-python2 python-flask))
 
+(define-public python-flask-sqlalchemy
+  (package
+   (name "python-flask-sqlalchemy")
+   (version "2.1")
+   (source
+    (origin
+     (method url-fetch)
+     (uri (pypi-uri "Flask-SQLAlchemy" version))
+     (sha256
+      (base32
+       "1i9ps5d5snih9xlqhrvmi3qfiygkmqzxh92n25kj4pf89kj4s965"))))
+   (build-system python-build-system)
+   (inputs
+    `(("python-setuptools" ,python-setuptools)
+      ("python-flask" ,python-flask)
+      ("python-sqlalchemy" ,python-sqlalchemy)
+      ))
+   (home-page
+    "http://github.com/mitsuhiko/flask-sqlalchemy")
+   (synopsis
+    "Adds SQLAlchemy support to your Flask application")
+   (description
+    "Adds SQLAlchemy support to your Flask application")
+   (license license:bsd-3)))
+
+(define-public python2-flask-sqlalchemy
+  (package-with-python2 python-flask-sqlalchemy))
+
 (define-public python-xlsxwriter
 (package
   (name "python-xlsxwriter")
@@ -328,6 +356,37 @@ version "-gn.tar.gz"))
 project)")
   (description #f)
   (license #f)))
+
+(define-public python2-piddle
+  (package
+    (name "python2-piddle")
+    (version "1.0.15")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append
+             ;; http://sourceforge.net/projects/numpy/files/Old%20Numarray/1.5.2/numarray-1.5.2.tar.gz/download
+             "mirror://sourceforge/piddle/piddle-" version ".zip"
+             ))
+       ;; (file-name (string-append name "-" version ".zip"))
+       (sha256
+        (base32
+         "0jaxfsrcgqb5cf2wznxnpdws5khlrdixmg85lrhq2zl9cy6dfdya"))))
+    (native-inputs
+     `(("unzip" ,unzip)))
+
+    (build-system python-build-system)
+    ;; (native-inputs
+    ;; `(("python-setuptools" ,python-setuptools)))
+    (arguments
+     `(#:python ,python-2
+       #:tests? #f
+       ))   ; no 'setup.py test' really!
+    (home-page "http://www.numpy.org/")
+    (synopsis "Canvas drawing library for python2 (old!)")
+    (description #f)
+    (license #f)))
+
 
 (define-public python2-numarray
   (package
