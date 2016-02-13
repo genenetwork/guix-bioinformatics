@@ -37,9 +37,9 @@
 
 (define-public slurm-llnl
   (package
-    (name "slurm-llnl")
-    (version "15-08-6-1")
-    (source (origin
+   (name "slurm-llnl")
+   (version "15-08-6-1")
+   (source (origin
              (method url-fetch)
              (uri (string-append "https://github.com/SchedMD/slurm/archive/slurm-"
                                  version ".tar.gz"))

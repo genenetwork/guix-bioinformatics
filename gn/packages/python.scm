@@ -8,6 +8,7 @@
   #:use-module (gnu packages gcc)
   #:use-module (gnu packages ghostscript)
   #:use-module (gnu packages glib)
+  #:use-module (gnu packages gnupg)
   #:use-module (gnu packages gtk)
   #:use-module (gnu packages icu4c)
   #:use-module (gnu packages image)
@@ -40,6 +41,68 @@
   #:use-module (guix build-system python)
   #:use-module (guix build-system trivial)
   #:use-module (srfi srfi-1))
+
+(define-public python-flask
+(package
+  (name "python-flask")
+  (version "0.10.1")
+  (source
+    (origin
+      (method url-fetch)
+      (uri (pypi-uri "Flask" version))
+      (sha256
+        (base32
+          "0wrkavjdjndknhp8ya8j850jq7a1cli4g5a93mg8nh1xz2gq50sc"))))
+  (build-system python-build-system)
+  (inputs
+   `(("python-setuptools" ,python-setuptools)
+     ; ("python-itsdangerous" ,python-itsdangerous)
+     ; ("python-jinja2" ,python-jinja2)
+     ; ("python-werkzeug" ,python-werkzeug)
+     ))
+  (propagated-inputs
+   `(
+     ("python-itsdangerous" ,python-itsdangerous)
+     ("python-jinja2" ,python-jinja2)
+     ("python-werkzeug" ,python-werkzeug)
+     ))
+  
+  (arguments
+   `(#:tests? #f)) ; No tests
+  (home-page "http://github.com/mitsuhiko/flask/")
+  (synopsis
+    "A microframework based on Werkzeug, Jinja2 and good intentions")
+  (description
+    "A microframework based on Werkzeug, Jinja2 and good intentions")
+  (license license:bsd-3)))
+
+(define-public python2-flask
+  (package-with-python2 python-flask))
+
+(define-public python-xlsxwriter
+(package
+  (name "python-xlsxwriter")
+  (version "0.8.4")
+  (source
+    (origin
+      (method url-fetch)
+      (uri (pypi-uri "XlsxWriter" version))
+      (sha256
+        (base32
+          "0hv6bknnj9mlvvkdnlzycs0s97vrakmyh91ddb7ynjaqp8gl434z"))))
+  (build-system python-build-system)
+  (inputs
+    `(("python-setuptools" ,python-setuptools)))
+  (home-page
+    "https://github.com/jmcnamara/XlsxWriter")
+  (synopsis
+    "A Python module for creating Excel XLSX files.")
+  (description
+    "A Python module for creating Excel XLSX files.")
+  (license license:bsd-3)))
+
+(define-public python2-xlsxwriter
+  (package-with-python2 python-xlsxwriter))
 
 (define-public python-rdflib-jsonld
   (package
@@ -175,6 +238,40 @@ powerful language for representing information.")
 
 (define-public python2-shellescape
   (package-with-python2 python-shellescape))
+
+(define-public python-mysqlclient
+(package
+  (name "python-mysqlclient")
+  (version "1.3.7")
+  (source
+    (origin
+      (method url-fetch)
+      (uri (pypi-uri "mysqlclient" version))
+      (sha256
+        (base32
+          "06qzgwk7j66k8ggx51i6wxx0f0zsppp7w4bh6gjd0cr9rfs86jn7"))))
+  (build-system python-build-system)
+  (inputs
+   `(
+     ("mysql" ,mysql)
+     ("python-nose" ,python-nose)
+     ("zlib" ,zlib)
+     ("openssl" ,openssl)
+     ("libgcrypt" ,libgcrypt)
+     ))
+  (propagated-inputs
+   `(("python-setuptools" ,python-setuptools)
+     ))
+  (arguments
+   `(#:tests? #f))   ; wants a running MySQL server
+  (home-page
+    "https://github.com/PyMySQL/mysqlclient-python")
+  (synopsis "Python interface to MySQL")
+  (description "Python interface to MySQL")
+  (license license:gpl3)))
+
+(define-public python2-mysqlclient
+  (package-with-python2 python-mysqlclient))
 
 (define-public python2-numarray
   (package
