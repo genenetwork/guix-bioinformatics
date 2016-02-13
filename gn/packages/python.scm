@@ -273,6 +273,27 @@ powerful language for representing information.")
 (define-public python2-mysqlclient
   (package-with-python2 python-mysqlclient))
 
+(define-public python2-htmlgen
+(package
+  (name "python2-htmlgen")
+  (version "2.2.2")
+  (source (origin
+           (method url-fetch)
+           (uri (string-append
+                 "http://ftp.nl.debian.org/debian/pool/main/h/htmlgen/htmlgen_"
+version ".orig.tar.gz"))
+           (sha256
+            (base32
+             "186kb434q6z84g31ysvzi4kcfcvl3pmm57k4jlng4ccgls94x6wb"))
+            (patches (list (search-patch "htmlgen_2.2.2-12.3.patch")
+            ))))
+  (build-system python-build-system)
+  (home-page
+    "https://packages.debian.org/unstable/python/python-htmlgen")
+  (synopsis "Python2 HTMLgen (somewhat defunkt project)")
+  (description #f)
+  (license #f)))
+
 (define-public python2-numarray
   (package
     (name "python2-numarray")
