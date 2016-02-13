@@ -346,28 +346,31 @@ version ".orig.tar.gz"))
                      (search-patch "python2-htmlgen-Applied-Deb-patch.patch")
                      (search-patch "python2-htmlgen-Fix-test-for-random.patch")
             ))))
-  (build-system gnu-build-system)
+  (build-system python-build-system)
+  (outputs '("out"))
   (native-inputs
-   `(("make" ,gnu-make)))
+   `(("make" ,gnu-make)
+     ))
   (propagated-inputs
    `(("python2" ,python-2)))
   (arguments
    `(#:phases (modify-phases %standard-phases
-     (delete 'configure)
      (replace 'build
-             (lambda _
-               (system* "chmod" "a+w" "-R" ".")
-               )
-             )
+              (lambda _
+                (system* "python2" "-m" "compileall" ".")))
      (replace 'install
               (lambda* (#:key outputs #:allow-other-keys)
                        (let* ((out (assoc-ref outputs "out"))
                               (include (string-append out "/include"))
-                              (lib (string-append out "/lib"))
+                              (lib2 (string-append out "/lib/htmlgen"))
+                              (lib (string-append (assoc-ref %outputs "out") "/lib/python2.7/site-packages/htmlgen"))
                               (pkgconfig (string-append out "/lib/pkgconfig"))
                               (doc (string-append out "/share/doc")))
                          ;; Install libs and headers.
+                         ;; (copy-file "HTMLgen.pyc" "HTMLgen2.pyc")
                          (install-file "HTMLgen.pyc" lib)
+                         (install-file "HTMLgen2.pyc" lib)
+                         (install-file "__init__.pyc" lib)
               ))) ; install 
      ) ; phases
      #:tests? #f))
