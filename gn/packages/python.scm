@@ -387,6 +387,33 @@ project)")
     (description #f)
     (license #f)))
 
+(define-public python2-parallel
+  (package
+    (name "python2-parallel")
+    (version "1.6.4")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append
+             "http://www.parallelpython.com/downloads/pp/pp-" version ".zip"
+             ))
+       (sha256
+        (base32
+         "1bw3j0zn7bj56636vp1vx4m91p2mlp661gn2nfhpbph3prgxzv82"))))
+    (native-inputs
+     `(("unzip" ,unzip)))
+
+    (build-system python-build-system)
+    ;; (native-inputs
+    ;; `(("python-setuptools" ,python-setuptools)))
+    (arguments
+     `(#:python ,python-2
+       #:tests? #f
+       ))   ; no 'setup.py test' really!
+    (home-page #f)
+    (synopsis "Parallel python lib")
+    (description #f)
+    (license #f)))
 
 (define-public python2-numarray
   (package
