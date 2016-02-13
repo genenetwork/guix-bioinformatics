@@ -347,7 +347,7 @@ version ".orig.tar.gz"))
                      (search-patch "python2-htmlgen-Fix-test-for-random.patch")
             ))))
   (build-system gnu-build-system)
-  (inputs
+  (native-inputs
    `(("make" ,gnu-make)))
   (propagated-inputs
    `(("python2" ,python-2)))
@@ -355,9 +355,21 @@ version ".orig.tar.gz"))
    `(#:phases (modify-phases %standard-phases
      (delete 'configure)
      (replace 'build
-              (lambda _
-                       (zero? (apply system* "make" "test")))))
-              
+             (lambda _
+               (system* "chmod" "a+w" "-R" ".")
+               )
+             )
+     (replace 'install
+              (lambda* (#:key outputs #:allow-other-keys)
+                       (let* ((out (assoc-ref outputs "out"))
+                              (include (string-append out "/include"))
+                              (lib (string-append out "/lib"))
+                              (pkgconfig (string-append out "/lib/pkgconfig"))
+                              (doc (string-append out "/share/doc")))
+                         ;; Install libs and headers.
+                         (install-file "HTMLgen.pyc" lib)
+              ))) ; install 
+     ) ; phases
      #:tests? #f))
   (home-page
     "https://packages.debian.org/unstable/python/python-htmlgen")
