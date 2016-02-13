@@ -1,0 +1,263 @@
+From c0b16bbad9b8e396bdb64c638a3540547acfa3a5 Mon Sep 17 00:00:00 2001
+From: Pjotr Prins <pjotr.public01@thebird.nl>
+Date: Sat, 13 Feb 2016 13:39:03 +0100
+Subject: [PATCH 1/2] Applied Deb patch
+
+---
+ Formtools.py     |  1 -
+ HTMLcalendar.py  |  9 ++++-----
+ HTMLgen.py       |  6 +++---
+ HTMLtest.py      | 12 ++++++------
+ HTMLutil.py      | 19 +++++++++----------
+ ImagePaletteH.py |  2 +-
+ Makefile         | 10 ++++++++++
+ NavLinks.py      |  1 -
+ barchart.py      |  1 -
+ colorcube.py     |  1 -
+ 10 files changed, 33 insertions(+), 29 deletions(-)
+
+diff --git a/Formtools.py b/Formtools.py
+index bb598f4..1dabccd 100644
+--- a/Formtools.py
++++ b/Formtools.py
+@@ -1,4 +1,3 @@
+-#! /usr/bin/env python
+ "Provide some supporting classes to simplify Input Forms with HTMLgen"
+ #'$Id: Formtools.py,v 1.1 1999/04/19 23:45:36 friedric Exp friedric $'
+ # COPYRIGHT (C) 1999  ROBIN FRIEDRICH  email: Robin.Friedrich@pdq.net
+diff --git a/HTMLcalendar.py b/HTMLcalendar.py
+index 3a03915..35edf27 100644
+--- a/HTMLcalendar.py
++++ b/HTMLcalendar.py
+@@ -1,4 +1,3 @@
+-#!/usr/bin/env python
+ # COPYRIGHT (C) 1997  ROBIN FRIEDRICH
+ # Permission to  use, copy, modify, and distribute this software and its
+ # documentation  for  any  purpose  and  without fee  is hereby granted,
+@@ -212,12 +211,12 @@ def makeint(value):
+             return value
+         else:
+             raise TypeError, ('cannot convert to int', value)
+-import regex
+-datepat = regex.compile('^ *\([0-9*][0-9]?\)[/-]' #first 2 char date field
++import re
++datepat = re.compile('^ *\([0-9*][0-9]?\)[/-]' #first 2 char date field
+                         '\([0-9][0-9]?\)[/-]?'    #second 2 char date field
+                         '\([12][0-9][0-9][0-9]\)?[ \t]*:') #optional year field
+-daypat  = regex.compile('^ *\('+string.join(day_name,'\|')+'\)')
+-timepat = regex.compile('\([0-9][0-9]?\):\([0-9][0-9]\)')
++daypat  = re.compile('^ *\('+string.join(day_name,'\|')+'\)')
++timepat = re.compile('\([0-9][0-9]?\):\([0-9][0-9]\)')
+ 
+ def read_appt_file(filename):
+     """Parsing function.
+diff --git a/HTMLgen.py b/HTMLgen.py
+index 10ecd28..dbdbd81 100644
+--- a/HTMLgen.py
++++ b/HTMLgen.py
+@@ -284,7 +284,7 @@ class SimpleDocument(BasicDocument):
+         if self.meta: s.append(str(self.meta))
+         if self.base: s.append(str(self.base))
+         if self.stylesheet:
+-            s.append('\n <LINK rel=stylesheet href="%s" type=text/css title="%s">\n' \
++            s.append('\n <LINK rel=stylesheet href="%s" type="text/css" title="%s">\n' \
+                      % (self.stylesheet, self.stylesheet))
+         if self.style:
+             s.append('\n<STYLE>\n<!--\n%s\n-->\n</style>\n' % self.style)
+@@ -1083,7 +1083,7 @@ class List(UserList.UserList):
+ 
+         Overloaded by child classes to represent other list styles.
+         """
+-        return '%s<LI>%s\n' % (self.pad*self.lvl, item)
++        return '%s<LI>%s</LI>\n' % (self.pad*self.lvl, item)
+ 
+     def start_element(self):
+         """Generic creator for the HTML element opening tag.
+@@ -2463,7 +2463,7 @@ class URL:
+         import urlparse
+         self.unparse = urlparse.urlunparse
+         self.proto, self.node, self.path, self.params, self.query, self.fragment = \
+-                    urlparse(url)
++                    urlparse.urlparse(url)
+         self.dir, self.file = self.split(self.path)
+ 
+     def split(self, p):
+diff --git a/HTMLtest.py b/HTMLtest.py
+index 5850a04..283233f 100755
+--- a/HTMLtest.py
++++ b/HTMLtest.py
+@@ -1,8 +1,8 @@
+-#!/bin/env python
++#!/usr/bin/env python
+ 
+ """Test script which generates the online documentation for HTMLgen.
+ """
+-import string, regex, regsub, os, time, glob
++import string, re, os, time, glob
+ from HTMLcolors import *
+ from HTMLgen import *
+ import HTMLgen  #only so I can pick off the __version__
+@@ -232,11 +232,11 @@ def sample1(filename, aft=None, fore=None, top=None, home=None):
+     doc.email = 'jefferson@montecello.virginia.gov'
+     doc.logo = ('../image/eagle21.gif', 64, 54)
+     # parse Declaration of Independence
+-    re_hline = regex.compile('^--+$')
+-    re_title = regex.compile('^Title:\(.*$\)')
++    re_hline = re.compile('^--+$')
++    re_title = re.compile('^Title:\(.*$\)')
+     font2 = Font(size='+2')
+     s = open(os.path.join(datadir, 'DoI.txt')).read()
+-    paragraphs = regsub.split(s, '\n\([\t ]*\n\)+')
++    paragraphs = re.split(s, '\n\([\t ]*\n\)+')
+     for para in paragraphs:
+         if not para: continue
+         if re_title.search(para) > -1:
+@@ -263,7 +263,7 @@ def sample2(filename, aft=None, fore=None, top=None, home=None):
+     #Ok parse that file
+     f = open(mpath(os.path.join(datadir, 'parrot.txt')))
+     line = f.readline()
+-    re_dialog = regex.compile('\(^[OC].*:\)\(.*\)')
++    re_dialog = re.compile('\(^[OC].*:\)\(.*\)')
+     while line:
+         if re_dialog.search(line) > -1:
+             role, prose = re_dialog.group(1,2)
+diff --git a/HTMLutil.py b/HTMLutil.py
+index 2baf168..9a877e5 100755
+--- a/HTMLutil.py
++++ b/HTMLutil.py
+@@ -1,4 +1,3 @@
+-#!/usr/bin/env python
+ """This module provides utility functions/classes associated with HTMLgen.
+ 
+ This is functionality use by HTMLgen script writers rather than by HTMLgen
+@@ -19,7 +18,7 @@ itself. (i.e. HTMLgen.py is not dependant on this module.)
+ # OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ # PERFORMANCE OF THIS SOFTWARE.
+ __version__ = '$Id: HTMLutil.py,v 1.3 1998/05/28 20:14:52 friedric Exp $'
+-import string, regex, os
++import string, re, os
+ import HTMLgen, HTMLcolors
+ from types import *
+ 
+@@ -79,7 +78,7 @@ def been_marked(text):
+     """Determine if the text have been marked by a previous gsub.
+     (ugly hack but it works)
+     """
+-    if regex.search('\(</?FONT\)\|\(</?STRONG\)', text) > -1:
++    if re.search('\(</?FONT\)\|\(</?STRONG\)', text) > -1:
+         return 1
+     else: 
+         return 0
+@@ -125,13 +124,13 @@ def global_substitute(search_func, repl_func, s):
+ not_backslash = "[^\\\\]"
+ triple_single = "'''"
+ triple_double = '"""'
+-_doc_start_re = regex.compile(
++_doc_start_re = re.compile(
+     "\(^\|" + not_backslash + "\)" # bol or not backslash
+     + "\(" + triple_single + "\|" + triple_double + "\)" )
+ single_re = not_backslash + triple_single
+ double_re = not_backslash + triple_double
+-_triple_re = { triple_single : regex.compile(single_re),
+-               triple_double : regex.compile(double_re) }
++_triple_re = { triple_single : re.compile(single_re),
++               triple_double : re.compile(double_re) }
+ 
+ del not_backslash, triple_single, triple_double, \
+     single_re, double_re
+@@ -150,13 +149,13 @@ def find_docstring( s, begin=0):
+         return (None, None)
+     return startquote, quotefinder.regs[0][1]
+ 
+-string_re = regex.compile('\(\(\'[^\'\n]*\'\)\|\("[^"\n]"\)\)')
++string_re = re.compile('\(\(\'[^\'\n]*\'\)\|\("[^"\n]"\)\)')
+ def find_string_literal( s, begin=0 ):
+     if string_re.search(s, begin) > -1:
+         return string_re.regs[1]
+     return (None, None)
+ 
+-comment_re = regex.compile('#.*$')
++comment_re = re.compile('#.*$')
+ def find_comment( s, begin=0 ):
+     while comment_re.search(s, begin) > -1:
+         if been_marked(comment_re.group(0)):
+@@ -166,13 +165,13 @@ def find_comment( s, begin=0 ):
+     return (None, None)
+ 
+ Name = '[a-zA-Z_][a-zA-Z0-9_]*'
+-func_re = regex.compile('\(^[ \t]*def[ \t]+' +Name+ '\)[ \t]*(') 
++func_re = re.compile('\(^[ \t]*def[ \t]+' +Name+ '\)[ \t]*(') 
+ def find_function( s, begin=0 ):
+     if func_re.search(s, begin) > -1:
+         return func_re.regs[1]
+     return (None, None)
+ 
+-class_re = regex.compile('\(^[ \t]*class[ \t]+' +Name+ '\)[ \t]*[(:]')
++class_re = re.compile('\(^[ \t]*class[ \t]+' +Name+ '\)[ \t]*[(:]')
+ def find_class( s, begin=0 ):
+     if class_re.search(s, begin) > -1:
+         return class_re.regs[1]
+diff --git a/ImagePaletteH.py b/ImagePaletteH.py
+index 83bb867..e723847 100644
+--- a/ImagePaletteH.py
++++ b/ImagePaletteH.py
+@@ -70,7 +70,7 @@ def negative(mode = "RGB"):
+     return ImagePalette(mode, palette * len(mode))
+ 
+ def random(mode = "RGB"):
+-    from whrandom import randint
++#    from whrandom import randint
+     palette = map(lambda a: randint(0, 255), [0]*256*len(mode))
+     return ImagePalette(mode, palette)
+ 
+diff --git a/Makefile b/Makefile
+index 1788fa6..e1ec846 100644
+--- a/Makefile
++++ b/Makefile
+@@ -62,6 +62,16 @@ install: compileall
+ 	python installp.py -f $(MODULES) $(MODULESC) $(PIL) $(PILC)
+ 	@echo Installation of $(PACKAGE) done.
+ 
++debinstall:
++	if [ -z "$(PYLIBDIR)" ]; then \
++	  echo "Unset PYLIBDIR."; \
++	  exit 1; \
++	fi; \
++	for f in $(MODULES) $(PIL); do \
++	  install -m 644 $$f $(PYLIBDIR)/; \
++	done
++	@echo Installation of $(PACKAGE) done.
++
+ checkin:
+ 	ci -u $(MODULES) $(PIL) $(EXTRAS) $(TEST) Makefile
+ 
+diff --git a/NavLinks.py b/NavLinks.py
+index fcecbb3..51ef774 100644
+--- a/NavLinks.py
++++ b/NavLinks.py
+@@ -1,4 +1,3 @@
+-#!/usr/bin/env python
+ #'$Id: NavLinks.py,v 1.1 1999/02/04 04:54:29 friedric Exp friedric $'
+ # COPYRIGHT (C) 1999  ROBIN FRIEDRICH  email:Robin.Friedrich@pdq.net
+ # Permission to use, copy, modify, and distribute this software and
+diff --git a/barchart.py b/barchart.py
+index 882cde5..a901fe4 100755
+--- a/barchart.py
++++ b/barchart.py
+@@ -1,4 +1,3 @@
+-#!/usr/bin/env python
+ 
+ """Provides BarChart class which creates HTML 1D bar charts,
+ and StackedBarChart class to deal with multiple data plotting
+diff --git a/colorcube.py b/colorcube.py
+index be91154..94fa7dd 100644
+--- a/colorcube.py
++++ b/colorcube.py
+@@ -1,4 +1,3 @@
+-#!/usr/bin/env python
+ 
+ """Utility to generate a table of browser safe colors.
+ """
+-- 
+2.1.4
+

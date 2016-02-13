@@ -1,0 +1,25 @@
+From c9ca65d39ca1185cebf5be86a10ba0ceea171249 Mon Sep 17 00:00:00 2001
+From: Pjotr Prins <pjotr.public01@thebird.nl>
+Date: Sat, 13 Feb 2016 13:40:46 +0100
+Subject: [PATCH 2/2] Fix test for random
+
+---
+ HTMLgen.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/HTMLgen.py b/HTMLgen.py
+index dbdbd81..034f672 100644
+--- a/HTMLgen.py
++++ b/HTMLgen.py
+@@ -924,7 +924,7 @@ class MailTo:
+     def antispam(self, address):
+         """Process a string with HTML encodings to defeat address spiders.
+         """
+-        from whrandom import choice
++        from random import choice
+         buffer = map(None, address)
+         for i in range(0, len(address), choice((2,3,4))):
+             buffer[i] = '&#%d;' % ord(buffer[i])
+-- 
+2.1.4
+
