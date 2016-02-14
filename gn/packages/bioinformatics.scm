@@ -211,10 +211,64 @@ subsequent visualization, annotation and storage of results.")
     ;; LGPLv2.1+
     (license (list license:gpl2 license:lgpl2.1+))))
 
-(define-public gemma
+(define-public plink-ng
+  (let ((commit "516d730f9"))
+  (package
+    (name "plink-ng")
+    (version (string-append "1.90b3-" commit ))
+    (source (origin
+             (method git-fetch)
+             (uri (git-reference
+                   (url "https://github.com/chrchang/plink-ng.git")
+                   (commit commit)))
+             (file-name (string-append name "-" commit)) 
+             (sha256
+              (base32
+               "0cv824wkdml9h9imsc30s2x3l8g65j44cpjbr1ydkk49g5qmf580"))
+    (patches (list (search-patch "plink-ng-Makefile-zlib-git.patch")))))
+    (build-system gnu-build-system)
+    (arguments
+     '(#:tests? #f ;no "check" target
+       #:phases
+       (modify-phases %standard-phases
+        (delete 'configure)
+        (replace 'build
+                 (lambda _
+                   (zero? (system* "make" "-f" "Makefile.std"))
+                   ))                 
+        (replace 'install
+                  (lambda* (#:key outputs #:allow-other-keys)
+                    (let ((bin (string-append (assoc-ref outputs "out")
+                                              "/bin/")))
+                      (install-file "plink2" bin)
+                      #t))))))
+    (inputs
+     `(("zlib" ,zlib)
+       ("openblas" ,openblas)
+       ("atlas" ,atlas)
+       ("lapack" ,lapack)
+       ("gfortran" ,gfortran)
+       ))
+    (native-inputs
+     `(("unzip" ,unzip)))
+    (home-page "https://www.cog-genomics.org/plink2")
+    (synopsis "Whole genome association analysis toolset")
+    (description
+     "PLINK is a whole genome association analysis toolset, designed to
+perform a range of basic, large-scale analyses in a computationally efficient
+manner.  The focus of PLINK is purely on analysis of genotype/phenotype data,
+so there is no support for steps prior to this (e.g. study design and
+planning, generating genotype or CNV calls from raw data).  Through
+integration with gPLINK and Haploview, there is some support for the
+subsequent visualization, annotation and storage of results.")
+    ;; Code is released under GPLv2, except for fisher.h, which is under
+    ;; LGPLv2.1+
+    (license (list license:gpl2 license:lgpl2.1+)))))
+
+(define-public gemma-git
   (let ((commit "2de4bfab3"))
   (package
-    (name "gemma")
+    (name "gemma-git")
     (version (string-append "0.9.5-" commit ))
     (source (origin
              (method git-fetch)
@@ -327,7 +381,8 @@ association studies (GWAS).")
     ))
     (inputs `(
               ("mysql" ,mysql)
-              ("gemma" ,gemma)
+              ("gemma" ,gemma-git)
+              ("plink2" ,plink-ng)
               ("nginx" ,nginx)
               ("python2-flask" ,python2-flask)
               ("python2-htmlgen-gn" ,python2-htmlgen-gn)
