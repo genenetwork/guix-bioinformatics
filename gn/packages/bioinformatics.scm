@@ -22,6 +22,7 @@
   #:use-module (gnu packages databases)
   #:use-module (gnu packages cpio)
   #:use-module (gnu packages file)
+  #:use-module (gnu packages gcc)
   #:use-module (gnu packages graphviz)
   #:use-module (gnu packages java)
   #:use-module (gnu packages linux)
@@ -173,30 +174,27 @@ confidence region for the location of a putative QTL.")
        (patches (list (search-patch "plink-ng-Makefile-zlib.patch")))))
     (build-system gnu-build-system)
     (arguments
-     '(#:tests? #t ;no "check" target
-       #:make-flags (list (string-append "LIB_LAPACK="
-                                         (assoc-ref %build-inputs "lapack")
-                                         "/lib/liblapack.so")
-                          "WITH_LAPACK=1"
-                          "FORCE_DYNAMIC=1"
-                          ;; disable phoning home
-                          "WITH_WEBCHECK=")
+     '(#:tests? #f ;no "check" target
        #:phases
        (modify-phases %standard-phases
         (delete 'configure)
         (replace 'build
                  (lambda _
-                   (system* "make" "-f" "Makefile.std")
+                   (zero? (system* "make" "-f" "Makefile.std"))
                    ))                 
         (replace 'install
                   (lambda* (#:key outputs #:allow-other-keys)
                     (let ((bin (string-append (assoc-ref outputs "out")
                                               "/bin/")))
-                      (install-file "plink" bin)
+                      (install-file "plink2" bin)
                       #t))))))
     (inputs
      `(("zlib" ,zlib)
-       ("lapack" ,lapack)))
+       ("openblas" ,openblas)
+       ("atlas" ,atlas)
+       ("lapack" ,lapack)
+       ("gfortran" ,gfortran)
+       ))
     (native-inputs
      `(("unzip" ,unzip)))
     (home-page "https://www.cog-genomics.org/plink2")
