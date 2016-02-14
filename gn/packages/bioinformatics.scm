@@ -261,9 +261,7 @@ so there is no support for steps prior to this (e.g. study design and
 planning, generating genotype or CNV calls from raw data).  Through
 integration with gPLINK and Haploview, there is some support for the
 subsequent visualization, annotation and storage of results.")
-    ;; Code is released under GPLv2, except for fisher.h, which is under
-    ;; LGPLv2.1+
-    (license (list license:gpl2 license:lgpl2.1+)))))
+    (license license:gpl3+))))
 
 (define-public gemma-git
   (let ((commit "2de4bfab3"))
