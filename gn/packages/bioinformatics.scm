@@ -157,6 +157,62 @@ precision. It also performs bootstrap resampling to estimate the
 confidence region for the location of a putative QTL.")
     (license license:gpl2)))
 
+(define-public plink2
+  (package
+    (name "plink2")
+    (version "1.90b3")
+    (source
+     (origin
+      (method url-fetch)
+      ;; https://github.com/chrchang/plink-ng/archive/v1.90b3.tar.gz
+       (uri (string-append
+             "https://github.com/chrchang/plink-ng/archive/v"
+             version ".tar.gz"))
+       (sha256
+        (base32 "03fzib1al5qkr9vxv63wxmv6y2pfb1rmir0h8jpi72r87hczqjig"))
+       (patches (list (search-patch "plink-ng-Makefile-zlib.patch")))))
+    (build-system gnu-build-system)
+    (arguments
+     '(#:tests? #t ;no "check" target
+       #:make-flags (list (string-append "LIB_LAPACK="
+                                         (assoc-ref %build-inputs "lapack")
+                                         "/lib/liblapack.so")
+                          "WITH_LAPACK=1"
+                          "FORCE_DYNAMIC=1"
+                          ;; disable phoning home
+                          "WITH_WEBCHECK=")
+       #:phases
+       (modify-phases %standard-phases
+        (delete 'configure)
+        (replace 'build
+                 (lambda _
+                   (system* "make" "-f" "Makefile.std")
+                   ))                 
+        (replace 'install
+                  (lambda* (#:key outputs #:allow-other-keys)
+                    (let ((bin (string-append (assoc-ref outputs "out")
+                                              "/bin/")))
+                      (install-file "plink" bin)
+                      #t))))))
+    (inputs
+     `(("zlib" ,zlib)
+       ("lapack" ,lapack)))
+    (native-inputs
+     `(("unzip" ,unzip)))
+    (home-page "https://www.cog-genomics.org/plink2")
+    (synopsis "Whole genome association analysis toolset")
+    (description
+     "PLINK is a whole genome association analysis toolset, designed to
+perform a range of basic, large-scale analyses in a computationally efficient
+manner.  The focus of PLINK is purely on analysis of genotype/phenotype data,
+so there is no support for steps prior to this (e.g. study design and
+planning, generating genotype or CNV calls from raw data).  Through
+integration with gPLINK and Haploview, there is some support for the
+subsequent visualization, annotation and storage of results.")
+    ;; Code is released under GPLv2, except for fisher.h, which is under
+    ;; LGPLv2.1+
+    (license (list license:gpl2 license:lgpl2.1+))))
+
 (define-public gemma
   (let ((commit "2de4bfab3"))
   (package
