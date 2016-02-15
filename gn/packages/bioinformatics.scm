@@ -417,3 +417,68 @@ association studies (GWAS).")
     (synopsis "Full genenetwork services")
     (description "Genenetwork installation sumo.")
     (license license:agpl3+))))
+
+(define-public sambamba
+  (package
+    (name "sambamba")
+    (version "0.5.9")
+    (source (origin
+              (method url-fetch)
+              (uri (string-append
+                    "https://github.com/lomereiter/sambamba/archive/v"
+                    version "tar.gz"))
+              (sha256
+               (base32 ""))))
+    (build-system gnu-build-system)
+    (inputs
+     `(("ldc" ,ldc)
+       ;; These are currently included in "ldc".
+       ;;("druntime-ldc" ,druntime-ldc)
+       ;;("phobos2-ldc" ,phobos2-ldc)
+       ("lz4" ,lz4)))
+    (native-inputs
+     `(("ldc" ,ldc)
+       ;;("druntime-ldc" ,druntime-ldc)
+       ;;("phobos2-ldc" ,phobos2-ldc)
+       ("lz4" ,lz4)
+       ("gcc" ,gcc)
+       ("htslib-src"
+        (let ((version "0.2.0-rc10"))
+          ,(origin
+             (method url-fetch)
+             (uri (string-append
+                   "https://github.com/lomereiter/htslib/archive/"
+                   version ".tar.gz"))
+             (file-name (string-append "htslib-" version ".tar.gz"))
+           (sha256
+            (base32 "1k6dlf6m8yayhcp7b4yisgw1xqdy1xg2xyrllss6ld0wg00hfcbs")))))
+       ("biod-src"
+        ,(origin
+           (method git-fetch)
+           (uri (git-reference
+                 (url "https://github.com/biod/BioD.git")
+                 (commit "7efdb8a2f7fdcd71c9ad9596be48d1262bb1bd5b")))
+           (sha256
+            (base32 "09icc2bjsg9y4hxjim4ql275izadf0kh1nnmapg8manyz6bc8svf"))
+           (file-name "biod")))))
+    (arguments
+     `(#:make-flags "sambamba-ldmd2-64" ; This target is used for releases.
+        #:phases
+        (modify-phases %standard-phases
+          (delete 'configure)
+          (add-after 'unpack 'unpack-htslib-sources
+            (lambda* (#:key inputs #:allow-other-keys)
+              (with-directory-excursion "htslib"
+                (zero? (system* "tar" "xvf" (assoc-ref inputs "htslib-src")
+                                "--strip-components=1")))))
+          (add-after 'unpack 'move-biod-sources
+            '()))) ; TODO: Figure out how to move or symlink the BioD sources to the right place.
+    (home-page "https://github.com/lomereiter/sambamba")
+    (synopsis "A tool for working with SAM and BAM files written in D.")
+    (description
+     "Sambamba is a high performance modern robust and fast tool (and
+library), written in the D programming language, for working with SAM
+and BAM files.  Current parallelised functionality is an important
+subset of samtools functionality, including view, index, sort,
+markdup, and depth.")
+    (license license:gpl2+))))
