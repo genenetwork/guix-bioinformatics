@@ -490,3 +490,53 @@ and BAM files.  Current parallelised functionality is an important
 subset of samtools functionality, including view, index, sort,
 markdup, and depth.")
     (license license:gpl2+)))
+
+(define-public picard
+  (package
+    (name "picard")
+    (version "2.1.0")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append
+             "https://github.com/broadinstitute/picard/archive/"
+             version ".tar.gz"))
+       (sha256
+        (base32 ""))))
+    (home-page "http://broadinstitute.github.io/picard/")
+    (synopsis "A set of Java command line tools for manipulating high-throughput
+sequencing data (HTS) data and formats")
+    (description "Picard comprises Java-based command-line utilities that
+manipulate SAM files, and a Java API (HTSJDK) for creating new programs that
+read and write SAM files. Both SAM text format and SAM binary (BAM) format are
+supported.")
+    ;; The license is MIT.
+    (license license:expat)
+))
+
+(define-public fastqc
+  (package
+    (name "fastqc")
+    (version "0.11.4")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append
+             "http://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_v"
+             version "_source.zip"))
+       (sha256
+        (base32 ""))))
+    (build-system gnu-build-system)
+    (arguments
+     `(("perl" ,perl) ; Needed to run the java command.
+       ("jdk" ,icedtea "jdk")))
+    (native-inputs
+     `(("ant" ,ant) ; TODO: Most Java packages need Ant, but in this case, IDK..
+       ("jdk" ,icedtea "jdk")
+       ;;("htsjdk" ,htsjdk) ; It is based on htsjdk, but it ships its own copy.
+       ("unzip" ,unzip)))
+    (home-page "http://www.bioinformatics.babraham.ac.uk/projects/fastqc/")
+    (synopsis "A quality control tool for high throughput sequence data")
+    (description
+     "FastQC aims to provide a QC report which can spot problems which originate either in the sequencer or in the starting library material. It can either run as a stand alone interactive application for the immediate analysis of small numbers of FastQ files, or it can be run in a non-interactive mode where it would be suitable for integrating into a larger analysis pipeline for the systematic processing of large numbers of files.")
+    (license license:gpl3+)))
