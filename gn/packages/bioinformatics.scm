@@ -426,9 +426,10 @@ association studies (GWAS).")
               (method url-fetch)
               (uri (string-append
                     "https://github.com/lomereiter/sambamba/archive/v"
-                    version "tar.gz"))
+                    version ".tar.gz"))
+              (file-name (string-append "sambamba-" version ".tar.gz"))
               (sha256
-               (base32 ""))))
+               (base32 "152zbg4m10ikr7xgk20c0nwqwrqvydmpc73p2c1fqmbhpk0l0ws6"))))
     (build-system gnu-build-system)
     (inputs
      `(("ldc" ,ldc)
@@ -443,15 +444,13 @@ association studies (GWAS).")
        ("lz4" ,lz4)
        ("gcc" ,gcc)
        ("htslib-src"
-        (let ((version "0.2.0-rc10"))
-          ,(origin
-             (method url-fetch)
-             (uri (string-append
-                   "https://github.com/lomereiter/htslib/archive/"
-                   version ".tar.gz"))
-             (file-name (string-append "htslib-" version ".tar.gz"))
+        ,(origin
+           (method url-fetch)
+           (uri (string-append
+                 "https://github.com/lomereiter/htslib/archive/0.2.0-rc10.tar.gz"))
+           (file-name (string-append "htslib-0.2.0-rc10.tar.gz"))
            (sha256
-            (base32 "1k6dlf6m8yayhcp7b4yisgw1xqdy1xg2xyrllss6ld0wg00hfcbs")))))
+            (base32 "1k6dlf6m8yayhcp7b4yisgw1xqdy1xg2xyrllss6ld0wg00hfcbs"))))
        ("biod-src"
         ,(origin
            (method git-fetch)
@@ -462,17 +461,26 @@ association studies (GWAS).")
             (base32 "09icc2bjsg9y4hxjim4ql275izadf0kh1nnmapg8manyz6bc8svf"))
            (file-name "biod")))))
     (arguments
-     `(#:make-flags "sambamba-ldmd2-64" ; This target is used for releases.
-        #:phases
-        (modify-phases %standard-phases
-          (delete 'configure)
-          (add-after 'unpack 'unpack-htslib-sources
-            (lambda* (#:key inputs #:allow-other-keys)
-              (with-directory-excursion "htslib"
-                (zero? (system* "tar" "xvf" (assoc-ref inputs "htslib-src")
-                                "--strip-components=1")))))
-          (add-after 'unpack 'move-biod-sources
-            '()))) ; TODO: Figure out how to move or symlink the BioD sources to the right place.
+     '(#:phases 
+       (modify-phases %standard-phases
+         (delete 'configure)
+         (add-after 'unpack 'unpack-htslib-sources
+           (lambda* (#:key inputs #:allow-other-keys)
+             ;; Unfortunately, the current build compiles htslib statically
+             ;; into the executable.  Instead of patching the build files
+             ;; for Guix, this should be resolved on Sambamba upstream.  For
+             ;; now, just extract the source code to the desired directory.
+             (and (with-directory-excursion "htslib"
+                    (zero? (system* "tar" "xvf" (assoc-ref inputs "htslib-src")
+                                    "--strip-components=1")))
+                  (zero? (system* "cp" "-R" (assoc-ref inputs "biod-src") "BioD")))))
+         ;; Building a production-quality executable is done with a
+         ;; non-default make target. Adding it with #:make-flags breaks
+         ;; building tests.  Therefore, the default make got replaced by this.
+         (replace
+          'build
+          (lambda* (#:key (make-flags '()) #:allow-other-keys)
+            (zero? (system* "make" "sambamba-ldmd2-64" make-flags)))))))
     (home-page "https://github.com/lomereiter/sambamba")
     (synopsis "A tool for working with SAM and BAM files written in D.")
     (description
@@ -481,4 +489,4 @@ library), written in the D programming language, for working with SAM
 and BAM files.  Current parallelised functionality is an important
 subset of samtools functionality, including view, index, sort,
 markdup, and depth.")
-    (license license:gpl2+))))
+    (license license:gpl2+)))
