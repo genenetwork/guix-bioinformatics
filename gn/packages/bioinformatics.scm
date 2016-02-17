@@ -417,3 +417,126 @@ association studies (GWAS).")
     (synopsis "Full genenetwork services")
     (description "Genenetwork installation sumo.")
     (license license:agpl3+))))
+
+(define-public sambamba
+  (package
+    (name "sambamba")
+    (version "0.5.9")
+    (source (origin
+              (method url-fetch)
+              (uri (string-append
+                    "https://github.com/lomereiter/sambamba/archive/v"
+                    version ".tar.gz"))
+              (file-name (string-append "sambamba-" version ".tar.gz"))
+              (sha256
+               (base32 "152zbg4m10ikr7xgk20c0nwqwrqvydmpc73p2c1fqmbhpk0l0ws6"))))
+    (build-system gnu-build-system)
+    (inputs
+     `(("ldc" ,ldc)
+       ;; These are currently included in "ldc".
+       ;;("druntime-ldc" ,druntime-ldc)
+       ;;("phobos2-ldc" ,phobos2-ldc)
+       ("lz4" ,lz4)))
+    (native-inputs
+     `(("ldc" ,ldc)
+       ;;("druntime-ldc" ,druntime-ldc)
+       ;;("phobos2-ldc" ,phobos2-ldc)
+       ("lz4" ,lz4)
+       ("gcc" ,gcc)
+       ("htslib-src"
+        ,(origin
+           (method url-fetch)
+           (uri (string-append
+                 "https://github.com/lomereiter/htslib/archive/0.2.0-rc10.tar.gz"))
+           (file-name (string-append "htslib-0.2.0-rc10.tar.gz"))
+           (sha256
+            (base32 "1k6dlf6m8yayhcp7b4yisgw1xqdy1xg2xyrllss6ld0wg00hfcbs"))))
+       ("biod-src"
+        ,(origin
+           (method git-fetch)
+           (uri (git-reference
+                 (url "https://github.com/biod/BioD.git")
+                 (commit "7efdb8a2f7fdcd71c9ad9596be48d1262bb1bd5b")))
+           (sha256
+            (base32 "09icc2bjsg9y4hxjim4ql275izadf0kh1nnmapg8manyz6bc8svf"))
+           (file-name "biod")))))
+    (arguments
+     '(#:phases 
+       (modify-phases %standard-phases
+         (delete 'configure)
+         (add-after 'unpack 'unpack-htslib-sources
+           (lambda* (#:key inputs #:allow-other-keys)
+             ;; Unfortunately, the current build compiles htslib statically
+             ;; into the executable.  Instead of patching the build files
+             ;; for Guix, this should be resolved on Sambamba upstream.  For
+             ;; now, just extract the source code to the desired directory.
+             (and (with-directory-excursion "htslib"
+                    (zero? (system* "tar" "xvf" (assoc-ref inputs "htslib-src")
+                                    "--strip-components=1")))
+                  (zero? (system* "cp" "-R" (assoc-ref inputs "biod-src") "BioD")))))
+         ;; Building a production-quality executable is done with a
+         ;; non-default make target. Adding it with #:make-flags breaks
+         ;; building tests.  Therefore, the default make got replaced by this.
+         (replace
+          'build
+          (lambda* (#:key (make-flags '()) #:allow-other-keys)
+            (zero? (system* "make" "sambamba-ldmd2-64" make-flags)))))))
+    (home-page "https://github.com/lomereiter/sambamba")
+    (synopsis "A tool for working with SAM and BAM files written in D.")
+    (description
+     "Sambamba is a high performance modern robust and fast tool (and
+library), written in the D programming language, for working with SAM
+and BAM files.  Current parallelised functionality is an important
+subset of samtools functionality, including view, index, sort,
+markdup, and depth.")
+    (license license:gpl2+)))
+
+(define-public picard
+  (package
+    (name "picard")
+    (version "2.1.0")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append
+             "https://github.com/broadinstitute/picard/archive/"
+             version ".tar.gz"))
+       (sha256
+        (base32 ""))))
+    (home-page "http://broadinstitute.github.io/picard/")
+    (synopsis "A set of Java command line tools for manipulating high-throughput
+sequencing data (HTS) data and formats")
+    (description "Picard comprises Java-based command-line utilities that
+manipulate SAM files, and a Java API (HTSJDK) for creating new programs that
+read and write SAM files. Both SAM text format and SAM binary (BAM) format are
+supported.")
+    ;; The license is MIT.
+    (license license:expat)
+))
+
+(define-public fastqc
+  (package
+    (name "fastqc")
+    (version "0.11.4")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append
+             "http://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_v"
+             version "_source.zip"))
+       (sha256
+        (base32 ""))))
+    (build-system gnu-build-system)
+    (arguments
+     `(("perl" ,perl) ; Needed to run the java command.
+       ("jdk" ,icedtea "jdk")))
+    (native-inputs
+     `(("ant" ,ant) ; TODO: Most Java packages need Ant, but in this case, IDK..
+       ("jdk" ,icedtea "jdk")
+       ;;("htsjdk" ,htsjdk) ; It is based on htsjdk, but it ships its own copy.
+       ("unzip" ,unzip)))
+    (home-page "http://www.bioinformatics.babraham.ac.uk/projects/fastqc/")
+    (synopsis "A quality control tool for high throughput sequence data")
+    (description
+     "FastQC aims to provide a QC report which can spot problems which originate either in the sequencer or in the starting library material. It can either run as a stand alone interactive application for the immediate analysis of small numbers of FastQ files, or it can be run in a non-interactive mode where it would be suitable for integrating into a larger analysis pipeline for the systematic processing of large numbers of files.")
+    (license license:gpl3+)))
