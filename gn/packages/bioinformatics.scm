@@ -418,6 +418,45 @@ association studies (GWAS).")
     (description "Genenetwork installation sumo.")
     (license license:agpl3+))))
 
+(define-public rdmd
+  (package
+    (name "rdmd")
+    (version "20160217")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url "https://github.com/D-Programming-Language/tools.git")
+                    (commit "4dba6877c481c1a911a7d50714da8fbd80022f0e")))
+              (file-name (string-append name "-" version "-checkout"))
+              (sha256
+               (base32
+                "1pcx5lyqzrip86f4vv60x292rpvnwsq2hvl1znm9x9rn68f34m45"))))
+    (build-system gnu-build-system)
+    (arguments
+     '(#:phases
+       (modify-phases %standard-phases
+         (delete 'configure)
+         (delete 'check)
+         (replace
+          'build
+          (lambda* _
+            (zero? (system* "ldc2" "rdmd.d"))))
+         (replace
+          'install
+          (lambda* (#:key outputs #:allow-other-keys)
+            (let ((bin (string-append (assoc-ref outputs "out") "/bin")))
+              (mkdir-p bin)
+              (copy-file "rdmd" (string-append bin "/rdmd"))))))))
+    (native-inputs
+     `(("gcc" ,gcc)
+       ("ldc" ,ldc)))
+    (home-page "https://github.com/D-Programming-Language/tools/")
+    (synopsis "Extra tools for building D programs")
+    (description
+     "This repository hosts various tools redistributed with DMD or used
+internally during various build tasks.")
+    (license license:boost1.0)))
+
 (define-public sambamba
   (package
     (name "sambamba")
@@ -443,6 +482,7 @@ association studies (GWAS).")
        ;;("phobos2-ldc" ,phobos2-ldc)
        ("lz4" ,lz4)
        ("gcc" ,gcc)
+       ("rdmd" ,rdmd)
        ("htslib-src"
         ,(origin
            (method url-fetch)
@@ -451,7 +491,7 @@ association studies (GWAS).")
            (file-name (string-append "htslib-0.2.0-rc10.tar.gz"))
            (sha256
             (base32 "1k6dlf6m8yayhcp7b4yisgw1xqdy1xg2xyrllss6ld0wg00hfcbs"))))
-       ("biod-src"
+       ("biod"
         ,(origin
            (method git-fetch)
            (uri (git-reference
@@ -459,7 +499,7 @@ association studies (GWAS).")
                  (commit "7efdb8a2f7fdcd71c9ad9596be48d1262bb1bd5b")))
            (sha256
             (base32 "09icc2bjsg9y4hxjim4ql275izadf0kh1nnmapg8manyz6bc8svf"))
-           (file-name "biod")))))
+           (file-name "biod-src")))))
     (arguments
      '(#:phases 
        (modify-phases %standard-phases
