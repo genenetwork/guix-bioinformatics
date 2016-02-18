@@ -373,11 +373,10 @@ association studies (GWAS).")
              (sha256
               (base32
                "09hvy9mf4dnmkb8qg49viffzrxk53m2kr4r955m84dxaa5pdrjhd"))))
-    (propagated-inputs `(
+    (propagated-inputs `(  ;; propagated for development purposes
               ("python" ,python-2) ;; probably superfluous
-              ("r" ,r) 
-    ))
-    (inputs `(
+              ("r" ,r)
+              ("redis" ,redis)
               ("mysql" ,mysql)
               ("gemma" ,gemma-git)
               ("plink2" ,plink-ng)
@@ -403,7 +402,7 @@ association studies (GWAS).")
               ("python2-scipy" ,python2-scipy)
               ("python2-simplejson" ,python2-simplejson)
               ("python2-pyyaml" ,python2-pyyaml)
-              ("python-xlsxwriter" ,python-xlsxwriter)
+              ("python2-xlsxwriter" ,python2-xlsxwriter)
               ;; python-yolk is not needed
               ("plink" ,plink) 
               ("qtlreaper" ,qtlreaper) 
