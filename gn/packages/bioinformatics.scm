@@ -543,6 +543,7 @@ markdup, and depth.")
              version ".tar.gz"))
        (sha256
         (base32 ""))))
+    (build-system gnu-build-system)
     (home-page "http://broadinstitute.github.io/picard/")
     (synopsis "A set of Java command line tools for manipulating high-throughput
 sequencing data (HTS) data and formats")
