@@ -490,7 +490,7 @@ internally during various build tasks.")
            (file-name (string-append "htslib-0.2.0-rc10.tar.gz"))
            (sha256
             (base32 "1k6dlf6m8yayhcp7b4yisgw1xqdy1xg2xyrllss6ld0wg00hfcbs"))))
-       ("biod"
+       ("biod-src"
         ,(origin
            (method git-fetch)
            (uri (git-reference
@@ -498,7 +498,7 @@ internally during various build tasks.")
                  (commit "7efdb8a2f7fdcd71c9ad9596be48d1262bb1bd5b")))
            (sha256
             (base32 "09icc2bjsg9y4hxjim4ql275izadf0kh1nnmapg8manyz6bc8svf"))
-           (file-name "biod-src")))))
+           (file-name "biod")))))
     (arguments
      '(#:phases 
        (modify-phases %standard-phases
