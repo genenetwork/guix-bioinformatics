@@ -148,3 +148,27 @@
      "R/lmmlite")
     (home-page "https://github.com/kbroman/")
     (license license:asl2.0)))
+
+(define-public pylmm-gn2
+  (let ((commit "f5c9e2378"))
+  (package
+    (name "pylmm-gn2")
+    (version (string-append "1.0-" commit ))
+    (source (origin
+             (method git-fetch)
+             (uri (git-reference
+                   (url "https://github.com/genenetwork/pylmm.git")
+                   (commit commit)))
+             (file-name (string-append name "-" commit)) 
+             (sha256
+              (base32
+               "10qb5dpwqjdiq9gakl7m4p4ckjlc701mzqpgbhp89w1aysddj1c7"))))
+    (build-system python-build-system)
+    (arguments
+     `(#:python ,python-2
+       #:tests? #f))   ; no 'setup.py test'
+    (home-page "http://genenetwork.org/")
+    (synopsis "LMM resolver")
+    (description "Fast and lightweight linear mixed-model (LMM) solver
+for use in genome-wide association studies (GWAS).")
+    (license license:agpl3+))))
