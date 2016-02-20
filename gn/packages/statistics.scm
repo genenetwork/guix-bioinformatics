@@ -150,7 +150,7 @@
     (license license:asl2.0)))
 
 (define-public pylmm-gn2
-  (let ((commit "f5c9e2378"))
+  (let ((commit "3c6d1cac8"))
   (package
     (name "pylmm-gn2")
     (version (string-append "1.0-" commit ))
@@ -162,11 +162,27 @@
              (file-name (string-append name "-" commit)) 
              (sha256
               (base32
-               "10qb5dpwqjdiq9gakl7m4p4ckjlc701mzqpgbhp89w1aysddj1c7"))))
+               "0wryaadb36i275p9d2i1kzflahvbl9kj5wlk8jlbvjij8gpqg964"))))
     (build-system python-build-system)
+    (inputs `(
+              ("python2-setuptools" ,python2-setuptools)
+              ("python2-scipy" ,python2-scipy)
+              ("python2-numpy" ,python2-numpy)
+              ))
     (arguments
      `(#:python ,python-2
-       #:tests? #f))   ; no 'setup.py test'
+       #:tests? #f        ; no 'setup.py test'
+       #:phases
+       (modify-phases %standard-phases
+         (add-before
+          'build 'change-paths
+          (lambda* (#:key outputs #:allow-other-keys)
+                   (let ((out (assoc-ref outputs "out")))
+                     (substitute* "scripts/pylmm_redis"
+                                  (("/usr/bin/python") (which "python"))
+                                  (("\\$PACKAGEDIR") (string-append out "/lib/python2.7/site-packages")))
+                     ))))))
+
     (home-page "http://genenetwork.org/")
     (synopsis "LMM resolver")
     (description "Fast and lightweight linear mixed-model (LMM) solver
