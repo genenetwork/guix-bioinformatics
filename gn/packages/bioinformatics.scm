@@ -10,7 +10,7 @@
   #:use-module (guix build-system cmake)
   #:use-module (guix build-system perl)
   #:use-module (guix build-system python)
-  #:use-module (guix build-system ruby)
+  ;; #:use-module (guix build-system ruby)
   #:use-module (guix build-system r)
   #:use-module (guix build-system trivial)
   #:use-module (gnu packages)
@@ -459,17 +459,20 @@ internally during various build tasks.")
     (license license:boost1.0)))
 
 (define-public sambamba
+  (let ((commit "2ca5a2dba"))
   (package
     (name "sambamba")
-    (version "0.5.9")
+    (version (string-append "0.5.9-" commit))
     (source (origin
-              (method url-fetch)
-              (uri (string-append
-                    "https://github.com/lomereiter/sambamba/archive/v"
-                    version ".tar.gz"))
-              (file-name (string-append "sambamba-" version ".tar.gz"))
-              (sha256
-               (base32 "152zbg4m10ikr7xgk20c0nwqwrqvydmpc73p2c1fqmbhpk0l0ws6"))))
+             (method git-fetch)
+             (uri (git-reference                
+                   ;; https://github.com/pjotrp/sambamba.git
+                   (url "https://github.com/pjotrp/sambamba.git")
+                   (commit commit)))
+             (file-name (string-append name "-" commit)) 
+             (sha256
+              (base32
+               "1f14wn9aaxwjkmla6pzq3s28741carbr2v0fd2v2mm1dcpwnrqz5"))))
     (build-system gnu-build-system)
     (inputs
      `(("ldc" ,ldc)
@@ -512,16 +515,17 @@ internally during various build tasks.")
              ;; for Guix, this should be resolved on Sambamba upstream.  For
              ;; now, just extract the source code to the desired directory.
              (and (with-directory-excursion "htslib"
-                    (zero? (system* "tar" "xvf" (assoc-ref inputs "htslib-src")
-                                    "--strip-components=1")))
-                  (zero? (system* "cp" "-R" (assoc-ref inputs "biod-src") "BioD")))))
+              (zero? (system* "tar" "xvf" (assoc-ref inputs "htslib-src")
+                              "--strip-components=1")))
+              (zero? (system* "cp" "-R" (assoc-ref inputs "biod-src") "BioD"))
+                  )))
          ;; Building a production-quality executable is done with a
          ;; non-default make target. Adding it with #:make-flags breaks
          ;; building tests.  Therefore, the default make got replaced by this.
          (replace
           'build
           (lambda* (#:key (make-flags '()) #:allow-other-keys)
-            (zero? (system* "make" "sambamba-ldmd2-64" make-flags)))))))
+            (zero? (system* "make" "-f" "Makefile.guix" make-flags)))))))
     (home-page "https://github.com/lomereiter/sambamba")
     (synopsis "A tool for working with SAM and BAM files written in D.")
     (description
@@ -530,7 +534,7 @@ library), written in the D programming language, for working with SAM
 and BAM files.  Current parallelised functionality is an important
 subset of samtools functionality, including view, index, sort,
 markdup, and depth.")
-    (license license:gpl2+)))
+    (license license:gpl2+))))
 
 (define-public picard
   (package
