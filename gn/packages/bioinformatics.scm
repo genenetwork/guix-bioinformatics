@@ -44,6 +44,7 @@
   #:use-module (gnu packages zip)
   #:use-module (gnu packages bootstrap)
   #:use-module (gn packages python)
+  #:use-module (gn packages statistics)
   #:use-module (srfi srfi-1))
 
 (define-public my-deploy
@@ -379,6 +380,7 @@ association studies (GWAS).")
               ("redis" ,redis)
               ("mysql" ,mysql)
               ("gemma" ,gemma-git)
+              ("pylmm-gn2" ,pylmm-gn2)
               ("plink2" ,plink-ng)
               ("nginx" ,nginx)
               ("python2-flask" ,python2-flask)
