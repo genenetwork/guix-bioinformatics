@@ -43,6 +43,7 @@
   #:use-module (gnu packages xml)
   #:use-module (gnu packages zip)
   #:use-module (gnu packages bootstrap)
+  #:use-module (gn packages bioinformatics)
   #:use-module (gn packages python)
   #:use-module (gn packages statistics)
   #:use-module (srfi srfi-1))
@@ -198,3 +199,6 @@
     (synopsis "Full genenetwork services")
     (description "Genenetwork installation sumo.")
     (license license:agpl3+))))
+
+;; ./pre-inst-env guix download http://files.genenetwork.org/raw_database/db_webqtl_s.zip
+;; 0sscjh0wml2lx0mb43vf4chg9gpbfi7abpjxb34n3kyny9ll557x
