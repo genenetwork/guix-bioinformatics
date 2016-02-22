@@ -277,7 +277,7 @@ association studies (GWAS).")
                 (uri (git-reference
                       (url "https://github.com/D-Programming-Language/tools.git")
                       (commit commit)))
-                (file-name (string-append name "-" commit)) 
+                (file-name (string-append name "-" commit))
                 (sha256
                  (base32
                   "1pcx5lyqzrip86f4vv60x292rpvnwsq2hvl1znm9x9rn68f34m45"))))
@@ -303,9 +303,9 @@ association studies (GWAS).")
       (synopsis "Tool for the D language which is used for compiling")
       (description
        "rdmd is a companion to the dmd compiler that simplifies the typical
-edit-compile-link-run or edit-make-run cycle to a rapid edit-run cycle. Like
+edit-compile-link-run or edit-make-run cycle to a rapid edit-run cycle.  Like
 make and other tools, rdmd uses the relative dates of the files involved to
-minimize the amount of work necessary. Unlike make, rdmd tracks dependencies
+minimize the amount of work necessary.  Unlike make, rdmd tracks dependencies
 and freshness without requiring additional information from the user.")
       (license license:boost1.0))))
 
