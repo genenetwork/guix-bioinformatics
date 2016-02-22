@@ -10,7 +10,7 @@
   #:use-module (guix build-system cmake)
   #:use-module (guix build-system perl)
   #:use-module (guix build-system python)
-  #:use-module (guix build-system ruby)
+  ;; #:use-module (guix build-system ruby)
   #:use-module (guix build-system r)
   #:use-module (guix build-system trivial)
   #:use-module (gnu packages)
@@ -26,6 +26,7 @@
   #:use-module (gnu packages graphviz)
   #:use-module (gnu packages java)
   #:use-module (gnu packages linux)
+  #:use-module (gnu packages ldc)
   #:use-module (gnu packages machine-learning)
   #:use-module (gnu packages maths)
   #:use-module (gnu packages ncurses)
@@ -34,7 +35,6 @@
   #:use-module (gnu packages popt)
   #:use-module (gnu packages protobuf)
   #:use-module (gnu packages python)
-  #:use-module (gnu packages ruby)
   #:use-module (gnu packages statistics)
   #:use-module (gnu packages tbb)
   #:use-module (gnu packages textutils)
@@ -44,46 +44,8 @@
   #:use-module (gnu packages zip)
   #:use-module (gnu packages bootstrap)
   #:use-module (gn packages python)
+  #:use-module (gn packages statistics)
   #:use-module (srfi srfi-1))
-
-(define-public my-deploy
-  (package
-    (name "my-deploy")
-    (version "0.0.1")
-    (source #f)
-    (build-system trivial-build-system)
-    (arguments
-     `(#:guile ,%bootstrap-guile
-       #:modules ((guix build utils))
-       #:builder
-       (let* ((out  (assoc-ref %outputs "out"))
-              (bash (assoc-ref %build-inputs "bash"))
-              (foo  (string-append out "/foo")))
-         (begin
-           (use-modules (guix build utils))
-           (mkdir out)
-           (call-with-output-file foo
-             (lambda (p)
-               (format p
-                       "#!~a~%echo \"${GUIX_FOO} ${GUIX_BAR}\"~%"
-                       bash)))
-           (chmod foo #o777)
-           ;; wrap-program uses `which' to find bash for the wrapper
-           ;; shebang, but it can't know about the bootstrap bash in
-           ;; the store, since it's not named "bash".  Help it out a
-           ;; bit by providing a symlink it this package's output.
-           (symlink bash (string-append out "/bash"))
-           (setenv "PATH" out)
-           (wrap-program foo `("GUIX_FOO" prefix ("hello")))
-           (wrap-program foo `("GUIX_BAR" prefix ("world")))
-           #t))))
-    (inputs `(("bash" ,(search-bootstrap-binary "bash"
-                                                (%current-system)))))
-
-    (home-page #f)
-    (synopsis #f)
-    (description #f)
-    (license #f)))
 
 (define-public r-wgcna
 (package
@@ -306,117 +268,6 @@ association studies (GWAS).")
     (license license:gpl3))))
 
 
-(define-public genenetwork1
-  (let ((commit "d622c803b"))
-  (package
-    (name "genenetwork1")
-    (version (string-append "1.0-" commit ))
-    (source (origin
-             (method git-fetch)
-             (uri (git-reference
-                   (url "https://github.com/genenetwork/genenetwork.git")
-                   ;; (url "https://github.com/pjotrp/genenetwork.git")
-                   (commit commit)))
-             (file-name (string-append name "-" commit)) 
-             (sha256
-              (base32
-               "14fzfcm4vl20mlhxjslfa01i1nmxpk8lbxmfvpq6dyfc22ir62py"))))
-    (propagated-inputs `(
-              ("python" ,python-2) ;; probably superfluous
-              ("r" ,r) 
-    ))
-    (inputs `(
-              ;; http://spring211.uthsc.edu/gn/thirdparty.tbz
-              ;; graphviz-2.22.2  htmlgen  json  numarray-1.5.2  piddle  PIL  pp-1.5.7  pyx  pyXLWriter  svg
-              ("mysql" ,mysql)
-              ("nginx" ,nginx)
-              ("graphviz" ,graphviz)
-              ; ("python2-jinja2" ,python2-jinja2)
-              ; ("python2-sqlalchemy" ,python2-sqlalchemy)
-              ; ("python2-setuptools" ,python2-setuptools)
-              ; ("python2-scipy" ,python2-scipy)
-              ;; looks like python-numarray is not needed
-              ; ("python2-numpy" ,python2-numpy)
-              ; ("python2-pandas" ,python2-pandas)
-              ; ("python2-passlib" ,python2-passlib)
-              ; ("python2-redis" ,python2-redis)
-              ; ("python2-requests" ,python2-requests)
-              ; ("python2-simplejson" ,python2-simplejson)
-              ; ("python2-pyyaml" ,python2-pyyaml)
-              ;; python-yolk is not needed
-              ("python2-pil" ,python2-pil)
-              ("python2-numarray" ,python2-numarray)
-              ("plink" ,plink) ;; gn1
-              ; ("r-qtl" ,r-qtl)
-              ))
-    (build-system python-build-system)
-    (arguments
-     `(#:python ,python-2
-       #:tests? #f))   ; no 'setup.py test'
-    (home-page "http://genenetwork.org/")
-    (synopsis "Full genenetwork services")
-    (description "Genenetwork installation sumo.")
-    (license license:agpl3+))))
-
-(define-public genenetwork2
-  (let ((commit "9e9475053"))
-  (package
-    (name "genenetwork2")
-    (version (string-append "2.0-" commit ))
-    (source (origin
-             (method git-fetch)
-             (uri (git-reference
-                   ;; (url "https://github.com/genenetwork/genenetwork2.git")
-                   (url "https://github.com/pjotrp/genenetwork2.git")
-                   (commit commit)))
-             (file-name (string-append name "-" commit)) 
-             (sha256
-              (base32
-               "09hvy9mf4dnmkb8qg49viffzrxk53m2kr4r955m84dxaa5pdrjhd"))))
-    (propagated-inputs `(  ;; propagated for development purposes
-              ("python" ,python-2) ;; probably superfluous
-              ("r" ,r)
-              ("redis" ,redis)
-              ("mysql" ,mysql)
-              ("gemma" ,gemma-git)
-              ("plink2" ,plink-ng)
-              ("nginx" ,nginx)
-              ("python2-flask" ,python2-flask)
-              ("python2-htmlgen-gn" ,python2-htmlgen-gn)
-              ("python2-jinja2" ,python2-jinja2)
-              ("python2-sqlalchemy" ,python2-sqlalchemy)
-              ("python2-flask-sqlalchemy" ,python2-flask-sqlalchemy)
-              ("python2-setuptools" ,python2-setuptools)
-              ("python2-scipy" ,python2-scipy)
-              ;; looks like python-numarray is not needed
-              ("python2-mysqlclient" ,python2-mysqlclient)
-              ("python2-numarray" ,python2-numarray)
-              ("python2-numpy" ,python2-numpy)
-              ("python2-pandas" ,python2-pandas)
-              ("python2-parallel" ,python2-parallel)
-              ("python2-passlib" ,python2-passlib)
-              ("python2-piddle" ,python2-piddle)
-              ("python2-redis" ,python2-redis)
-              ("python2-requests" ,python2-requests)
-              ("python2-rpy2" ,python2-rpy2)
-              ("python2-scipy" ,python2-scipy)
-              ("python2-simplejson" ,python2-simplejson)
-              ("python2-pyyaml" ,python2-pyyaml)
-              ("python2-xlsxwriter" ,python2-xlsxwriter)
-              ;; python-yolk is not needed
-              ("plink" ,plink) 
-              ("qtlreaper" ,qtlreaper) 
-              ("r-qtl" ,r-qtl)
-              ))
-    (build-system python-build-system)
-    (arguments
-     `(#:python ,python-2
-       #:tests? #f))   ; no 'setup.py test'
-    (home-page "http://genenetwork.org/")
-    (synopsis "Full genenetwork services")
-    (description "Genenetwork installation sumo.")
-    (license license:agpl3+))))
-
 (define-public rdmd
   (let ((commit "4dba6877c481c1a911a7d50714da8fbd80022f0e"))
     (package
@@ -461,17 +312,20 @@ and freshness without requiring additional information from the user.")
       (license license:boost1.0))))
 
 (define-public sambamba
+  (let ((commit "2ca5a2dba"))
   (package
     (name "sambamba")
-    (version "0.5.9")
+    (version (string-append "0.5.9-" commit))
     (source (origin
-              (method url-fetch)
-              (uri (string-append
-                    "https://github.com/lomereiter/sambamba/archive/v"
-                    version ".tar.gz"))
-              (file-name (string-append "sambamba-" version ".tar.gz"))
-              (sha256
-               (base32 "152zbg4m10ikr7xgk20c0nwqwrqvydmpc73p2c1fqmbhpk0l0ws6"))))
+             (method git-fetch)
+             (uri (git-reference                
+                   ;; https://github.com/pjotrp/sambamba.git
+                   (url "https://github.com/pjotrp/sambamba.git")
+                   (commit commit)))
+             (file-name (string-append name "-" commit)) 
+             (sha256
+              (base32
+               "1f14wn9aaxwjkmla6pzq3s28741carbr2v0fd2v2mm1dcpwnrqz5"))))
     (build-system gnu-build-system)
     (inputs
      `(("ldc" ,ldc)
@@ -514,16 +368,17 @@ and freshness without requiring additional information from the user.")
              ;; for Guix, this should be resolved on Sambamba upstream.  For
              ;; now, just extract the source code to the desired directory.
              (and (with-directory-excursion "htslib"
-                    (zero? (system* "tar" "xvf" (assoc-ref inputs "htslib-src")
-                                    "--strip-components=1")))
-                  (zero? (system* "cp" "-R" (assoc-ref inputs "biod-src") "BioD")))))
+              (zero? (system* "tar" "xvf" (assoc-ref inputs "htslib-src")
+                              "--strip-components=1")))
+              (zero? (system* "cp" "-R" (assoc-ref inputs "biod-src") "BioD"))
+                  )))
          ;; Building a production-quality executable is done with a
          ;; non-default make target. Adding it with #:make-flags breaks
          ;; building tests.  Therefore, the default make got replaced by this.
          (replace
           'build
           (lambda* (#:key (make-flags '()) #:allow-other-keys)
-            (zero? (system* "make" "sambamba-ldmd2-64" make-flags)))))))
+            (zero? (system* "make" "-f" "Makefile.guix" make-flags)))))))
     (home-page "https://github.com/lomereiter/sambamba")
     (synopsis "A tool for working with SAM and BAM files written in D.")
     (description
@@ -532,7 +387,7 @@ library), written in the D programming language, for working with SAM
 and BAM files.  Current parallelised functionality is an important
 subset of samtools functionality, including view, index, sort,
 markdup, and depth.")
-    (license license:gpl2+)))
+    (license license:gpl2+))))
 
 (define-public picard
   (package
