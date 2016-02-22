@@ -418,43 +418,47 @@ association studies (GWAS).")
     (license license:agpl3+))))
 
 (define-public rdmd
-  (package
-    (name "rdmd")
-    (version "20160217")
-    (source (origin
-              (method git-fetch)
-              (uri (git-reference
-                    (url "https://github.com/D-Programming-Language/tools.git")
-                    (commit "4dba6877c481c1a911a7d50714da8fbd80022f0e")))
-              (file-name (string-append name "-" version "-checkout"))
-              (sha256
-               (base32
-                "1pcx5lyqzrip86f4vv60x292rpvnwsq2hvl1znm9x9rn68f34m45"))))
-    (build-system gnu-build-system)
-    (arguments
-     '(#:phases
-       (modify-phases %standard-phases
-         (delete 'configure)
-         (delete 'check)
-         (replace
-          'build
-          (lambda* _
-            (zero? (system* "ldc2" "rdmd.d"))))
-         (replace
-          'install
-          (lambda* (#:key outputs #:allow-other-keys)
-            (let ((bin (string-append (assoc-ref outputs "out") "/bin")))
-              (mkdir-p bin)
-              (copy-file "rdmd" (string-append bin "/rdmd"))))))))
-    (native-inputs
-     `(("gcc" ,gcc)
-       ("ldc" ,ldc)))
-    (home-page "https://github.com/D-Programming-Language/tools/")
-    (synopsis "Extra tools for building D programs")
-    (description
-     "This repository hosts various tools redistributed with DMD or used
-internally during various build tasks.")
-    (license license:boost1.0)))
+  (let ((commit "4dba6877c481c1a911a7d50714da8fbd80022f0e"))
+    (package
+      (name "rdmd")
+      (version "20160217")
+      (source (origin
+                (method git-fetch)
+                (uri (git-reference
+                      (url "https://github.com/D-Programming-Language/tools.git")
+                      (commit commit)))
+                (file-name (string-append name "-" commit)) 
+                (sha256
+                 (base32
+                  "1pcx5lyqzrip86f4vv60x292rpvnwsq2hvl1znm9x9rn68f34m45"))))
+      (build-system gnu-build-system)
+      (arguments
+       '(#:phases
+         (modify-phases %standard-phases
+           (delete 'configure)
+           (delete 'check)
+           (replace
+            'build
+            (lambda* _
+              (zero? (system* "ldc2" "rdmd.d"))))
+           (replace
+            'install
+            (lambda* (#:key outputs #:allow-other-keys)
+              (let ((bin (string-append (assoc-ref outputs "out") "/bin")))
+                (mkdir-p bin)
+                (copy-file "rdmd" (string-append bin "/rdmd"))))))))
+      (native-inputs
+       `(("gcc" ,gcc)
+         ("ldc" ,ldc)))
+      (home-page "https://github.com/D-Programming-Language/tools/")
+      (synopsis "Tool for the D language which is used for compiling")
+      (description
+       "rdmd is a companion to the dmd compiler that simplifies the typical
+edit-compile-link-run or edit-make-run cycle to a rapid edit-run cycle. Like
+make and other tools, rdmd uses the relative dates of the files involved to
+minimize the amount of work necessary. Unlike make, rdmd tracks dependencies
+and freshness without requiring additional information from the user.")
+      (license license:boost1.0))))
 
 (define-public sambamba
   (package
