@@ -267,9 +267,8 @@ mixed model and some of its close relatives for genome-wide
 association studies (GWAS).")
     (license license:gpl3))))
 
-
 (define-public rdmd
-  (let ((commit "4dba6877c481c1a911a7d50714da8fbd80022f0e"))
+  (let ((commit "4dba6877c"))
     (package
       (name "rdmd")
       (version "20160217")
@@ -287,10 +286,10 @@ association studies (GWAS).")
        '(#:phases
          (modify-phases %standard-phases
            (delete 'configure)
-           (delete 'check)
+           (delete 'check) ; There is no Makefile, so there's no 'make check'.
            (replace
             'build
-            (lambda* _
+            (lambda _
               (zero? (system* "ldc2" "rdmd.d"))))
            (replace
             'install
@@ -299,8 +298,7 @@ association studies (GWAS).")
                 (mkdir-p bin)
                 (copy-file "rdmd" (string-append bin "/rdmd"))))))))
       (native-inputs
-       `(("gcc" ,gcc)
-         ("ldc" ,ldc)))
+       `(("ldc" ,ldc)))
       (home-page "https://github.com/D-Programming-Language/tools/")
       (synopsis "Tool for the D language which is used for compiling")
       (description
