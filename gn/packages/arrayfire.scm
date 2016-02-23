@@ -65,6 +65,7 @@
     (inputs
      `(("boost" ,boost)
        ("bzip2" ,bzip2)
+       ("glfw" ,glfw)
        ("curl" ,curl)
        ("dbus" ,dbus)
        ("enca" ,enca)
