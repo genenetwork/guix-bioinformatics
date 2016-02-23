@@ -310,7 +310,9 @@ minimize the amount of work necessary.  Unlike make, rdmd tracks dependencies
 and freshness without requiring additional information from the user.")
       (license license:boost1.0))))
 
+
 (define-public sambamba
+  ;;(let ((commit "8fe1bda92423c7c97a52ef81c6871fd6569fd1da"))
   (let ((commit "2ca5a2dbac5ab90c3b4c588519edc3edcb71df84"))
     (package
       (name "sambamba")
@@ -319,11 +321,14 @@ and freshness without requiring additional information from the user.")
         (method git-fetch)
         (uri (git-reference                
               (url "https://github.com/pjotrp/sambamba.git")
+              ;;(url "https://github.com/roelj/sambamba.git")
               (commit commit)))
         (file-name (string-append name "-" version "-checkout"))
         (sha256
          (base32
-          "1f14wn9aaxwjkmla6pzq3s28741carbr2v0fd2v2mm1dcpwnrqz5"))))
+          "1f14wn9aaxwjkmla6pzq3s28741carbr2v0fd2v2mm1dcpwnrqz5"
+          ;;"14gx0hhn039xhgkf5hbvffn9d0ld4zn9ka2zvvdi16k441sc8wjh"
+          ))))
       (build-system gnu-build-system)
       ;; (inputs
       ;;  `(("ldc" ,ldc)
@@ -395,7 +400,10 @@ and freshness without requiring additional information from the user.")
            (replace
             'build
             (lambda* (#:key inputs make-flags #:allow-other-keys)
-              (zero? (system* "make" "-f" "Makefile.guix" "CC=gcc" "D_COMPILER=ldc2")))))))
+              (zero? (system* "make" "-f" "Makefile.guix" "CC=gcc"
+                              "D_COMPILER=ldc2"
+                              (string-append "LDC_LIB_PATH="
+                                (assoc-ref inputs "ldc") "/lib"))))))))
       (home-page "https://github.com/lomereiter/sambamba")
       (synopsis "A tool for working with SAM and BAM files written in D.")
       (description
