@@ -310,82 +310,97 @@ and freshness without requiring additional information from the user.")
       (license license:boost1.0))))
 
 (define-public sambamba
-  (let ((commit "2ca5a2dba"))
-  (package
-    (name "sambamba")
-    (version (string-append "0.5.9-" commit))
-    (source (origin
-             (method git-fetch)
-             (uri (git-reference                
-                   ;; https://github.com/pjotrp/sambamba.git
-                   (url "https://github.com/pjotrp/sambamba.git")
-                   (commit commit)))
-             (file-name (string-append name "-" commit)) 
+  (let ((commit "8fe1bda92423c7c97a52ef81c6871fd6569fd1da"))
+  ;;(let ((commit "2ca5a2dbac5ab90c3b4c588519edc3edcb71df84"))
+    (package
+      (name "sambamba")
+      (version (string-append "0.5.9-" commit))
+      (source (origin
+        (method git-fetch)
+        (uri (git-reference                
+              ;; https://github.com/pjotrp/sambamba.git
+              (url "https://github.com/roelj/sambamba.git")
+              (commit commit)))
+        (file-name (string-append name "-" (string-take commit 7)))
+        (sha256
+         (base32
+          ;;"1f14wn9aaxwjkmla6pzq3s28741carbr2v0fd2v2mm1dcpwnrqz5"
+          "14gx0hhn039xhgkf5hbvffn9d0ld4zn9ka2zvvdi16k441sc8wjh"))))
+      (build-system gnu-build-system)
+      ;; (inputs
+      ;;  `(("ldc" ,ldc)
+      ;;    ;; These are currently included in "ldc".
+      ;;    ;;("druntime-ldc" ,druntime-ldc)
+      ;;    ;;("phobos2-ldc" ,phobos2-ldc)
+      ;;    ("lz4" ,lz4)))
+      (native-inputs
+       `(("ldc" ,ldc)
+         ;;("druntime-ldc" ,druntime-ldc)
+         ;;("phobos2-ldc" ,phobos2-ldc)
+         ("lz4" ,lz4)
+         ("rdmd" ,rdmd)
+         ("zlib" ,zlib)
+         ("gcc" ,gcc)
+         ("lz4-src"
+          ,(origin
+             (method url-fetch)
+             (uri (string-append
+                   "https://github.com/Cyan4973/lz4/archive/r131.tar.gz"))
+             (file-name "lz4-131.tar.gz")
              (sha256
-              (base32
-               "1f14wn9aaxwjkmla6pzq3s28741carbr2v0fd2v2mm1dcpwnrqz5"))))
-    (build-system gnu-build-system)
-    (inputs
-     `(("ldc" ,ldc)
-       ;; These are currently included in "ldc".
-       ;;("druntime-ldc" ,druntime-ldc)
-       ;;("phobos2-ldc" ,phobos2-ldc)
-       ("lz4" ,lz4)))
-    (native-inputs
-     `(("ldc" ,ldc)
-       ;;("druntime-ldc" ,druntime-ldc)
-       ;;("phobos2-ldc" ,phobos2-ldc)
-       ("lz4" ,lz4)
-       ("gcc" ,gcc)
-       ("rdmd" ,rdmd)
-       ("htslib-src"
-        ,(origin
-           (method url-fetch)
-           (uri (string-append
-                 "https://github.com/lomereiter/htslib/archive/0.2.0-rc10.tar.gz"))
-           (file-name (string-append "htslib-0.2.0-rc10.tar.gz"))
-           (sha256
-            (base32 "1k6dlf6m8yayhcp7b4yisgw1xqdy1xg2xyrllss6ld0wg00hfcbs"))))
-       ("biod-src"
-        ,(origin
-           (method git-fetch)
-           (uri (git-reference
-                 (url "https://github.com/biod/BioD.git")
-                 (commit "7efdb8a2f7fdcd71c9ad9596be48d1262bb1bd5b")))
-           (sha256
-            (base32 "09icc2bjsg9y4hxjim4ql275izadf0kh1nnmapg8manyz6bc8svf"))
-           (file-name "biod")))))
-    (arguments
-     '(#:phases 
-       (modify-phases %standard-phases
-         (delete 'configure)
-         (add-after 'unpack 'unpack-htslib-sources
-           (lambda* (#:key inputs #:allow-other-keys)
-             ;; Unfortunately, the current build compiles htslib statically
-             ;; into the executable.  Instead of patching the build files
-             ;; for Guix, this should be resolved on Sambamba upstream.  For
-             ;; now, just extract the source code to the desired directory.
-             (and (with-directory-excursion "htslib"
-              (zero? (system* "tar" "xvf" (assoc-ref inputs "htslib-src")
-                              "--strip-components=1")))
-              (zero? (system* "cp" "-R" (assoc-ref inputs "biod-src") "BioD"))
-                  )))
-         ;; Building a production-quality executable is done with a
-         ;; non-default make target. Adding it with #:make-flags breaks
-         ;; building tests.  Therefore, the default make got replaced by this.
-         (replace
-          'build
-          (lambda* (#:key (make-flags '()) #:allow-other-keys)
-            (zero? (system* "make" "-f" "Makefile.guix" make-flags)))))))
-    (home-page "https://github.com/lomereiter/sambamba")
-    (synopsis "A tool for working with SAM and BAM files written in D.")
-    (description
-     "Sambamba is a high performance modern robust and fast tool (and
+              (base32 "1vfg305zvj50hwscad24wan9jar6nqj14gdk2hqyr7bb9mhh0kcx"))))
+         ("htslib-src"
+          ,(origin
+             (method url-fetch)
+             (uri (string-append
+                   "https://github.com/lomereiter/htslib/archive/0.2.0-rc10.tar.gz"))
+             (file-name (string-append name "-" version ".tar.gz"))
+             (sha256
+              (base32 "1k6dlf6m8yayhcp7b4yisgw1xqdy1xg2xyrllss6ld0wg00hfcbs"))))
+         ("biod-src"
+          ,(origin
+             (method git-fetch)
+             (uri (git-reference
+                   (url "https://github.com/biod/BioD.git")
+                   (commit "7efdb8a2f7fdcd71c9ad9596be48d1262bb1bd5b")))
+             (sha256
+              (base32 "09icc2bjsg9y4hxjim4ql275izadf0kh1nnmapg8manyz6bc8svf"))
+             (file-name "biod-src")))))
+      (arguments
+       `(#:tests? #f
+         #:make-flags (list "CC=gcc" "D_COMPILER=ldc2")
+         #:phases
+         (modify-phases %standard-phases
+           (delete 'configure)
+           (add-after 'unpack 'unpack-htslib-sources
+             (lambda* (#:key inputs #:allow-other-keys)
+               ;; Unfortunately, the current build compiles htslib statically
+               ;; into the executable.  Instead of patching the build files
+               ;; for Guix, this should be resolved on Sambamba upstream.  For
+               ;; now, just extract the source code to the desired directory.
+               (and (with-directory-excursion "htslib"
+                      (zero? (system* "tar" "xvf" (assoc-ref inputs "htslib-src")
+                                      "--strip-components=1")))
+                    (with-directory-excursion "lz4"
+                      (zero? (system* "tar" "xvf" (assoc-ref inputs "lz4-src")
+                                      "--strip-components=1")))
+                    (zero? (system* "ln" "--symbolic" (assoc-ref inputs "biod-src") "BioD")))))
+           ;; Building a production-quality executable is done with a
+           ;; non-default make target. Adding it with #:make-flags breaks
+           ;; building tests.  Therefore, the default make got replaced by this.
+           (replace
+            'build
+            (lambda* (#:key inputs #:allow-other-keys)
+              (zero? (system* "make" "sambamba-ldmd2-64")))))))
+      (home-page "https://github.com/lomereiter/sambamba")
+      (synopsis "A tool for working with SAM and BAM files written in D.")
+      (description
+       "Sambamba is a high performance modern robust and fast tool (and
 library), written in the D programming language, for working with SAM
 and BAM files.  Current parallelised functionality is an important
 subset of samtools functionality, including view, index, sort,
 markdup, and depth.")
-    (license license:gpl2+))))
+      (license license:gpl2+))))
 
 (define-public picard
   (package
