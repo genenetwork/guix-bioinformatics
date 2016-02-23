@@ -1,0 +1,59 @@
+;;; GNU Guix --- Functional package management for GNU
+;;; Copyright © 2016 Dennis Mungai <dmngaie@gmail.com>
+;;;
+;;; This file is part of GNU Guix.
+;;;
+;;; GNU Guix is free software; you can redistribute it and/or modify it
+;;; under the terms of the GNU General Public License as published by
+;;; the Free Software Foundation; either version 3 of the License, or (at
+;;; your option) any later version.
+;;;
+;;; GNU Guix is distributed in the hope that it will be useful, but
+;;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;; GNU General Public License for more details.
+;;;
+;;; You should have received a copy of the GNU General Public License
+;;; along with GNU Guix.  If not, see <http://www.gnu.org/licenses/>.
+
+(define-module (gnu packages OpenFYBA)
+  #:use-module ((guix licenses) #:prefix license:)
+  #:use-module (gnu packages)
+  #:use-module (guix packages)
+  #:use-module (guix download)
+  #:use-module (guix build-system gnu)
+  #:use-module (gnu packages linux)
+  #:use-module (gnu packages textutils)
+  #:use-module (gnu packages base)
+  #:use-module (gnu packages tls)
+  #:use-module (gnu packages zip)
+  #:use-module (gnu packages bootstrap)
+  #:use-module (guix git-download))
+
+(define-public OpenFYBA
+  (package
+   (name "OpenFYBA")
+   (version "4.4.1")
+   (source (origin
+             (method url-fetch)
+             (uri (string-append "https://github.com/kartverket/fyba/archive"
+                                 version ".tar.gz"))
+             (file-name (string-append name "-" version ".tar.gz"))
+             (sha256
+              (base32
+               "0ya1agi78d386skq353dk400fl11q6whfqmv31qrkn4g5vamixlr"))))
+    (inputs `(("openssl" ,openssl)                                          
+    (build-system gnu-build-system)    
+    (home-page "http://labs.kartverket.no/sos/")
+    (synopsis "source code release of the FYBA library")
+    (description
+     "OpenFYBA is the source code release of the FYBA library, distributed by the 
+National Mapping Authority of Norway (Statens kartverk) to read and write 
+files in the National geodata standard format SOSI. 
+The original library has a long history, and was originally developed for 
+systems as diverse as DOS, OS/2-16, OS/2-32, Win16, Win32, and various UNIX 
+variants (POSIX, HPUX, Silicon graphics). In Norwegian. It shows in the 
+source code. OpenFYBA has been tested to run at least on Windows and Linux 
+environments. ")
+    (license license:gpl2+)))
+

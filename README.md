@@ -32,7 +32,7 @@ Install slurm with
 
 ## Module system
 
-Install the module envirmonment with
+Install the module environment with
 
     git clone https://github.com/genenetwork/guix-bioinformatics.git
     export GUIX_PACKAGE_PATH=$PWD/guix-bioinformatics/
@@ -44,7 +44,7 @@ Install the module envirmonment with
 
 ## python2-numarray 1.5.2
 
-Install the module envirmonment with
+Install the module environment with
 
     git clone https://github.com/genenetwork/guix-bioinformatics.git
     export GUIX_PACKAGE_PATH=$PWD/guix-bioinformatics/
