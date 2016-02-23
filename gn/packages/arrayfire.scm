@@ -114,7 +114,7 @@
              (file-name (string-append name "-" version ".zip"))
              (sha256
               (base32
-               "0njplyalwwqh7xr7xc7klc6x06mq0ak8w2pxh85w8n4hxkmqqnf5"))))
+               "1g0jm80cakk60477zz9z1mpsznxaadsfm318yiigf6kackrkqfqg"))))
     (arguments `(#:configure-flags '("-DBUILD_SHARED_LIBS=ON")))
     (native-inputs
       `(("autoconf" ,autoconf)
