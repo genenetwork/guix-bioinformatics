@@ -39,6 +39,7 @@
   #:use-module (gnu packages glew)
   #:use-module (gnu packages pkg-config)
   #:use-module (gnu packages mesa)
+  #:use-module (gnu packages web)
   #:use-module (gnu packages linux))
 
 (define-public arrayfire
