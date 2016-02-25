@@ -178,7 +178,7 @@
               ("python2-pandas" ,python2-pandas)
               ("python2-parallel" ,python2-parallel)
               ("python2-passlib" ,python2-passlib)
-              ("python2-piddle-gn2" ,python2-piddle-gn2)
+              ("python2-piddle-gn" ,python2-piddle-gn)
               ("python2-redis" ,python2-redis)
               ("python2-requests" ,python2-requests)
               ("python2-rpy2" ,python2-rpy2)

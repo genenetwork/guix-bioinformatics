@@ -426,19 +426,20 @@ capabilities to the Python interpreter.")
      (method url-fetch)
      (uri (string-append
            "http://files.genenetwork.org/software/contrib/piddle-"
-version "-gn.tgz"))
+version ".tgz"))
      (sha256
       (base32
-       "0yl6frmhy94cmwzdks7ndc7nzh1ml2a4ch86gz2l7wcwpxjhwgmk"))))
+       "05gjnn31v7p0kh58qixrpcizcxqf3b7zv4a5kk8nsmqwgxh0c6gq"))))
 
     (build-system python-build-system)
-    ;; (native-inputs
-    ;; `(("python-setuptools" ,python-setuptools)))
+    (native-inputs
+     `(("python2-setuptools" ,python2-setuptools)))
     (arguments
-     `(#:python ,python-2
-       #:tests? #f
-       ))   ; no 'setup.py test' really!
-    (home-page "http://www.numpy.org/")
+     `(
+       #:python ,python-2
+       #:tests? #f   ; no 'setup.py test' really!
+    ))
+    (home-page #f)
     (synopsis "Canvas drawing library for python2 (old!)")
     (description #f)
     (license #f)))
