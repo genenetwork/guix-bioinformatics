@@ -16,12 +16,13 @@
 ;;; You should have received a copy of the GNU General Public License
 ;;; along with GNU Guix.  If not, see <http://www.gnu.org/licenses/>.
 
-(define-module (gnu packages arrayfire)
+(define-module (gn packages arrayfire)
   #:use-module (guix packages)
   #:use-module (guix download)
   #:use-module (guix build-system gnu)
-  #:use-module (guix cmake-build-system)
+  #:use-module (guix build-system cmake)
   #:use-module (guix licenses)
+  #:use-module (gnu packages algebra)
   #:use-module (gnu packages autotools)
   #:use-module (gnu packages curl)
   #:use-module (gnu packages gawk)
@@ -32,9 +33,9 @@
   #:use-module (gnu packages video)
   #:use-module (gnu packages tls)
   #:use-module (gnu packages textutils)
-  #:use-module (gnu packages fftw)
-  #:use-module (gnu packages fftw-openmpi)
-  #:use-module (gnu packages fftwf)
+  ;; #:use-module (gnu packages fftw)
+  ;; #:use-module (gnu packages fftw-openmpi) - in algebra
+  ;; #:use-module (gnu packages fftwf)
   #:use-module (gnu packages gl)
   #:use-module (gnu packages glew)
   #:use-module (gnu packages pkg-config)
