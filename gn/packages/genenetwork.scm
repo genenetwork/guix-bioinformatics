@@ -178,7 +178,7 @@
               ("python2-pandas" ,python2-pandas)
               ("python2-parallel" ,python2-parallel)
               ("python2-passlib" ,python2-passlib)
-              ("python2-piddle" ,python2-piddle)
+              ("python2-piddle-gn2" ,python2-piddle-gn2)
               ("python2-redis" ,python2-redis)
               ("python2-requests" ,python2-requests)
               ("python2-rpy2" ,python2-rpy2)
@@ -202,3 +202,35 @@
 
 ;; ./pre-inst-env guix download http://files.genenetwork.org/raw_database/db_webqtl_s.zip
 ;; 0sscjh0wml2lx0mb43vf4chg9gpbfi7abpjxb34n3kyny9ll557x
+
+(define-public genenetwork2-database-small
+  (let ((md5 "93e745e9c"))
+    (package
+    (name "genenetwork2-database-small")
+    (version "1.0")
+    (source
+     (origin
+       (method url-fetch)
+       (uri "http://files.genenetwork.org/raw_database/db_webqtl_s.zip")
+       (file-name (string-append name "-" md5)) 
+       (sha256
+        (base32 "0sscjh0wml2lx0mb43vf4chg9gpbfi7abpjxb34n3kyny9ll557x"))))
+    (build-system trivial-build-system)
+    (native-inputs `(("unzip" ,unzip)
+                     ("source" ,source)))
+
+    (arguments
+     `(#:modules ((guix build utils))
+       #:builder (begin
+                   (use-modules (guix build utils))
+                   (let ((source (assoc-ref %build-inputs "source"))
+                         (unzip (string-append (assoc-ref %build-inputs "unzip") "/bin/unzip"))
+                         )
+                   (and (mkdir "db")
+                        (zero? (system* unzip source "-d" "db"))
+                        (chdir "db"))))))
+    (home-page "http://genenetwork.org/")
+    (synopsis "Small database to run on genenetwork")
+    (description "Genenetwork installation + database.")
+    (license license:agpl3+))))
+
