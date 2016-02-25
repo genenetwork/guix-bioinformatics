@@ -325,39 +325,23 @@ and freshness without requiring additional information from the user.")
          (base32
           "1f14wn9aaxwjkmla6pzq3s28741carbr2v0fd2v2mm1dcpwnrqz5"))))
       (build-system gnu-build-system)
-      ;; (inputs
-      ;;  `(("ldc" ,ldc)
-      ;;    ;; These are currently included in "ldc".
-      ;;    ;;("druntime-ldc" ,druntime-ldc)
-      ;;    ;;("phobos2-ldc" ,phobos2-ldc)
-      ;;    ("lz4" ,lz4)))
       (native-inputs
        `(("ldc" ,ldc)
-         ;;("druntime-ldc" ,druntime-ldc)
-         ;;("phobos2-ldc" ,phobos2-ldc)
          ("lz4" ,lz4)
          ("rdmd" ,rdmd)
          ("zlib" ,zlib)
-         ("perl" ,perl) ; Needed for htslib
-         ("ruby" ,ruby) ; Needed for htslib
-         ("python" ,python) ; Needed for htslib
+         ("perl" ,perl) ; Needed for htslib tests?
+         ("ruby" ,ruby) ; Needed for htslib tests?
+         ("python" ,python) ; Needed for htslib tests?
          ("gcc" ,gcc)
-         ("lz4-src"
-          ,(origin
-             (method url-fetch)
-             (uri (string-append
-                   "https://github.com/Cyan4973/lz4/archive/r131.tar.gz"))
-             (file-name "lz4-r131.tar.gz")
-             (sha256
-              (base32 "1vfg305zvj50hwscad24wan9jar6nqj14gdk2hqyr7bb9mhh0kcx"))))
          ("htslib-src"
           ,(origin
              (method url-fetch)
-             (uri (string-append
-                   "https://github.com/lomereiter/htslib/archive/0.2.0-rc10.tar.gz"))
-             (file-name "htslib-0.2.0-rc10.tar.gz")
+             (uri "https://github.com/samtools/htslib/archive/1.3.tar.gz")
+             (file-name "htslib-1.3.tar.gz")
              (sha256
-              (base32 "1k6dlf6m8yayhcp7b4yisgw1xqdy1xg2xyrllss6ld0wg00hfcbs"))))
+              (base32 "1bqkif7yrqmiqak5yb74kgpb2lsdlg7y344qa1xkdg7k1l4m86i9"))
+             (patches (list (search-patch "htslib-add-cram_to_bam.patch")))))
          ("biod-src"
           ,(origin
              (method git-fetch)
@@ -369,33 +353,34 @@ and freshness without requiring additional information from the user.")
               (base32 "09icc2bjsg9y4hxjim4ql275izadf0kh1nnmapg8manyz6bc8svf"))))))
       (arguments
        `(#:tests? #f
-         ;;#:make-flags 
+         #:make-flags (list "-f" "Makefile.guix")
          #:phases
          (modify-phases %standard-phases
            (delete 'configure)
            (delete 'check)
            (add-after 'unpack 'unpack-htslib-sources
              (lambda* (#:key inputs #:allow-other-keys)
-               ;; Unfortunately, the current build compiles htslib statically
-               ;; into the executable.  Instead of patching the build files
-               ;; for Guix, this should be resolved on Sambamba upstream.  For
-               ;; now, just extract the source code to the desired directory.
+               ;; The current build compiles htslib statically into the
+               ;; executable.  On top of that, we need to patch the latest
+               ;; version of htslib to have it working with Sambamba.
                (and (with-directory-excursion "htslib"
                       (zero? (system* "tar" "xvf" (assoc-ref inputs "htslib-src")
                                       "--strip-components=1")))
-                    (with-directory-excursion "lz4"
-                      (zero? (system* "tar" "xvf" (assoc-ref inputs "lz4-src")
-                                      "--strip-components=1")))
-                    (and (zero? (system* "rm" "-r" "BioD"))
-                         (zero? (system* "ln" "--symbolic" "--no-target-directory"
-                                         (assoc-ref inputs "biod-src") "BioD"))))))
-           ;; Building a production-quality executable is done with a
-           ;; non-default make target. Adding it with #:make-flags breaks
-           ;; building tests.  Therefore, the default make got replaced by this.
+                    (zero? (system* "rm" "-r" "BioD"))
+                    (zero? (system* "ln" "--symbolic" "--no-target-directory"
+                                    (assoc-ref inputs "biod-src") "BioD")))))
            (replace
             'build
             (lambda* (#:key inputs make-flags #:allow-other-keys)
-              (zero? (system* "make" "-f" "Makefile.guix" "CC=gcc" "D_COMPILER=ldc2")))))))
+              (zero? (system* "make" "-f" "Makefile.guix"
+                              (string-append "LDC_LIB_PATH="
+                                             (assoc-ref inputs "ldc")
+                                             "/lib")))))
+           (replace
+            'install
+            (lambda* (#:key outputs #:allow-other-keys)
+              (let ((bin (string-append (assoc-ref outputs "out") "/bin")))
+                (install-file "build/sambamba" bin)))))))
       (home-page "https://github.com/lomereiter/sambamba")
       (synopsis "A tool for working with SAM and BAM files written in D.")
       (description
