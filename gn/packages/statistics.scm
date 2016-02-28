@@ -18,6 +18,7 @@
   #:use-module (gnu packages compression)
   #:use-module (gnu packages cpio)
   #:use-module (gnu packages file)
+  #:use-module (gnu packages gcc)
   #:use-module (gnu packages java)
   #:use-module (gnu packages linux)
   #:use-module (gnu packages machine-learning)
@@ -38,6 +39,90 @@
   #:use-module (gnu packages zip)
   #:use-module (gnu packages bootstrap)
   #:use-module (srfi srfi-1))
+
+(define-public r-acepack
+(package
+  (name "r-acepack")
+  (version "1.3-3.3")
+  (source
+    (origin
+      (method url-fetch)
+      (uri (cran-uri "acepack" version))
+      (sha256
+        (base32
+          "13ry3vyys12iplb14jfhmkrl9g5fxg3iijiggq4s4zb5m5436b1y"))))
+  (build-system r-build-system)
+  (inputs
+   `(("gfortran" ,gfortran)))
+  (home-page
+    "http://cran.r-project.org/web/packages/acepack")
+  (synopsis
+    "ace() and avas() for selecting regression transformations")
+  (description
+    "ACE and AVAS methods for choosing regression transformations.")
+  (license license:x11)))
+
+(define-public r-hmisc
+(package
+  (name "r-hmisc")
+  (version "3.17-2")
+  (source
+    (origin
+      (method url-fetch)
+      (uri (cran-uri "Hmisc" version))
+      (sha256
+        (base32
+          "110w5hbrl10isslqs0iq6w2ll0dafqyqznb50cdcallnlnvbvxrg"))))
+  (properties `((upstream-name . "Hmisc")))
+  (build-system r-build-system)
+  (propagated-inputs
+    `(("r-acepack" ,r-acepack)
+      ; ("r-cluster" ,r-cluster)
+      ; ("r-foreign" ,r-foreign)
+      ; ("r-formula" ,r-formula)
+      ("r-ggplot2" ,r-ggplot2)
+      ; ("r-grid" ,r-grid)
+      ("r-gridextra" ,r-gridextra)
+      ("r-gtable" ,r-gtable)
+      ("r-lattice" ,r-lattice)
+      ; ("r-latticeextra" ,r-latticeextra)
+      ; ("r-methods" ,r-methods)
+      ; ("r-nnet" ,r-nnet)
+      ; ("r-rpart" ,r-rpart)
+                                        ; ("r-survival" ,r-survival)))
+      ))
+  (home-page
+    "http://biostat.mc.vanderbilt.edu/Hmisc")
+  (synopsis "Harrell Miscellaneous")
+  (description
+    "Contains many functions useful for data analysis, high-level graphics, utility operations, functions for computing sample size and power, importing and annotating datasets, imputing missing values, advanced table making, variable clustering, character string manipulation, conversion of R objects to LaTeX code, and recoding variables.")
+  (license license:gpl2+)))
+
+(define-public r-doparallel
+(package
+  (name "r-doparallel")
+  (version "1.0.10")
+  (source
+    (origin
+      (method url-fetch)
+      (uri (cran-uri "doParallel" version))
+      (sha256
+        (base32
+          "1mddx25l25pw9d0csnx2q203dbg5hbrhkr1f08kw0p02a1lln0kh"))))
+  (properties `((upstream-name . "doParallel")))
+  (build-system r-build-system)
+  (propagated-inputs
+    `(("r-foreach" ,r-foreach)
+      ("r-iterators" ,r-iterators)
+      ;; ("r-parallel" ,r-parallel)
+      ))
+  (home-page
+    "http://cran.r-project.org/web/packages/doParallel")
+  (synopsis
+    "Foreach Parallel Adaptor for the 'parallel' Package")
+  (description
+    "Provides a parallel backend for the %dopar% function using the parallel package.")
+  (license license:gpl2+)))
 
 (define-public r-iterators
 (package

@@ -49,7 +49,7 @@
   #:use-module (srfi srfi-1))
 
 (define-public r-wgcna
-  (let ((commit "41b24edb522a200b671e8e25f6ffb67769113a49"))
+  (let ((commit "425bc170cc0873ddbd414675ac40f6d4d724c7cb"))
 (package
   (name "r-wgcna")
   (version (string-append "1.49-" commit))
@@ -62,18 +62,19 @@
            (file-name (string-append name "-" commit))
            (sha256
             (base32
-             "1ad2lgdz8dy8imn4my83jz4xqp4m3phyakfssmdjcp362g739p2w"))))
+             "1zqnsb8s3065rq1y2y3l79zi8wmdwjkcjls96ypycrb7pmdil58j"))))
   (properties `((upstream-name . "WGCNA")))
   (build-system r-build-system)
   (propagated-inputs
    `( ;; ("r-annotationdbi" ,r-annotationdbi)
      ; ("r-biocparallel" ,r-biocparallel)
      ("r-dynamictreecut" ,r-dynamictreecut)
+     ("r-doparallel" ,r-doparallel)
      ("r-fastcluster" ,r-fastcluster)
      ("r-foreach" ,r-foreach)
-     ; ("r-go-db" ,r-go-db)
+     ("r-go-db" ,r-go-db)
      ; ("r-grdevices" ,r-grdevices)
-     ; ("r-hmisc" ,r-hmisc)
+     ("r-hmisc" ,r-hmisc)
      ("r-impute" ,r-impute)
      ("r-matrixstats" ,r-matrixstats)
      ; ("r-parallel" ,r-parallel)
@@ -83,6 +84,9 @@
      ; ("r-survival" ,r-survival)
      ; ("r-utils" ,r-utils)
      ))
+    (arguments
+     `(
+       #:tests? #f))   ; no 'setup.py test'
   (home-page
     "http://www.genetics.ucla.edu/labs/horvath/CoexpressionNetwork/Rpackages/WGCNA/")
   (synopsis
