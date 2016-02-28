@@ -17,7 +17,7 @@
 ;;; along with GNU Guix.  If not, see <http://www.gnu.org/licenses/>.
 
 (define-module (gn packages arrayfire)
-  #:use-module ((guix packages)
+  #:use-module ((guix packages))
   #:use-module (guix download)
   #:use-module (guix build-system gnu)
   #:use-module (guix build-system cmake)
@@ -31,14 +31,15 @@
   #:use-module (gnu packages glib)
   #:use-module (gnu packages image)
   #:use-module (gnu packages video)
-  #:use-module (gnu packages tls)
+  ;;#:use-module (gnu packages tls)
   #:use-module (gnu packages textutils)
   #:use-module (gnu packages gl)
-  #:use-module (gnu packages glew)
+  ;;#:use-module (gnu packages glew)
   #:use-module (gnu packages pkg-config)
-  #:use-module (gnu packages mesa)
+  ;;#:use-module (gnu packages mesa)
   #:use-module (gnu packages web)
-  #:use-module (gnu packages linux)))
+  #:use-module (gnu packages ldc)
+  #:use-module (gnu packages linux))
 
 (define-public arrayfire
   (package
@@ -52,11 +53,7 @@
               (sha256
                (base32
                 "0rla0mi5wby8bkpzrj063y6js3d4dlfl3qwfvm8m8skfc21dz52p"))))
-    (build-system cmake-build-system)
-    (arguments 
-     `(#:configure-flags '("-DCMAKE_BUILD_TYPE=Release -DBUILD_OPENCL=ON")))
-    (native-inputs
-      `(("autoconf" ,autoconf)
+    (native-inputs `(("autoconf" ,autoconf)
         ("automake" ,automake)
         ("cmake" ,cmake)
         ("doxygen" ,doxygen)
@@ -68,8 +65,7 @@
         ("swig" ,swig)
         ("which" ,which)
         ("yasm" ,yasm)))
-    (inputs
-     `(("boost" ,boost)
+    (inputs `(("boost" ,boost)
        ("bzip2" ,bzip2)
        ("glfw" ,glfw)
        ("curl" ,curl)
@@ -118,7 +114,12 @@
        ("libxxf86vm" ,libxxf86vm)
        ("inputproto" ,inputproto)
        ("glproto" ,glproto)
+       ("cmake" ,cmake)
        ("zlib" ,zlib)))
+    (build-system cmake-build-system)
+    (arguments 
+     `(#:configure-flags '("-DCMAKE_BUILD_TYPE=Release -DBUILD_OPENCL=ON")))
+     
     (synopsis "ArrayFire: a general purpose GPU library. https://arrayfire.com")
     (description "ArrayFire is a high performance software library for parallel computing with an easy-to-use API. Its array based function set makes parallel programming simple.")
     (home-page "http://arrayfire.com/")
@@ -176,6 +177,7 @@
        ("unzip" ,unzip)
        ("zip" ,zip)
        ("zlib" ,zlib)))
+       
     (home-page "http://www.glfw.org/")
     (synopsis "glfw is an Open Source, multi-platform library for creating windows with OpenGL contexts and receiving input and events.")
     (description "glfw is an Open Source, multi-platform library for creating windows with OpenGL contexts and receiving input and events.")
