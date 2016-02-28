@@ -39,6 +39,91 @@
   #:use-module (gnu packages bootstrap)
   #:use-module (srfi srfi-1))
 
+(define-public r-iterators
+(package
+  (name "r-iterators")
+  (version "1.0.8")
+  (source
+    (origin
+      (method url-fetch)
+      (uri (cran-uri "iterators" version))
+      (sha256
+        (base32
+          "1f057pabs7ss9h1n244can26qsi5n2k3salrdk0b0vkphlrs4kmf"))))
+  (build-system r-build-system)
+  ;; (propagated-inputs `(("r-utils" ,r-utils)))
+  (home-page
+    "http://cran.r-project.org/web/packages/iterators")
+  (synopsis "Provides Iterator Construct for R")
+  (description
+    "Support for iterators, which allow a programmer to traverse through all the elements of a vector, list, or other collection of data.")
+  (license #f)))
+
+(define-public r-foreach
+(package
+  (name "r-foreach")
+  (version "1.4.3")
+  (source
+    (origin
+      (method url-fetch)
+      (uri (cran-uri "foreach" version))
+      (sha256
+        (base32
+          "10aqsd3rxz03s1qdb6gsb1cj89mj4vmh491zfpin4skj1xvkzw0y"))))
+  (build-system r-build-system)
+  (propagated-inputs `(("r-iterators" ,r-iterators)))
+  (home-page
+    "http://cran.r-project.org/web/packages/foreach")
+  (synopsis
+    "Provides Foreach Looping Construct for R")
+  (description
+    "Support for the foreach looping construct.  Foreach is an idiom that allows for iterating over elements in a collection, without the use of an explicit loop counter.  This package in particular is intended to be used for its return value, rather than for its side effects.  In that sense, it is similar to the standard lapply function, but doesn't require the evaluation of a function.  Using foreach without side effects also facilitates executing the loop in parallel.")
+  (license #f))
+)
+
+(define-public r-fastcluster
+(package
+  (name "r-fastcluster")
+  (version "1.1.16")
+  (source
+    (origin
+      (method url-fetch)
+      (uri (cran-uri "fastcluster" version))
+      (sha256
+        (base32
+          "0x2prrsnqi5iqx23ki6y2agndjq8058ph6s703i4avrqi1q1w1q8"))))
+  (build-system r-build-system)
+  (home-page
+    "http://danifold.net/fastcluster.html")
+  (synopsis
+    "Fast Hierarchical Clustering Routines for R and Python")
+  (description
+    "This is a two-in-one package which provides interfaces to both R and Python.  It implements fast hierarchical, agglomerative clustering routines.  Part of the functionality is designed as drop-in replacement for existing routines: \"linkage\" in the SciPy package \"scipy.cluster.hierarchy\", \"hclust\" in R's \"stats\" package, and the \"flashClust\" package.  It provides the same functionality with the benefit of a much faster implementation.  Moreover, there are memory-saving routines for clustering of vector data, which go beyond what the existing packages provide.  For information on how to install the Python files, see the file INSTALL in the source distribution.")
+  (license #f)))
+
+(define-public r-dynamictreecut
+(package
+  (name "r-dynamictreecut")
+  (version "1.62")
+  (source
+    (origin
+      (method url-fetch)
+      (uri (cran-uri "dynamicTreeCut" version))
+      (sha256
+        (base32
+          "1y11gg6k32wpsyb10kdv176ivczx2jlizs1xsrjrs6iwbncwzrkp"))))
+  (properties
+    `((upstream-name . "dynamicTreeCut")))
+  (build-system r-build-system)
+  ; (propagated-inputs `(("r-stats" ,r-stats)))
+  (home-page
+    "http://www.genetics.ucla.edu/labs/horvath/CoexpressionNetwork/BranchCutting/")
+  (synopsis
+    "Methods for detection of clusters in hierarchical clustering dendrograms.")
+  (description
+    "Contains methods for detection of clusters in hierarchical clustering dendrograms.")
+  (license license:gpl2+)))
+
 (define-public r-rcppeigen
 (package
   (name "r-rcppeigen")

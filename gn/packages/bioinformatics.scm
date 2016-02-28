@@ -49,27 +49,28 @@
   #:use-module (srfi srfi-1))
 
 (define-public r-wgcna
-  (let ((commit "9c68667c3"))
+  (let ((commit "41b24edb522a200b671e8e25f6ffb67769113a49"))
 (package
   (name "r-wgcna")
   (version (string-append "1.49-" commit))
   (source (origin
            (method git-fetch)
            (uri (git-reference
-                 (url "https://github.com/genenetwork/WGCNA.git")
+                 ;; (url "https://github.com/genenetwork/WGCNA.git")
+                 (url "https://github.com/pjotrp/WGCNA.git")
                  (commit commit)))
            (file-name (string-append name "-" commit))
            (sha256
             (base32
-             "0cv824wkdml9h9imsc30s2x3l8g65j44cpjbr1ydkk49g5qmf581"))))
+             "1ad2lgdz8dy8imn4my83jz4xqp4m3phyakfssmdjcp362g739p2w"))))
   (properties `((upstream-name . "WGCNA")))
   (build-system r-build-system)
   (propagated-inputs
    `( ;; ("r-annotationdbi" ,r-annotationdbi)
      ; ("r-biocparallel" ,r-biocparallel)
-     ; ("r-dynamictreecut" ,r-dynamictreecut)
-     ; ("r-fastcluster" ,r-fastcluster)
-     ; ("r-foreach" ,r-foreach)
+     ("r-dynamictreecut" ,r-dynamictreecut)
+     ("r-fastcluster" ,r-fastcluster)
+     ("r-foreach" ,r-foreach)
      ; ("r-go-db" ,r-go-db)
      ; ("r-grdevices" ,r-grdevices)
      ; ("r-hmisc" ,r-hmisc)
@@ -85,9 +86,14 @@
   (home-page
     "http://www.genetics.ucla.edu/labs/horvath/CoexpressionNetwork/Rpackages/WGCNA/")
   (synopsis
-    "Weighted Correlation Network Analysis")
+    "Weighted gene correlation network analysis (wgcna)")
   (description
-    "Functions necessary to perform Weighted Correlation Network Analysis on high-dimensional data.  Includes functions for rudimentary data cleaning, construction of correlation networks, module identification, summarization, and relating of variables and modules to sample traits.  Also includes a number of utility functions for data manipulation and visualization.")
+    "Functions necessary to perform Weighted Correlation Network
+Analysis on high-dimensional data.  Includes functions for rudimentary
+data cleaning, construction of correlation networks, module
+identification, summarization, and relating of variables and modules
+to sample traits.  Also includes a number of utility functions for
+data manipulation and visualization.")
   (license license:gpl2+))))
 
 (define-public qtlreaper
@@ -123,7 +129,7 @@ test.  For the permutation test, it performs only as many permutations
 as are necessary to define the empirical P-value to a reasonable
 precision. It also performs bootstrap resampling to estimate the
 confidence region for the location of a putative QTL.")
-    (license license:gpl2)))
+    (license license:gpl2+)))
 
 (define-public plink2
   (package
