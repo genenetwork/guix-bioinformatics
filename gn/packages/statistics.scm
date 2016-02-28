@@ -62,6 +62,54 @@
     "ACE and AVAS methods for choosing regression transformations.")
   (license license:x11)))
 
+(define-public r-latticeextra
+(package
+  (name "r-latticeextra")
+  (version "0.6-28")
+  (source
+    (origin
+      (method url-fetch)
+      (uri (cran-uri "latticeExtra" version))
+      (sha256
+        (base32
+          "1hkyqsa7klk5glj9y1hg3rxr5qilqw8h0017zc4c3nps7lr9a1kq"))))
+  (properties `((upstream-name . "latticeExtra")))
+  (build-system r-build-system)
+  (propagated-inputs
+    `( ;;("r-grdevices" ,r-grdevices)
+      ("r-gridbase" ,r-gridbase)
+      ("r-lattice" ,r-lattice)
+      ("r-rcolorbrewer" ,r-rcolorbrewer)
+      ))
+  (home-page
+    "http://latticeextra.r-forge.r-project.org/")
+  (synopsis
+    "Extra Graphical Utilities Based on Lattice")
+  (description
+    "Building on the infrastructure provided by the lattice package, this package provides several new high-level functions and methods, as well as additional utilities such as panel and axis annotation functions.")
+  (license license:gpl2+)))
+
+(define-public r-formula
+  (package
+  (name "r-formula")
+  (version "1.2-1")
+  (source
+    (origin
+      (method url-fetch)
+      (uri (cran-uri "Formula" version))
+      (sha256
+        (base32
+          "02in5325zzrqbhlygx6s0dinj6ymw845q70y56frqacv25ayzcax"))))
+  (properties `((upstream-name . "Formula")))
+  (build-system r-build-system)
+  (home-page
+    "http://cran.r-project.org/web/packages/Formula")
+  (synopsis "Extended Model Formulas")
+  (description
+    "Infrastructure for extended formulas with multiple parts on the right-hand side and/or multiple responses on the left-hand side.")
+  (license #f))
+)
+
 (define-public r-hmisc
 (package
   (name "r-hmisc")
@@ -75,17 +123,21 @@
           "110w5hbrl10isslqs0iq6w2ll0dafqyqznb50cdcallnlnvbvxrg"))))
   (properties `((upstream-name . "Hmisc")))
   (build-system r-build-system)
+  (inputs
+   `(("gfortran" ,gfortran)))
+  (arguments
+   `(#:tests? #f))   ; no 'setup.py test'
   (propagated-inputs
     `(("r-acepack" ,r-acepack)
       ; ("r-cluster" ,r-cluster)
       ; ("r-foreign" ,r-foreign)
-      ; ("r-formula" ,r-formula)
+      ("r-formula" ,r-formula)
       ("r-ggplot2" ,r-ggplot2)
       ; ("r-grid" ,r-grid)
       ("r-gridextra" ,r-gridextra)
       ("r-gtable" ,r-gtable)
       ("r-lattice" ,r-lattice)
-      ; ("r-latticeextra" ,r-latticeextra)
+      ("r-latticeextra" ,r-latticeextra)
       ; ("r-methods" ,r-methods)
       ; ("r-nnet" ,r-nnet)
       ; ("r-rpart" ,r-rpart)
