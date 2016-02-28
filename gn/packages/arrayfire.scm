@@ -17,7 +17,7 @@
 ;;; along with GNU Guix.  If not, see <http://www.gnu.org/licenses/>.
 
 (define-module (gn packages arrayfire)
-  #:use-module (guix packages)
+  #:use-module ((guix packages)
   #:use-module (guix download)
   #:use-module (guix build-system gnu)
   #:use-module (guix build-system cmake)
@@ -33,15 +33,12 @@
   #:use-module (gnu packages video)
   #:use-module (gnu packages tls)
   #:use-module (gnu packages textutils)
-  ;; #:use-module (gnu packages fftw)
-  ;; #:use-module (gnu packages fftw-openmpi) - in algebra
-  ;; #:use-module (gnu packages fftwf)
   #:use-module (gnu packages gl)
   #:use-module (gnu packages glew)
   #:use-module (gnu packages pkg-config)
   #:use-module (gnu packages mesa)
   #:use-module (gnu packages web)
-  #:use-module (gnu packages linux))
+  #:use-module (gnu packages linux)))
 
 (define-public arrayfire
   (package
@@ -51,11 +48,13 @@
               (method url-fetch)
               (uri (string-append "https://github.com/arrayfire/arrayfire/archive/" version 
                                   ".tar.gz"))
+              (file-name (string-append name "-" version ".tar.gz"))
               (sha256
                (base32
                 "0rla0mi5wby8bkpzrj063y6js3d4dlfl3qwfvm8m8skfc21dz52p"))))
     (build-system cmake-build-system)
-    (arguments `(#:configure-flags '("-DCMAKE_BUILD_TYPE=Release -DBUILD_OPENCL=ON")))
+    (arguments 
+     `(#:configure-flags '("-DCMAKE_BUILD_TYPE=Release -DBUILD_OPENCL=ON")))
     (native-inputs
       `(("autoconf" ,autoconf)
         ("automake" ,automake)
@@ -179,7 +178,6 @@
        ("zlib" ,zlib)))
     (home-page "http://www.glfw.org/")
     (synopsis "glfw is an Open Source, multi-platform library for creating windows with OpenGL contexts and receiving input and events.")
-    (description "glfw is an Open Source, multi-platform library for creating windows with OpenGL contexts and receiving input and events. It is easy to integrate into existing applications and does not lay claim to the main loop.
-GLFW is written in C and has native support for Windows, OS X and many Unix-like systems using the X Window System, such as Linux and FreeBSD.
-GLFW is licensed under the zlib/libpng license.")
+    (description "glfw is an Open Source, multi-platform library for creating windows with OpenGL contexts and receiving input and events.")
     (license license:gpl2+)))
+
