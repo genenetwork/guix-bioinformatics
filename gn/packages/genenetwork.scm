@@ -158,6 +158,7 @@
     (propagated-inputs `(  ;; propagated for development purposes
               ("python" ,python-2) ;; probably superfluous
               ("r" ,r)
+              ("r-wgcna" ,r-wgcna)
               ("redis" ,redis)
               ("mysql" ,mysql)
               ("gemma" ,gemma-git)

@@ -48,6 +48,28 @@
   #:use-module (gn packages statistics)
   #:use-module (srfi srfi-1))
 
+
+(define-public r-biocpreprocesscore
+  (package
+    (name "r-biocpreprocesscore")
+    (version "1.32.0")
+    (source (origin
+              (method url-fetch)
+              (uri (bioconductor-uri "preprocessCore" version))
+              (sha256
+               (base32
+                "07isghjkqm91rg37l1fzpjrbq36b7w4pbsi95wwh6a8qq7r69z1n"))))
+    (properties
+     `((upstream-name . "BiocpreprocessCore")
+       (r-repository . bioconductor)))
+    (build-system r-build-system)
+    (home-page "http://bioconductor.org/packages/preprocessCore")
+    (synopsis "Preprocess functions for Bioconductor")
+    (description
+     "A library of core preprocessing routines.")
+    (license license:lgpl2.0+)))
+
+
 (define-public r-wgcna
   (let ((commit "425bc170cc0873ddbd414675ac40f6d4d724c7cb"))
 (package
@@ -78,7 +100,7 @@
      ("r-impute" ,r-impute)
      ("r-matrixstats" ,r-matrixstats)
      ; ("r-parallel" ,r-parallel)
-     ; ("r-preprocesscore" ,r-preprocesscore)
+     ("r-biocpreprocesscore" ,r-biocpreprocesscore)
      ; ("r-splines" ,r-splines)
      ; ("r-stats" ,r-stats)
      ; ("r-survival" ,r-survival)
