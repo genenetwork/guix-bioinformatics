@@ -49,25 +49,28 @@
   #:use-module (srfi srfi-1))
 
 (define-public r-wgcna
+  (let ((commit "9c68667c3"))
 (package
   (name "r-wgcna")
-  (version "1.48")
-  (source
-    (origin
-      (method url-fetch)
-      (uri (cran-uri "WGCNA" version))
-      (sha256
-        (base32
-          "18yl2v3s279saq318vd5hlwnqfm89rxmjjji778d2d26vviaf6bn"))))
+  (version (string-append "1.49-" commit))
+  (source (origin
+           (method git-fetch)
+           (uri (git-reference
+                 (url "https://github.com/genenetwork/WGCNA.git")
+                 (commit commit)))
+           (file-name (string-append name "-" commit))
+           (sha256
+            (base32
+             "0cv824wkdml9h9imsc30s2x3l8g65j44cpjbr1ydkk49g5qmf581"))))
   (properties `((upstream-name . "WGCNA")))
   (build-system r-build-system)
   (propagated-inputs
    `( ;; ("r-annotationdbi" ,r-annotationdbi)
-     ("r-biocparallel" ,r-biocparallel)
+     ; ("r-biocparallel" ,r-biocparallel)
      ; ("r-dynamictreecut" ,r-dynamictreecut)
      ; ("r-fastcluster" ,r-fastcluster)
      ; ("r-foreach" ,r-foreach)
-     ("r-go-db" ,r-go-db)
+     ; ("r-go-db" ,r-go-db)
      ; ("r-grdevices" ,r-grdevices)
      ; ("r-hmisc" ,r-hmisc)
      ("r-impute" ,r-impute)
@@ -85,7 +88,7 @@
     "Weighted Correlation Network Analysis")
   (description
     "Functions necessary to perform Weighted Correlation Network Analysis on high-dimensional data.  Includes functions for rudimentary data cleaning, construction of correlation networks, module identification, summarization, and relating of variables and modules to sample traits.  Also includes a number of utility functions for data manipulation and visualization.")
-  (license license:gpl2+)))
+  (license license:gpl2+))))
 
 (define-public qtlreaper
   (package
