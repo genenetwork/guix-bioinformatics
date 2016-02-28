@@ -269,48 +269,6 @@ mixed model and some of its close relatives for genome-wide
 association studies (GWAS).")
     (license license:gpl3))))
 
-(define-public rdmd
-  (let ((commit "4dba6877c"))
-    (package
-      (name "rdmd")
-      (version "20160217")
-      (source (origin
-                (method git-fetch)
-                (uri (git-reference
-                      (url "https://github.com/D-Programming-Language/tools.git")
-                      (commit commit)))
-                (file-name (string-append name "-" commit))
-                (sha256
-                 (base32
-                  "1pcx5lyqzrip86f4vv60x292rpvnwsq2hvl1znm9x9rn68f34m45"))))
-      (build-system gnu-build-system)
-      (arguments
-       '(#:phases
-         (modify-phases %standard-phases
-           (delete 'configure)
-           (delete 'check) ; There is no Makefile, so there's no 'make check'.
-           (replace
-            'build
-            (lambda _
-              (zero? (system* "ldc2" "rdmd.d"))))
-           (replace
-            'install
-            (lambda* (#:key outputs #:allow-other-keys)
-              (let ((bin (string-append (assoc-ref outputs "out") "/bin")))
-                (mkdir-p bin)
-                (copy-file "rdmd" (string-append bin "/rdmd"))))))))
-      (native-inputs
-       `(("ldc" ,ldc)))
-      (home-page "https://github.com/D-Programming-Language/tools/")
-      (synopsis "Tool for the D language which is used for compiling")
-      (description
-       "rdmd is a companion to the dmd compiler that simplifies the typical
-edit-compile-link-run or edit-make-run cycle to a rapid edit-run cycle.  Like
-make and other tools, rdmd uses the relative dates of the files involved to
-minimize the amount of work necessary.  Unlike make, rdmd tracks dependencies
-and freshness without requiring additional information from the user.")
-      (license license:boost1.0))))
-
 (define-public sambamba
   (let ((commit "2ca5a2dbac5ab90c3b4c588519edc3edcb71df84"))
     (package
