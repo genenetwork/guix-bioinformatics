@@ -495,11 +495,14 @@ and freshness without requiring additional information from the user.")
          ("htslib-src"
           ,(origin
              (method url-fetch)
-             (uri "https://github.com/samtools/htslib/archive/1.3.tar.gz")
-             (file-name "htslib-1.3.tar.gz")
+             (uri (string-append "https://github.com/lomereiter/htslib/archive/"
+                    "2f3c3ea7b301f9b45737a793c0b2dcf0240e5ee5" ".tar.gz"))
+             ;;(uri "https://github.com/samtools/htslib/archive/1.3.tar.gz")
+             (file-name "htslib-2f3c3ea7b.tar.gz")
              (sha256
-              (base32 "1bqkif7yrqmiqak5yb74kgpb2lsdlg7y344qa1xkdg7k1l4m86i9"))
-             (patches (list (search-patch "htslib-add-cram_to_bam.patch")))))
+              (base32 "0bl6w856afnbgdsw8bybsxpqsyf2ba3f12rqh47hhpxvv866g08w"))))
+              ;;(base32 "1bqkif7yrqmiqak5yb74kgpb2lsdlg7y344qa1xkdg7k1l4m86i9"))
+             ;;(patches (list (search-patch "htslib-add-cram_to_bam.patch")))))
          ("biod-src"
           ,(origin
              (method git-fetch)
