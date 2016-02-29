@@ -16,7 +16,7 @@
 ;;; You should have received a copy of the GNU General Public License
 ;;; along with GNU Guix.  If not, see <http://www.gnu.org/licenses/>.
 
-(define-module (gn packages OpenFYBA)
+(define-module (gn packages openfyba)
   #:use-module ((guix licenses))
   #:use-module (gnu packages)
   #:use-module (gnu packages autotools)
@@ -32,7 +32,7 @@
   #:use-module (gnu packages bootstrap)
   #:use-module (guix git-download))
 
-(define-public OpenFYBA
+(define-public openfyba
   (package
    (name "OpenFYBA")
    (version "4.1.1")
