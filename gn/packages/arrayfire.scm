@@ -38,7 +38,6 @@
   #:use-module (gnu packages web)
   #:use-module (gnu packages databases)
   #:use-module (gnu packages ldc)
-  #:use-module (gnu packages gcc)
   #:use-module (gnu packages python)
   #:use-module (gnu packages xorg)
   #:use-module (gnu packages version-control)  
@@ -86,7 +85,6 @@
        ("glu" ,glu)
        ("openblas" ,openblas)
        ("git" ,git)
-       ("gcc" ,gcc)
        ("cmake" ,cmake)))
     (build-system cmake-build-system)
     (arguments 
