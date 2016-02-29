@@ -34,7 +34,7 @@
 
 (define-public openfyba
   (package
-   (name "OpenFYBA")
+   (name "openfyba")
    (version "4.1.1")
    (source (origin
              (method url-fetch)
