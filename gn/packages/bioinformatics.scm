@@ -48,43 +48,79 @@
   #:use-module (gn packages statistics)
   #:use-module (srfi srfi-1))
 
+
+(define-public r-biocpreprocesscore
+  (package
+    (name "r-biocpreprocesscore")
+    (version "1.32.0")
+    (source (origin
+              (method url-fetch)
+              (uri (bioconductor-uri "preprocessCore" version))
+              (sha256
+               (base32
+                "07isghjkqm91rg37l1fzpjrbq36b7w4pbsi95wwh6a8qq7r69z1n"))))
+    (properties
+     `((upstream-name . "BiocpreprocessCore")
+       (r-repository . bioconductor)))
+    (build-system r-build-system)
+    (home-page "http://bioconductor.org/packages/preprocessCore")
+    (synopsis "Preprocess functions for Bioconductor")
+    (description
+     "A library of core preprocessing routines.")
+    (license license:lgpl2.0+)))
+
+
 (define-public r-wgcna
+  (let ((commit "425bc170cc0873ddbd414675ac40f6d4d724c7cb"))
 (package
   (name "r-wgcna")
-  (version "1.48")
-  (source
-    (origin
-      (method url-fetch)
-      (uri (cran-uri "WGCNA" version))
-      (sha256
-        (base32
-          "18yl2v3s279saq318vd5hlwnqfm89rxmjjji778d2d26vviaf6bn"))))
+  (version (string-append "1.49-" commit))
+  (source (origin
+           (method git-fetch)
+           (uri (git-reference
+                 ;; (url "https://github.com/genenetwork/WGCNA.git")
+                 (url "https://github.com/pjotrp/WGCNA.git")
+                 (commit commit)))
+           (file-name (string-append name "-" commit))
+           (sha256
+            (base32
+             "1zqnsb8s3065rq1y2y3l79zi8wmdwjkcjls96ypycrb7pmdil58j"))))
   (properties `((upstream-name . "WGCNA")))
   (build-system r-build-system)
-  ;; (propagated-inputs
-    ;; `( ;; ("r-annotationdbi" ,r-annotationdbi)
-       ;; ("r-doparallel" ,r-doparallel)
-       ;; ("r-dynamictreecut" ,r-dynamictreecut)
-       ;; ("r-fastcluster" ,r-fastcluster)
-       ;; ("r-foreach" ,r-foreach)
-       ;; ("r-go.db" ,r-go.db)
-       ;; ("r-grdevices" ,r-grdevices)
-       ;; ("r-hmisc" ,r-hmisc)
-       ;; ("r-impute" ,r-impute)
-       ;; ("r-matrixstats" ,r-matrixstats)
-       ;; ("r-parallel" ,r-parallel)
-       ;; ("r-preprocesscore" ,r-preprocesscore)
-       ;; ("r-splines" ,r-splines)
-       ;; ("r-stats" ,r-stats)
-       ;; ("r-survival" ,r-survival)
-       ;; ("r-utils" ,r-utils)))
+  (propagated-inputs
+   `( ;; ("r-annotationdbi" ,r-annotationdbi)
+     ; ("r-biocparallel" ,r-biocparallel)
+     ("r-dynamictreecut" ,r-dynamictreecut)
+     ("r-doparallel" ,r-doparallel)
+     ("r-fastcluster" ,r-fastcluster)
+     ("r-foreach" ,r-foreach)
+     ("r-go-db" ,r-go-db)
+     ; ("r-grdevices" ,r-grdevices)
+     ("r-hmisc" ,r-hmisc)
+     ("r-impute" ,r-impute)
+     ("r-matrixstats" ,r-matrixstats)
+     ; ("r-parallel" ,r-parallel)
+     ("r-biocpreprocesscore" ,r-biocpreprocesscore)
+     ; ("r-splines" ,r-splines)
+     ; ("r-stats" ,r-stats)
+     ; ("r-survival" ,r-survival)
+     ; ("r-utils" ,r-utils)
+     ))
+    (arguments
+     `(
+       #:tests? #f))   ; no 'setup.py test'
   (home-page
     "http://www.genetics.ucla.edu/labs/horvath/CoexpressionNetwork/Rpackages/WGCNA/")
   (synopsis
-    "Weighted Correlation Network Analysis")
+    "Weighted gene correlation network analysis (wgcna)")
   (description
-    "Functions necessary to perform Weighted Correlation Network Analysis on high-dimensional data.  Includes functions for rudimentary data cleaning, construction of correlation networks, module identification, summarization, and relating of variables and modules to sample traits.  Also includes a number of utility functions for data manipulation and visualization.")
-  (license license:gpl2+)))
+    "Functions necessary to perform Weighted Correlation Network
+Analysis on high-dimensional data.  Includes functions for rudimentary
+data cleaning, construction of correlation networks, module
+identification, summarization, and relating of variables and modules
+to sample traits.  Also includes a number of utility functions for
+data manipulation and visualization.")
+  (license license:gpl2+))))
 
 (define-public qtlreaper
   (package
@@ -119,7 +155,7 @@ test.  For the permutation test, it performs only as many permutations
 as are necessary to define the empirical P-value to a reasonable
 precision. It also performs bootstrap resampling to estimate the
 confidence region for the location of a putative QTL.")
-    (license license:gpl2)))
+    (license license:gpl2+)))
 
 (define-public plink2
   (package
@@ -268,48 +304,6 @@ mixed model and some of its close relatives for genome-wide
 association studies (GWAS).")
     (license license:gpl3))))
 
-(define-public rdmd
-  (let ((commit "4dba6877c"))
-    (package
-      (name "rdmd")
-      (version "20160217")
-      (source (origin
-                (method git-fetch)
-                (uri (git-reference
-                      (url "https://github.com/D-Programming-Language/tools.git")
-                      (commit commit)))
-                (file-name (string-append name "-" commit))
-                (sha256
-                 (base32
-                  "1pcx5lyqzrip86f4vv60x292rpvnwsq2hvl1znm9x9rn68f34m45"))))
-      (build-system gnu-build-system)
-      (arguments
-       '(#:phases
-         (modify-phases %standard-phases
-           (delete 'configure)
-           (delete 'check) ; There is no Makefile, so there's no 'make check'.
-           (replace
-            'build
-            (lambda _
-              (zero? (system* "ldc2" "rdmd.d"))))
-           (replace
-            'install
-            (lambda* (#:key outputs #:allow-other-keys)
-              (let ((bin (string-append (assoc-ref outputs "out") "/bin")))
-                (mkdir-p bin)
-                (copy-file "rdmd" (string-append bin "/rdmd"))))))))
-      (native-inputs
-       `(("ldc" ,ldc)))
-      (home-page "https://github.com/D-Programming-Language/tools/")
-      (synopsis "Tool for the D language which is used for compiling")
-      (description
-       "rdmd is a companion to the dmd compiler that simplifies the typical
-edit-compile-link-run or edit-make-run cycle to a rapid edit-run cycle.  Like
-make and other tools, rdmd uses the relative dates of the files involved to
-minimize the amount of work necessary.  Unlike make, rdmd tracks dependencies
-and freshness without requiring additional information from the user.")
-      (license license:boost1.0))))
-
 (define-public sambamba
   (let ((commit "2ca5a2dbac5ab90c3b4c588519edc3edcb71df84"))
     (package
@@ -325,39 +319,23 @@ and freshness without requiring additional information from the user.")
          (base32
           "1f14wn9aaxwjkmla6pzq3s28741carbr2v0fd2v2mm1dcpwnrqz5"))))
       (build-system gnu-build-system)
-      ;; (inputs
-      ;;  `(("ldc" ,ldc)
-      ;;    ;; These are currently included in "ldc".
-      ;;    ;;("druntime-ldc" ,druntime-ldc)
-      ;;    ;;("phobos2-ldc" ,phobos2-ldc)
-      ;;    ("lz4" ,lz4)))
       (native-inputs
        `(("ldc" ,ldc)
-         ;;("druntime-ldc" ,druntime-ldc)
-         ;;("phobos2-ldc" ,phobos2-ldc)
          ("lz4" ,lz4)
          ("rdmd" ,rdmd)
          ("zlib" ,zlib)
-         ("perl" ,perl) ; Needed for htslib
-         ("ruby" ,ruby) ; Needed for htslib
-         ("python" ,python) ; Needed for htslib
+         ("perl" ,perl) ; Needed for htslib tests?
+         ("ruby" ,ruby) ; Needed for htslib tests?
+         ("python" ,python) ; Needed for htslib tests?
          ("gcc" ,gcc)
-         ("lz4-src"
-          ,(origin
-             (method url-fetch)
-             (uri (string-append
-                   "https://github.com/Cyan4973/lz4/archive/r131.tar.gz"))
-             (file-name "lz4-r131.tar.gz")
-             (sha256
-              (base32 "1vfg305zvj50hwscad24wan9jar6nqj14gdk2hqyr7bb9mhh0kcx"))))
          ("htslib-src"
           ,(origin
              (method url-fetch)
-             (uri (string-append
-                   "https://github.com/lomereiter/htslib/archive/0.2.0-rc10.tar.gz"))
-             (file-name "htslib-0.2.0-rc10.tar.gz")
+             (uri "https://github.com/samtools/htslib/archive/1.3.tar.gz")
+             (file-name "htslib-1.3.tar.gz")
              (sha256
-              (base32 "1k6dlf6m8yayhcp7b4yisgw1xqdy1xg2xyrllss6ld0wg00hfcbs"))))
+              (base32 "1bqkif7yrqmiqak5yb74kgpb2lsdlg7y344qa1xkdg7k1l4m86i9"))
+             (patches (list (search-patch "htslib-add-cram_to_bam.patch")))))
          ("biod-src"
           ,(origin
              (method git-fetch)
@@ -369,33 +347,34 @@ and freshness without requiring additional information from the user.")
               (base32 "09icc2bjsg9y4hxjim4ql275izadf0kh1nnmapg8manyz6bc8svf"))))))
       (arguments
        `(#:tests? #f
-         ;;#:make-flags 
+         #:make-flags (list "-f" "Makefile.guix")
          #:phases
          (modify-phases %standard-phases
            (delete 'configure)
            (delete 'check)
            (add-after 'unpack 'unpack-htslib-sources
              (lambda* (#:key inputs #:allow-other-keys)
-               ;; Unfortunately, the current build compiles htslib statically
-               ;; into the executable.  Instead of patching the build files
-               ;; for Guix, this should be resolved on Sambamba upstream.  For
-               ;; now, just extract the source code to the desired directory.
+               ;; The current build compiles htslib statically into the
+               ;; executable.  On top of that, we need to patch the latest
+               ;; version of htslib to have it working with Sambamba.
                (and (with-directory-excursion "htslib"
                       (zero? (system* "tar" "xvf" (assoc-ref inputs "htslib-src")
                                       "--strip-components=1")))
-                    (with-directory-excursion "lz4"
-                      (zero? (system* "tar" "xvf" (assoc-ref inputs "lz4-src")
-                                      "--strip-components=1")))
-                    (and (zero? (system* "rm" "-r" "BioD"))
-                         (zero? (system* "ln" "--symbolic" "--no-target-directory"
-                                         (assoc-ref inputs "biod-src") "BioD"))))))
-           ;; Building a production-quality executable is done with a
-           ;; non-default make target. Adding it with #:make-flags breaks
-           ;; building tests.  Therefore, the default make got replaced by this.
+                    (zero? (system* "rm" "-r" "BioD"))
+                    (zero? (system* "ln" "--symbolic" "--no-target-directory"
+                                    (assoc-ref inputs "biod-src") "BioD")))))
            (replace
             'build
             (lambda* (#:key inputs make-flags #:allow-other-keys)
-              (zero? (system* "make" "-f" "Makefile.guix" "CC=gcc" "D_COMPILER=ldc2")))))))
+              (zero? (system* "make" "-f" "Makefile.guix"
+                              (string-append "LDC_LIB_PATH="
+                                             (assoc-ref inputs "ldc")
+                                             "/lib")))))
+           (replace
+            'install
+            (lambda* (#:key outputs #:allow-other-keys)
+              (let ((bin (string-append (assoc-ref outputs "out") "/bin")))
+                (install-file "build/sambamba" bin)))))))
       (home-page "https://github.com/lomereiter/sambamba")
       (synopsis "A tool for working with SAM and BAM files written in D.")
       (description

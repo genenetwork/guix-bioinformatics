@@ -357,32 +357,89 @@ project)")
   (description #f)
   (license #f)))
 
-(define-public python2-piddle
+(define-public python2-pil-1.1.6
+  (package
+    (name "python2-pil")
+    (version "1.1.6")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (string-append
+              "http://effbot.org/downloads/Imaging-"
+              version ".tar.gz"))
+        (sha256
+          (base32
+            "141zidl3s9v4vfi3nsbg42iq1lc2a932gprqr1kij5hrnn53bmvx"))
+       (modules '((guix build utils)))
+       (snippet
+        ;; Adapt to newer freetype. As the package is unmaintained upstream,
+        ;; there is no use in creating a patch and reporting it.
+        '(substitute* "_imagingft.c"
+           (("freetype/")
+            "freetype2/")))))
+    (build-system python-build-system)
+    (inputs
+      `(("freetype" ,freetype)
+        ("libjpeg" ,libjpeg)
+        ("libtiff" ,libtiff)
+        ("python-setuptools" ,python-setuptools)
+        ("zlib" ,zlib)))
+    (arguments
+     ;; Only the fork python-pillow works with Python 3.
+     `(#:python ,python-2
+       #:tests? #f ; no check target
+       #:phases
+         (alist-cons-before
+          'build 'configure
+          ;; According to README and setup.py, manual configuration is
+          ;; the preferred way of "searching" for inputs.
+          ;; lcms is not found, TCL_ROOT refers to the unavailable tkinter.
+          (lambda* (#:key inputs #:allow-other-keys)
+            (let ((jpeg (assoc-ref inputs "libjpeg"))
+                  (zlib (assoc-ref inputs "zlib"))
+                  (tiff (assoc-ref inputs "libtiff"))
+                  (freetype (assoc-ref inputs "freetype")))
+              (substitute* "setup.py"
+                (("JPEG_ROOT = None")
+                 (string-append "JPEG_ROOT = libinclude(\"" jpeg "\")"))
+                (("ZLIB_ROOT = None")
+                 (string-append "ZLIB_ROOT = libinclude(\"" zlib "\")"))
+                (("TIFF_ROOT = None")
+                 (string-append "TIFF_ROOT = libinclude(\"" tiff "\")"))
+                (("FREETYPE_ROOT = None")
+                 (string-append "FREETYPE_ROOT = libinclude(\""
+                                freetype "\")")))))
+          %standard-phases)))
+    (home-page "http://www.pythonware.com/products/pil/")
+    (synopsis "Python Imaging Library")
+    (description "The Python Imaging Library (PIL) adds image processing
+capabilities to the Python interpreter.")
+    (license (license:x11-style
+               "file://README"
+               "See 'README' in the distribution."))))
+
+(define-public python2-piddle-gn
   (package
     (name "python2-piddle")
-    (version "1.0.15")
-    (source
-     (origin
-       (method url-fetch)
-       (uri (string-append
-             ;; http://sourceforge.net/projects/numpy/files/Old%20Numarray/1.5.2/numarray-1.5.2.tar.gz/download
-             "mirror://sourceforge/piddle/piddle-" version ".zip"
-             ))
-       ;; (file-name (string-append name "-" version ".zip"))
-       (sha256
-        (base32
-         "0jaxfsrcgqb5cf2wznxnpdws5khlrdixmg85lrhq2zl9cy6dfdya"))))
-    (native-inputs
-     `(("unzip" ,unzip)))
+    (version "1.0.15-gn")
+    (source (origin
+     (method url-fetch)
+     (uri (string-append
+           "http://files.genenetwork.org/software/contrib/piddle-"
+version ".tgz"))
+     (sha256
+      (base32
+       "05gjnn31v7p0kh58qixrpcizcxqf3b7zv4a5kk8nsmqwgxh0c6gq"))))
 
     (build-system python-build-system)
-    ;; (native-inputs
-    ;; `(("python-setuptools" ,python-setuptools)))
+    (native-inputs
+     `(("python2-setuptools" ,python2-setuptools)))
     (arguments
-     `(#:python ,python-2
-       #:tests? #f
-       ))   ; no 'setup.py test' really!
-    (home-page "http://www.numpy.org/")
+     `(
+       #:python ,python-2
+       #:tests? #f   ; no 'setup.py test' really!
+    ))
+    (home-page #f)
     (synopsis "Canvas drawing library for python2 (old!)")
     (description #f)
     (license #f)))
