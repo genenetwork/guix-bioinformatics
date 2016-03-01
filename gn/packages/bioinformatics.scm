@@ -470,19 +470,22 @@ association studies (GWAS).")
     (license license:gpl3))))
 
 (define-public sambamba
-  (let ((commit "2ca5a2dbac5ab90c3b4c588519edc3edcb71df84"))
+  (let ((commit "c810c7ef14957f16288c205fd7b9d25c4ae7005d"))
+  ;;(let ((commit "2ca5a2dbac5ab90c3b4c588519edc3edcb71df84"))
     (package
       (name "sambamba")
       (version (string-append "0.5.9-1." (string-take commit 7)))
       (source (origin
         (method git-fetch)
-        (uri (git-reference                
-              (url "https://github.com/pjotrp/sambamba.git")
+        (uri (git-reference
+              (url "https://github.com/roelj/sambamba.git")
+              ;;(url "https://github.com/pjotrp/sambamba.git")
               (commit commit)))
         (file-name (string-append name "-" version "-checkout"))
         (sha256
          (base32
-          "1f14wn9aaxwjkmla6pzq3s28741carbr2v0fd2v2mm1dcpwnrqz5"))))
+          "0c4c13f021sl7mf5xc2v8dbwsz775n8dlsrrn7qa6qgbx05n54dv"))))
+          ;;"1f14wn9aaxwjkmla6pzq3s28741carbr2v0fd2v2mm1dcpwnrqz5"))))
       (build-system gnu-build-system)
       (native-inputs
        `(("ldc" ,ldc)
@@ -500,6 +503,7 @@ association studies (GWAS).")
                     "2f3c3ea7b301f9b45737a793c0b2dcf0240e5ee5" ".tar.gz"))
              ;;(uri "https://github.com/samtools/htslib/archive/1.3.tar.gz")
              (file-name "htslib-2f3c3ea7b.tar.gz")
+             ;;(file-name "htslib-1.3.tar.gz")
              (sha256
               (base32 "0bl6w856afnbgdsw8bybsxpqsyf2ba3f12rqh47hhpxvv866g08w"))))
               ;;(base32 "1bqkif7yrqmiqak5yb74kgpb2lsdlg7y344qa1xkdg7k1l4m86i9"))
@@ -535,7 +539,7 @@ association studies (GWAS).")
             'build
             (lambda* (#:key inputs make-flags #:allow-other-keys)
               (zero? (system* "make" "-f" "Makefile.guix"
-                              (string-append "LDC_LIB_PATH="
+                       (string-append "LDC_LIB_PATH="
                                              (assoc-ref inputs "ldc")
                                              "/lib")))))
            (replace
