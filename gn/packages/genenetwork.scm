@@ -141,23 +141,24 @@
     (license license:agpl3+))))
 
 (define-public genenetwork2
-  (let ((commit "9e9475053"))
+  (let ((commit "8c9de7e5a2016f1e5b7397be1a8e84396e3a25c5"))
   (package
     (name "genenetwork2")
-    (version (string-append "2.0-" commit ))
+    (version (string-append "2.0-" (string-take commit 7) ))
     (source (origin
              (method git-fetch)
              (uri (git-reference
                    ;; (url "https://github.com/genenetwork/genenetwork2.git")
                    (url "https://github.com/pjotrp/genenetwork2.git")
                    (commit commit)))
-             (file-name (string-append name "-" commit)) 
+             (file-name (string-append name "-" (string-take commit 7))) 
              (sha256
               (base32
-               "09hvy9mf4dnmkb8qg49viffzrxk53m2kr4r955m84dxaa5pdrjhd"))))
+               "1kgigzs4rs6zgbqbnm40rcljzz9prlwv7n2n9an57jk58bjgf6v8"))))
     (propagated-inputs `(  ;; propagated for development purposes
               ("python" ,python-2) ;; probably superfluous
               ("r" ,r)
+              ("r-wgcna" ,r-wgcna)
               ("redis" ,redis)
               ("mysql" ,mysql)
               ("gemma" ,gemma-git)
@@ -178,7 +179,7 @@
               ("python2-pandas" ,python2-pandas)
               ("python2-parallel" ,python2-parallel)
               ("python2-passlib" ,python2-passlib)
-              ("python2-piddle" ,python2-piddle)
+              ("python2-piddle-gn" ,python2-piddle-gn)
               ("python2-redis" ,python2-redis)
               ("python2-requests" ,python2-requests)
               ("python2-rpy2" ,python2-rpy2)
@@ -202,3 +203,35 @@
 
 ;; ./pre-inst-env guix download http://files.genenetwork.org/raw_database/db_webqtl_s.zip
 ;; 0sscjh0wml2lx0mb43vf4chg9gpbfi7abpjxb34n3kyny9ll557x
+
+(define-public genenetwork2-database-small
+  (let ((md5 "93e745e9c"))
+    (package
+    (name "genenetwork2-database-small")
+    (version "1.0")
+    (source
+     (origin
+       (method url-fetch)
+       (uri "http://files.genenetwork.org/raw_database/db_webqtl_s.zip")
+       (file-name (string-append name "-" md5)) 
+       (sha256
+        (base32 "0sscjh0wml2lx0mb43vf4chg9gpbfi7abpjxb34n3kyny9ll557x"))))
+    (build-system trivial-build-system)
+    (native-inputs `(("unzip" ,unzip)
+                     ("source" ,source)))
+
+    (arguments
+     `(#:modules ((guix build utils))
+       #:builder (begin
+                   (use-modules (guix build utils))
+                   (let ((source (assoc-ref %build-inputs "source"))
+                         (unzip (string-append (assoc-ref %build-inputs "unzip") "/bin/unzip"))
+                         )
+                   (and (mkdir "db")
+                        (zero? (system* unzip source "-d" "db"))
+                        (chdir "db"))))))
+    (home-page "http://genenetwork.org/")
+    (synopsis "Small database to run on genenetwork")
+    (description "Genenetwork installation + database.")
+    (license license:agpl3+))))
+

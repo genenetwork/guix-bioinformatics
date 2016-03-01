@@ -48,201 +48,77 @@
   #:use-module (gn packages statistics)
   #:use-module (srfi srfi-1))
 
-(define-public freebayes
-  (let ((commit "3ce827d8ebf89bb3bdc097ee0fe7f46f9f30d5fb"))
-    (package
-      (name "freebayes")
-      (version (string-append "v1.0.2-" (string-take commit 7)))
-      (source (origin
-        (method git-fetch)
-        (uri (git-reference
-          (url "https://github.com/ekg/freebayes.git")
-          (commit commit)))
-        (file-name (string-append name "-" version "-checkout"))
-        (sha256
-         (base32 "1sbzwmcbn78ybymjnhwk7qc5r912azy5vqz2y7y81616yc3ba2a2"))))
-      (build-system gnu-build-system)
-      (native-inputs
-       `(("cmake" ,cmake)
-         ("htslib" ,htslib)
-         ;;("openmpi" ,openmpi)
-         ("zlib" ,zlib)
-         ("python" ,python-2)
-         ("perl" ,perl)
-         ("bamtools-src"
-          ,(origin
-             (method url-fetch)
-             (uri (string-append "https://github.com/ekg/bamtools/archive/"
-                  "e77a43f5097ea7eee432ee765049c6b246d49baa" ".tar.gz"))
-             (file-name "bamtools-src.tar.gz")
-             (sha256
-              (base32 "0rqymka21g6lfjfgxzr40pxz4c4fcl77jpy1np1li70pnc7h2cs1"))))
-         ("vcflib-src"
-          ,(origin
-             (method url-fetch)
-             (uri "https://github.com/vcflib/vcflib/archive/v1.0.0-rc1.tar.gz")
-             (file-name "vcflib-v1.0.0-rc1.tar.gz")
-             (sha256
-              (base32 "0313cxnf77i74mz4xwkpdablw2a1nn7si9g5ar3kr0ipm02afizx"))))
-         ;; These are submodules for the vcflib version used in freebayes
-         ("tabixpp-src"
-          ,(origin
-            (method url-fetch)
-            (uri (string-append "https://github.com/ekg/tabixpp/archive/"
-                  "bbc63a49acc52212199f92e9e3b8fba0a593e3f7" ".tar.gz"))
-            (file-name "tabixpp-src.tar.gz")
-            (sha256
-             (base32 "1s06wmpgj4my4pik5kp2lc42hzzazbp5ism2y4i2ajp2y1c68g77"))))
-         ("intervaltree-src"
-          ,(origin
-             (method url-fetch)
-             (uri (string-append
-                   "https://github.com/ekg/intervaltree/archive/"
-                   "dbb4c513d1ad3baac516fc1484c995daf9b42838" ".tar.gz"))
-             (file-name "intervaltree-src.tar.gz")
-             (sha256
-              (base32 "19prwpn2wxsrijp5svfqvfcxl5nj7zdhm3jycd5kqhl9nifpmcks"))))
-         ("smithwaterman-src"
-          ,(origin
-            (method url-fetch)
-            (uri (string-append "https://github.com/ekg/smithwaterman/archive/"
-                  "203218b47d45ac56ef234716f1bd4c741b289be1" ".tar.gz"))
-            (file-name "smithwaterman-src.tar.gz")
-            (sha256
-             (base32 "1lkxy4xkjn96l70jdbsrlm687jhisgw4il0xr2dm33qwcclzzm3b"))))
-         ("multichoose-src"
-          ,(origin
-            (method url-fetch)
-            (uri (string-append "https://github.com/ekg/multichoose/archive/"
-                  "73d35daa18bf35729b9ba758041a9247a72484a5" ".tar.gz"))
-            (file-name "multichoose-src.tar.gz")
-            (sha256
-             (base32 "07aizwdabmlnjaq4p3v0vsasgz1xzxid8xcxcw3paq8kh9c1099i"))))
-         ("fsom-src"
-          ,(origin
-            (method url-fetch)
-            (uri (string-append "https://github.com/ekg/fsom/archive/"
-                  "a6ef318fbd347c53189384aef7f670c0e6ce89a3" ".tar.gz"))
-            (file-name "fsom-src.tar.gz")
-            (sha256
-             (base32 "0q6b57ppxfvsm5cqmmbfmjpn5qvx2zi5pamvp3yh8gpmmz8cfbl3"))))
-         ("filevercmp-src"
-          ,(origin
-            (method url-fetch)
-            (uri (string-append "https://github.com/ekg/filevercmp/archive/"
-                  "1a9b779b93d0b244040274794d402106907b71b7" ".tar.gz"))
-            (file-name "filevercmp-src.tar.gz")
-            (sha256
-             (base32 "0yp5jswf5j2pqc6517x277s4s6h1ss99v57kxw9gy0jkfl3yh450"))))
-         ("fastahack-src"
-          ,(origin
-            (method url-fetch)
-            (uri (string-append "https://github.com/ekg/fastahack/archive/"
-                  "c68cebb4f2e5d5d2b70cf08fbdf1944e9ab2c2dd" ".tar.gz"))
-            (file-name "fastahack-src.tar.gz")
-            (sha256
-             (base32 "0j25lcl3jk1kls66zzxjfyq5ir6sfcvqrdwfcva61y3ajc9ssay2"))))
-            ))
-      (arguments
-       `(#:tests? #f
-         #:phases
-         (modify-phases %standard-phases
-           (delete 'configure)
-           (delete 'check)
-           (add-after 'unpack 'unpack-submodule-sources
-             (lambda* (#:key inputs #:allow-other-keys)
-               (let ((unpack (lambda (source target)
-                               (with-directory-excursion target
-                                 (zero? (system* "tar" "xvf"
-                                        (assoc-ref inputs source)
-                                        "--strip-components=1"))))))
-                 (and
-                  (unpack "bamtools-src" "bamtools")
-                  (unpack "vcflib-src" "vcflib")
-                  (unpack "intervaltree-src" "intervaltree")
-                  (unpack "fastahack-src" "vcflib/fastahack")
-                  (unpack "filevercmp-src" "vcflib/filevercmp")
-                  (unpack "intervaltree-src" "vcflib/intervaltree")
-                  (unpack "multichoose-src" "vcflib/multichoose")
-                  (unpack "smithwaterman-src" "vcflib/smithwaterman")
-                  (unpack "tabixpp-src" "vcflib/tabixpp")))))
-           (replace
-            'build
-            (lambda* (#:key inputs make-flags #:allow-other-keys)
-              (and
-               ;; We must compile Bamtools before we can compile the main
-               ;; project.
-               (with-directory-excursion "bamtools"
-                 (system* "mkdir" "build")
-                 (with-directory-excursion "build"
-                   (and (zero? (system* "cmake" "../"))
-                        (zero? (system* "make")))))
-               ;; We must compile vcflib before we can compile the main
-               ;; project.
-               (with-directory-excursion "vcflib"
-                 (with-directory-excursion "tabixpp"
-                   (zero? (system* "make")))
-                 (zero? (system* "make" "CC=gcc" "-Itabixpp")))
-               (zero? (system* "make" "src/version_git.h"))
-               (zero? (system* "make" "vcflib/Makefile")))))
-           (replace
-            'install
-            (lambda* (#:key outputs #:allow-other-keys)
-              (let ((bin (string-append (assoc-ref outputs "out") "/bin")))
-                (install-file "bin/freebayes" bin)
-                (install-file "bin/bamleftalign" bin))))
-           ;; (replace
-           ;;  'check
-           ;;  (lambda* (#:key outputs #:allow-other-keys)
-           ;;    (with-directory-excursion "test"
-           ;;      (zero? (system* "make" "test")))))
-             )))
-      (home-page "https://github.com/ekg/freebayes")
-      (synopsis "haplotype-based variant detector.")
-      (description "FreeBayes is a Bayesian genetic variant detector designed to
-find small polymorphisms, specifically SNPs (single-nucleotide polymorphisms),
-indels (insertions and deletions), MNPs (multi-nucleotide polymorphisms), and
-complex events (composite insertion and substitution events) smaller than the
-length of a short-read sequencing alignment.")
-      (license license:non-copyleft))))
+(define-public r-biocpreprocesscore
+  (package
+    (name "r-biocpreprocesscore")
+    (version "1.32.0")
+    (source (origin
+              (method url-fetch)
+              (uri (bioconductor-uri "preprocessCore" version))
+              (sha256
+               (base32
+                "07isghjkqm91rg37l1fzpjrbq36b7w4pbsi95wwh6a8qq7r69z1n"))))
+    (properties
+     `((upstream-name . "BiocpreprocessCore")
+       (r-repository . bioconductor)))
+    (build-system r-build-system)
+    (home-page "http://bioconductor.org/packages/preprocessCore")
+    (synopsis "Preprocess functions for Bioconductor")
+    (description
+     "A library of core preprocessing routines.")
+    (license license:lgpl2.0+)))
 
 (define-public r-wgcna
+  (let ((commit "425bc170cc0873ddbd414675ac40f6d4d724c7cb"))
 (package
   (name "r-wgcna")
-  (version "1.48")
-  (source
-    (origin
-      (method url-fetch)
-      (uri (cran-uri "WGCNA" version))
-      (sha256
-        (base32
-          "18yl2v3s279saq318vd5hlwnqfm89rxmjjji778d2d26vviaf6bn"))))
+  (version (string-append "1.49-" commit))
+  (source (origin
+           (method git-fetch)
+           (uri (git-reference
+                 ;; (url "https://github.com/genenetwork/WGCNA.git")
+                 (url "https://github.com/pjotrp/WGCNA.git")
+                 (commit commit)))
+           (file-name (string-append name "-" commit))
+           (sha256
+            (base32
+             "1zqnsb8s3065rq1y2y3l79zi8wmdwjkcjls96ypycrb7pmdil58j"))))
   (properties `((upstream-name . "WGCNA")))
   (build-system r-build-system)
-  ;; (propagated-inputs
-    ;; `( ;; ("r-annotationdbi" ,r-annotationdbi)
-       ;; ("r-doparallel" ,r-doparallel)
-       ;; ("r-dynamictreecut" ,r-dynamictreecut)
-       ;; ("r-fastcluster" ,r-fastcluster)
-       ;; ("r-foreach" ,r-foreach)
-       ;; ("r-go.db" ,r-go.db)
-       ;; ("r-grdevices" ,r-grdevices)
-       ;; ("r-hmisc" ,r-hmisc)
-       ;; ("r-impute" ,r-impute)
-       ;; ("r-matrixstats" ,r-matrixstats)
-       ;; ("r-parallel" ,r-parallel)
-       ;; ("r-preprocesscore" ,r-preprocesscore)
-       ;; ("r-splines" ,r-splines)
-       ;; ("r-stats" ,r-stats)
-       ;; ("r-survival" ,r-survival)
-       ;; ("r-utils" ,r-utils)))
+  (propagated-inputs
+   `( ;; ("r-annotationdbi" ,r-annotationdbi)
+     ; ("r-biocparallel" ,r-biocparallel)
+     ("r-dynamictreecut" ,r-dynamictreecut)
+     ("r-doparallel" ,r-doparallel)
+     ("r-fastcluster" ,r-fastcluster)
+     ("r-foreach" ,r-foreach)
+     ("r-go-db" ,r-go-db)
+     ; ("r-grdevices" ,r-grdevices)
+     ("r-hmisc" ,r-hmisc)
+     ("r-impute" ,r-impute)
+     ("r-matrixstats" ,r-matrixstats)
+     ; ("r-parallel" ,r-parallel)
+     ("r-biocpreprocesscore" ,r-biocpreprocesscore)
+     ; ("r-splines" ,r-splines)
+     ; ("r-stats" ,r-stats)
+     ; ("r-survival" ,r-survival)
+     ; ("r-utils" ,r-utils)
+     ))
+    (arguments
+     `(
+       #:tests? #f))   ; no 'setup.py test'
   (home-page
     "http://www.genetics.ucla.edu/labs/horvath/CoexpressionNetwork/Rpackages/WGCNA/")
   (synopsis
-    "Weighted Correlation Network Analysis")
+    "Weighted gene correlation network analysis (wgcna)")
   (description
-    "Functions necessary to perform Weighted Correlation Network Analysis on high-dimensional data.  Includes functions for rudimentary data cleaning, construction of correlation networks, module identification, summarization, and relating of variables and modules to sample traits.  Also includes a number of utility functions for data manipulation and visualization.")
-  (license license:gpl2+)))
+    "Functions necessary to perform Weighted Correlation Network
+Analysis on high-dimensional data.  Includes functions for rudimentary
+data cleaning, construction of correlation networks, module
+identification, summarization, and relating of variables and modules
+to sample traits.  Also includes a number of utility functions for
+data manipulation and visualization.")
+  (license license:gpl2+))))
 
 (define-public qtlreaper
   (package
@@ -277,7 +153,7 @@ test.  For the permutation test, it performs only as many permutations
 as are necessary to define the empirical P-value to a reasonable
 precision. It also performs bootstrap resampling to estimate the
 confidence region for the location of a putative QTL.")
-    (license license:gpl2)))
+    (license license:gpl2+)))
 
 (define-public plink2
   (package
@@ -425,48 +301,6 @@ Efficient Mixed Model Association algorithm for a standard linear
 mixed model and some of its close relatives for genome-wide
 association studies (GWAS).")
     (license license:gpl3))))
-
-(define-public rdmd
-  (let ((commit "4dba6877c"))
-    (package
-      (name "rdmd")
-      (version "20160217")
-      (source (origin
-                (method git-fetch)
-                (uri (git-reference
-                      (url "https://github.com/D-Programming-Language/tools.git")
-                      (commit commit)))
-                (file-name (string-append name "-" commit))
-                (sha256
-                 (base32
-                  "1pcx5lyqzrip86f4vv60x292rpvnwsq2hvl1znm9x9rn68f34m45"))))
-      (build-system gnu-build-system)
-      (arguments
-       '(#:phases
-         (modify-phases %standard-phases
-           (delete 'configure)
-           (delete 'check) ; There is no Makefile, so there's no 'make check'.
-           (replace
-            'build
-            (lambda _
-              (zero? (system* "ldc2" "rdmd.d"))))
-           (replace
-            'install
-            (lambda* (#:key outputs #:allow-other-keys)
-              (let ((bin (string-append (assoc-ref outputs "out") "/bin")))
-                (mkdir-p bin)
-                (copy-file "rdmd" (string-append bin "/rdmd"))))))))
-      (native-inputs
-       `(("ldc" ,ldc)))
-      (home-page "https://github.com/D-Programming-Language/tools/")
-      (synopsis "Tool for the D language which is used for compiling")
-      (description
-       "rdmd is a companion to the dmd compiler that simplifies the typical
-edit-compile-link-run or edit-make-run cycle to a rapid edit-run cycle.  Like
-make and other tools, rdmd uses the relative dates of the files involved to
-minimize the amount of work necessary.  Unlike make, rdmd tracks dependencies
-and freshness without requiring additional information from the user.")
-      (license license:boost1.0))))
 
 (define-public sambamba
   (let ((commit "2ca5a2dbac5ab90c3b4c588519edc3edcb71df84"))

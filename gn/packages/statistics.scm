@@ -18,6 +18,7 @@
   #:use-module (gnu packages compression)
   #:use-module (gnu packages cpio)
   #:use-module (gnu packages file)
+  #:use-module (gnu packages gcc)
   #:use-module (gnu packages java)
   #:use-module (gnu packages linux)
   #:use-module (gnu packages machine-learning)
@@ -38,6 +39,227 @@
   #:use-module (gnu packages zip)
   #:use-module (gnu packages bootstrap)
   #:use-module (srfi srfi-1))
+
+(define-public r-acepack
+(package
+  (name "r-acepack")
+  (version "1.3-3.3")
+  (source
+    (origin
+      (method url-fetch)
+      (uri (cran-uri "acepack" version))
+      (sha256
+        (base32
+          "13ry3vyys12iplb14jfhmkrl9g5fxg3iijiggq4s4zb5m5436b1y"))))
+  (build-system r-build-system)
+  (inputs
+   `(("gfortran" ,gfortran)))
+  (home-page
+    "http://cran.r-project.org/web/packages/acepack")
+  (synopsis
+    "ace() and avas() for selecting regression transformations")
+  (description
+    "ACE and AVAS methods for choosing regression transformations.")
+  (license license:x11)))
+
+(define-public r-latticeextra
+(package
+  (name "r-latticeextra")
+  (version "0.6-28")
+  (source
+    (origin
+      (method url-fetch)
+      (uri (cran-uri "latticeExtra" version))
+      (sha256
+        (base32
+          "1hkyqsa7klk5glj9y1hg3rxr5qilqw8h0017zc4c3nps7lr9a1kq"))))
+  (properties `((upstream-name . "latticeExtra")))
+  (build-system r-build-system)
+  (propagated-inputs
+    `( ;;("r-grdevices" ,r-grdevices)
+      ("r-gridbase" ,r-gridbase)
+      ("r-lattice" ,r-lattice)
+      ("r-rcolorbrewer" ,r-rcolorbrewer)
+      ))
+  (home-page
+    "http://latticeextra.r-forge.r-project.org/")
+  (synopsis
+    "Extra Graphical Utilities Based on Lattice")
+  (description
+    "Building on the infrastructure provided by the lattice package, this package provides several new high-level functions and methods, as well as additional utilities such as panel and axis annotation functions.")
+  (license license:gpl2+)))
+
+(define-public r-formula
+  (package
+  (name "r-formula")
+  (version "1.2-1")
+  (source
+    (origin
+      (method url-fetch)
+      (uri (cran-uri "Formula" version))
+      (sha256
+        (base32
+          "02in5325zzrqbhlygx6s0dinj6ymw845q70y56frqacv25ayzcax"))))
+  (properties `((upstream-name . "Formula")))
+  (build-system r-build-system)
+  (home-page
+    "http://cran.r-project.org/web/packages/Formula")
+  (synopsis "Extended Model Formulas")
+  (description
+    "Infrastructure for extended formulas with multiple parts on the right-hand side and/or multiple responses on the left-hand side.")
+  (license #f))
+)
+
+(define-public r-hmisc
+(package
+  (name "r-hmisc")
+  (version "3.17-2")
+  (source
+    (origin
+      (method url-fetch)
+      (uri (cran-uri "Hmisc" version))
+      (sha256
+        (base32
+          "110w5hbrl10isslqs0iq6w2ll0dafqyqznb50cdcallnlnvbvxrg"))))
+  (properties `((upstream-name . "Hmisc")))
+  (build-system r-build-system)
+  (inputs
+   `(("gfortran" ,gfortran)))
+  (arguments
+   `(#:tests? #f))   ; no 'setup.py test'
+  (propagated-inputs
+    `(("r-acepack" ,r-acepack)
+      ; ("r-cluster" ,r-cluster)
+      ; ("r-foreign" ,r-foreign)
+      ("r-formula" ,r-formula)
+      ("r-ggplot2" ,r-ggplot2)
+      ; ("r-grid" ,r-grid)
+      ("r-gridextra" ,r-gridextra)
+      ("r-gtable" ,r-gtable)
+      ("r-lattice" ,r-lattice)
+      ("r-latticeextra" ,r-latticeextra)
+      ; ("r-methods" ,r-methods)
+      ; ("r-nnet" ,r-nnet)
+      ; ("r-rpart" ,r-rpart)
+                                        ; ("r-survival" ,r-survival)))
+      ))
+  (home-page
+    "http://biostat.mc.vanderbilt.edu/Hmisc")
+  (synopsis "Harrell Miscellaneous")
+  (description
+    "Contains many functions useful for data analysis, high-level graphics, utility operations, functions for computing sample size and power, importing and annotating datasets, imputing missing values, advanced table making, variable clustering, character string manipulation, conversion of R objects to LaTeX code, and recoding variables.")
+  (license license:gpl2+)))
+
+(define-public r-doparallel
+(package
+  (name "r-doparallel")
+  (version "1.0.10")
+  (source
+    (origin
+      (method url-fetch)
+      (uri (cran-uri "doParallel" version))
+      (sha256
+        (base32
+          "1mddx25l25pw9d0csnx2q203dbg5hbrhkr1f08kw0p02a1lln0kh"))))
+  (properties `((upstream-name . "doParallel")))
+  (build-system r-build-system)
+  (propagated-inputs
+    `(("r-foreach" ,r-foreach)
+      ("r-iterators" ,r-iterators)
+      ;; ("r-parallel" ,r-parallel)
+      ))
+  (home-page
+    "http://cran.r-project.org/web/packages/doParallel")
+  (synopsis
+    "Foreach Parallel Adaptor for the 'parallel' Package")
+  (description
+    "Provides a parallel backend for the %dopar% function using the parallel package.")
+  (license license:gpl2+)))
+
+(define-public r-iterators
+(package
+  (name "r-iterators")
+  (version "1.0.8")
+  (source
+    (origin
+      (method url-fetch)
+      (uri (cran-uri "iterators" version))
+      (sha256
+        (base32
+          "1f057pabs7ss9h1n244can26qsi5n2k3salrdk0b0vkphlrs4kmf"))))
+  (build-system r-build-system)
+  ;; (propagated-inputs `(("r-utils" ,r-utils)))
+  (home-page
+    "http://cran.r-project.org/web/packages/iterators")
+  (synopsis "Provides Iterator Construct for R")
+  (description
+    "Support for iterators, which allow a programmer to traverse through all the elements of a vector, list, or other collection of data.")
+  (license #f)))
+
+(define-public r-foreach
+(package
+  (name "r-foreach")
+  (version "1.4.3")
+  (source
+    (origin
+      (method url-fetch)
+      (uri (cran-uri "foreach" version))
+      (sha256
+        (base32
+          "10aqsd3rxz03s1qdb6gsb1cj89mj4vmh491zfpin4skj1xvkzw0y"))))
+  (build-system r-build-system)
+  (propagated-inputs `(("r-iterators" ,r-iterators)))
+  (home-page
+    "http://cran.r-project.org/web/packages/foreach")
+  (synopsis
+    "Provides Foreach Looping Construct for R")
+  (description
+    "Support for the foreach looping construct.  Foreach is an idiom that allows for iterating over elements in a collection, without the use of an explicit loop counter.  This package in particular is intended to be used for its return value, rather than for its side effects.  In that sense, it is similar to the standard lapply function, but doesn't require the evaluation of a function.  Using foreach without side effects also facilitates executing the loop in parallel.")
+  (license #f))
+)
+
+(define-public r-fastcluster
+(package
+  (name "r-fastcluster")
+  (version "1.1.16")
+  (source
+    (origin
+      (method url-fetch)
+      (uri (cran-uri "fastcluster" version))
+      (sha256
+        (base32
+          "0x2prrsnqi5iqx23ki6y2agndjq8058ph6s703i4avrqi1q1w1q8"))))
+  (build-system r-build-system)
+  (home-page
+    "http://danifold.net/fastcluster.html")
+  (synopsis
+    "Fast Hierarchical Clustering Routines for R and Python")
+  (description
+    "This is a two-in-one package which provides interfaces to both R and Python.  It implements fast hierarchical, agglomerative clustering routines.  Part of the functionality is designed as drop-in replacement for existing routines: \"linkage\" in the SciPy package \"scipy.cluster.hierarchy\", \"hclust\" in R's \"stats\" package, and the \"flashClust\" package.  It provides the same functionality with the benefit of a much faster implementation.  Moreover, there are memory-saving routines for clustering of vector data, which go beyond what the existing packages provide.  For information on how to install the Python files, see the file INSTALL in the source distribution.")
+  (license #f)))
+
+(define-public r-dynamictreecut
+(package
+  (name "r-dynamictreecut")
+  (version "1.62")
+  (source
+    (origin
+      (method url-fetch)
+      (uri (cran-uri "dynamicTreeCut" version))
+      (sha256
+        (base32
+          "1y11gg6k32wpsyb10kdv176ivczx2jlizs1xsrjrs6iwbncwzrkp"))))
+  (properties
+    `((upstream-name . "dynamicTreeCut")))
+  (build-system r-build-system)
+  ; (propagated-inputs `(("r-stats" ,r-stats)))
+  (home-page
+    "http://www.genetics.ucla.edu/labs/horvath/CoexpressionNetwork/BranchCutting/")
+  (synopsis
+    "Methods for detection of clusters in hierarchical clustering dendrograms.")
+  (description
+    "Contains methods for detection of clusters in hierarchical clustering dendrograms.")
+  (license license:gpl2+)))
 
 (define-public r-rcppeigen
 (package
