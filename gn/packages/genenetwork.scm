@@ -141,20 +141,20 @@
     (license license:agpl3+))))
 
 (define-public genenetwork2
-  (let ((commit "9e9475053"))
+  (let ((commit "8c9de7e5a2016f1e5b7397be1a8e84396e3a25c5"))
   (package
     (name "genenetwork2")
-    (version (string-append "2.0-" commit ))
+    (version (string-append "2.0-" (string-take commit 7) ))
     (source (origin
              (method git-fetch)
              (uri (git-reference
                    ;; (url "https://github.com/genenetwork/genenetwork2.git")
                    (url "https://github.com/pjotrp/genenetwork2.git")
                    (commit commit)))
-             (file-name (string-append name "-" commit)) 
+             (file-name (string-append name "-" (string-take commit 7))) 
              (sha256
               (base32
-               "09hvy9mf4dnmkb8qg49viffzrxk53m2kr4r955m84dxaa5pdrjhd"))))
+               "1i8shsqci73z8gsswjack6l1wbph4x3d7vdg4ah8j6r2zsaf5782"))))
     (propagated-inputs `(  ;; propagated for development purposes
               ("python" ,python-2) ;; probably superfluous
               ("r" ,r)
