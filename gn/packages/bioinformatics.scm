@@ -20,6 +20,7 @@
   #:use-module (gnu packages boost)
   #:use-module (gnu packages compression)
   #:use-module (gnu packages databases)
+  #:use-module (gnu packages cmake)
   #:use-module (gnu packages cpio)
   #:use-module (gnu packages file)
   #:use-module (gnu packages gcc)
@@ -47,6 +48,172 @@
   #:use-module (gn packages python)
   #:use-module (gn packages statistics)
   #:use-module (srfi srfi-1))
+
+(define-public freebayes
+  (let ((commit "3ce827d8ebf89bb3bdc097ee0fe7f46f9f30d5fb"))
+    (package
+      (name "freebayes")
+      (version (string-append "v1.0.2-" (string-take commit 7)))
+      (source (origin
+        (method git-fetch)
+        (uri (git-reference
+          (url "https://github.com/ekg/freebayes.git")
+          (commit commit)))
+        (file-name (string-append name "-" version "-checkout"))
+        (sha256
+         (base32 "1sbzwmcbn78ybymjnhwk7qc5r912azy5vqz2y7y81616yc3ba2a2"))))
+      (build-system gnu-build-system)
+      (native-inputs
+       `(("cmake" ,cmake)
+         ("htslib" ,htslib)
+         ("zlib" ,zlib)
+         ("python" ,python-2)
+         ("perl" ,perl)
+         ("bamtools-src"
+          ,(origin
+             (method url-fetch)
+             (uri (string-append "https://github.com/ekg/bamtools/archive/"
+                  "e77a43f5097ea7eee432ee765049c6b246d49baa" ".tar.gz"))
+             (file-name "bamtools-src.tar.gz")
+             (sha256
+              (base32 "0rqymka21g6lfjfgxzr40pxz4c4fcl77jpy1np1li70pnc7h2cs1"))))
+         ("vcflib-src"
+          ,(origin
+             (method url-fetch)
+             (uri (string-append "https://github.com/vcflib/vcflib/archive/"
+                  "5ac091365fdc716cc47cc5410bb97ee5dc2a2c92" ".tar.gz"))
+             (file-name "vcflib-5ac0913.tar.gz")
+             (sha256
+              (base32 "0ywshwpif059z5h0g7zzrdfzzdj2gr8xvwlwcsdxrms3p9iy35h8"))))
+         ;; These are submodules for the vcflib version used in freebayes
+         ("tabixpp-src"
+          ,(origin
+            (method url-fetch)
+            (uri (string-append "https://github.com/ekg/tabixpp/archive/"
+                  "bbc63a49acc52212199f92e9e3b8fba0a593e3f7" ".tar.gz"))
+            (file-name "tabixpp-src.tar.gz")
+            (sha256
+             (base32 "1s06wmpgj4my4pik5kp2lc42hzzazbp5ism2y4i2ajp2y1c68g77"))))
+         ("intervaltree-src"
+          ,(origin
+             (method url-fetch)
+             (uri (string-append
+                   "https://github.com/ekg/intervaltree/archive/"
+                   "dbb4c513d1ad3baac516fc1484c995daf9b42838" ".tar.gz"))
+             (file-name "intervaltree-src.tar.gz")
+             (sha256
+              (base32 "19prwpn2wxsrijp5svfqvfcxl5nj7zdhm3jycd5kqhl9nifpmcks"))))
+         ("smithwaterman-src"
+          ,(origin
+            (method url-fetch)
+            (uri (string-append "https://github.com/ekg/smithwaterman/archive/"
+                  "203218b47d45ac56ef234716f1bd4c741b289be1" ".tar.gz"))
+            (file-name "smithwaterman-src.tar.gz")
+            (sha256
+             (base32 "1lkxy4xkjn96l70jdbsrlm687jhisgw4il0xr2dm33qwcclzzm3b"))))
+         ("multichoose-src"
+          ,(origin
+            (method url-fetch)
+            (uri (string-append "https://github.com/ekg/multichoose/archive/"
+                  "73d35daa18bf35729b9ba758041a9247a72484a5" ".tar.gz"))
+            (file-name "multichoose-src.tar.gz")
+            (sha256
+             (base32 "07aizwdabmlnjaq4p3v0vsasgz1xzxid8xcxcw3paq8kh9c1099i"))))
+         ("fsom-src"
+          ,(origin
+            (method url-fetch)
+            (uri (string-append "https://github.com/ekg/fsom/archive/"
+                  "a6ef318fbd347c53189384aef7f670c0e6ce89a3" ".tar.gz"))
+            (file-name "fsom-src.tar.gz")
+            (sha256
+             (base32 "0q6b57ppxfvsm5cqmmbfmjpn5qvx2zi5pamvp3yh8gpmmz8cfbl3"))))
+         ("filevercmp-src"
+          ,(origin
+            (method url-fetch)
+            (uri (string-append "https://github.com/ekg/filevercmp/archive/"
+                  "1a9b779b93d0b244040274794d402106907b71b7" ".tar.gz"))
+            (file-name "filevercmp-src.tar.gz")
+            (sha256
+             (base32 "0yp5jswf5j2pqc6517x277s4s6h1ss99v57kxw9gy0jkfl3yh450"))))
+         ("fastahack-src"
+          ,(origin
+            (method url-fetch)
+            (uri (string-append "https://github.com/ekg/fastahack/archive/"
+                  "c68cebb4f2e5d5d2b70cf08fbdf1944e9ab2c2dd" ".tar.gz"))
+            (file-name "fastahack-src.tar.gz")
+            (sha256
+             (base32 "0j25lcl3jk1kls66zzxjfyq5ir6sfcvqrdwfcva61y3ajc9ssay2"))))
+            ))
+      (arguments
+       `(#:tests? #f
+         #:phases
+         (modify-phases %standard-phases
+           (delete 'configure)
+           (delete 'check)
+           (add-after 'unpack 'unpack-submodule-sources
+             (lambda* (#:key inputs #:allow-other-keys)
+               (let ((unpack (lambda (source target)
+                               (with-directory-excursion target
+                                 (zero? (system* "tar" "xvf"
+                                        (assoc-ref inputs source)
+                                        "--strip-components=1"))))))
+                 (and
+                  (unpack "bamtools-src" "bamtools")
+                  (unpack "vcflib-src" "vcflib")
+                  (unpack "intervaltree-src" "intervaltree")
+                  (unpack "fastahack-src" "vcflib/fastahack")
+                  (unpack "filevercmp-src" "vcflib/filevercmp")
+                  (unpack "fsom-src" "vcflib/fsom")
+                  (unpack "intervaltree-src" "vcflib/intervaltree")
+                  (unpack "multichoose-src" "vcflib/multichoose")
+                  (unpack "smithwaterman-src" "vcflib/smithwaterman")
+                  (unpack "tabixpp-src" "vcflib/tabixpp")))))
+           (add-after 'unpack-submodule-sources 'fix-makefile
+             (lambda* (#:key inputs #:allow-other-keys)
+               (substitute* '("vcflib/Makefile")
+                 (("^GIT_VERSION.*") "GIT_VERSION = v1.0.0"))))
+           (replace
+            'build
+            (lambda* (#:key inputs make-flags #:allow-other-keys)
+              (and
+               ;; We must compile Bamtools before we can compile the main
+               ;; project.
+               (with-directory-excursion "bamtools"
+                 (system* "mkdir" "build")
+                 (with-directory-excursion "build"
+                   (and (zero? (system* "cmake" "../"))
+                        (zero? (system* "make")))))
+               ;; We must compile vcflib before we can compile the main
+               ;; project.
+               (with-directory-excursion "vcflib"
+                 (with-directory-excursion "tabixpp"
+                   (zero? (system* "make")))
+                 (zero? (system* "make" "CC=gcc"
+                   (string-append "CFLAGS=\"" "-Itabixpp "
+                     "-I" (assoc-ref inputs "htslib") "/include " "\"") "all")))
+
+               (with-directory-excursion "src"
+                 (zero? (system* "make"))))))
+           (replace
+            'install
+            (lambda* (#:key outputs #:allow-other-keys)
+              (let ((bin (string-append (assoc-ref outputs "out") "/bin")))
+                (install-file "bin/freebayes" bin)
+                (install-file "bin/bamleftalign" bin))))
+           ;; (replace
+           ;;  'check
+           ;;  (lambda* (#:key outputs #:allow-other-keys)
+           ;;    (with-directory-excursion "test"
+           ;;      (zero? (system* "make" "test")))))
+             )))
+      (home-page "https://github.com/ekg/freebayes")
+      (synopsis "haplotype-based variant detector.")
+      (description "FreeBayes is a Bayesian genetic variant detector designed to
+find small polymorphisms, specifically SNPs (single-nucleotide polymorphisms),
+indels (insertions and deletions), MNPs (multi-nucleotide polymorphisms), and
+complex events (composite insertion and substitution events) smaller than the
+length of a short-read sequencing alignment.")
+      (license license:non-copyleft))))
 
 (define-public r-biocpreprocesscore
   (package
