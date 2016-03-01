@@ -489,20 +489,24 @@ association studies (GWAS).")
       (build-system gnu-build-system)
       (native-inputs
        `(("ldc" ,ldc)
-         ("lz4" ,lz4)
+         ;;("lz4" ,lz4)
          ("rdmd" ,rdmd)
          ("zlib" ,zlib)
-         ("perl" ,perl) ; Needed for htslib tests?
-         ("ruby" ,ruby) ; Needed for htslib tests?
-         ("python" ,python) ; Needed for htslib tests?
+         ("perl" ,perl) ; Needed for htslib
+         ("ruby" ,ruby) ; Needed for htslib
+         ("python" ,python) ; Needed for htslib
          ("gcc" ,gcc)
+         ("lz4-src"
+          ,(origin
+             (method url-fetch)
+             (uri "https://github.com/Cyan4973/lz4/archive/160661c7a4cbf805f4af74d2e3932a17a66e6ce7.tar.gz")
+             (sha256
+              (base32 "131nnbsd5dh7c8sdqzc9kawh3mi0qi4qxznv7zhzfszlx4g2fd20"))))
          ("htslib-src"
           ,(origin
              (method url-fetch)
-             (uri (string-append "https://github.com/lomereiter/htslib/archive/"
-                    "2f3c3ea7b301f9b45737a793c0b2dcf0240e5ee5" ".tar.gz"))
+             (uri "https://github.com/lomereiter/htslib/archive/2f3c3ea7b301f9b45737a793c0b2dcf0240e5ee5.tar.gz")
              ;;(uri "https://github.com/samtools/htslib/archive/1.3.tar.gz")
-             (file-name "htslib-2f3c3ea7b.tar.gz")
              ;;(file-name "htslib-1.3.tar.gz")
              (sha256
               (base32 "0bl6w856afnbgdsw8bybsxpqsyf2ba3f12rqh47hhpxvv866g08w"))))
@@ -532,13 +536,16 @@ association studies (GWAS).")
                (and (with-directory-excursion "htslib"
                       (zero? (system* "tar" "xvf" (assoc-ref inputs "htslib-src")
                                       "--strip-components=1")))
+                    (with-directory-excursion "lz4"
+                      (zero? (system* "tar" "xvf" (assoc-ref inputs "lz4-src")
+                                      "--strip-components=1")))
                     (zero? (system* "rm" "-r" "BioD"))
                     (zero? (system* "ln" "--symbolic" "--no-target-directory"
                                     (assoc-ref inputs "biod-src") "BioD")))))
            (replace
             'build
             (lambda* (#:key inputs make-flags #:allow-other-keys)
-              (zero? (system* "make" "-f" "Makefile.guix"
+              (zero? (system* "make" "sambamba-ldmd2-64" "CC=gcc" "D_COMPILER=ldc2"
                        (string-append "LDC_LIB_PATH="
                                              (assoc-ref inputs "ldc")
                                              "/lib")))))
