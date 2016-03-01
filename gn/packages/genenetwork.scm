@@ -154,7 +154,7 @@
              (file-name (string-append name "-" (string-take commit 7))) 
              (sha256
               (base32
-               "1i8shsqci73z8gsswjack6l1wbph4x3d7vdg4ah8j6r2zsaf5782"))))
+               "1kgigzs4rs6zgbqbnm40rcljzz9prlwv7n2n9an57jk58bjgf6v8"))))
     (propagated-inputs `(  ;; propagated for development purposes
               ("python" ,python-2) ;; probably superfluous
               ("r" ,r)
