@@ -17,7 +17,7 @@
 ;;; along with GNU Guix.  If not, see <http://www.gnu.org/licenses/>.
 
 (define-module (gn packages hyphy)
-  #:use-module ((guix licenses))
+  #:use-module ((guix licenses) #:prefix license:)
   #:use-module (guix download)
   #:use-module (guix build-system gnu)
   #:use-module (guix build-system cmake)
@@ -54,52 +54,31 @@
               (sha256
                (base32
                 "00i3609nywb1xfq50p3kvfbvahql241ciq23jrf67z0yp4y5l5a9"))))
-    (native-inputs `(("autoconf" ,autoconf)
-        ("automake" ,automake)
-        ("cmake" ,cmake)
-        ("gawk" ,gawk)
-        ("libtool" ,libtool)
-        ("pkg-config" ,pkg-config)))
-    (inputs `(("boost" ,boost)
-       ("curl" ,curl)
-       ("atlas" ,atlas)
-       ("dbus" ,dbus)
-       ("enca" ,enca)
-       ("eudev" ,eudev)
-       ("glew" ,glew)
-       ("lapack" ,lapack)
-       ("libcap" ,libcap)
-       ("libjpeg" ,libjpeg)
-       ("libltdl" ,libltdl)
-       ("libtiff" ,libtiff)
-       ("libyajl" ,libyajl)
-       ("mesa-utils" ,mesa-utils)
-       ("mysql" ,mysql)
-       ("python" ,python-2)
-       ("freeimage" ,freeimage)
-       ("fftw" ,fftw)
-       ("fftwf" ,fftwf)
-       ("fftw-openmpi" ,fftw-openmpi)
-       ("glew" ,glew)
-       ("glu" ,glu)
-       ("openblas" ,openblas)
-       ("git" ,git)
-       ("cmake" ,cmake)))
+    (inputs
+     `(("python" ,python-2)
+       ("fftw-openmpi" ,fftw-openmpi)))
     (build-system cmake-build-system)
     (arguments
      '(#:phases (modify-phases %standard-phases
-                    (add-after 'unpack `bootstrap 
-                      (lambda _
-                        (zero? (system* "make" "MPI"))))))) 
+                 (add-after 'unpack `bootstrap 
+                  (lambda _
+                   (zero? (system* "make" "MPI"))))))) 
     (arguments 
-     `(#:configure-flags '("-DCMAKE_BUILD_TYPE=Release") #:tests? #f))     
-    (synopsis "hyphy: an open-source software package for the analysis of genetic sequences using techniques in phylogenetics, molecular evolution, and machine learning.")
-    (description "HyPhy is an open-source software package for the analysis of genetic sequences using techniques in phylogenetics, molecular evolution, and machine learning.
-     It features a complete graphical user interface (GUI) and a rich scripting language for limitless customization of analyses. Additionally, HyPhy features support for 
-     parallel computing environments (via message passing interface (MPI)) and it can be compiled as a shared library and called from other programming environments such as
-     Python and R. ")
+     `(#:configure-flags '("-DCMAKE_BUILD_TYPE=Release")
+       #:tests? #f))     
+    (synopsis "hyphy: an open-source software package for the analysis
+of genetic sequences using techniques in phylogenetics, molecular
+evolution, and machine learning.")
+    (description "HyPhy is an open-source software package for the
+analysis of genetic sequences using techniques in phylogenetics,
+molecular evolution, and machine learning.  It features a complete
+graphical user interface (GUI) and a rich scripting language for
+limitless customization of analyses. Additionally, HyPhy features
+support for parallel computing environments (via message passing
+interface (MPI)) and it can be compiled as a shared library and called
+from other programming environments such as Python and R. ")
     (home-page "http://hyphy.org")
-    (license (list gpl2 gpl2+ gpl3 gpl3+))))
+    (license license:expat)))
 
 
 
