@@ -20,7 +20,7 @@
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (guix git-download)
   #:use-module (guix download)
-  #:use-module (guix build-system gnu)
+  #:use-module (guix build-system cmake)
   #:use-module (guix packages)
   #:use-module (gnu packages algebra)
   #:use-module (gnu packages autotools)
@@ -60,6 +60,7 @@
 (native-inputs `(("autoconf" ,autoconf)
                 ("automake" ,automake)
                 ("libtool" ,libtool)
+                ("cmake" ,cmake)
                 ("pkg-config" ,pkg-config)))
 (inputs        `(("python" ,python-2)
                ("boost" ,boost)
@@ -69,10 +70,12 @@
                ("eudev" ,eudev)
                ("fftw-openmpi" ,fftw-openmpi)
                ("glew" ,glew)
+               ("hwloc" ,hwloc)
                ("libcap" ,libcap)
                ("libjpeg" ,libjpeg)
                ("libltdl" ,libltdl)
                ("libtiff" ,libtiff)
+               ("llvm" ,llvm)
                ("mesa-utils" ,mesa-utils)
                ("openmpi" ,openmpi)
                ("randrproto" ,randrproto)
@@ -81,9 +84,10 @@
                ("libxinerama" ,libxinerama)
                ("libxcursor" ,libxcursor)
                ("fftw-openmpi" ,fftw-openmpi)))
-    (build-system gnu-build-system)
-    (arguments
-     `(#:configure-flags '("--with-boost=yes --enable-icd --enable-install-opencl-headers ")))            
+    (build-system cmake-build-system)
+    (arguments 
+     `(#:configure-flags '("-DCMAKE_BUILD_TYPE=Release" "-DBUILD_SHARED_LIBS=ON")
+       #:tests? #f))                
     (synopsis "pocl: Portable Computing Language (pocl) aims to become a MIT-licensed
      open source implementation of the OpenCL standard which can be easily adapted for
      new targets and devices, both for homogeneous CPU and heterogenous GPUs/accelerators.")
