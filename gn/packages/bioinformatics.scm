@@ -49,6 +49,56 @@
   #:use-module (gn packages statistics)
   #:use-module (srfi srfi-1))
 
+(define-public freec
+  (package
+    (name "control-freec")
+    (version "8.7")
+    (source (origin
+      (method url-fetch)
+      (uri "http://bioinfo-out.curie.fr/projects/freec/src/FREEC_Linux64.tar.gz")
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256
+       (base32 "12sl7gxbklhvv0687qjhml1z4lwpcn159zcyxvawvclsrzqjmv0h"))))
+    (build-system gnu-build-system)
+    ;; The source code's filename indicates only a 64-bit Linux build.
+    ;; We need to investigate whether this is true.
+    (supported-systems '("x86_64-linux"))
+    (arguments
+     `(#:phases
+       (modify-phases %standard-phases
+         ;; There's no configure phase because there are no external
+         ;; dependencies.
+         (delete 'configure)
+         ;; There are no tests.
+         (delete 'check)
+         (replace
+          'unpack
+          (lambda* (#:key source #:allow-other-keys)
+            (and
+             (zero? (system* "mkdir" "source"))
+             (with-directory-excursion "source"
+               (zero? (system* "tar" "xvf" source))))))
+         (replace
+          'build
+          (lambda* (#:key inputs #:allow-other-keys)
+            (with-directory-excursion "source"
+              (zero? (system* "make")))))
+         (replace
+          'install
+          (lambda* (#:key outputs #:allow-other-keys)
+            (let ((bin (string-append (assoc-ref outputs "out") "/bin")))
+              (install-file "source/freec" bin)))))))
+    (home-page "http://bioinfo-out.curie.fr/projects/freec/")
+    (synopsis "Tool for detection of copy-number changes and allelic imbalances
+(including LOH) using deep-sequencing data")
+    (description "Control-FREEC automatically computes, normalizes, segments
+copy number and beta allele frequency (BAF) profiles, then calls copy number
+alterations and LOH.  The control (matched normal) sample is optional for whole
+genome sequencing data but mandatory for whole exome or targeted sequencing
+data.  For whole genome sequencing data analysis, the program can also use
+mappability data (files created by GEM). ")
+    (license license:gpl2+)))
+
 (define-public freebayes
   (let ((commit "3ce827d8ebf89bb3bdc097ee0fe7f46f9f30d5fb"))
     (package
