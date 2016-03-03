@@ -263,7 +263,7 @@ find small polymorphisms, specifically SNPs (single-nucleotide polymorphisms),
 indels (insertions and deletions), MNPs (multi-nucleotide polymorphisms), and
 complex events (composite insertion and substitution events) smaller than the
 length of a short-read sequencing alignment.")
-      (license license:non-copyleft))))
+      (license license:expat))))
 
 (define-public r-biocpreprocesscore
   (package
