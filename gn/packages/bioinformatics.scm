@@ -784,11 +784,12 @@ supported.")
                            (install-file file bin))
                          (find-files "bin" ".*"))
                 (install-file "libvcflib.a" lib)))))))
-      (home-page "https://github.com/ekg/freebayes")
-      (synopsis "haplotype-based variant detector.")
-      (description "FreeBayes is a Bayesian genetic variant detector designed to
-find small polymorphisms, specifically SNPs (single-nucleotide polymorphisms),
-indels (insertions and deletions), MNPs (multi-nucleotide polymorphisms), and
-complex events (composite insertion and substitution events) smaller than the
-length of a short-read sequencing alignment.")
+      (home-page "https://github.com/vcflib/vcflib/")
+      (synopsis "Library for parsing and manipulating VCF files")
+      (description "Vcflib provides methods to manipulate and interpret
+sequence variation as it can be described by VCF. It is both an API for parsing
+and operating on records of genomic variation as it can be described by the VCF
+format, and a collection of command-line utilities for executing complex
+manipulations on VCF files.")
       (license license:expat))))
+
