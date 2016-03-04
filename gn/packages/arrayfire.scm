@@ -19,6 +19,7 @@
 (define-module (gn packages arrayfire)
   #:use-module ((guix licenses))
   #:use-module (guix download)
+  #:use-module (guix git-download)
   #:use-module (guix build-system gnu)
   #:use-module (guix build-system cmake)
   #:use-module (guix packages)
@@ -36,7 +37,6 @@
   #:use-module (gnu packages pkg-config)
   #:use-module (gnu packages maths)
   #:use-module (gnu packages web)
-  #:use-module (gnu packages databases)
   #:use-module (gnu packages ldc)
   #:use-module (gnu packages python)
   #:use-module (gnu packages xorg)
@@ -44,30 +44,35 @@
   #:use-module (gnu packages linux))
 
 (define-public arrayfire
+(let ((commit "9ca1ea0"))
   (package
     (name "arrayfire")
-    (version "3.3.0")
+    (version "3.3.1-hotfix")
     (source (origin
-              (method url-fetch)
-              (uri (string-append "http://arrayfire.com/arrayfire_source/arrayfire-full-" version 
-                                  ".tar.bz2"))
-              (file-name (string-append name "-" version ".tar.bz2"))
+              (method git-fetch)
+              (uri (git-reference
+              (url "https://github.com/arrayfire/arrayfire.git")
+              (commit commit)))
+              (file-name (string-append name "-" commit))
               (sha256
                (base32
-                "07pbw6vzny3z86y890c0rx7rk31ddchxrrdslk661iq512xppr0g"))))
+                "0b270w9nyf2v7knda94x47c8snf06yb1jlj3cgdv8l5cq1q2bqgm"))))
     (native-inputs `(("autoconf" ,autoconf)
         ("automake" ,automake)
         ("cmake" ,cmake)
         ("gawk" ,gawk)
+        ("glew" ,glew)
         ("libtool" ,libtool)
         ("pkg-config" ,pkg-config)))
     (inputs `(("boost" ,boost)
        ("glfw" ,glfw)
        ("curl" ,curl)
+       ("atlas" ,atlas)
        ("dbus" ,dbus)
        ("enca" ,enca)
        ("eudev" ,eudev)
        ("glew" ,glew)
+       ("glib" ,glib)
        ("lapack" ,lapack)
        ("libcap" ,libcap)
        ("libjpeg" ,libjpeg)
@@ -75,7 +80,6 @@
        ("libtiff" ,libtiff)
        ("libyajl" ,libyajl)
        ("mesa-utils" ,mesa-utils)
-       ("mysql" ,mysql)
        ("python" ,python-2)
        ("freeimage" ,freeimage)
        ("fftw" ,fftw)
@@ -88,11 +92,11 @@
        ("cmake" ,cmake)))
     (build-system cmake-build-system)
     (arguments 
-     `(#:configure-flags '("-DCMAKE_BUILD_TYPE=Release -DBUILD_OPENCL=ON") #:tests? #f))     
+     `(#:configure-flags '("-DCMAKE_BUILD_TYPE=Release" "-DBUILD_OPENCL=OFF" "-DBUILD_GRAPHICS=OFF") #:tests? #f))     
     (synopsis "ArrayFire: a general purpose GPU library. https://arrayfire.com")
     (description "ArrayFire is a high performance software library for parallel computing with an easy-to-use API. Its array based function set makes parallel programming simple.")
     (home-page "http://arrayfire.com/")
-    (license (list gpl2 gpl2+ gpl3 gpl3+))))
+    (license (list gpl2 gpl2+ gpl3 gpl3+)))))
 
 (define-public glfw
   (package
@@ -104,13 +108,14 @@
                                  version ".tar.gz"))
              (sha256
               (base32
-               "08pixv8hd5xsccf7l8cqcijjqaq4k4da8qbp77wggal2fq445ika"))))
+               "067y98a9s78vpz7xsg889xnwfaza7c5gdv97yg9cgrdl0iljvsgp"))))
     (build-system cmake-build-system)
     (arguments `(#:configure-flags '("-DBUILD_SHARED_LIBS=ON") #:tests? #f))
     (native-inputs `(("autoconf" ,autoconf)
         ("automake" ,automake)
         ("cmake" ,cmake)
         ("libtool" ,libtool)
+        ("libpthread-stubs" ,libpthread-stubs)
         ("pkg-config" ,pkg-config)))
     (inputs `(("curl" ,curl)
        ("dbus" ,dbus)
@@ -127,7 +132,6 @@
        ("xineramaproto" ,xineramaproto)
        ("libxinerama" ,libxinerama)
        ("libxcursor" ,libxcursor)
-       ("mysql" ,mysql)
        ("python" ,python-2)))       
     (home-page "http://www.glfw.org/")
     (synopsis "glfw is an Open Source, multi-platform library for creating windows with OpenGL contexts and receiving input and events.")
