@@ -279,16 +279,14 @@ powerful language for representing information.")
         (base32
           "06qzgwk7j66k8ggx51i6wxx0f0zsppp7w4bh6gjd0cr9rfs86jn7"))))
   (build-system python-build-system)
-  (inputs
+  (propagated-inputs
    `(
      ("mysql" ,mysql)
      ("python-nose" ,python-nose)
      ("zlib" ,zlib)
      ("openssl" ,openssl)
      ("libgcrypt" ,libgcrypt)
-     ))
-  (propagated-inputs
-   `(("python-setuptools" ,python-setuptools)
+     ("python-setuptools" ,python-setuptools)
      ))
   (arguments
    `(#:tests? #f))   ; wants a running MySQL server
