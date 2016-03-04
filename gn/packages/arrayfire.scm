@@ -56,7 +56,7 @@
               (file-name (string-append name "-" commit))
               (sha256
                (base32
-                "0b270w9nyf2v7knda94x47c8snf06yb1jlj3cgdv8l5cq1q2bqgm"))))
+                "067y98a9s78vpz7xsg889xnwfaza7c5gdv97yg9cgrdl0iljvsgp"))))
     (native-inputs `(("autoconf" ,autoconf)
         ("automake" ,automake)
         ("cmake" ,cmake)
@@ -108,7 +108,7 @@
                                  version ".tar.gz"))
              (sha256
               (base32
-               "067y98a9s78vpz7xsg889xnwfaza7c5gdv97yg9cgrdl0iljvsgp"))))
+               "08pixv8hd5xsccf7l8cqcijjqaq4k4da8qbp77wggal2fq445ika"))))
     (build-system cmake-build-system)
     (arguments `(#:configure-flags '("-DBUILD_SHARED_LIBS=ON") #:tests? #f))
     (native-inputs `(("autoconf" ,autoconf)
