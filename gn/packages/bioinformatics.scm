@@ -49,6 +49,56 @@
   #:use-module (gn packages statistics)
   #:use-module (srfi srfi-1))
 
+(define-public freec
+  (package
+    (name "control-freec")
+    (version "8.7")
+    (source (origin
+      (method url-fetch)
+      (uri "http://bioinfo-out.curie.fr/projects/freec/src/FREEC_Linux64.tar.gz")
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256
+       (base32 "12sl7gxbklhvv0687qjhml1z4lwpcn159zcyxvawvclsrzqjmv0h"))))
+    (build-system gnu-build-system)
+    ;; The source code's filename indicates only a 64-bit Linux build.
+    ;; We need to investigate whether this is true.
+    (supported-systems '("x86_64-linux"))
+    (arguments
+     `(#:phases
+       (modify-phases %standard-phases
+         ;; There's no configure phase because there are no external
+         ;; dependencies.
+         (delete 'configure)
+         ;; There are no tests.
+         (delete 'check)
+         (replace
+          'unpack
+          (lambda* (#:key source #:allow-other-keys)
+            (and
+             (zero? (system* "mkdir" "source"))
+             (with-directory-excursion "source"
+               (zero? (system* "tar" "xvf" source))))))
+         (replace
+          'build
+          (lambda* (#:key inputs #:allow-other-keys)
+            (with-directory-excursion "source"
+              (zero? (system* "make")))))
+         (replace
+          'install
+          (lambda* (#:key outputs #:allow-other-keys)
+            (let ((bin (string-append (assoc-ref outputs "out") "/bin")))
+              (install-file "source/freec" bin)))))))
+    (home-page "http://bioinfo-out.curie.fr/projects/freec/")
+    (synopsis "Tool for detection of copy-number changes and allelic imbalances
+(including LOH) using deep-sequencing data")
+    (description "Control-FREEC automatically computes, normalizes, segments
+copy number and beta allele frequency (BAF) profiles, then calls copy number
+alterations and LOH.  The control (matched normal) sample is optional for whole
+genome sequencing data but mandatory for whole exome or targeted sequencing
+data.  For whole genome sequencing data analysis, the program can also use
+mappability data (files created by GEM). ")
+    (license license:gpl2+)))
+
 (define-public freebayes
   (let ((commit "3ce827d8ebf89bb3bdc097ee0fe7f46f9f30d5fb"))
     (package
@@ -213,7 +263,7 @@ find small polymorphisms, specifically SNPs (single-nucleotide polymorphisms),
 indels (insertions and deletions), MNPs (multi-nucleotide polymorphisms), and
 complex events (composite insertion and substitution events) smaller than the
 length of a short-read sequencing alignment.")
-      (license license:non-copyleft))))
+      (license license:expat))))
 
 (define-public r-biocpreprocesscore
   (package
@@ -614,3 +664,132 @@ supported.")
     (description
      "FastQC aims to provide a QC report which can spot problems which originate either in the sequencer or in the starting library material. It can either run as a stand alone interactive application for the immediate analysis of small numbers of FastQ files, or it can be run in a non-interactive mode where it would be suitable for integrating into a larger analysis pipeline for the systematic processing of large numbers of files.")
     (license license:gpl3+)))
+
+(define-public vcflib
+  (let ((commit "3ce827d8ebf89bb3bdc097ee0fe7f46f9f30d5fb"))
+    (package
+      (name "vcflib")
+      (version (string-append "v1.0.2-" (string-take commit 7)))
+      (source
+       (origin
+         (method url-fetch)
+         (uri (string-append "https://github.com/vcflib/vcflib/archive/"
+                "5ac091365fdc716cc47cc5410bb97ee5dc2a2c92" ".tar.gz"))
+         (file-name "vcflib-5ac0913.tar.gz")
+         (sha256
+          (base32 "0ywshwpif059z5h0g7zzrdfzzdj2gr8xvwlwcsdxrms3p9iy35h8"))))
+      (build-system gnu-build-system)
+      (native-inputs
+       `(("htslib" ,htslib)
+         ("zlib" ,zlib)
+         ("python" ,python-2)
+         ("perl" ,perl)
+         ("tabixpp-src"
+          ,(origin
+            (method url-fetch)
+            (uri (string-append "https://github.com/ekg/tabixpp/archive/"
+                  "bbc63a49acc52212199f92e9e3b8fba0a593e3f7" ".tar.gz"))
+            (file-name "tabixpp-src.tar.gz")
+            (sha256
+             (base32 "1s06wmpgj4my4pik5kp2lc42hzzazbp5ism2y4i2ajp2y1c68g77"))))
+         ("intervaltree-src"
+          ,(origin
+             (method url-fetch)
+             (uri (string-append
+                   "https://github.com/ekg/intervaltree/archive/"
+                   "dbb4c513d1ad3baac516fc1484c995daf9b42838" ".tar.gz"))
+             (file-name "intervaltree-src.tar.gz")
+             (sha256
+              (base32 "19prwpn2wxsrijp5svfqvfcxl5nj7zdhm3jycd5kqhl9nifpmcks"))))
+         ("smithwaterman-src"
+          ,(origin
+            (method url-fetch)
+            (uri (string-append "https://github.com/ekg/smithwaterman/archive/"
+                  "203218b47d45ac56ef234716f1bd4c741b289be1" ".tar.gz"))
+            (file-name "smithwaterman-src.tar.gz")
+            (sha256
+             (base32 "1lkxy4xkjn96l70jdbsrlm687jhisgw4il0xr2dm33qwcclzzm3b"))))
+         ("multichoose-src"
+          ,(origin
+            (method url-fetch)
+            (uri (string-append "https://github.com/ekg/multichoose/archive/"
+                  "73d35daa18bf35729b9ba758041a9247a72484a5" ".tar.gz"))
+            (file-name "multichoose-src.tar.gz")
+            (sha256
+             (base32 "07aizwdabmlnjaq4p3v0vsasgz1xzxid8xcxcw3paq8kh9c1099i"))))
+         ("fsom-src"
+          ,(origin
+            (method url-fetch)
+            (uri (string-append "https://github.com/ekg/fsom/archive/"
+                  "a6ef318fbd347c53189384aef7f670c0e6ce89a3" ".tar.gz"))
+            (file-name "fsom-src.tar.gz")
+            (sha256
+             (base32 "0q6b57ppxfvsm5cqmmbfmjpn5qvx2zi5pamvp3yh8gpmmz8cfbl3"))))
+         ("filevercmp-src"
+          ,(origin
+            (method url-fetch)
+            (uri (string-append "https://github.com/ekg/filevercmp/archive/"
+                  "1a9b779b93d0b244040274794d402106907b71b7" ".tar.gz"))
+            (file-name "filevercmp-src.tar.gz")
+            (sha256
+             (base32 "0yp5jswf5j2pqc6517x277s4s6h1ss99v57kxw9gy0jkfl3yh450"))))
+         ("fastahack-src"
+          ,(origin
+            (method url-fetch)
+            (uri (string-append "https://github.com/ekg/fastahack/archive/"
+                  "c68cebb4f2e5d5d2b70cf08fbdf1944e9ab2c2dd" ".tar.gz"))
+            (file-name "fastahack-src.tar.gz")
+            (sha256
+             (base32 "0j25lcl3jk1kls66zzxjfyq5ir6sfcvqrdwfcva61y3ajc9ssay2"))))))
+      (arguments
+       `(#:tests? #f
+         #:phases
+         (modify-phases %standard-phases
+           (delete 'configure)
+           (delete 'check)
+           (add-after 'unpack 'unpack-submodule-sources
+             (lambda* (#:key inputs #:allow-other-keys)
+               (let ((unpack (lambda (source target)
+                               (with-directory-excursion target
+                                 (zero? (system* "tar" "xvf"
+                                        (assoc-ref inputs source)
+                                        "--strip-components=1"))))))
+                 (and
+                  (unpack "intervaltree-src" "intervaltree")
+                  (unpack "fastahack-src" "fastahack")
+                  (unpack "filevercmp-src" "filevercmp")
+                  (unpack "fsom-src" "fsom")
+                  (unpack "intervaltree-src" "intervaltree")
+                  (unpack "multichoose-src" "multichoose")
+                  (unpack "smithwaterman-src" "smithwaterman")
+                  (unpack "tabixpp-src" "tabixpp")))))
+           (add-after 'unpack-submodule-sources 'fix-makefile
+             (lambda* (#:key inputs #:allow-other-keys)
+               (substitute* '("Makefile")
+                 (("^GIT_VERSION.*") "GIT_VERSION = v1.0.0"))))
+           (replace
+            'build
+            (lambda* (#:key inputs make-flags #:allow-other-keys)
+              (with-directory-excursion "tabixpp"
+                (zero? (system* "make")))
+              (zero? (system* "make" "CC=gcc"
+                (string-append "CFLAGS=\"" "-Itabixpp "
+                  "-I" (assoc-ref inputs "htslib") "/include " "\"") "all"))))
+           (replace
+            'install
+            (lambda* (#:key outputs #:allow-other-keys)
+              (let ((bin (string-append (assoc-ref outputs "out") "/bin"))
+                    (lib (string-append (assoc-ref outputs "out") "/lib")))
+                (for-each (lambda (file)
+                           (install-file file bin))
+                         (find-files "bin" ".*"))
+                (install-file "libvcflib.a" lib)))))))
+      (home-page "https://github.com/vcflib/vcflib/")
+      (synopsis "Library for parsing and manipulating VCF files")
+      (description "Vcflib provides methods to manipulate and interpret
+sequence variation as it can be described by VCF. It is both an API for parsing
+and operating on records of genomic variation as it can be described by the VCF
+format, and a collection of command-line utilities for executing complex
+manipulations on VCF files.")
+      (license license:expat))))
+
