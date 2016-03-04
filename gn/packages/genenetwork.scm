@@ -140,7 +140,7 @@
     (license license:agpl3+))))
 
 (define-public genenetwork2
-  (let ((commit "3d55e84c81ae6c10765c79b6dfa18ccf30e98b53"))
+  (let ((commit "a8fcff44d3bd768d02e7ed0c80b84d2516bdad2a"))
   (package
     (name "genenetwork2")
     (version (string-append "2.0-" (string-take commit 7) ))
@@ -153,7 +153,7 @@
              (file-name (string-append name "-" (string-take commit 7))) 
              (sha256
               (base32
-               "0pmf96hsmxpiczkh4c2zpq5zz6byklhw4vjrazn9qvrgh78aqyab"))))
+               "1zs6jgrpwzxmfjz03whnaw8q6h8f53mycl440p058gfn8x7pd618"))))
     (propagated-inputs `(  ;; propagated for development purposes
               ("python" ,python-2) ;; probably superfluous
               ("r" ,r)
@@ -161,6 +161,7 @@
               ("redis" ,redis)
               ("mysql" ,mysql)
               ("gemma" ,gemma-git)
+              ("genenetwork2-files-small" ,genenetwork2-files-small)
               ("pylmm-gn2" ,pylmm-gn2)
               ("plink2" ,plink-ng)
               ("nginx" ,nginx)
@@ -194,6 +195,13 @@
     (build-system python-build-system)
     (arguments
      `(#:python ,python-2
+       #:phases
+         (modify-phases %standard-phases
+           (add-before 'install 'fix-paths
+             (lambda* (#:key inputs #:allow-other-keys)
+               (let* ((datafiles (string-append (assoc-ref inputs "genenetwork2-files-small") "/share/genenetwork2" )))
+               (substitute* '("etc/default_settings.py")
+                 (("^GENENETWORK_FILES =.*") (string-append "GENENETWORK_FILES = \"" datafiles "\"\n" )))))))
        #:tests? #f))   ; no 'setup.py test'
     (home-page "http://genenetwork.org/")
     (synopsis "Full genenetwork services")
@@ -224,7 +232,9 @@
      `(#:modules ((guix build utils))
        #:builder
        (let* ((out (assoc-ref %outputs "out"))
-              ;; (targetdir (string-append out "/gn2_data_s"))
+              (name "gn2_data_s")
+              (tarfn (string-append name ".tar"))
+              (targetdir (string-append out "/share/genenetwork2/"))
               )
            (begin
              (use-modules (guix build utils))
@@ -232,10 +242,11 @@
                    (lz4unpack (string-append (assoc-ref %build-inputs "lz4") "/bin/lz4"))
                    (tar (string-append (assoc-ref %build-inputs "tar") "/bin/tar"))
                    )
-               (and ;; (mkdir targetdir)
-                    (zero? (system* lz4unpack source "-d" "xx.tar"))
-                    (zero? (system* tar "xf" "xx.tar"))
-                    (copy-recursively "gn2_data_s" (string-append out "/gn2_data_s"))
+               (and 
+                    (zero? (system* lz4unpack source "-d" tarfn))
+                    (zero? (system* tar "xf" tarfn))
+                    (mkdir-p targetdir)
+                    (copy-recursively name targetdir)
                     ))))))
     (home-page "http://genenetwork.org/")
     (synopsis "Small file archive to run on genenetwork")
