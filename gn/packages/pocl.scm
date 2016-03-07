@@ -66,6 +66,7 @@
                ("boost" ,boost)
                ("dbus" ,dbus)
                ("clang" ,clang)
+               ("clang-runtime" ,clang-runtime)
                ("enca" ,enca)
                ("eudev" ,eudev)
                ("fftw-openmpi" ,fftw-openmpi)
