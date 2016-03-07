@@ -185,6 +185,7 @@
               ("python2-passlib" ,python2-passlib)
               ("python2-piddle-gn" ,python2-piddle-gn)
               ("python2-redis" ,python2-redis)
+              ("python2-pil" ,python2-pil)
               ("python2-requests" ,python2-requests)
               ("python2-rpy2" ,python2-rpy2)
               ("python2-scipy" ,python2-scipy)
