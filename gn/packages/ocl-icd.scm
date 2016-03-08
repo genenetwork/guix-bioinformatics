@@ -17,7 +17,7 @@
 ;;; along with GNU Guix.  If not, see <http://www.gnu.org/licenses/>.
 
 (define-module (gn packages ocl-icd)
-  #:use-module ((guix licenses))
+  #:use-module ((guix licenses) #:prefix license:)
   #:use-module (gnu packages)
   #:use-module (gnu packages autotools)
   #:use-module (guix packages)
@@ -47,8 +47,9 @@
     (inputs `(("zip" ,zip)
              ("autoconf" ,autoconf)
              ("automake" ,automake)
-             ("libtool" ,libtool)
              ("ruby" ,ruby)
+             ("libtool" ,libtool)
+             ("opencl-headers" ,opencl-headers)
              ("libgcrypt" ,libgcrypt)))                                              
     (build-system gnu-build-system)
      (arguments
@@ -61,4 +62,38 @@
     (description "OpenCL implementations are provided as ICD (Installable Client Driver).
     An OpenCL program can use several ICD thanks to the use of an ICD Loader as provided by this project.
     This free ICD Loader can load any (free or non free) ICD")
-    (license (list gpl2))))
+    (license license:gpl2)))
+    
+    (define-public opencl-headers
+(let ((commit "c1770dc"))
+  (package
+    (name "opencl-headers")
+    (version (string-append "2.1-" commit ))
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+              (url "https://github.com/KhronosGroup/OpenCL-Headers.git")
+              (commit commit)))
+              (file-name (string-append name "-" commit))
+              (sha256
+               (base32
+                "0m9fkblqja0686i2jjqiszvq3df95gp01a2674xknlmkd6525rck"))))
+    (propagated-inputs '())
+    (inputs '())
+    (native-inputs '())
+    (build-system gnu-build-system)
+    (arguments
+     '(#:phases
+       (modify-phases %standard-phases
+         (delete 'configure)
+         (delete 'build)
+         (delete 'check)
+         (replace 'install
+                  (lambda* (#:key outputs #:allow-other-keys)
+                    (copy-recursively "." (string-append
+                                                 (assoc-ref outputs "out")
+                                                 "/include/CL")))))))
+    (synopsis "The Khronos OpenCL headers")
+    (description "This package provides the Khronos OpenCL headers")
+    (home-page "https://www.khronos.org/registry/cl/")
+    (license license:gpl2))))
