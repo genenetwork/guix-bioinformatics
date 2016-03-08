@@ -41,7 +41,7 @@
               (file-name (string-append name "-" commit))
               (sha256
                (base32
-                "1sbxdd9vgl3m8j39kwvvk5cflyj7480pq0s307zg1ssidvj98v3g"))))
+                "0m9fkblqja0686i2jjqiszvq3df95gp01a2674xknlmkd6525rck"))))
     (propagated-inputs '())
     (inputs '())
     (native-inputs '())
@@ -54,10 +54,10 @@
          (delete 'check)
          (replace 'install
                   (lambda* (#:key outputs #:allow-other-keys)
-                    (copy-recursively "*" (string-append
+                    (copy-recursively "." (string-append
                                                  (assoc-ref outputs "out")
                                                  "/include/CL")))))))
     (synopsis "The Khronos OpenCL headers")
     (description "This package provides the Khronos OpenCL headers")
     (home-page "https://www.khronos.org/registry/cl/")
-    (license license:gpl2))))
+    (license gpl2))))
