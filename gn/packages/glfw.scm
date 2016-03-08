@@ -16,10 +16,9 @@
 ;;; You should have received a copy of the GNU General Public License
 ;;; along with GNU Guix.  If not, see <http://www.gnu.org/licenses/>.
 
-(define-module (gn packages arrayfire)
+(define-module (gn packages glfw)
   #:use-module ((guix licenses))
   #:use-module (guix download)
-  #:use-module (guix git-download)
   #:use-module (guix build-system gnu)
   #:use-module (guix build-system cmake)
   #:use-module (guix packages)
@@ -37,66 +36,11 @@
   #:use-module (gnu packages pkg-config)
   #:use-module (gnu packages maths)
   #:use-module (gnu packages web)
-  #:use-module (gnu packages ldc)
+  #:use-module (gnu packages databases)
   #:use-module (gnu packages python)
   #:use-module (gnu packages xorg)
   #:use-module (gnu packages version-control)  
   #:use-module (gnu packages linux))
-
-(define-public arrayfire
-(let ((commit "9ca1ea0"))
-  (package
-    (name "arrayfire")
-    (version "3.3.1-hotfix")
-    (source (origin
-              (method git-fetch)
-              (uri (git-reference
-              (url "https://github.com/arrayfire/arrayfire.git")
-              (commit commit)))
-              (file-name (string-append name "-" commit))
-              (sha256
-               (base32
-                "067y98a9s78vpz7xsg889xnwfaza7c5gdv97yg9cgrdl0iljvsgp"))))
-    (native-inputs `(("autoconf" ,autoconf)
-        ("automake" ,automake)
-        ("cmake" ,cmake)
-        ("gawk" ,gawk)
-        ("glew" ,glew)
-        ("libtool" ,libtool)
-        ("pkg-config" ,pkg-config)))
-    (inputs `(("boost" ,boost)
-       ("glfw" ,glfw)
-       ("curl" ,curl)
-       ("atlas" ,atlas)
-       ("dbus" ,dbus)
-       ("enca" ,enca)
-       ("eudev" ,eudev)
-       ("glew" ,glew)
-       ("glib" ,glib)
-       ("lapack" ,lapack)
-       ("libcap" ,libcap)
-       ("libjpeg" ,libjpeg)
-       ("libltdl" ,libltdl)
-       ("libtiff" ,libtiff)
-       ("libyajl" ,libyajl)
-       ("mesa-utils" ,mesa-utils)
-       ("python" ,python-2)
-       ("freeimage" ,freeimage)
-       ("fftw" ,fftw)
-       ("fftwf" ,fftwf)
-       ("fftw-openmpi" ,fftw-openmpi)
-       ("glew" ,glew)
-       ("glu" ,glu)
-       ("openblas" ,openblas)
-       ("git" ,git)
-       ("cmake" ,cmake)))
-    (build-system cmake-build-system)
-    (arguments 
-     `(#:configure-flags '("-DCMAKE_BUILD_TYPE=Release" "-DBUILD_OPENCL=OFF" "-DBUILD_GRAPHICS=OFF") #:tests? #f))     
-    (synopsis "ArrayFire: a general purpose GPU library. https://arrayfire.com")
-    (description "ArrayFire is a high performance software library for parallel computing with an easy-to-use API. Its array based function set makes parallel programming simple.")
-    (home-page "http://arrayfire.com/")
-    (license (list gpl2 gpl2+ gpl3 gpl3+)))))
 
 (define-public glfw
   (package
@@ -109,13 +53,12 @@
              (sha256
               (base32
                "08pixv8hd5xsccf7l8cqcijjqaq4k4da8qbp77wggal2fq445ika"))))
-    (build-system cmake-build-system)
+    (build-system cmake-build-system)    
     (arguments `(#:configure-flags '("-DBUILD_SHARED_LIBS=ON") #:tests? #f))
     (native-inputs `(("autoconf" ,autoconf)
         ("automake" ,automake)
         ("cmake" ,cmake)
         ("libtool" ,libtool)
-        ("libpthread-stubs" ,libpthread-stubs)
         ("pkg-config" ,pkg-config)))
     (inputs `(("curl" ,curl)
        ("dbus" ,dbus)
@@ -132,9 +75,9 @@
        ("xineramaproto" ,xineramaproto)
        ("libxinerama" ,libxinerama)
        ("libxcursor" ,libxcursor)
+       ("mysql" ,mysql)
        ("python" ,python-2)))       
     (home-page "http://www.glfw.org/")
     (synopsis "glfw is an Open Source, multi-platform library for creating windows with OpenGL contexts and receiving input and events.")
     (description "glfw is an Open Source, multi-platform library for creating windows with OpenGL contexts and receiving input and events.")
     (license (list gpl2))))
-
