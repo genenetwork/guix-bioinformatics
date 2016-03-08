@@ -58,7 +58,7 @@
               (file-name (string-append name "-" commit))
               (sha256
                (base32
-                "0b1y8c2y0xx5sqfpkkvgmp02czgmq5immypgm4hhpmp512hcj38j"))))
+                "1sbxdd9vgl3m8j39kwvvk5cflyj7480pq0s307zg1ssidvj98v3g"))))
 (native-inputs `(("autoconf" ,autoconf)
                 ("automake" ,automake)
                 ("libtool" ,libtool)
