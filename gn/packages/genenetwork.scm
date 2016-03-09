@@ -154,10 +154,14 @@
              (sha256
               (base32
                "1zs6jgrpwzxmfjz03whnaw8q6h8f53mycl440p058gfn8x7pd618"))))
+    (inputs `(
+              ("r-wgcna" ,r-wgcna)
+              ("r-qtl" ,r-qtl)))
     (propagated-inputs `(  ;; propagated for development purposes
               ("python" ,python-2) ;; probably superfluous
               ("r" ,r)
               ("r-wgcna" ,r-wgcna)
+              ("r-qtl" ,r-qtl)
               ("redis" ,redis)
               ("mysql" ,mysql)
               ("gemma" ,gemma-git)
@@ -181,6 +185,7 @@
               ("python2-passlib" ,python2-passlib)
               ("python2-piddle-gn" ,python2-piddle-gn)
               ("python2-redis" ,python2-redis)
+              ("python2-pil" ,python2-pil)
               ("python2-requests" ,python2-requests)
               ("python2-rpy2" ,python2-rpy2)
               ("python2-scipy" ,python2-scipy)
@@ -190,7 +195,6 @@
               ;; python-yolk is not needed
               ("plink" ,plink) 
               ("qtlreaper" ,qtlreaper) 
-              ("r-qtl" ,r-qtl)
               ))
     (build-system python-build-system)
     (arguments
@@ -199,9 +203,20 @@
          (modify-phases %standard-phases
            (add-before 'install 'fix-paths
              (lambda* (#:key inputs #:allow-other-keys)
-               (let* ((datafiles (string-append (assoc-ref inputs "genenetwork2-files-small") "/share/genenetwork2" )))
+                      (let* (
+                             (datafiles (string-append (assoc-ref inputs "genenetwork2-files-small") "/share/genenetwork2" ))
+                             (pylmmcmd (string-append (assoc-ref inputs "pylmm-gn2") "/bin/pylmm_redis"))
+                             (plink2cmd (string-append (assoc-ref inputs "plink2") "/bin/plink2"))
+                             (gemmacmd (string-append (assoc-ref inputs "gemma") "/bin/gemma"))
+                             )
+                             
                (substitute* '("etc/default_settings.py")
-                 (("^GENENETWORK_FILES =.*") (string-append "GENENETWORK_FILES = \"" datafiles "\"\n" )))))))
+                            (("^GENENETWORK_FILES =.*") (string-append "GENENETWORK_FILES = \"" datafiles "\"\n" ))
+                            (("^PYLMM_COMMAND =.*") (string-append "PYLMM_COMMAND = \"" pylmmcmd "\"\n" ))
+                            (("^PLINK_COMMAND =.*") (string-append "PLINK_COMMAND = \"" plink2cmd "\"\n" ))
+                            (("^GEMMA_COMMAND =.*") (string-append "GEMMA_COMMAND = \"" gemmacmd "\"\n" ))
+                            )
+               ))))
        #:tests? #f))   ; no 'setup.py test'
     (home-page "http://genenetwork.org/")
     (synopsis "Full genenetwork services")

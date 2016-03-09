@@ -100,10 +100,11 @@ mappability data (files created by GEM). ")
     (license license:gpl2+)))
 
 (define-public freebayes
-  (let ((commit "3ce827d8ebf89bb3bdc097ee0fe7f46f9f30d5fb"))
+  (let ((commit "3ce827d8ebf89bb3bdc097ee0fe7f46f9f30d5fb")
+        (revision "1"))
     (package
       (name "freebayes")
-      (version (string-append "v1.0.2-" (string-take commit 7)))
+      (version (string-append "1.0.2-" revision "." (string-take commit 7)))
       (source (origin
         (method git-fetch)
         (uri (git-reference
@@ -113,11 +114,18 @@ mappability data (files created by GEM). ")
         (sha256
          (base32 "1sbzwmcbn78ybymjnhwk7qc5r912azy5vqz2y7y81616yc3ba2a2"))))
       (build-system gnu-build-system)
+      (inputs
+       `(("zlib" ,zlib)))
       (native-inputs
-       `(("cmake" ,cmake)
+       `(("bc" ,bc) ; Needed for running tests.
+         ("samtools" ,samtools) ; Needed for running tests.
+         ("parallel" ,parallel) ; Needed for running tests.
+         ("procps" ,procps) ; Needed for running tests.
+         ("bamtools" ,bamtools)
+         ("cmake" ,cmake)
          ("htslib" ,htslib)
-         ("zlib" ,zlib)
          ("python" ,python-2)
+         ("r" ,r)
          ("perl" ,perl)
          ("bamtools-src"
           ,(origin
@@ -193,20 +201,34 @@ mappability data (files created by GEM). ")
             (file-name "fastahack-src.tar.gz")
             (sha256
              (base32 "0j25lcl3jk1kls66zzxjfyq5ir6sfcvqrdwfcva61y3ajc9ssay2"))))
-            ))
+         ;; These submodules are needed to run the tests.
+         ("bash-tap-src"
+          ,(origin
+            (method url-fetch)
+            (uri (string-append "https://github.com/illusori/bash-tap/archive/"
+                                "c38fbfa401600cc81ccda66bfc0da3ea56288d03" ".tar.gz"))
+            (file-name "bash-tap-src.tar.gz")
+            (sha256
+             (base32 "07ijb1p0aa65ajpg9nkghc183iha6lwiydkckay8pghapa01j6nz"))))
+         ("test-simple-bash-src"
+          ,(origin
+            (method url-fetch)
+            (uri (string-append "https://github.com/ingydotnet/test-simple-bash/archive/"
+                                "124673ff204b01c8e96b7fc9f9b32ee35d898acc" ".tar.gz"))
+            (file-name "test-simple-bash-src.tar.gz")
+            (sha256
+             (base32 "016xf3wbgqbav9dncvfdx5k0f10z5xwq8jdszajzmcvnhz5wis14"))))))
       (arguments
-       `(#:tests? #f
-         #:phases
+       `(#:phases
          (modify-phases %standard-phases
            (delete 'configure)
-           (delete 'check)
            (add-after 'unpack 'unpack-submodule-sources
              (lambda* (#:key inputs #:allow-other-keys)
                (let ((unpack (lambda (source target)
                                (with-directory-excursion target
                                  (zero? (system* "tar" "xvf"
-                                        (assoc-ref inputs source)
-                                        "--strip-components=1"))))))
+                                                 (assoc-ref inputs source)
+                                                 "--strip-components=1"))))))
                  (and
                   (unpack "bamtools-src" "bamtools")
                   (unpack "vcflib-src" "vcflib")
@@ -217,47 +239,46 @@ mappability data (files created by GEM). ")
                   (unpack "intervaltree-src" "vcflib/intervaltree")
                   (unpack "multichoose-src" "vcflib/multichoose")
                   (unpack "smithwaterman-src" "vcflib/smithwaterman")
-                  (unpack "tabixpp-src" "vcflib/tabixpp")))))
+                  (unpack "tabixpp-src" "vcflib/tabixpp")
+                  (unpack "test-simple-bash-src" "test/test-simple-bash")
+                  (unpack "bash-tap-src" "test/bash-tap")))))
            (add-after 'unpack-submodule-sources 'fix-makefile
              (lambda* (#:key inputs #:allow-other-keys)
+               ;; We don't have the .git folder to get the version tag from.
+               ;; For this checkout of the code, it's v1.0.0.
                (substitute* '("vcflib/Makefile")
                  (("^GIT_VERSION.*") "GIT_VERSION = v1.0.0"))))
-           (replace
-            'build
+           (replace 'build
             (lambda* (#:key inputs make-flags #:allow-other-keys)
               (and
-               ;; We must compile Bamtools before we can compile the main
-               ;; project.
+               ;; Compile Bamtools before compiling the main project.
                (with-directory-excursion "bamtools"
                  (system* "mkdir" "build")
                  (with-directory-excursion "build"
                    (and (zero? (system* "cmake" "../"))
                         (zero? (system* "make")))))
-               ;; We must compile vcflib before we can compile the main
-               ;; project.
+               ;; Compile vcflib before we compiling the main project.
                (with-directory-excursion "vcflib"
                  (with-directory-excursion "tabixpp"
                    (zero? (system* "make")))
                  (zero? (system* "make" "CC=gcc"
                    (string-append "CFLAGS=\"" "-Itabixpp "
                      "-I" (assoc-ref inputs "htslib") "/include " "\"") "all")))
-
                (with-directory-excursion "src"
                  (zero? (system* "make"))))))
-           (replace
-            'install
+           (replace 'install
             (lambda* (#:key outputs #:allow-other-keys)
               (let ((bin (string-append (assoc-ref outputs "out") "/bin")))
                 (install-file "bin/freebayes" bin)
                 (install-file "bin/bamleftalign" bin))))
-           ;; (replace
-           ;;  'check
-           ;;  (lambda* (#:key outputs #:allow-other-keys)
-           ;;    (with-directory-excursion "test"
-           ;;      (zero? (system* "make" "test")))))
-             )))
+           ;; There are three tests that fail.  All because of the -P
+           ;; (--perl-regexp) option in grep, which is not compiled into the
+           ;; version of grep in Guix.
+           (replace 'check
+            (lambda* (#:key inputs #:allow-other-keys)
+              (system* "make" "test"))))))
       (home-page "https://github.com/ekg/freebayes")
-      (synopsis "haplotype-based variant detector.")
+      (synopsis "Haplotype-based variant detector")
       (description "FreeBayes is a Bayesian genetic variant detector designed to
 find small polymorphisms, specifically SNPs (single-nucleotide polymorphisms),
 indels (insertions and deletions), MNPs (multi-nucleotide polymorphisms), and
@@ -305,8 +326,8 @@ length of a short-read sequencing alignment.")
   (propagated-inputs
    `( ;; ("r-annotationdbi" ,r-annotationdbi)
      ; ("r-biocparallel" ,r-biocparallel)
-     ("r-dynamictreecut" ,r-dynamictreecut)
      ("r-doparallel" ,r-doparallel)
+     ("r-dynamictreecut" ,r-dynamictreecut)
      ("r-fastcluster" ,r-fastcluster)
      ("r-foreach" ,r-foreach)
      ("r-go-db" ,r-go-db)
@@ -793,3 +814,49 @@ format, and a collection of command-line utilities for executing complex
 manipulations on VCF files.")
       (license license:expat))))
 
+(define-public pindel
+  (package
+   (name "pindel")
+   (version "0.2.5b8")
+   (source (origin
+     (method url-fetch)
+     (uri (string-append "https://github.com/genome/pindel/archive/v"
+                         version ".tar.gz"))
+     (file-name (string-append name "-" version ".tar.gz"))
+     (sha256
+      (base32 "06bsf0psxwf7h5p3j97xkh9k5qrwhxh6xn942y1j1m2inyhgs8bz"))))
+   (build-system gnu-build-system)
+   (inputs
+    `(("samtools" ,samtools)
+      ("htslib" ,htslib)
+      ("zlib" ,zlib)))
+   (native-inputs
+    `(("cppcheck" ,cppcheck)
+      ("python" ,python-2)
+      ("perl" ,perl)))
+   (arguments
+    `(#:tests? #f
+      #:phases
+      (modify-phases %standard-phases
+        (delete 'configure) ; There is no configure phase.
+        (replace 'build
+          (lambda* (#:key inputs #:allow-other-keys)
+            ;; The first run creates a Makefile.local file.
+            (system* "make" (string-append "SAMTOOLS=" (assoc-ref inputs "samtools")))
+            ;; The second run actually compiles the program.
+            (zero? (system* "make"))))
+        (replace 'install
+          (lambda* (#:key outputs #:allow-other-keys)
+            (let ((bin (string-append (assoc-ref outputs "out") "/bin")))
+              (install-file "src/pindel" bin)
+              (install-file "src/pindel2vcf" bin)
+              (install-file "src/pindel2vcf4tcga" bin)
+              (install-file "src/sam2pindel" bin)))))))
+   (home-page "https://github.com/genome/pindel")
+   (synopsis "Structural variants detector for next-gen sequencing data")
+   (description "Pindel can detect breakpoints of large deletions, medium sized
+insertions, inversions, tandem duplications and other structural variants at
+single-based resolution from next-gen sequence data.  It uses a pattern growth
+approach to identify the breakpoints of these variants from paired-end short
+reads.")
+   (license license:gpl3+)))
