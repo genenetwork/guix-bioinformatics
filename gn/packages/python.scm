@@ -355,7 +355,7 @@ project)")
   (description #f)
   (license #f)))
 
-(define-public python2-pil-1.1.6
+(define-public python2-pil
   (package
     (name "python2-pil")
     (version "1.1.6")
