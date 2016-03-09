@@ -150,7 +150,7 @@
                    ;; (url "https://github.com/genenetwork/genenetwork2.git")
                    (url "https://github.com/genenetwork/genenetwork2_diet.git")
                    (commit commit)))
-             (file-name (string-append name "-" (string-take commit 7))) 
+             (file-name (string-append name "-" (string-take commit 7)))
              (sha256
               (base32
                "1zs6jgrpwzxmfjz03whnaw8q6h8f53mycl440p058gfn8x7pd618"))))
