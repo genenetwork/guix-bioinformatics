@@ -814,3 +814,49 @@ format, and a collection of command-line utilities for executing complex
 manipulations on VCF files.")
       (license license:expat))))
 
+(define-public pindel
+  (package
+   (name "pindel")
+   (version "0.2.5b8")
+   (source (origin
+     (method url-fetch)
+     (uri (string-append "https://github.com/genome/pindel/archive/v"
+                         version ".tar.gz"))
+     (file-name (string-append name "-" version ".tar.gz"))
+     (sha256
+      (base32 "06bsf0psxwf7h5p3j97xkh9k5qrwhxh6xn942y1j1m2inyhgs8bz"))))
+   (build-system gnu-build-system)
+   (inputs
+    `(("samtools" ,samtools)
+      ("htslib" ,htslib)
+      ("zlib" ,zlib)))
+   (native-inputs
+    `(("cppcheck" ,cppcheck)
+      ("python" ,python-2)
+      ("perl" ,perl)))
+   (arguments
+    `(#:tests? #f
+      #:phases
+      (modify-phases %standard-phases
+        (delete 'configure) ; There is no configure phase.
+        (replace 'build
+          (lambda* (#:key inputs #:allow-other-keys)
+            ;; The first run creates a Makefile.local file.
+            (system* "make" (string-append "SAMTOOLS=" (assoc-ref inputs "samtools")))
+            ;; The second run actually compiles the program.
+            (zero? (system* "make"))))
+        (replace 'install
+          (lambda* (#:key outputs #:allow-other-keys)
+            (let ((bin (string-append (assoc-ref outputs "out") "/bin")))
+              (install-file "src/pindel" bin)
+              (install-file "src/pindel2vcf" bin)
+              (install-file "src/pindel2vcf4tcga" bin)
+              (install-file "src/sam2pindel" bin)))))))
+   (home-page "https://github.com/genome/pindel")
+   (synopsis "Structural variants detector for next-gen sequencing data")
+   (description "Pindel can detect breakpoints of large deletions, medium sized
+insertions, inversions, tandem duplications and other structural variants at
+single-based resolution from next-gen sequence data.  It uses a pattern growth
+approach to identify the breakpoints of these variants from paired-end short
+reads.")
+   (license license:gpl3+)))
