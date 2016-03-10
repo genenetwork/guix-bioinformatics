@@ -150,13 +150,10 @@
                    ;; (url "https://github.com/genenetwork/genenetwork2.git")
                    (url "https://github.com/genenetwork/genenetwork2_diet.git")
                    (commit commit)))
-             (file-name (string-append name "-" (string-take commit 7))) 
+             (file-name (string-append name "-" (string-take commit 7)))
              (sha256
               (base32
                "1zs6jgrpwzxmfjz03whnaw8q6h8f53mycl440p058gfn8x7pd618"))))
-    (inputs `(
-              ("r-wgcna" ,r-wgcna)
-              ("r-qtl" ,r-qtl)))
     (propagated-inputs `(  ;; propagated for development purposes
               ("python" ,python-2) ;; probably superfluous
               ("r" ,r)
