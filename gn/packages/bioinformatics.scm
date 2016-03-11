@@ -13,17 +13,25 @@
   ;; #:use-module (guix build-system ruby)
   #:use-module (guix build-system r)
   #:use-module (guix build-system trivial)
+  #:use-module (gn packages statistics)
   #:use-module (gnu packages)
+  #:use-module (gnu packages autotools)
   #:use-module (gnu packages algebra)
   #:use-module (gnu packages base)
   #:use-module (gnu packages bioinformatics)
   #:use-module (gnu packages boost)
   #:use-module (gnu packages compression)
   #:use-module (gnu packages databases)
+  #:use-module (gnu packages check)
   #:use-module (gnu packages cmake)
+  #:use-module (gnu packages compression)
   #:use-module (gnu packages cpio)
+  #:use-module (gnu packages curl)
+  #:use-module (gnu packages doxygen)
+  #:use-module (gnu packages datastructures)
   #:use-module (gnu packages check)
   #:use-module (gnu packages file)
+  #:use-module (gnu packages gawk)
   #:use-module (gnu packages gcc)
   #:use-module (gnu packages graphviz)
   #:use-module (gnu packages java)
@@ -31,7 +39,11 @@
   #:use-module (gnu packages ldc)
   #:use-module (gnu packages machine-learning)
   #:use-module (gnu packages maths)
+  #:use-module (gnu packages mpi)
   #:use-module (gnu packages ncurses)
+  #:use-module (gnu packages node)
+  #:use-module (gnu packages parallel)
+  #:use-module (gnu packages pcre)
   #:use-module (gnu packages perl)
   #:use-module (gnu packages pkg-config)
   #:use-module (gnu packages popt)
@@ -41,13 +53,13 @@
   #:use-module (gnu packages statistics)
   #:use-module (gnu packages tbb)
   #:use-module (gnu packages textutils)
+  #:use-module (gnu packages time)
+  #:use-module (gnu packages tls)
   #:use-module (gnu packages vim)
   #:use-module (gnu packages web)
   #:use-module (gnu packages xml)
   #:use-module (gnu packages zip)
   #:use-module (gnu packages bootstrap)
-  #:use-module (gn packages python)
-  #:use-module (gn packages statistics)
   #:use-module (srfi srfi-1))
 
 (define-public freec
@@ -100,6 +112,350 @@ data.  For whole genome sequencing data analysis, the program can also use
 mappability data (files created by GEM). ")
     (license license:gpl2+)))
 
+(define-public tabixpp
+  (package
+   (name "tabixpp")
+   (version "1.0.0")
+   (source (origin
+     (method url-fetch)
+     (uri (string-append "https://github.com/ekg/tabixpp/archive/v"
+                         version ".tar.gz"))
+     (file-name (string-append name "-" version ".tar.gz"))
+     (sha256
+      (base32 "1s0lgks7qlvlhvcjhi2wm18nnza1bwcnic44ij7z8wfg88h4ivwn"))))
+   (build-system gnu-build-system)
+   (inputs
+    `(("htslib" ,htslib)
+      ("zlib" ,zlib)))
+   (arguments
+    `(#:tests? #f ; There are no tests to run.
+      #:phases
+      (modify-phases %standard-phases
+        (delete 'configure) ; There is no configure phase.
+        ;; The build phase needs overriding the location of htslib.
+        (replace 'build
+          (lambda* (#:key inputs #:allow-other-keys)
+            (let ((htslib-ref (assoc-ref inputs "htslib")))
+              (zero?
+               (system* "make"
+                 (string-append "HTS_LIB=" htslib-ref "/lib/libhts.a")
+                 "HTS_HEADERS=" ; No need to check for headers here.
+                 (string-append "LIBPATH=-L. -L" htslib-ref "/include"))))))
+        (replace 'install
+          (lambda* (#:key outputs #:allow-other-keys)
+            (let ((bin (string-append (assoc-ref outputs "out") "/bin")))
+              (install-file "tabix++" bin)))))))
+   (home-page "https://github.com/ekg/tabixpp")
+   (synopsis "C++ wrapper around tabix project")
+   (description "This is a C++ wrapper around the Tabix project which abstracts
+some of the details of opening and jumping in tabix-indexed files.")
+   (license license:expat)))
+
+;; This version works with FreeBayes while the released version doesn't. The
+;; released creates a variable with the name "vcf" somewhere, which is also the
+;; name of a namespace in vcflib.
+(define-public tabixpp-freebayes
+  (let ((commit "bbc63a49acc52212199f92e9e3b8fba0a593e3f7"))
+    (package (inherit tabixpp)
+      (name "tabixpp-freebayes")
+      (version (string-append "0-1." (string-take commit 7)))
+      (source (origin
+        (method url-fetch)
+        (uri (string-append "https://github.com/ekg/tabixpp/archive/"
+                            commit ".tar.gz"))
+        (file-name (string-append name "-" version "-checkout.tar.gz"))
+        (sha256
+         (base32 "1s06wmpgj4my4pik5kp2lc42hzzazbp5ism2y4i2ajp2y1c68g77")))))))
+
+(define-public smithwaterman
+  ;; TODO: Upgrading smithwaterman breaks FreeBayes.
+  (let ((commit "203218b47d45ac56ef234716f1bd4c741b289be1"))
+    (package
+      (name "smithwaterman")
+      (version (string-append "0-1." (string-take commit 7)))
+      (source (origin
+        (method url-fetch)
+        (uri (string-append "https://github.com/ekg/smithwaterman/archive/"
+                            commit ".tar.gz"))
+        (file-name (string-append name "-" version "-checkout.tar.gz"))
+        (sha256
+         (base32 "1lkxy4xkjn96l70jdbsrlm687jhisgw4il0xr2dm33qwcclzzm3b"))))
+      (build-system gnu-build-system)
+      (arguments
+       `(#:tests? #f ; There are no tests to run.
+         #:phases
+         (modify-phases %standard-phases
+           (delete 'configure) ; There is no configure phase.
+           (replace 'install
+             (lambda* (#:key outputs #:allow-other-keys)
+               (let ((bin (string-append (assoc-ref outputs "out") "/bin")))
+                 (install-file "smithwaterman" bin)))))))
+      (home-page "https://github.com/ekg/smithwaterman")
+      (synopsis "Implementation of the Smith-Waterman algorithm")
+      (description "Implementation of the Smith-Waterman algorithm.")
+      ;; The project contains a license file for the GPLv2.  The source files
+      ;; do not contain a license notice, so GPLv2-only is assumed here.
+      (license license:gpl2))))
+
+(define-public multichoose
+  (package
+    (name "multichoose")
+    (version "1.0.3")
+    (source (origin
+      (method url-fetch)
+      (uri (string-append "https://github.com/ekg/multichoose/archive/v"
+                          version ".tar.gz"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256
+       (base32 "0xy86vvr3qrs4l81qis7ia1q2hnqv0xcb4a1n60smxbhqqis5w3l"))))
+    (build-system gnu-build-system)
+    (native-inputs
+     `(("python" ,python-2)
+       ("node" ,node)))
+    (arguments
+     `(#:tests? #f ; There are no tests to run.
+       #:phases
+       (modify-phases %standard-phases
+         (delete 'configure) ; There is no configure phase.
+         (replace 'install
+           (lambda* (#:key outputs #:allow-other-keys)
+             (let ((bin (string-append (assoc-ref outputs "out") "/bin")))
+               ;; TODO: There are Python modules for these programs too.
+               (install-file "multichoose" bin)
+               (install-file "multipermute" bin)))))))
+    (home-page "https://github.com/ekg/multichoose")
+    (synopsis "Library for efficient loopless multiset combination generation
+algorithm")
+    (description "A library implements an efficient loopless multiset
+combination generation algorithm which is (approximately) described in
+\"Loopless algorithms for generating permutations, combinations, and other
+combinatorial configurations.\" G Ehrlich - Journal of the ACM (JACM),
+1973. (Algorithm 7.)")
+    (license license:expat)))
+
+(define-public fsom
+  (let ((commit "a6ef318fbd347c53189384aef7f670c0e6ce89a3"))
+    (package
+      (name "fsom")
+      (version (string-append "0-1." (string-take commit 7)))
+      (source (origin
+        (method url-fetch)
+        (uri (string-append "https://github.com/ekg/fsom/archive/"
+                            "a6ef318fbd347c53189384aef7f670c0e6ce89a3" ".tar.gz"))
+        (file-name (string-append name "-" version "-checkout.tar.gz"))
+        (sha256
+         (base32 "0q6b57ppxfvsm5cqmmbfmjpn5qvx2zi5pamvp3yh8gpmmz8cfbl3"))))
+      (build-system gnu-build-system)
+      (arguments
+       `(#:tests? #f ; There are no tests to run.
+         #:phases
+         (modify-phases %standard-phases
+           (delete 'configure) ; There is no configure phase.
+           (replace 'install
+             (lambda* (#:key outputs #:allow-other-keys)
+               (let ((bin (string-append (assoc-ref outputs "out") "/bin")))
+                 (install-file "fsom" bin)))))))
+      (home-page "https://github.com/ekg/fsom")
+      (synopsis "Program for managing SOM (Self-Organizing Maps) neural networks")
+      (description "Program for managing SOM (Self-Organizing Maps) neural networks.")
+      (license license:gpl3))))
+
+(define-public filevercmp
+  (let ((commit "1a9b779b93d0b244040274794d402106907b71b7"))
+    (package
+      (name "filevercmp")
+      (version (string-append "0-1." (string-take commit 7)))
+      (source (origin
+        (method url-fetch)
+        (uri (string-append "https://github.com/ekg/filevercmp/archive/"
+                            commit ".tar.gz"))
+        (file-name "filevercmp-src.tar.gz")
+        (sha256
+         (base32 "0yp5jswf5j2pqc6517x277s4s6h1ss99v57kxw9gy0jkfl3yh450"))))
+      (build-system gnu-build-system)
+      (arguments
+       `(#:tests? #f ; There are no tests to run.
+         #:phases
+         (modify-phases %standard-phases
+           (delete 'configure) ; There is no configure phase.
+           (replace 'install
+             (lambda* (#:key outputs #:allow-other-keys)
+               (let ((bin (string-append (assoc-ref outputs "out") "/bin")))
+                 (install-file "filevercmp" bin)))))))
+      (home-page "https://github.com/ekg/filevercmp")
+      (synopsis "Program to compare version strings")
+      (description "A program to compare version strings.  It intends to be a
+replacement for strverscmp.")
+      (license license:gpl3+))))
+
+(define-public fastahack
+  (let ((commit "c68cebb4f2e5d5d2b70cf08fbdf1944e9ab2c2dd"))
+    (package
+      (name "fastahack")
+      (version (string-append "0-1." (string-take commit 7)))
+      (source (origin
+        (method url-fetch)
+        (uri (string-append "https://github.com/ekg/fastahack/archive/"
+                            commit ".tar.gz"))
+        (file-name (string-append name "-" version "-checkout.tar.gz"))
+        (sha256
+         (base32 "0j25lcl3jk1kls66zzxjfyq5ir6sfcvqrdwfcva61y3ajc9ssay2"))))
+      (build-system gnu-build-system)
+      (arguments
+       `(#:tests? #f ; There are no tests to run.
+         #:phases
+         (modify-phases %standard-phases
+           (delete 'configure) ; There is no configure phase.
+           (replace 'install
+             (lambda* (#:key outputs #:allow-other-keys)
+               (let ((bin (string-append (assoc-ref outputs "out") "/bin")))
+                 (install-file "fastahack" bin)))))))
+      (home-page "https://github.com/ekg/fastahack")
+      (synopsis "Program for indexing and sequence extraction from FASTA files")
+      (description "Fastahack is a small application for indexing and extracting
+sequences and subsequences from FASTA files.  The included Fasta.cpp library
+provides a FASTA reader and indexer that can be embeddedinto applications which
+would benefit from directly reading subsequences from FASTA files.  The library
+automatically handles index file generation and use.")
+      ;; There is no specific license for fastahack.
+      ;; A part of the program is licensed GPLv2.
+      (license (list license:non-copyleft license:gpl2)))))
+
+(define-public vcflib
+  (let ((commit "3ce827d8ebf89bb3bdc097ee0fe7f46f9f30d5fb"))
+    (package
+      (name "vcflib")
+      (version (string-append "1.0.2-1." (string-take commit 7)))
+      (source
+       (origin
+         (method url-fetch)
+         (uri (string-append "https://github.com/vcflib/vcflib/archive/"
+                "5ac091365fdc716cc47cc5410bb97ee5dc2a2c92" ".tar.gz"))
+         (file-name "vcflib-5ac0913.tar.gz")
+         (sha256
+          (base32 "0ywshwpif059z5h0g7zzrdfzzdj2gr8xvwlwcsdxrms3p9iy35h8"))))
+      (build-system gnu-build-system)
+      (native-inputs
+       `(("htslib" ,htslib)
+         ("zlib" ,zlib)
+         ("python" ,python-2)
+         ("perl" ,perl)
+         ("r" ,r)
+         ("node" ,node)
+         ("tabixpp-src" ,(package-source tabixpp-freebayes))
+         ("smithwaterman-src" ,(package-source smithwaterman))
+         ("multichoose-src" ,(package-source multichoose))
+         ("fsom-src" ,(package-source fsom))
+         ("filevercmp-src" ,(package-source filevercmp))
+         ("fastahack-src" ,(package-source fastahack))
+         ("intervaltree-src"
+          ,(origin
+             (method url-fetch)
+             (uri (string-append
+                   "https://github.com/ekg/intervaltree/archive/"
+                   "dbb4c513d1ad3baac516fc1484c995daf9b42838" ".tar.gz"))
+             (file-name "intervaltree-src.tar.gz")
+             (sha256
+              (base32 "19prwpn2wxsrijp5svfqvfcxl5nj7zdhm3jycd5kqhl9nifpmcks"))))))
+      (arguments
+       `(#:tests? #f
+         #:phases
+         (modify-phases %standard-phases
+           (delete 'configure)
+           (delete 'check)
+           (add-after 'unpack 'unpack-submodule-sources
+             (lambda* (#:key inputs #:allow-other-keys)
+               (let ((unpack (lambda (source target)
+                               (with-directory-excursion target
+                                 (zero? (system* "tar" "xvf"
+                                        (assoc-ref inputs source)
+                                        "--strip-components=1"))))))
+                 (and
+                  (unpack "intervaltree-src" "intervaltree")
+                  (unpack "fastahack-src" "fastahack")
+                  (unpack "filevercmp-src" "filevercmp")
+                  (unpack "fsom-src" "fsom")
+                  (unpack "multichoose-src" "multichoose")
+                  (unpack "smithwaterman-src" "smithwaterman")
+                  (unpack "tabixpp-src" "tabixpp")))))
+           (add-after 'unpack-submodule-sources 'fix-makefile
+             (lambda* (#:key inputs #:allow-other-keys)
+               (substitute* '("Makefile")
+                 (("^GIT_VERSION.*") "GIT_VERSION = v1.0.0"))))
+           (replace
+            'build
+            (lambda* (#:key inputs make-flags #:allow-other-keys)
+              (with-directory-excursion "tabixpp"
+                (zero? (system* "make")))
+              (zero? (system* "make" "CC=gcc"
+                (string-append "CFLAGS=\"" "-Itabixpp "
+                  "-I" (assoc-ref inputs "htslib") "/include " "\"") "all"))))
+           (replace
+            'install
+            (lambda* (#:key outputs #:allow-other-keys)
+              (let ((bin (string-append (assoc-ref outputs "out") "/bin"))
+                    ;;(include (string-append (assoc-ref outputs "out") "/include"))
+                    (lib (string-append (assoc-ref outputs "out") "/lib")))
+                (for-each (lambda (file)
+                           (install-file file bin))
+                         (find-files "bin" ".*"))
+                ;; The header files do not correspond to libvcflib.a, therefore
+                ;; I left them out.
+                ;;(for-each (lambda (file)
+                ;;           (install-file file include))
+                ;;         (find-files "src" "\\.h$"))
+                (install-file "libvcflib.a" lib)))))))
+      (home-page "https://github.com/vcflib/vcflib/")
+      (synopsis "Library for parsing and manipulating VCF files")
+      (description "Vcflib provides methods to manipulate and interpret
+sequence variation as it can be described by VCF. It is both an API for parsing
+and operating on records of genomic variation as it can be described by the VCF
+format, and a collection of command-line utilities for executing complex
+manipulations on VCF files.")
+      (license license:expat))))
+
+(define-public bash-tap
+  (package
+    (name "bash-tap")
+    (version "1.0.2")
+    (source (origin
+      (method url-fetch)
+      (uri (string-append "https://github.com/illusori/bash-tap/archive/"
+                          version ".tar.gz"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256
+       (base32 "0qs1qi38bl3ns4mpagcawv618dsk2q1lgrbddgvs0wl3ia12cyz5"))))
+    (build-system trivial-build-system)
+    (native-inputs `(("source" ,source)
+                     ("tar" ,tar)
+                     ("gzip" ,gzip)))
+    (arguments
+     `(#:modules ((guix build utils))
+       #:builder (begin
+                   (use-modules (guix build utils))
+                   (let ((tar (string-append (assoc-ref %build-inputs "tar") "/bin/tar"))
+                         (path (string-append (assoc-ref %build-inputs "gzip") "/bin"))
+                         (bin (string-append %output "/bin"))
+                         (source (string-append (assoc-ref %build-inputs "source"))))
+                     (setenv "PATH" path)
+                     (mkdir-p bin)
+                     (with-directory-excursion bin
+                       (zero? (system* tar "xvf" source
+                                       "--strip-components=1"
+                                       "--no-anchored"
+                                       "bash-tap"
+                                       "bash-tap-bootstrap"
+                                       "bash-tap-mock")))))))
+    (home-page "http://www.illusori.co.uk/projects/bash-tap/")
+    (synopsis "Bash port of a Test::More/Test::Builder-style TAP-compliant
+test library")
+    (description "Bash TAP is a TAP-compliant Test::More-style testing library
+for Bash shell scripts and functions.  Along with the Test::More-style testing
+helpers it provides helper functions for mocking commands and functions and
+in-process output capturing.")
+    ;; The author didn't specify a license.
+    (license license:public-domain)))
+
 (define-public freebayes
   (let ((commit "3ce827d8ebf89bb3bdc097ee0fe7f46f9f30d5fb")
         (revision "1"))
@@ -116,7 +472,8 @@ mappability data (files created by GEM). ")
          (base32 "1sbzwmcbn78ybymjnhwk7qc5r912azy5vqz2y7y81616yc3ba2a2"))))
       (build-system gnu-build-system)
       (inputs
-       `(("zlib" ,zlib)))
+       `(("zlib" ,zlib)
+         ("htslib" ,htslib)))
       (native-inputs
        `(("bc" ,bc) ; Needed for running tests.
          ("samtools" ,samtools) ; Needed for running tests.
@@ -124,35 +481,19 @@ mappability data (files created by GEM). ")
          ("procps" ,procps) ; Needed for running tests.
          ("bamtools" ,bamtools)
          ("cmake" ,cmake)
-         ("htslib" ,htslib)
          ("python" ,python-2)
+         ("node" ,node)
          ("r" ,r)
          ("perl" ,perl)
-         ("bamtools-src"
-          ,(origin
-             (method url-fetch)
-             (uri (string-append "https://github.com/ekg/bamtools/archive/"
-                  "e77a43f5097ea7eee432ee765049c6b246d49baa" ".tar.gz"))
-             (file-name "bamtools-src.tar.gz")
-             (sha256
-              (base32 "0rqymka21g6lfjfgxzr40pxz4c4fcl77jpy1np1li70pnc7h2cs1"))))
-         ("vcflib-src"
-          ,(origin
-             (method url-fetch)
-             (uri (string-append "https://github.com/vcflib/vcflib/archive/"
-                  "5ac091365fdc716cc47cc5410bb97ee5dc2a2c92" ".tar.gz"))
-             (file-name "vcflib-5ac0913.tar.gz")
-             (sha256
-              (base32 "0ywshwpif059z5h0g7zzrdfzzdj2gr8xvwlwcsdxrms3p9iy35h8"))))
+         ("bamtools-src" ,(package-source bamtools))
+         ("vcflib-src" ,(package-source vcflib))
          ;; These are submodules for the vcflib version used in freebayes
-         ("tabixpp-src"
-          ,(origin
-            (method url-fetch)
-            (uri (string-append "https://github.com/ekg/tabixpp/archive/"
-                  "bbc63a49acc52212199f92e9e3b8fba0a593e3f7" ".tar.gz"))
-            (file-name "tabixpp-src.tar.gz")
-            (sha256
-             (base32 "1s06wmpgj4my4pik5kp2lc42hzzazbp5ism2y4i2ajp2y1c68g77"))))
+         ("tabixpp-src" ,(package-source tabixpp-freebayes))
+         ("smithwaterman-src" ,(package-source smithwaterman))
+         ("multichoose-src" ,(package-source multichoose))
+         ("fsom-src" ,(package-source fsom))
+         ("filevercmp-src" ,(package-source filevercmp))
+         ("fastahack-src" ,(package-source fastahack))
          ("intervaltree-src"
           ,(origin
              (method url-fetch)
@@ -162,55 +503,15 @@ mappability data (files created by GEM). ")
              (file-name "intervaltree-src.tar.gz")
              (sha256
               (base32 "19prwpn2wxsrijp5svfqvfcxl5nj7zdhm3jycd5kqhl9nifpmcks"))))
-         ("smithwaterman-src"
-          ,(origin
-            (method url-fetch)
-            (uri (string-append "https://github.com/ekg/smithwaterman/archive/"
-                  "203218b47d45ac56ef234716f1bd4c741b289be1" ".tar.gz"))
-            (file-name "smithwaterman-src.tar.gz")
-            (sha256
-             (base32 "1lkxy4xkjn96l70jdbsrlm687jhisgw4il0xr2dm33qwcclzzm3b"))))
-         ("multichoose-src"
-          ,(origin
-            (method url-fetch)
-            (uri (string-append "https://github.com/ekg/multichoose/archive/"
-                  "73d35daa18bf35729b9ba758041a9247a72484a5" ".tar.gz"))
-            (file-name "multichoose-src.tar.gz")
-            (sha256
-             (base32 "07aizwdabmlnjaq4p3v0vsasgz1xzxid8xcxcw3paq8kh9c1099i"))))
-         ("fsom-src"
-          ,(origin
-            (method url-fetch)
-            (uri (string-append "https://github.com/ekg/fsom/archive/"
-                  "a6ef318fbd347c53189384aef7f670c0e6ce89a3" ".tar.gz"))
-            (file-name "fsom-src.tar.gz")
-            (sha256
-             (base32 "0q6b57ppxfvsm5cqmmbfmjpn5qvx2zi5pamvp3yh8gpmmz8cfbl3"))))
-         ("filevercmp-src"
-          ,(origin
-            (method url-fetch)
-            (uri (string-append "https://github.com/ekg/filevercmp/archive/"
-                  "1a9b779b93d0b244040274794d402106907b71b7" ".tar.gz"))
-            (file-name "filevercmp-src.tar.gz")
-            (sha256
-             (base32 "0yp5jswf5j2pqc6517x277s4s6h1ss99v57kxw9gy0jkfl3yh450"))))
-         ("fastahack-src"
-          ,(origin
-            (method url-fetch)
-            (uri (string-append "https://github.com/ekg/fastahack/archive/"
-                  "c68cebb4f2e5d5d2b70cf08fbdf1944e9ab2c2dd" ".tar.gz"))
-            (file-name "fastahack-src.tar.gz")
-            (sha256
-             (base32 "0j25lcl3jk1kls66zzxjfyq5ir6sfcvqrdwfcva61y3ajc9ssay2"))))
          ;; These submodules are needed to run the tests.
-         ("bash-tap-src"
-          ,(origin
-            (method url-fetch)
-            (uri (string-append "https://github.com/illusori/bash-tap/archive/"
-                                "c38fbfa401600cc81ccda66bfc0da3ea56288d03" ".tar.gz"))
-            (file-name "bash-tap-src.tar.gz")
-            (sha256
-             (base32 "07ijb1p0aa65ajpg9nkghc183iha6lwiydkckay8pghapa01j6nz"))))
+         ("bash-tap-src" ,(package-source bash-tap))
+          ;; ,(origin
+          ;;   (method url-fetch)
+          ;;   (uri (string-append "https://github.com/illusori/bash-tap/archive/"
+          ;;                       "c38fbfa401600cc81ccda66bfc0da3ea56288d03" ".tar.gz"))
+          ;;   (file-name "bash-tap-src.tar.gz")
+          ;;   (sha256
+          ;;    (base32 "07ijb1p0aa65ajpg9nkghc183iha6lwiydkckay8pghapa01j6nz"))))
          ("test-simple-bash-src"
           ,(origin
             (method url-fetch)
@@ -233,7 +534,7 @@ mappability data (files created by GEM). ")
                  (and
                   (unpack "bamtools-src" "bamtools")
                   (unpack "vcflib-src" "vcflib")
-                  (unpack "intervaltree-src" "intervaltree")
+                  ;;(unpack "intervaltree-src" "intervaltree")
                   (unpack "fastahack-src" "vcflib/fastahack")
                   (unpack "filevercmp-src" "vcflib/filevercmp")
                   (unpack "fsom-src" "vcflib/fsom")
@@ -261,7 +562,11 @@ mappability data (files created by GEM). ")
                ;; Compile vcflib before we compiling the main project.
                (with-directory-excursion "vcflib"
                  (with-directory-excursion "tabixpp"
-                   (zero? (system* "make")))
+                   (let ((htslib-ref (assoc-ref inputs "htslib")))
+                     (zero?
+                      (system* "make" "HTS_HEADERS="
+                               (string-append "HTS_LIB=" htslib-ref "/lib/libhts.a")
+                               (string-append "LIBPATH=-L. -L" htslib-ref "/include")))))
                  (zero? (system* "make" "CC=gcc"
                    (string-append "CFLAGS=\"" "-Itabixpp "
                      "-I" (assoc-ref inputs "htslib") "/include " "\"") "all")))
