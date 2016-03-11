@@ -1140,15 +1140,19 @@ manipulations on VCF files.")
       ("python" ,python-2)
       ("perl" ,perl)))
    (arguments
-    `(#:tests? #f
-      #:phases
+    `(#:phases
       (modify-phases %standard-phases
         (delete 'configure) ; There is no configure phase.
+        ;; The build phase needs to run 'make' twice for the reasons described
+        ;; below.
         (replace 'build
           (lambda* (#:key inputs #:allow-other-keys)
-            ;; The first run creates a Makefile.local file.
+            ;; The first run creates a Makefile.local file.  Make will report
+            ;; the failure to find Makefile.local, but we can ignore this error.
             (system* "make" (string-append "SAMTOOLS=" (assoc-ref inputs "samtools")))
-            ;; The second run actually compiles the program.
+            ;; The second run actually compiles the program.  Now Makefile.local
+            ;; is available, and we should treat an exiting make with an error as
+            ;; a true error.
             (zero? (system* "make"))))
         (replace 'install
           (lambda* (#:key outputs #:allow-other-keys)
@@ -1156,7 +1160,17 @@ manipulations on VCF files.")
               (install-file "src/pindel" bin)
               (install-file "src/pindel2vcf" bin)
               (install-file "src/pindel2vcf4tcga" bin)
-              (install-file "src/sam2pindel" bin)))))))
+              (install-file "src/sam2pindel" bin))))
+        ;; There are multiple test targets, so in order to run all
+        ;; tests, we must run the separate make targets.
+        (replace 'check
+          (lambda* (#:key inputs #:allow-other-keys)
+            (and
+             (zero? (system* "make" "acceptance-tests"))
+             (zero? (system* "make" "coverage-tests"))
+             (zero? (system* "make" "cppcheck"))
+             (zero? (system* "make" "functional-tests"))
+             (zero? (system* "make" "regression-tests"))))))))
    (home-page "https://github.com/genome/pindel")
    (synopsis "Structural variants detector for next-gen sequencing data")
    (description "Pindel can detect breakpoints of large deletions, medium sized
