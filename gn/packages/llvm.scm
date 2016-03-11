@@ -19,7 +19,7 @@
 ;;; You should have received a copy of the GNU General Public License
 ;;; along with GNU Guix.  If not, see <http://www.gnu.org/licenses/>.
 
-(define-module (gnu packages llvm)
+(define-module (gn packages llvm)
   #:use-module (guix packages)
   #:use-module (guix licenses)
   #:use-module (guix download)
@@ -62,4 +62,4 @@ languages.  It currently supports compilation of C and C++ programs, using
 front-ends derived from GCC 4.0.1.  A new front-end for the C family of
 languages is in development.  The compiler infrastructure includes mirror sets
 of programming tools as well as libraries with equivalent functionality.")
-    (license license:ncsa)))
+    (license ncsa)))
