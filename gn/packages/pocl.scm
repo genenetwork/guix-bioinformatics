@@ -20,15 +20,21 @@
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (guix git-download)
   #:use-module (guix download)
+  #:use-module (guix utils)
   #:use-module (guix build-system gnu)
   #:use-module (guix build-system cmake)
   #:use-module (guix packages)
+  #:use-module (gnu packages)
+  #:use-module (srfi srfi-1)
   #:use-module (gnu packages algebra)
   #:use-module (gnu packages autotools)
   #:use-module (gnu packages curl)
   #:use-module (gnu packages boost)
+  #:use-module (gnu packages bootstrap)
+  #:use-module (gnu packages base)
   #:use-module (gnu packages gawk)
   #:use-module (gnu packages cmake)
+  #:use-module (gnu packages gcc)
   #:use-module (gnu packages glib)
   #:use-module (gnu packages image)
   #:use-module (gnu packages video)
@@ -42,6 +48,7 @@
   #:use-module (gnu packages perl)
   #:use-module (gnu packages python)
   #:use-module (gnu packages xorg)
+  #:use-module (gnu packages xml)
   #:use-module (gnu packages version-control)
   #:use-module (gnu packages ruby)
   #:use-module (gnu packages gnupg)
@@ -49,7 +56,7 @@
   #:use-module (gnu packages linux))
 
 (define-public pocl
-(let ((commit "a6f377a"))
+(let ((commit "7aefc52"))
   (package
     (name "pocl")
     (version (string-append "v09rc-" commit ))
@@ -61,7 +68,7 @@
               (file-name (string-append name "-" commit))
               (sha256
                (base32
-                "0b1y8c2y0xx5sqfpkkvgmp02czgmq5immypgm4hhpmp512hcj38j"))))
+                "03wbcxkx1w5kx0crangsnah0xq218bhb99vglmn00wcjhhw80qim"))))
 (native-inputs `(("autoconf" ,autoconf)
                 ("automake" ,automake)
                 ("libtool" ,libtool)
@@ -70,8 +77,8 @@
 (inputs        `(("python" ,python-2)
                ("boost" ,boost)
                ("dbus" ,dbus)
-               ("clang" ,clang)
-               ("clang-runtime" ,clang-runtime)
+               ("clang" ,clang-3.7.1)
+               ("clang-runtime" ,clang-runtime-3.7.1)
                ("enca" ,enca)
                ("eudev" ,eudev)
                ("fftw-openmpi" ,fftw-openmpi)
@@ -111,37 +118,7 @@
      new targets and devices, both for homogeneous CPU and heterogenous GPUs/accelerators.")
     (home-page "http://portablecl.org/")
     (license license:gpl2))))
-    
-(define-public llvm-3.7.1
-(package
-    (name "llvm-3.7.1")
-    (version "3.7.1")
-    (source
-     (origin
-      (method url-fetch)
-      (uri (string-append "http://llvm.org/releases/"
-                          version "/llvm-" version ".src.tar.xz"))
-      (sha256
-       (base32
-        "1masakdp9g2dan1yrazg7md5am2vacbkb3nahb3dchpc1knr8xxy"))))
-    (build-system cmake-build-system)
-    (native-inputs
-     `(("python" ,python-wrapper)
-       ("perl"   ,perl)))
-    (arguments
-     `(#:configure-flags '("-DCMAKE_SKIP_BUILD_RPATH=FALSE"
-                           "-DCMAKE_BUILD_WITH_INSTALL_RPATH=FALSE")))
-    (home-page "http://www.llvm.org")
-    (synopsis "Optimizing compiler infrastructure")
-    (description
-     "LLVM is a compiler infrastructure designed for compile-time, link-time,
-runtime, and idle-time optimization of programs from arbitrary programming
-languages.  It currently supports compilation of C and C++ programs, using
-front-ends derived from GCC 4.0.1.  A new front-end for the C family of
-languages is in development.  The compiler infrastructure includes mirror sets
-of programming tools as well as libraries with equivalent functionality.")
-    (license license:ncsa)))
-    
+        
 (define-public ocl-icd
   (package
    (name "ocl-icd")
@@ -207,3 +184,145 @@ of programming tools as well as libraries with equivalent functionality.")
     (description "This package provides the Khronos OpenCL headers")
     (home-page "https://www.khronos.org/registry/cl/")
     (license license:gpl2))))
+    
+(define (clang-runtime-from-llvm llvm hash)
+  (package
+    (name "clang-runtime")
+    (version (package-version llvm-3.7.1))
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append "http://llvm.org/releases/"
+                           version "/compiler-rt-" version ".src.tar.xz"))
+       (sha256 
+        (base32 
+        "10c1mz2q4bdq9bqfgr3dirc6hz1h3sq8573srd5q5lr7m7j6jiwx"))))
+    (build-system cmake-build-system)
+    (native-inputs (package-native-inputs llvm))
+    (inputs
+     `(("llvm" ,llvm)))
+    (arguments
+     `(;; Don't use '-g' during the build to save space.
+       #:build-type "Release"))
+
+    (home-page "http://compiler-rt.llvm.org")
+    (synopsis "Runtime library for Clang/LLVM")
+    (description
+     "The \"clang-runtime\" library provides the implementations of run-time
+functions for C and C++ programs.  It also provides header files that allow C
+and C++ source code to interface with the \"sanitization\" passes of the clang
+compiler.  In LLVM this library is called \"compiler-rt\".")
+    (license license:ncsa)
+
+    ;; <http://compiler-rt.llvm.org/> doesn't list MIPS as supported.
+    (supported-systems (delete "mips64el-linux" %supported-systems))))
+
+(define (clang-from-llvm llvm clang-runtime hash)
+  (package
+    (name "clang")
+    (version (package-version llvm-3.7.1))
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append "http://llvm.org/releases/"
+                           version "/cfe-" version ".src.tar.xz"))
+       (sha256 
+        (base32 
+         "0x065d0w9b51xvdjxwfzjxng0gzpbx45fgiaxpap45ragi61dqjn"))
+       (patches (list (search-patch "clang-libc-search-path.patch")))))
+    ;; Using cmake allows us to treat llvm as an external library.  There
+    ;; doesn't seem to be any way to do this with clang's autotools-based
+    ;; build system.
+    (build-system cmake-build-system)
+    (native-inputs (package-native-inputs llvm))
+    (inputs
+     `(("libxml2" ,libxml2)
+       ("libstdc++-4.9", libstdc++-4.9)
+       ("python" ,python-2)
+       ("gcc-lib" ,gcc "lib")
+       ,@(package-inputs llvm)))
+    (propagated-inputs
+     `(("llvm" ,llvm)
+       ("clang-runtime" ,clang-runtime)))
+    (arguments
+     `(#:configure-flags
+       (list "-DCLANG_INCLUDE_TESTS=True"
+
+             ;; Find libgcc_s, crtbegin.o, and crtend.o.
+             (string-append "-DGCC_INSTALL_PREFIX="
+                            (assoc-ref %build-inputs "gcc-lib"))
+
+             ;; Use a sane default include directory.
+             (string-append "-DC_INCLUDE_DIRS="
+                            (assoc-ref %build-inputs "libc")
+                            "/include"))
+
+       ;; Don't use '-g' during the build to save space.
+       #:build-type "Release"
+
+       #:phases (modify-phases %standard-phases
+                  (add-after
+                   'unpack 'set-glibc-file-names
+                   (lambda* (#:key inputs #:allow-other-keys)
+                     (let ((libc (assoc-ref inputs "libc"))
+                           (compiler-rt (assoc-ref inputs "clang-runtime")))
+                       (substitute* "lib/Driver/Tools.cpp"
+                         ;; Patch the 'getLinuxDynamicLinker' function to that
+                         ;; it uses the right dynamic linker file name.
+                         (("/lib64/ld-linux-x86-64.so.2")
+                          (string-append libc
+                                         ,(glibc-dynamic-linker)))
+
+                         ;; Link to libclang_rt files from clang-runtime.
+                         (("TC\\.getDriver\\(\\)\\.ResourceDir")
+                          (string-append "\"" compiler-rt "\"")))
+
+                       ;; Same for libc's libdir, to allow crt1.o & co. to be
+                       ;; found.
+                       (substitute* "lib/Driver/ToolChains.cpp"
+                         (("@GLIBC_LIBDIR@")
+                          (string-append libc "/lib")))))))))
+
+    ;; Clang supports the same environment variables as GCC.
+    (native-search-paths
+     (list (search-path-specification
+            (variable "CPATH")
+            (files '("include")))
+           (search-path-specification
+            (variable "LIBRARY_PATH")
+            (files '("lib" "lib64")))))
+
+    (home-page "http://clang.llvm.org")
+    (synopsis "C language family frontend for LLVM")
+    (description
+     "Clang is a compiler front end for the C, C++, Objective-C and
+Objective-C++ programming languages.  It uses LLVM as its back end.  The Clang
+project includes the Clang front end, the Clang static analyzer, and several
+code analysis tools.")
+    (license license:ncsa)))
+         
+(define-public llvm-3.7.1
+  (package (inherit llvm)
+    (version "3.7.1")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append "http://llvm.org/releases/"
+                           version "/llvm-" version ".src.tar.xz"))
+       (sha256
+        (base32
+         "1masakdp9g2dan1yrazg7md5am2vacbkb3nahb3dchpc1knr8xxy"))))))
+
+(define-public clang-runtime-3.7.1
+  (clang-runtime-from-llvm
+   llvm-3.7.1
+   "0dl1kbrhz96djsxqr61iw5h788s7ncfpfb7aayixky1bhdaydcx4"))
+
+(define-public clang-3.7.1
+  (clang-from-llvm llvm clang-runtime
+                   "12yv3jwdjcbkrx7zjm8wh4jrvb59v8fdw4mnmz3zc1jb00p9k07w"))
+
+
+
+    
+    
