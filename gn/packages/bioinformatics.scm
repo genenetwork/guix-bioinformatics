@@ -22,7 +22,7 @@
   #:use-module (gnu packages databases)
   #:use-module (gnu packages cmake)
   #:use-module (gnu packages cpio)
-  #:use-module (gnu packages cppcheck)
+  #:use-module (gnu packages check)
   #:use-module (gnu packages file)
   #:use-module (gnu packages gcc)
   #:use-module (gnu packages graphviz)
