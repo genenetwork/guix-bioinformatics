@@ -30,9 +30,11 @@
   #:use-module (gnu packages bootstrap)
   #:use-module (gnu packages gawk)
   #:use-module (gnu packages cmake)
+  #:use-module (gnu packages compression)
   #:use-module (gnu packages glib)
   #:use-module (gnu packages gnupg)
   #:use-module (gnu packages llvm)
+  #:use-module (gnu packages libedit)
   #:use-module (gnu packages video)
   #:use-module (gnu packages textutils)
   #:use-module (gnu packages gl)
@@ -40,46 +42,52 @@
   #:use-module (gnu packages pkg-config)
   #:use-module (gnu packages maths)
   #:use-module (gnu packages web)
+  #:use-module (gnu packages ncurses)
   #:use-module (gnu packages python)
   #:use-module (gnu packages xorg)
+  #:use-module (gnu packages xdisorg)
   #:use-module (gnu packages version-control)
   #:use-module (gnu packages zip)  
   #:use-module (gnu packages linux))
 
 (define-public beignet
-(let ((commit "4e7d5a0c7a269b2c0b70e37e4e7fcb254065c042"))
   (package
-    (name "beignet")
-    (version (string-append "master" commit ))
-    (source (origin
-              (method git-fetch)
-              (uri (git-reference
-              (url "git://anongit.freedesktop.org/beignet")
-              (commit commit)))
-              (file-name (string-append name "-" commit))
-              (sha256
-               (base32
-                "1gs6ls2jgwkrk5555nw9vsmqfqx3q49nnpq2d5xqm87qym78p5r2"))))
+   (name "beignet")
+   (version "1.1.1")
+   (source (origin
+             (method url-fetch)
+             (uri (string-append "https://01.org/sites/default/files/beignet-"
+                                 version "-source.tar.gz"))
+             (file-name (string-append name "-" version ".tar.gz"))
+             (sha256
+              (base32
+               "068i5srqpncfw0kklxdyzxcm5w56pi91jp7pkv6cglzvnjgcdx4v"))))
     (inputs `(("autoconf" ,autoconf)
-             ("llvm" ,llvm)
+             ("llvm" ,llvm-3.5)
              ("libpthread-stubs", libpthread-stubs)
-             ("clang" ,clang)
-             ("clang-runtime" ,clang-runtime)
+             ("clang" ,clang-3.5)
+             ("libdrm" ,libdrm)
              ("libtool" ,libtool)
              ("libsm" ,libsm)
+             ("libxfixes" ,libxfixes)
+             ("libxext" ,libxext)
+             ("libedit" ,libedit)
+             ("xextproto" ,xextproto)
              ("python" ,python-2)
              ("opencl-headers" ,opencl-headers)
              ("glu" ,glu)
+             ("zlib" ,zlib)
              ("pkg-config" ,pkg-config)
              ("freeglut" ,freeglut)
              ("mesa-utils" ,mesa-utils)
+             ("ncurses" ,ncurses)
              ("ocl-icd" ,ocl-icd)))                                              
     (build-system cmake-build-system)
-    (arguments `(#:configure-flags '("-DCMAKE_BUILD_TYPE=Release") #:tests? #f))   
+    (arguments `(#:configure-flags '("-DCMAKE_BUILD_TYPE=Release" "-DCOMPILER=CLANG") #:tests? #f))   
     (home-page "https://forge.imag.fr/projects/ocl-icd/")
     (synopsis "Intel's OpenCL framework")
     (description "Intel's OpenCL framework that works with Intel IvyBridge GPUs and above")
-    (license license:gpl2))))
+    (license license:gpl2)))
         
 (define-public ocl-icd
   (package
@@ -146,3 +154,5 @@
     (description "This package provides the Khronos OpenCL headers")
     (home-page "https://www.khronos.org/registry/cl/")
     (license license:gpl2))))
+    
+    
