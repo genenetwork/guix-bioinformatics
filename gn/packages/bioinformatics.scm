@@ -62,6 +62,57 @@
   #:use-module (gnu packages bootstrap)
   #:use-module (srfi srfi-1))
 
+(define-public contra
+  (package
+    (name "contra")
+    (version "2.0.6")
+    (source (origin
+      (method url-fetch)
+      (uri (string-append
+            "mirror://sourceforge/contra-cnv/CONTRA.v" version ".tar.gz"))
+      (sha256
+       (base32
+        "0agpcm2xh5f0i9n9sx1kvln6mzdksddmh11bvzj6bh76yw5pnw91"))))
+    (build-system gnu-build-system)
+    (propagated-inputs
+     `(("python" ,python-2)
+       ("r" ,r)
+       ("r-dnacopy" ,r-dnacopy)
+       ("bedtools" ,bedtools)
+       ("samtools" ,samtools)))
+    (arguments
+     `(#:tests? #f ; There are no tests.
+       #:phases
+       (modify-phases %standard-phases
+         (delete 'configure)
+         (delete 'build) ; We can use Guix's BEDtools instead.
+         (replace 'install
+           (lambda _
+             (let* ((out (assoc-ref %outputs "out"))
+                    (bin (string-append out "/bin"))
+                    (doc (string-append out "/share/doc/contra")))
+               (mkdir-p bin)
+               (mkdir-p doc)
+               (and
+                (zero? (system* "cp" "--recursive" "scripts" bin))
+                (zero? (system* "cp" "contra.py" bin))
+                (zero? (system* "cp" "baseline.py" bin))
+                ;; There's only a pre-built PDF available.
+                (zero? (system* "cp" "CONTRA_User_Guide.2.0.pdf" doc)))))))))
+    (home-page "http://contra-cnv.sourceforge.net/")
+    (synopsis "Tool for copy number variation (CNV) detection for targeted
+resequencing data")
+    (description "CONTRA is a tool for copy number variation (CNV) detection
+for targeted resequencing data such as those from whole-exome capture data.
+CONTRA calls copy number gains and losses for each target region with key
+strategies including the use of base-level log-ratios to remove GC-content
+bias, correction for an imbalanced library size effect on log-ratios, and the
+estimation of log-ratio variations via binning and interpolation.  It takes
+standard alignment formats (BAM/SAM) and outputs in variant call format
+(VCF 4.0) for easy integration with other next generation sequencing analysis
+package.")
+    (license license:gpl3+)))
+
 (define-public freec
   (package
     (name "control-freec")
