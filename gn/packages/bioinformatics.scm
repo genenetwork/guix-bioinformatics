@@ -113,6 +113,62 @@ standard alignment formats (BAM/SAM) and outputs in variant call format
 package.")
     (license license:gpl3+)))
 
+(define boost-delly
+  (package (inherit boost)
+    (name "boost-delly")
+    (version "1.57.0")
+    (source (origin
+              (method url-fetch)
+              (uri (string-append
+                    "mirror://sourceforge/boost/boost_"
+                    (string-map (lambda (x) (if (eq? x #\.) #\_ x)) version)
+                    ".tar.bz2"))
+              (sha256
+               (base32
+                "0rs94vdmg34bwwj23fllva6mhrml2i7mvmlb11zyrk1k5818q34i"))))))
+
+(define-public delly
+  (package
+    (name "delly")
+    (version "0.7.2")
+    (source (origin
+      (method url-fetch)
+      (uri (string-append "https://github.com/tobiasrausch/delly/archive/v"
+            version ".tar.gz"))
+      (sha256
+       (base32 "173mmg43dbxqkyq0kiffz63xbmggr2kzd55mwxci9yfh5md1zprn"))
+      (patches (list (search-patch "delly-use-system-libraries.patch")))))
+    (build-system gnu-build-system)
+    (native-inputs
+     `(("python" ,python-2)))
+    (inputs
+     `(("boost" ,boost-delly) ; Use version 1.57.0 instead.
+       ("htslib" ,htslib)
+       ("zlib" ,zlib)
+       ("bzip2" ,bzip2)))
+    (arguments
+     `(#:tests? #f ; There are no tests to run.
+       #:phases
+       (modify-phases %standard-phases
+         (delete 'configure) ; There is no configure phase.
+         (replace 'install
+           (lambda _
+             (let ((bin (string-append (assoc-ref %outputs "out") "/bin")))
+               (install-file "src/cov" bin)
+               (install-file "src/delly" bin)
+               (install-file "src/extract" bin)
+               (install-file "src/iover" bin)
+               (install-file "src/stats" bin)))))))
+    (home-page "https://github.com/tobiasrausch/delly")
+    (synopsis "Integrated structural variant prediction method")
+    (description "Delly is an integrated structural variant prediction method
+that can discover and genotype deletions, tandem duplications, inversions and
+translocations at single-nucleotide resolution in short-read massively parallel
+sequencing data.  It uses paired-ends and split-reads to sensitively and
+accurately delineate genomic rearrangements throughout the genome.  Structural
+variants can be visualized using Delly-maze and Delly-suave.")
+    (license license:gpl3)))
+
 (define-public freec
   (package
     (name "control-freec")
