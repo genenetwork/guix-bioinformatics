@@ -62,6 +62,113 @@
   #:use-module (gnu packages bootstrap)
   #:use-module (srfi srfi-1))
 
+(define-public contra
+  (package
+    (name "contra")
+    (version "2.0.6")
+    (source (origin
+      (method url-fetch)
+      (uri (string-append
+            "mirror://sourceforge/contra-cnv/CONTRA.v" version ".tar.gz"))
+      (sha256
+       (base32
+        "0agpcm2xh5f0i9n9sx1kvln6mzdksddmh11bvzj6bh76yw5pnw91"))))
+    (build-system gnu-build-system)
+    (propagated-inputs
+     `(("python" ,python-2)
+       ("r" ,r)
+       ("r-dnacopy" ,r-dnacopy)
+       ("bedtools" ,bedtools)
+       ("samtools" ,samtools)))
+    (arguments
+     `(#:tests? #f ; There are no tests.
+       #:phases
+       (modify-phases %standard-phases
+         (delete 'configure)
+         (delete 'build) ; We can use Guix's BEDtools instead.
+         (replace 'install
+           (lambda _
+             (let* ((out (assoc-ref %outputs "out"))
+                    (bin (string-append out "/bin"))
+                    (doc (string-append out "/share/doc/contra")))
+               (mkdir-p bin)
+               (mkdir-p doc)
+               (and
+                (zero? (system* "cp" "--recursive" "scripts" bin))
+                (zero? (system* "cp" "contra.py" bin))
+                (zero? (system* "cp" "baseline.py" bin))
+                ;; There's only a pre-built PDF available.
+                (zero? (system* "cp" "CONTRA_User_Guide.2.0.pdf" doc)))))))))
+    (home-page "http://contra-cnv.sourceforge.net/")
+    (synopsis "Tool for copy number variation (CNV) detection for targeted
+resequencing data")
+    (description "CONTRA is a tool for copy number variation (CNV) detection
+for targeted resequencing data such as those from whole-exome capture data.
+CONTRA calls copy number gains and losses for each target region with key
+strategies including the use of base-level log-ratios to remove GC-content
+bias, correction for an imbalanced library size effect on log-ratios, and the
+estimation of log-ratio variations via binning and interpolation.  It takes
+standard alignment formats (BAM/SAM) and outputs in variant call format
+(VCF 4.0) for easy integration with other next generation sequencing analysis
+package.")
+    (license license:gpl3+)))
+
+(define boost-delly
+  (package (inherit boost)
+    (name "boost-delly")
+    (version "1.57.0")
+    (source (origin
+              (method url-fetch)
+              (uri (string-append
+                    "mirror://sourceforge/boost/boost_"
+                    (string-map (lambda (x) (if (eq? x #\.) #\_ x)) version)
+                    ".tar.bz2"))
+              (sha256
+               (base32
+                "0rs94vdmg34bwwj23fllva6mhrml2i7mvmlb11zyrk1k5818q34i"))))))
+
+(define-public delly
+  (package
+    (name "delly")
+    (version "0.7.2")
+    (source (origin
+      (method url-fetch)
+      (uri (string-append "https://github.com/tobiasrausch/delly/archive/v"
+            version ".tar.gz"))
+      (sha256
+       (base32 "173mmg43dbxqkyq0kiffz63xbmggr2kzd55mwxci9yfh5md1zprn"))
+      (patches (list (search-patch "delly-use-system-libraries.patch")))))
+    (build-system gnu-build-system)
+    (native-inputs
+     `(("python" ,python-2)))
+    (inputs
+     `(("boost" ,boost-delly) ; Use version 1.57.0 instead.
+       ("htslib" ,htslib)
+       ("zlib" ,zlib)
+       ("bzip2" ,bzip2)))
+    (arguments
+     `(#:tests? #f ; There are no tests to run.
+       #:phases
+       (modify-phases %standard-phases
+         (delete 'configure) ; There is no configure phase.
+         (replace 'install
+           (lambda _
+             (let ((bin (string-append (assoc-ref %outputs "out") "/bin")))
+               (install-file "src/cov" bin)
+               (install-file "src/delly" bin)
+               (install-file "src/extract" bin)
+               (install-file "src/iover" bin)
+               (install-file "src/stats" bin)))))))
+    (home-page "https://github.com/tobiasrausch/delly")
+    (synopsis "Integrated structural variant prediction method")
+    (description "Delly is an integrated structural variant prediction method
+that can discover and genotype deletions, tandem duplications, inversions and
+translocations at single-nucleotide resolution in short-read massively parallel
+sequencing data.  It uses paired-ends and split-reads to sensitively and
+accurately delineate genomic rearrangements throughout the genome.  Structural
+variants can be visualized using Delly-maze and Delly-suave.")
+    (license license:gpl3)))
+
 (define-public freec
   (package
     (name "control-freec")
@@ -1141,15 +1248,19 @@ manipulations on VCF files.")
       ("python" ,python-2)
       ("perl" ,perl)))
    (arguments
-    `(#:tests? #f
-      #:phases
+    `(#:phases
       (modify-phases %standard-phases
         (delete 'configure) ; There is no configure phase.
+        ;; The build phase needs to run 'make' twice for the reasons described
+        ;; below.
         (replace 'build
           (lambda* (#:key inputs #:allow-other-keys)
-            ;; The first run creates a Makefile.local file.
+            ;; The first run creates a Makefile.local file.  Make will report
+            ;; the failure to find Makefile.local, but we can ignore this error.
             (system* "make" (string-append "SAMTOOLS=" (assoc-ref inputs "samtools")))
-            ;; The second run actually compiles the program.
+            ;; The second run actually compiles the program.  Now Makefile.local
+            ;; is available, and we should treat an exiting make with an error as
+            ;; a true error.
             (zero? (system* "make"))))
         (replace 'install
           (lambda* (#:key outputs #:allow-other-keys)
@@ -1157,7 +1268,17 @@ manipulations on VCF files.")
               (install-file "src/pindel" bin)
               (install-file "src/pindel2vcf" bin)
               (install-file "src/pindel2vcf4tcga" bin)
-              (install-file "src/sam2pindel" bin)))))))
+              (install-file "src/sam2pindel" bin))))
+        ;; There are multiple test targets, so in order to run all
+        ;; tests, we must run the separate make targets.
+        (replace 'check
+          (lambda* (#:key inputs #:allow-other-keys)
+            (and
+             (zero? (system* "make" "acceptance-tests"))
+             (zero? (system* "make" "coverage-tests"))
+             (zero? (system* "make" "cppcheck"))
+             (zero? (system* "make" "functional-tests"))
+             (zero? (system* "make" "regression-tests"))))))))
    (home-page "https://github.com/genome/pindel")
    (synopsis "Structural variants detector for next-gen sequencing data")
    (description "Pindel can detect breakpoints of large deletions, medium sized
