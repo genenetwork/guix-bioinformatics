@@ -6,6 +6,7 @@
   #:use-module (guix utils)
   #:use-module (guix download)
   #:use-module (guix git-download)
+  #:use-module (guix build-system ant)
   #:use-module (guix build-system gnu)
   #:use-module (guix build-system cmake)
   #:use-module (guix build-system perl)
@@ -1287,3 +1288,59 @@ single-based resolution from next-gen sequence data.  It uses a pattern growth
 approach to identify the breakpoints of these variants from paired-end short
 reads.")
    (license license:gpl3+)))
+
+(define-public varscan
+  (package
+    (name "varscan")
+    (version "2.4.1")
+    (source (origin
+      (method url-fetch)
+      (uri (string-append
+            "https://github.com/dkoboldt/varscan/releases/download/v"
+            version "/VarScan.v" version ".source.jar"))
+      (sha256
+       (base32 "0y45ympkza7qwcbcisg006286pwjbr5978n03hx5nvl09f0mapk8"))))
+    (build-system ant-build-system)
+    (arguments
+     `(#:phases
+       (modify-phases %standard-phases
+         (replace 'unpack
+           (lambda _
+             (mkdir "source")
+             (chdir "source")
+             (and
+              ;; Unpack the Java archive containing the source files.
+              (zero? (system* "jar" "xf" (assoc-ref %build-inputs "source")))
+              ;; Remove existing compiled output.
+              (with-directory-excursion "net/sf/varscan/"
+                (for-each (lambda (file)
+                            (unless (string= (string-take-right file 5) ".java")
+                              (zero? (system* "rm" file))))
+                          (find-files "." #:directories? #f))))))
+         (replace 'build
+           (lambda _
+             (let ((classes '()))
+             (and
+              ;; Compile the source files.
+              (with-directory-excursion "net/sf/varscan/"
+                (for-each (lambda (file)
+                            (when (string= (string-take-right file 5) ".java")
+                              (zero? (system* "javac" file))
+                              (cons ))
+                          (find-files "." #:directories? #f)))
+              ;; Construct the new Java archive.
+              (zero? (system* "jar" "cfm" "varscan-2.4.1.jar"
+                              "META-INF/MANIFEST.MF"
+                              "net/sf/varscan/*.java")))))))
+        (replace 'install
+          (lambda _
+            (let ((out (string-append (assoc-ref %outputs "out")
+                                      "/share/java/varscan/")))
+              (mkdir-p out)
+              (install-file "varscan-2.4.1.jar" out)))))))
+    (home-page "http://dkoboldt.github.io/varscan/")
+    (synopsis "Variant detection in massively parallel sequencing data")
+    (description "")
+    ;; Free for non-commercial use by academic, government, and
+    ;; non-profit/not-for-profit institutions
+    (license license:non-copyleft)))
