@@ -50,27 +50,22 @@
   #:use-module (gnu packages linux))
 
 (define-public arrayfire
-(let ((commit "e118bf2"))
-  (package
+(package
     (name "arrayfire")
-    (version "3.3.3")
+    (version "3.3.1")
     (source (origin
-              (method git-fetch)
-              (uri (git-reference
-              (url "https://github.com/arrayfire/arrayfire.git")
-              (commit commit)))
-              (file-name (string-append name "-" commit))
+              (method url-fetch)
+              (uri (string-append "http://arrayfire.com/arrayfire_source/arrayfire-full-" version 
+                                  ".tar.bz2"))
+              (file-name (string-append name "-" version ".tar.bz2"))
               (sha256
                (base32
-                "050lwbl31spia17n9yq70z86x5inrahsd0y781g46a8ry2psviyj"))))
+                "045adww6dqmyz6kkfmq7xawi5v9a894yp5j9pzn6j568gi48pyqc"))))
     (native-inputs `(("autoconf" ,autoconf)
         ("automake" ,automake)
-        ("cmake" ,cmake)
         ("gawk" ,gawk)
         ("git" ,git)
-        ("wget" ,wget)
         ("glew" ,glew)
-        ("git" ,git)
         ("libtool" ,libtool)
         ("pkg-config" ,pkg-config)))
     (inputs `(("boost" ,boost)
@@ -101,14 +96,19 @@
        ("glew" ,glew)
        ("glu" ,glu)
        ("openblas" ,openblas)
+       ("wget" ,wget)
        ("cmake" ,cmake)))
     (build-system cmake-build-system)
     (arguments 
-     `(#:configure-flags '("-DBUILD_OPENCL=ON" "-DBUILD_GRAPHICS=OFF") #:tests? #f))     
+     `(#:configure-flags '("-DBUILD_OPENCL=ON" "-DBUILD_CUDA=OFF" "-DBUILD_GRAPHICS=OFF") 
+       #:tests? #f))     
     (synopsis "ArrayFire: a general purpose GPU library. https://arrayfire.com")
     (description "ArrayFire is a high performance software library for parallel computing with an easy-to-use API. Its array based function set makes parallel programming simple.")
     (home-page "http://arrayfire.com/")
-    (license (list license:gpl2 license:gpl2+ license:gpl3 license:gpl3+)))))
+    (license (list license:gpl2 
+                   license:gpl2+ 
+                   license:gpl3 
+                   license:gpl3+))))
 
 (define-public glfw
   (package
@@ -122,7 +122,8 @@
               (base32
                "08pixv8hd5xsccf7l8cqcijjqaq4k4da8qbp77wggal2fq445ika"))))
     (build-system cmake-build-system)
-    (arguments `(#:configure-flags '("-DBUILD_SHARED_LIBS=ON") #:tests? #f))
+    (arguments `(#:configure-flags '("-DBUILD_SHARED_LIBS=ON") 
+                 #:tests? #f))
     (native-inputs `(("autoconf" ,autoconf)
         ("automake" ,automake)
         ("cmake" ,cmake)
