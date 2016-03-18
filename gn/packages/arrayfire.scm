@@ -17,14 +17,17 @@
 ;;; along with GNU Guix.  If not, see <http://www.gnu.org/licenses/>.
 
 (define-module (gn packages arrayfire)
-  #:use-module ((guix licenses))
+  #:use-module ((guix licenses) #:prefix license:)
   #:use-module (guix download)
   #:use-module (guix git-download)
   #:use-module (guix build-system gnu)
   #:use-module (guix build-system cmake)
   #:use-module (guix packages)
+  #:use-module (gnu packages)
+  #:use-module (guix utils)
   #:use-module (gnu packages algebra)
   #:use-module (gnu packages autotools)
+  #:use-module (gnu packages bootstrap)
   #:use-module (gnu packages curl)
   #:use-module (gnu packages gawk)
   #:use-module (gnu packages cmake)
@@ -34,20 +37,23 @@
   #:use-module (gnu packages video)
   #:use-module (gnu packages textutils)
   #:use-module (gnu packages gl)
+  #:use-module (gnu packages gnupg)
   #:use-module (gnu packages pkg-config)
   #:use-module (gnu packages maths)
   #:use-module (gnu packages web)
-  #:use-module (gnu packages ldc)
+  #:use-module (gnu packages wget)
   #:use-module (gnu packages python)
+  #:use-module (gnu packages ruby)
   #:use-module (gnu packages xorg)
-  #:use-module (gnu packages version-control)  
+  #:use-module (gnu packages version-control)
+  #:use-module (gnu packages zip)  
   #:use-module (gnu packages linux))
 
 (define-public arrayfire
-(let ((commit "9ca1ea0"))
+(let ((commit "e118bf2"))
   (package
     (name "arrayfire")
-    (version "3.3.1-hotfix")
+    (version "3.3.3")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -56,12 +62,15 @@
               (file-name (string-append name "-" commit))
               (sha256
                (base32
-                "067y98a9s78vpz7xsg889xnwfaza7c5gdv97yg9cgrdl0iljvsgp"))))
+                "050lwbl31spia17n9yq70z86x5inrahsd0y781g46a8ry2psviyj"))))
     (native-inputs `(("autoconf" ,autoconf)
         ("automake" ,automake)
         ("cmake" ,cmake)
         ("gawk" ,gawk)
+        ("git" ,git)
+        ("wget" ,wget)
         ("glew" ,glew)
+        ("git" ,git)
         ("libtool" ,libtool)
         ("pkg-config" ,pkg-config)))
     (inputs `(("boost" ,boost)
@@ -69,11 +78,14 @@
        ("curl" ,curl)
        ("atlas" ,atlas)
        ("dbus" ,dbus)
+       ("opencl-headers" ,opencl-headers)
+       ("ocl-icd" ,ocl-icd)
        ("enca" ,enca)
        ("eudev" ,eudev)
        ("glew" ,glew)
        ("glib" ,glib)
        ("lapack" ,lapack)
+       ("scalapack" ,scalapack)
        ("libcap" ,libcap)
        ("libjpeg" ,libjpeg)
        ("libltdl" ,libltdl)
@@ -82,21 +94,21 @@
        ("mesa-utils" ,mesa-utils)
        ("python" ,python-2)
        ("freeimage" ,freeimage)
+       ("freeglut" ,freeglut)
        ("fftw" ,fftw)
        ("fftwf" ,fftwf)
        ("fftw-openmpi" ,fftw-openmpi)
        ("glew" ,glew)
        ("glu" ,glu)
        ("openblas" ,openblas)
-       ("git" ,git)
        ("cmake" ,cmake)))
     (build-system cmake-build-system)
     (arguments 
-     `(#:configure-flags '("-DCMAKE_BUILD_TYPE=Release" "-DBUILD_OPENCL=OFF" "-DBUILD_GRAPHICS=OFF") #:tests? #f))     
+     `(#:configure-flags '("-DBUILD_OPENCL=ON" "-DBUILD_GRAPHICS=OFF") #:tests? #f))     
     (synopsis "ArrayFire: a general purpose GPU library. https://arrayfire.com")
     (description "ArrayFire is a high performance software library for parallel computing with an easy-to-use API. Its array based function set makes parallel programming simple.")
     (home-page "http://arrayfire.com/")
-    (license (list gpl2 gpl2+ gpl3 gpl3+)))))
+    (license (list license:gpl2 license:gpl2+ license:gpl3 license:gpl3+)))))
 
 (define-public glfw
   (package
@@ -114,6 +126,7 @@
     (native-inputs `(("autoconf" ,autoconf)
         ("automake" ,automake)
         ("cmake" ,cmake)
+        ("git" ,git)
         ("libtool" ,libtool)
         ("libpthread-stubs" ,libpthread-stubs)
         ("pkg-config" ,pkg-config)))
@@ -136,5 +149,71 @@
     (home-page "http://www.glfw.org/")
     (synopsis "glfw is an Open Source, multi-platform library for creating windows with OpenGL contexts and receiving input and events.")
     (description "glfw is an Open Source, multi-platform library for creating windows with OpenGL contexts and receiving input and events.")
-    (license (list gpl2))))
+    (license (list license:gpl2))))
+    
+(define-public ocl-icd
+  (package
+   (name "ocl-icd")
+   (version "2.2.9")
+   (source (origin
+             (method url-fetch)
+             (uri (string-append "https://forge.imag.fr/frs/download.php/716/ocl-icd-"
+                                 version ".tar.gz"))
+             (file-name (string-append name "-" version ".tar.gz"))
+             (sha256
+              (base32
+               "1rgaixwnxmrq2aq4kcdvs0yx7i6krakarya9vqs7qwsv5hzc32hc"))))
+    (inputs `(("zip" ,zip)
+             ("autoconf" ,autoconf)
+             ("automake" ,automake)
+             ("ruby" ,ruby)
+             ("libtool" ,libtool)
+             ("opencl-headers" ,opencl-headers)
+             ("libgcrypt" ,libgcrypt)))                                              
+    (build-system gnu-build-system)
+     (arguments
+     '(#:phases (modify-phases %standard-phases
+                    (add-after 'unpack `bootstrap
+                      (lambda _
+                        (zero? (system* "autoreconf" "-vfi")))))))    
+    (home-page "https://forge.imag.fr/projects/ocl-icd/")
+    (synopsis "OpenCL implementations are provided as ICD (Installable Client Driver).")
+    (description "OpenCL implementations are provided as ICD (Installable Client Driver).
+    An OpenCL program can use several ICD thanks to the use of an ICD Loader as provided by this project.
+    This free ICD Loader can load any (free or non free) ICD")
+    (license (list license:gpl2 license:ruby))))
+    
+(define-public opencl-headers
+(let ((commit "c1770dc"))
+  (package
+    (name "opencl-headers")
+    (version (string-append "2.1-" commit ))
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+              (url "https://github.com/KhronosGroup/OpenCL-Headers.git")
+              (commit commit)))
+              (file-name (string-append name "-" commit))
+              (sha256
+               (base32
+                "0m9fkblqja0686i2jjqiszvq3df95gp01a2674xknlmkd6525rck"))))
+    (propagated-inputs '())
+    (inputs '())
+    (native-inputs '())
+    (build-system gnu-build-system)
+    (arguments
+     '(#:phases
+       (modify-phases %standard-phases
+         (delete 'configure)
+         (delete 'build)
+         (delete 'check)
+         (replace 'install
+                  (lambda* (#:key outputs #:allow-other-keys)
+                    (copy-recursively "." (string-append
+                                                 (assoc-ref outputs "out")
+                                                 "/include/CL")))))))
+    (synopsis "The Khronos OpenCL headers")
+    (description "This package provides the Khronos OpenCL headers")
+    (home-page "https://www.khronos.org/registry/cl/")
+    (license (list license:gpl2)))))
 
