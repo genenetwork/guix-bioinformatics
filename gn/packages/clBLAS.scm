@@ -61,7 +61,8 @@
               (base32
                "0adlb02lqzrklfybhnv4n0p37mvkvdi3vqiwa05x2mv05ywnr93j"))))
     (build-system cmake-build-system)    
-    (arguments `(#:configure-flags '("../clBLAS-2.10/src" "-DBUILD_SHARED_LIBS=ON" "-DCMAKE_BUILD_TYPE=Release") #:tests? #f))
+    (arguments `(#:tests? #f 
+                 #:configure-flags '("../clBLAS-2.10/src" "-DBUILD_SHARED_LIBS=ON" "-DCMAKE_BUILD_TYPE=Release" "-DBUILD_TEST=OFF")))
     (native-inputs `(("autoconf" ,autoconf)
         ("automake" ,automake)
         ("cmake" ,cmake)
@@ -70,11 +71,11 @@
         ("pkg-config" ,pkg-config)))
     (inputs `(("curl" ,curl)
        ("dbus" ,dbus)
+       ("boost" ,boost)
        ("enca" ,enca)
        ("eudev" ,eudev)
        ("fftw-openmpi" ,fftw-openmpi)
-       ("glew" ,glew)
-       ("googletest" ,googletest)
+       ("glew" ,glew)       
        ("libcap" ,libcap)
        ("libjpeg" ,libjpeg)
        ("libltdl" ,libltdl)
@@ -82,7 +83,6 @@
        ("mesa-utils" ,mesa-utils)
        ("openmpi" ,openmpi)
        ("ocl-icd" ,ocl-icd)
-       ("openblas" ,openblas)
        ("opencl-headers" ,opencl-headers)
        ("randrproto" ,randrproto)
        ("libxrandr" ,libxrandr)
@@ -161,26 +161,4 @@
     (home-page "https://www.khronos.org/registry/cl/")
     (license (list license:gpl2)))))
     
-(define-public googletest
-  (package
-    (name "googletest")
-    (version "1.7.0")
-    (source (origin
-             (method url-fetch)
-             (uri (string-append "https://github.com/google/googletest/archive/release-"
-                                 version ".tar.gz"))
-             (sha256
-              (base32
-               "1k0nf1l9cb3prdmsvaajl5i31bx86c1mw0d5jgzykz7rzm36afpp"))))
-    (build-system cmake-build-system)
-    (arguments `(#:configure-flags '("-DCMAKE_BUILD_TYPE=RelWithDebInfo") #:tests? #f))    
-    (inputs `(("automake" ,automake)
-       ("autoconf" ,autoconf)
-       ("libtool" ,libtool)
-       ("cmake" ,cmake)
-       ("python" ,python-2)
-       ("pkg-config" ,pkg-config)))       
-    (home-page "https://github.com/google/googletest")
-    (synopsis "Google's C++ test framework")
-    (description "Google's C++ test framework")
-    (license (list license:gpl2))))
+
