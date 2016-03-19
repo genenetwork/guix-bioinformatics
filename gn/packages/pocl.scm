@@ -52,7 +52,7 @@
   #:use-module (gnu packages version-control)
   #:use-module (gnu packages ruby)
   #:use-module (gnu packages gnupg)
-  #:use-module (gnu packages zip)  
+  #:use-module ((gnu packages zip) #:prefix gnuzip:)
   #:use-module (gnu packages linux))
 
 (define-public pocl
@@ -131,7 +131,7 @@
              (sha256
               (base32
                "1rgaixwnxmrq2aq4kcdvs0yx7i6krakarya9vqs7qwsv5hzc32hc"))))
-    (inputs `(("zip" ,zip)
+    (inputs `(("zip" ,gnuzip:zip)
              ("autoconf" ,autoconf)
              ("automake" ,automake)
              ("ruby" ,ruby)
