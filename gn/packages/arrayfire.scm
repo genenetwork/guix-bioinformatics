@@ -37,9 +37,11 @@
   #:use-module (gnu packages video)
   #:use-module (gnu packages textutils)
   #:use-module (gnu packages gl)
+  #:use-module (gnu packages gcc)
   #:use-module (gnu packages gnupg)
   #:use-module (gnu packages pkg-config)
   #:use-module (gnu packages maths)
+  #:use-module (gnu packages mpi)
   #:use-module (gnu packages web)
   #:use-module (gnu packages wget)
   #:use-module (gnu packages python)
@@ -70,7 +72,10 @@
         ("pkg-config" ,pkg-config)))
     (inputs `(("boost" ,boost)
        ("glfw" ,glfw)
+       ("compute" ,compute)
        ("curl" ,curl)
+       ("clBLAS" ,clBLAS)
+       ("clFFT" ,clFFT)
        ("atlas" ,atlas)
        ("dbus" ,dbus)
        ("opencl-headers" ,opencl-headers)
@@ -100,7 +105,7 @@
        ("cmake" ,cmake)))
     (build-system cmake-build-system)
     (arguments 
-     `(#:configure-flags '("-DBUILD_OPENCL=OFF" "-DBUILD_CUDA=OFF" "-DBUILD_GRAPHICS=OFF") 
+     `(#:configure-flags '("-DBUILD_OPENCL=ON" "-DBUILD_CUDA=OFF" "-DBUILD_GRAPHICS=OFF") 
        #:tests? #f))     
     (synopsis "ArrayFire: a general purpose GPU library. https://arrayfire.com")
     (description "ArrayFire is a high performance software library for parallel computing with an easy-to-use API. Its array based function set makes parallel programming simple.")
@@ -151,6 +156,139 @@
     (synopsis "glfw is an Open Source, multi-platform library for creating windows with OpenGL contexts and receiving input and events.")
     (description "glfw is an Open Source, multi-platform library for creating windows with OpenGL contexts and receiving input and events.")
     (license (list license:gpl2))))
+    
+(define-public clBLAS
+  (package
+    (name "clBLAS")
+    (version "v2.10")
+    (source (origin
+             (method url-fetch)
+             (uri (string-append "https://github.com/clMathLibraries/clBLAS/archive/"
+                                 version ".tar.gz"))
+             (sha256
+              (base32
+               "0adlb02lqzrklfybhnv4n0p37mvkvdi3vqiwa05x2mv05ywnr93j"))))
+    (build-system cmake-build-system)    
+    (arguments `(#:tests? #f 
+                 #:configure-flags '("../clBLAS-2.10/src" "-DBUILD_SHARED_LIBS=ON" "-DCMAKE_BUILD_TYPE=Release" "-DBUILD_TEST=OFF")))
+    (native-inputs `(("autoconf" ,autoconf)
+        ("automake" ,automake)
+        ("cmake" ,cmake)
+        ("gfortran" ,gfortran)
+        ("libtool" ,libtool)
+        ("pkg-config" ,pkg-config)))
+    (inputs `(("curl" ,curl)
+       ("dbus" ,dbus)
+       ("boost" ,boost)
+       ("enca" ,enca)
+       ("eudev" ,eudev)
+       ("fftw-openmpi" ,fftw-openmpi)
+       ("glew" ,glew)       
+       ("libcap" ,libcap)
+       ("libjpeg" ,libjpeg)
+       ("libltdl" ,libltdl)
+       ("libtiff" ,libtiff)
+       ("mesa-utils" ,mesa-utils)
+       ("openmpi" ,openmpi)
+       ("ocl-icd" ,ocl-icd)
+       ("opencl-headers" ,opencl-headers)
+       ("randrproto" ,randrproto)
+       ("libxrandr" ,libxrandr)
+       ("xineramaproto" ,xineramaproto)
+       ("libxinerama" ,libxinerama)
+       ("libxcursor" ,libxcursor)
+       ("python" ,python-2)))       
+    (home-page "http://www.glfw.org/")
+    (synopsis "glfw is an Open Source, multi-platform library for creating windows with OpenGL contexts and receiving input and events.")
+    (description "glfw is an Open Source, multi-platform library for creating windows with OpenGL contexts and receiving input and events.")
+    (license (list license:gpl2))))
+    
+(define-public clFFT
+  (package
+    (name "clFFT")
+    (version "v2.10.1")
+    (source (origin
+             (method url-fetch)
+             (uri (string-append "https://github.com/clMathLibraries/clFFT/archive/"
+                                 version ".tar.gz"))
+             (sha256
+              (base32
+               "19hrk1lf06kch8x9dpbdj0waycn2mldrmj2y4vzi7zn2gdfw6g73"))))
+    (build-system cmake-build-system)    
+    (arguments `(#:configure-flags '("../clFFT-2.10.1/src" "-DBUILD_SHARED_LIBS=ON" "-DCMAKE_BUILD_TYPE=Release") #:tests? #f))
+    (native-inputs `(("autoconf" ,autoconf)
+        ("automake" ,automake)
+        ("cmake" ,cmake)
+        ("libtool" ,libtool)
+        ("pkg-config" ,pkg-config)))
+    (inputs `(("curl" ,curl)
+       ("dbus" ,dbus)
+       ("enca" ,enca)
+       ("eudev" ,eudev)
+       ("fftw-openmpi" ,fftw-openmpi)
+       ("glew" ,glew)
+       ("libcap" ,libcap)
+       ("libjpeg" ,libjpeg)
+       ("libltdl" ,libltdl)
+       ("libtiff" ,libtiff)
+       ("mesa-utils" ,mesa-utils)
+       ("openmpi" ,openmpi)
+       ("ocl-icd" ,ocl-icd)
+       ("opencl-headers" ,opencl-headers)
+       ("randrproto" ,randrproto)
+       ("libxrandr" ,libxrandr)
+       ("xineramaproto" ,xineramaproto)
+       ("libxinerama" ,libxinerama)
+       ("libxcursor" ,libxcursor)
+       ("python" ,python-2)))       
+    (home-page "http://www.glfw.org/")
+    (synopsis "glfw is an Open Source, multi-platform library for creating windows with OpenGL contexts and receiving input and events.")
+    (description "glfw is an Open Source, multi-platform library for creating windows with OpenGL contexts and receiving input and events.")
+    (license (list license:gpl2))))
+    
+(define-public compute
+  (package
+    (name "compute")
+    (version "v0.5")
+    (source (origin
+             (method url-fetch)
+             (uri (string-append "https://github.com/boostorg/compute/archive/"
+                                 version ".tar.gz"))
+             (sha256
+              (base32
+               "1r16zd1wdnn9gx278mkvr13k3i79hr35v6vj0fn7v3n92ngwxnhd"))))
+    (build-system cmake-build-system)    
+    (arguments `(#:configure-flags '("-DBUILD_SHARED_LIBS=ON" "-DCMAKE_BUILD_TYPE=Release") #:tests? #f))
+    (native-inputs `(("autoconf" ,autoconf)
+        ("automake" ,automake)
+        ("cmake" ,cmake)
+        ("libtool" ,libtool)
+        ("pkg-config" ,pkg-config)))
+    (inputs `(("curl" ,curl)
+       ("dbus" ,dbus)
+       ("enca" ,enca)
+       ("eudev" ,eudev)
+       ("fftw-openmpi" ,fftw-openmpi)
+       ("glew" ,glew)
+       ("boost" ,boost)
+       ("libcap" ,libcap)
+       ("libjpeg" ,libjpeg)
+       ("libltdl" ,libltdl)
+       ("libtiff" ,libtiff)
+       ("mesa-utils" ,mesa-utils)
+       ("openmpi" ,openmpi)
+       ("opencl-headers" ,opencl-headers)
+       ("ocl-icd" ,ocl-icd)
+       ("randrproto" ,randrproto)
+       ("libxrandr" ,libxrandr)
+       ("xineramaproto" ,xineramaproto)
+       ("libxinerama" ,libxinerama)
+       ("libxcursor" ,libxcursor)
+       ("python" ,python-2)))       
+    (home-page "http://boost.org")
+    (synopsis "Peer-reviewed portable C++ source libraries,BoostCompute")
+    (description "Peer-reviewed portable C++ source libraries,BoostCompute")
+    (license (list license:x11-style))))
     
 (define-public ocl-icd
   (package
@@ -217,4 +355,8 @@
     (description "This package provides the Khronos OpenCL headers")
     (home-page "https://www.khronos.org/registry/cl/")
     (license (list license:gpl2)))))
+    
+
+    
+   
 
