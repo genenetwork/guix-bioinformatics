@@ -105,7 +105,7 @@
        ("cmake" ,cmake)))
     (build-system cmake-build-system)
     (arguments 
-     `(#:configure-flags '("-DBUILD_OPENCL=ON" "-DBUILD_CUDA=OFF" "-DBUILD_GRAPHICS=OFF" "-DUSE_SYSTEM_BOOST_COMPUTE=ON") 
+     `(#:configure-flags '("-DBUILD_OPENCL=ON" "-DBUILD_CUDA=OFF" "-DBUILD_GRAPHICS=OFF" "-DUSE_SYSTEM_BOOST_COMPUTE=ON" "-DUSE_SYSTEM_CLBLAS=ON" "-DUSE_SYSTEM_CLFFT=ON") 
        #:tests? #f))     
     (synopsis "ArrayFire: a general purpose GPU library. https://arrayfire.com")
     (description "ArrayFire is a high performance software library for parallel computing with an easy-to-use API. Its array based function set makes parallel programming simple.")
