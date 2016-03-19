@@ -279,16 +279,14 @@ powerful language for representing information.")
         (base32
           "06qzgwk7j66k8ggx51i6wxx0f0zsppp7w4bh6gjd0cr9rfs86jn7"))))
   (build-system python-build-system)
-  (inputs
+  (propagated-inputs
    `(
      ("mysql" ,mysql)
      ("python-nose" ,python-nose)
      ("zlib" ,zlib)
      ("openssl" ,openssl)
      ("libgcrypt" ,libgcrypt)
-     ))
-  (propagated-inputs
-   `(("python-setuptools" ,python-setuptools)
+     ("python-setuptools" ,python-setuptools)
      ))
   (arguments
    `(#:tests? #f))   ; wants a running MySQL server
@@ -357,7 +355,7 @@ project)")
   (description #f)
   (license #f)))
 
-(define-public python2-pil-1.1.6
+(define-public python2-pil
   (package
     (name "python2-pil")
     (version "1.1.6")
@@ -434,6 +432,8 @@ version ".tgz"))
     (build-system python-build-system)
     (native-inputs
      `(("python2-setuptools" ,python2-setuptools)))
+    (propagated-inputs
+     `(("python2-pil" ,python2-pil)))
     (arguments
      `(
        #:python ,python-2
