@@ -87,7 +87,6 @@
     (description #f)
     (license #f)))
 
-
 (define-public genenetwork1
   (let ((commit "d622c803b"))
   (package
@@ -141,7 +140,7 @@
     (license license:agpl3+))))
 
 (define-public genenetwork2
-  (let ((commit "8c9de7e5a2016f1e5b7397be1a8e84396e3a25c5"))
+  (let ((commit "a8fcff44d3bd768d02e7ed0c80b84d2516bdad2a"))
   (package
     (name "genenetwork2")
     (version (string-append "2.0-" (string-take commit 7) ))
@@ -149,19 +148,21 @@
              (method git-fetch)
              (uri (git-reference
                    ;; (url "https://github.com/genenetwork/genenetwork2.git")
-                   (url "https://github.com/pjotrp/genenetwork2.git")
+                   (url "https://github.com/genenetwork/genenetwork2_diet.git")
                    (commit commit)))
-             (file-name (string-append name "-" (string-take commit 7))) 
+             (file-name (string-append name "-" (string-take commit 7)))
              (sha256
               (base32
-               "1kgigzs4rs6zgbqbnm40rcljzz9prlwv7n2n9an57jk58bjgf6v8"))))
+               "1zs6jgrpwzxmfjz03whnaw8q6h8f53mycl440p058gfn8x7pd618"))))
     (propagated-inputs `(  ;; propagated for development purposes
               ("python" ,python-2) ;; probably superfluous
               ("r" ,r)
               ("r-wgcna" ,r-wgcna)
+              ("r-qtl" ,r-qtl)
               ("redis" ,redis)
               ("mysql" ,mysql)
               ("gemma" ,gemma-git)
+              ("genenetwork2-files-small" ,genenetwork2-files-small)
               ("pylmm-gn2" ,pylmm-gn2)
               ("plink2" ,plink-ng)
               ("nginx" ,nginx)
@@ -181,6 +182,7 @@
               ("python2-passlib" ,python2-passlib)
               ("python2-piddle-gn" ,python2-piddle-gn)
               ("python2-redis" ,python2-redis)
+              ("python2-pil" ,python2-pil)
               ("python2-requests" ,python2-requests)
               ("python2-rpy2" ,python2-rpy2)
               ("python2-scipy" ,python2-scipy)
@@ -190,11 +192,28 @@
               ;; python-yolk is not needed
               ("plink" ,plink) 
               ("qtlreaper" ,qtlreaper) 
-              ("r-qtl" ,r-qtl)
               ))
     (build-system python-build-system)
     (arguments
      `(#:python ,python-2
+       #:phases
+         (modify-phases %standard-phases
+           (add-before 'install 'fix-paths
+             (lambda* (#:key inputs #:allow-other-keys)
+                      (let* (
+                             (datafiles (string-append (assoc-ref inputs "genenetwork2-files-small") "/share/genenetwork2" ))
+                             (pylmmcmd (string-append (assoc-ref inputs "pylmm-gn2") "/bin/pylmm_redis"))
+                             (plink2cmd (string-append (assoc-ref inputs "plink2") "/bin/plink2"))
+                             (gemmacmd (string-append (assoc-ref inputs "gemma") "/bin/gemma"))
+                             )
+                             
+               (substitute* '("etc/default_settings.py")
+                            (("^GENENETWORK_FILES =.*") (string-append "GENENETWORK_FILES = \"" datafiles "\"\n" ))
+                            (("^PYLMM_COMMAND =.*") (string-append "PYLMM_COMMAND = \"" pylmmcmd "\"\n" ))
+                            (("^PLINK_COMMAND =.*") (string-append "PLINK_COMMAND = \"" plink2cmd "\"\n" ))
+                            (("^GEMMA_COMMAND =.*") (string-append "GEMMA_COMMAND = \"" gemmacmd "\"\n" ))
+                            )
+               ))))
        #:tests? #f))   ; no 'setup.py test'
     (home-page "http://genenetwork.org/")
     (synopsis "Full genenetwork services")
@@ -203,6 +222,48 @@
 
 ;; ./pre-inst-env guix download http://files.genenetwork.org/raw_database/db_webqtl_s.zip
 ;; 0sscjh0wml2lx0mb43vf4chg9gpbfi7abpjxb34n3kyny9ll557x
+
+(define-public genenetwork2-files-small
+  (let ((pfff "xx"))
+    (package
+    (name "genenetwork2-files-small")
+    (version "1.0")
+    (source
+     (origin
+       (method url-fetch)
+       (uri "http://files.genenetwork.org/data_files/gn2_data_s-20160303-C9E672ECED1F51B915DE419B5B2C524E.tar.lz4")
+       (file-name (string-append name "-" pfff)) 
+       (sha256
+        (base32 "058ymx3af6abdhdxyxj0i9qfvb6v7j091frjpp6jh4ahks7r23lj"))))
+    (build-system trivial-build-system)
+    (native-inputs `(("lz4" ,lz4)
+                     ("tar" ,tar)
+                     ("source" ,source)))
+
+    (arguments
+     `(#:modules ((guix build utils))
+       #:builder
+       (let* ((out (assoc-ref %outputs "out"))
+              (name "gn2_data_s")
+              (tarfn (string-append name ".tar"))
+              (targetdir (string-append out "/share/genenetwork2/"))
+              )
+           (begin
+             (use-modules (guix build utils))
+             (let ((source (assoc-ref %build-inputs "source"))
+                   (lz4unpack (string-append (assoc-ref %build-inputs "lz4") "/bin/lz4"))
+                   (tar (string-append (assoc-ref %build-inputs "tar") "/bin/tar"))
+                   )
+               (and 
+                    (zero? (system* lz4unpack source "-d" tarfn))
+                    (zero? (system* tar "xf" tarfn))
+                    (mkdir-p targetdir)
+                    (copy-recursively name targetdir)
+                    ))))))
+    (home-page "http://genenetwork.org/")
+    (synopsis "Small file archive to run on genenetwork")
+    (description "Genenetwork genotype and mapping files.")
+    (license license:agpl3+))))
 
 (define-public genenetwork2-database-small
   (let ((md5 "93e745e9c"))
