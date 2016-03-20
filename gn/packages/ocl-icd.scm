@@ -62,9 +62,9 @@
     (description "OpenCL implementations are provided as ICD (Installable Client Driver).
     An OpenCL program can use several ICD thanks to the use of an ICD Loader as provided by this project.
     This free ICD Loader can load any (free or non free) ICD")
-    (license license:gpl2)))
+    (license (list license:gpl2 license:ruby))))
     
-    (define-public opencl-headers
+(define-public opencl-headers
 (let ((commit "c1770dc"))
   (package
     (name "opencl-headers")
