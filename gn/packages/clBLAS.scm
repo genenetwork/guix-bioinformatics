@@ -156,7 +156,7 @@
                     (copy-recursively "." (string-append
                                                  (assoc-ref outputs "out")
                                                  "/include/CL")))))))
-    (synopsis "This package ships the Khronos OpenCL headers")
+    (synopsis "The Khronos OpenCL headers")
     (description "This package provides the Khronos OpenCL headers")
     (home-page "https://www.khronos.org/registry/cl/")
     (license (list license:gpl2)))))
