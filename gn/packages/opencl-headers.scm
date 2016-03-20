@@ -17,7 +17,7 @@
 ;;; along with GNU Guix.  If not, see <http://www.gnu.org/licenses/>.
 
 (define-module (gn packages opencl-headers)
-  #:use-module ((guix licenses))
+  #:use-module ((guix licenses) #:prefix license:)
   #:use-module (guix download)
   #:use-module (guix git-download)
   #:use-module (guix packages)
@@ -60,4 +60,4 @@
     (synopsis "The Khronos OpenCL headers")
     (description "This package provides the Khronos OpenCL headers")
     (home-page "https://www.khronos.org/registry/cl/")
-    (license gpl2))))
+    (license (list license:gpl2)))))
