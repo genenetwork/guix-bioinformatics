@@ -16,7 +16,7 @@
 ;;; You should have received a copy of the GNU General Public License
 ;;; along with GNU Guix.  If not, see <http://www.gnu.org/licenses/>.
 
-(define-module (gn packages clFFT)
+(define-module (gn packages clfft)
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (guix download)
   #:use-module (guix git-download)
@@ -48,13 +48,13 @@
   #:use-module (gnu packages zip)  
   #:use-module (gnu packages linux))
 
-(define-public clFFT
+(define-public clfft
   (package
-    (name "clFFT")
-    (version "v2.10.1")
+    (name "clfft")
+    (version "2.10.1")
     (source (origin
              (method url-fetch)
-             (uri (string-append "https://github.com/clMathLibraries/clFFT/archive/"
+             (uri (string-append "https://github.com/clMathLibraries/clFFT/archive/v"
                                  version ".tar.gz"))
              (sha256
               (base32
@@ -89,7 +89,8 @@
     (home-page "http://www.glfw.org/")
     (synopsis "glfw is an Open Source, multi-platform library for creating windows with OpenGL contexts and receiving input and events.")
     (description "glfw is an Open Source, multi-platform library for creating windows with OpenGL contexts and receiving input and events.")
-    (license (list license:gpl2))))
+    (license (list l:gpl2
+                   l:asl2.0))))
     
 (define-public ocl-icd
   (package
@@ -121,7 +122,8 @@
     (description "OpenCL implementations are provided as ICD (Installable Client Driver).
     An OpenCL program can use several ICD thanks to the use of an ICD Loader as provided by this project.
     This free ICD Loader can load any (free or non free) ICD")
-    (license (list license:gpl2 license:ruby))))
+    (license (list l:gpl2
+                   l:ruby))))
     
 (define-public opencl-headers
 (let ((commit "c1770dc"))
@@ -155,4 +157,4 @@
     (synopsis "The Khronos OpenCL headers")
     (description "This package provides the Khronos OpenCL headers")
     (home-page "https://www.khronos.org/registry/cl/")
-    (license (list license:gpl2)))))
+    (license (list l:gpl2)))))
