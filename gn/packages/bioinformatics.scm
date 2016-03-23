@@ -77,7 +77,7 @@
     (propagated-inputs
      `(("python" ,python-2)
        ("r" ,r)
-       ("r-dnacopy" ,r-dnacopy)
+       ;; ("r-dnacopy" ,r-dnacopy) <-- missing in Pjotr's tree
        ("bedtools" ,bedtools)
        ("samtools" ,samtools)))
     (arguments
@@ -1048,72 +1048,6 @@ subset of samtools functionality, including view, index, sort,
 markdup, and depth.")
       (license license:gpl2+))))
 
-(define-public genenetwork2
-  (let ((commit "234aa9820eeaa3e4611239de31de1ba526d8bf09"))
-  (package
-    (name "genenetwork2")
-    (version (string-append "2.0-" (string-take commit 7) ))
-    (source (origin
-             (method git-fetch)
-             (uri (git-reference
-                   ;; (url "https://github.com/genenetwork/genenetwork2.git")
-                   ;; (url "https://github.com/pjotrp/genenetwork2.git")
-                   (url "https://github.com/genenetwork/genenetwork2_diet.git")
-                   (commit commit)))
-             (file-name (string-append name "-" (string-take commit 7))) 
-             (sha256
-              (base32
-               "10knws2azy53bar615r0b1dk6nr9lrl0x25k7vsc6jm879wcp91b"))))
-    (propagated-inputs `(
-              ("python" ,python-2) ;; probably superfluous
-              ("r" ,r) 
-    ))
-    (inputs `(
-              ("mysql" ,mysql)
-              ("gemma" ,gemma-git)
-              ("plink2" ,plink-ng)
-              ("nginx" ,nginx)
-              ("python2-flask" ,python2-flask)
-              ("python2-htmlgen-gn" ,python2-htmlgen-gn)
-              ("python2-jinja2" ,python2-jinja2)
-              ("python2-sqlalchemy" ,python2-sqlalchemy)
-              ("python2-flask-sqlalchemy" ,python2-flask-sqlalchemy)
-              ("python2-setuptools" ,python2-setuptools)
-              ("python2-scipy" ,python2-scipy)
-              ;; looks like python-numarray is not needed
-              ("python2-mysqlclient" ,python2-mysqlclient)
-              ("python2-numarray" ,python2-numarray)
-              ("python2-numpy" ,python2-numpy)
-              ("python2-pandas" ,python2-pandas)
-              ("python2-parallel" ,python2-parallel)
-              ("python2-passlib" ,python2-passlib)
-              ("python2-piddle" ,python2-piddle)
-              ("python2-redis" ,python2-redis)
-              ("python2-requests" ,python2-requests)
-              ("python2-rpy2" ,python2-rpy2)
-              ("python2-scipy" ,python2-scipy)
-              ("python2-simplejson" ,python2-simplejson)
-              ("python2-pyyaml" ,python2-pyyaml)
-              ("python2-xlsxwriter" ,python-xlsxwriter)
-              ;; python-yolk is not needed
-              ("plink" ,plink) 
-              ("qtlreaper" ,qtlreaper) 
-              ("r-qtl" ,r-qtl)
-              ))
-    (build-system python-build-system)
-    (arguments
-     `(("perl" ,perl) ; Needed to run the java command.
-       ("jdk" ,icedtea "jdk")))
-    (native-inputs
-     `(("ant" ,ant) ; TODO: Most Java packages need Ant, but in this case, IDK..
-       ("jdk" ,icedtea "jdk")
-       ;;("htsjdk" ,htsjdk) ; It is based on htsjdk, but it ships its own copy.
-       ("unzip" ,unzip)))
-    (home-page "http://www.bioinformatics.babraham.ac.uk/projects/fastqc/")
-    (synopsis "A quality control tool for high throughput sequence data")
-    (description
-     "FastQC aims to provide a QC report which can spot problems which originate either in the sequencer or in the starting library material. It can either run as a stand alone interactive application for the immediate analysis of small numbers of FastQ files, or it can be run in a non-interactive mode where it would be suitable for integrating into a larger analysis pipeline for the systematic processing of large numbers of files.")
-    (license license:gpl3+)))
 
 (define-public vcflib
   (let ((commit "3ce827d8ebf89bb3bdc097ee0fe7f46f9f30d5fb"))
