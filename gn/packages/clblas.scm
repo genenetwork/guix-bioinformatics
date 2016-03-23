@@ -16,7 +16,7 @@
 ;;; You should have received a copy of the GNU General Public License
 ;;; along with GNU Guix.  If not, see <http://www.gnu.org/licenses/>.
 
-(define-module (gn packages clBLAS)
+(define-module (gn packages clblas)
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (guix download)
   #:use-module (guix git-download)
@@ -49,13 +49,13 @@
   #:use-module (gnu packages zip)  
   #:use-module (gnu packages linux))
 
-(define-public clBLAS
+(define-public clblas
   (package
-    (name "clBLAS")
-    (version "v2.10")
+    (name "clblas")
+    (version "2.10")
     (source (origin
              (method url-fetch)
-             (uri (string-append "https://github.com/clMathLibraries/clBLAS/archive/"
+             (uri (string-append "https://github.com/clMathLibraries/clBLAS/archive/v"
                                  version ".tar.gz"))
              (sha256
               (base32
