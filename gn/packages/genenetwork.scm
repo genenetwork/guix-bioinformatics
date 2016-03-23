@@ -223,7 +223,7 @@
 ;; ./pre-inst-env guix download http://files.genenetwork.org/raw_database/db_webqtl_s.zip
 ;; 0sscjh0wml2lx0mb43vf4chg9gpbfi7abpjxb34n3kyny9ll557x
 
-(define-public genenetwork2-files-small
+(define-public genenetwork2-files-small1
   (let ((pfff "xx"))
     (package
     (name "genenetwork2-files-small")
