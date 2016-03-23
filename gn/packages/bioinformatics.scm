@@ -359,20 +359,21 @@ association studies (GWAS).")
     (license license:agpl3+))))
 
 (define-public genenetwork2
-  (let ((commit "9e9475053"))
+  (let ((commit "234aa9820eeaa3e4611239de31de1ba526d8bf09"))
   (package
     (name "genenetwork2")
-    (version (string-append "2.0-" commit ))
+    (version (string-append "2.0-" (string-take commit 7) ))
     (source (origin
              (method git-fetch)
              (uri (git-reference
                    ;; (url "https://github.com/genenetwork/genenetwork2.git")
-                   (url "https://github.com/pjotrp/genenetwork2.git")
+                   ;; (url "https://github.com/pjotrp/genenetwork2.git")
+                   (url "https://github.com/genenetwork/genenetwork2_diet.git")
                    (commit commit)))
-             (file-name (string-append name "-" commit)) 
+             (file-name (string-append name "-" (string-take commit 7))) 
              (sha256
               (base32
-               "1fimy5959q24wdk9jm83574fpywrarwvf9cd162vs6lriirq0cq5"))))
+               "10knws2azy53bar615r0b1dk6nr9lrl0x25k7vsc6jm879wcp91b"))))
     (propagated-inputs `(
               ("python" ,python-2) ;; probably superfluous
               ("r" ,r) 
