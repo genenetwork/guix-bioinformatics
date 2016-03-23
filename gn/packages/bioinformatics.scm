@@ -1048,43 +1048,59 @@ subset of samtools functionality, including view, index, sort,
 markdup, and depth.")
       (license license:gpl2+))))
 
-(define-public picard
+(define-public genenetwork2
+  (let ((commit "234aa9820eeaa3e4611239de31de1ba526d8bf09"))
   (package
-    (name "picard")
-    (version "2.1.0")
-    (source
-     (origin
-       (method url-fetch)
-       (uri (string-append
-             "https://github.com/broadinstitute/picard/archive/"
-             version ".tar.gz"))
-       (sha256
-        (base32 ""))))
-    (build-system gnu-build-system)
-    (home-page "http://broadinstitute.github.io/picard/")
-    (synopsis "A set of Java command line tools for manipulating high-throughput
-sequencing data (HTS) data and formats")
-    (description "Picard comprises Java-based command-line utilities that
-manipulate SAM files, and a Java API (HTSJDK) for creating new programs that
-read and write SAM files. Both SAM text format and SAM binary (BAM) format are
-supported.")
-    ;; The license is MIT.
-    (license license:expat)
-))
-
-(define-public fastqc
-  (package
-    (name "fastqc")
-    (version "0.11.4")
-    (source
-     (origin
-       (method url-fetch)
-       (uri (string-append
-             "http://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_v"
-             version "_source.zip"))
-       (sha256
-        (base32 ""))))
-    (build-system gnu-build-system)
+    (name "genenetwork2")
+    (version (string-append "2.0-" (string-take commit 7) ))
+    (source (origin
+             (method git-fetch)
+             (uri (git-reference
+                   ;; (url "https://github.com/genenetwork/genenetwork2.git")
+                   ;; (url "https://github.com/pjotrp/genenetwork2.git")
+                   (url "https://github.com/genenetwork/genenetwork2_diet.git")
+                   (commit commit)))
+             (file-name (string-append name "-" (string-take commit 7))) 
+             (sha256
+              (base32
+               "10knws2azy53bar615r0b1dk6nr9lrl0x25k7vsc6jm879wcp91b"))))
+    (propagated-inputs `(
+              ("python" ,python-2) ;; probably superfluous
+              ("r" ,r) 
+    ))
+    (inputs `(
+              ("mysql" ,mysql)
+              ("gemma" ,gemma-git)
+              ("plink2" ,plink-ng)
+              ("nginx" ,nginx)
+              ("python2-flask" ,python2-flask)
+              ("python2-htmlgen-gn" ,python2-htmlgen-gn)
+              ("python2-jinja2" ,python2-jinja2)
+              ("python2-sqlalchemy" ,python2-sqlalchemy)
+              ("python2-flask-sqlalchemy" ,python2-flask-sqlalchemy)
+              ("python2-setuptools" ,python2-setuptools)
+              ("python2-scipy" ,python2-scipy)
+              ;; looks like python-numarray is not needed
+              ("python2-mysqlclient" ,python2-mysqlclient)
+              ("python2-numarray" ,python2-numarray)
+              ("python2-numpy" ,python2-numpy)
+              ("python2-pandas" ,python2-pandas)
+              ("python2-parallel" ,python2-parallel)
+              ("python2-passlib" ,python2-passlib)
+              ("python2-piddle" ,python2-piddle)
+              ("python2-redis" ,python2-redis)
+              ("python2-requests" ,python2-requests)
+              ("python2-rpy2" ,python2-rpy2)
+              ("python2-scipy" ,python2-scipy)
+              ("python2-simplejson" ,python2-simplejson)
+              ("python2-pyyaml" ,python2-pyyaml)
+              ("python2-xlsxwriter" ,python-xlsxwriter)
+              ;; python-yolk is not needed
+              ("plink" ,plink) 
+              ("qtlreaper" ,qtlreaper) 
+              ("r-qtl" ,r-qtl)
+              ))
+    (build-system python-build-system)
     (arguments
      `(("perl" ,perl) ; Needed to run the java command.
        ("jdk" ,icedtea "jdk")))
