@@ -372,7 +372,7 @@ association studies (GWAS).")
              (file-name (string-append name "-" commit)) 
              (sha256
               (base32
-               "09hvy9mf4dnmkb8qg49viffzrxk53m2kr4r955m84dxaa5pdrjhd"))))
+               "1fimy5959q24wdk9jm83574fpywrarwvf9cd162vs6lriirq0cq5"))))
     (propagated-inputs `(
               ("python" ,python-2) ;; probably superfluous
               ("r" ,r) 
