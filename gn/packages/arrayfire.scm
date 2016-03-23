@@ -17,7 +17,7 @@
 ;;; along with GNU Guix.  If not, see <http://www.gnu.org/licenses/>.
 
 (define-module (gn packages arrayfire)
-  #:use-module ((guix licenses) #:prefix license:)
+  #:use-module ((guix licenses) #:prefix l:)
   #:use-module (guix download)
   #:use-module (guix git-download)
   #:use-module (guix build-system gnu)
@@ -74,8 +74,8 @@
        ("glfw" ,glfw)
        ("compute" ,compute)
        ("curl" ,curl)
-       ("clBLAS" ,clBLAS)
-       ("clFFT" ,clFFT)
+       ("clblas" ,clblas)
+       ("clfft" ,clfft)
        ("atlas" ,atlas)
        ("dbus" ,dbus)
        ("opencl-headers" ,opencl-headers)
@@ -108,12 +108,13 @@
      `(#:configure-flags '("-DBUILD_OPENCL=ON" "-DBUILD_CUDA=OFF" "-DBUILD_GRAPHICS=OFF" "-DUSE_SYSTEM_BOOST_COMPUTE=ON" "-DUSE_SYSTEM_CLBLAS=ON" "-DUSE_SYSTEM_CLFFT=ON") 
        #:tests? #f))     
     (synopsis "ArrayFire: a general purpose GPU library. https://arrayfire.com")
-    (description "ArrayFire is a high performance software library for parallel computing with an easy-to-use API. Its array based function set makes parallel programming simple.Now on Guix")
+    (description "ArrayFire is a high performance software library for parallel computing with an easy-to-use API. Its array based function set makes parallel programming simple.")
     (home-page "http://arrayfire.com/")
-    (license (list license:gpl2 
-                   license:gpl2+ 
-                   license:gpl3 
-                   license:gpl3+))))
+    (license l:gpl2 
+             l:gpl2+ 
+             l:gpl3
+             l:bsd-3 
+             l:gpl3+)))
 
 (define-public glfw
   (package
@@ -155,15 +156,16 @@
     (home-page "http://www.glfw.org/")
     (synopsis "glfw is an Open Source, multi-platform library for creating windows with OpenGL contexts and receiving input and events.")
     (description "glfw is an Open Source, multi-platform library for creating windows with OpenGL contexts and receiving input and events.")
-    (license (list license:gpl2))))
+    (license l:gpl2
+             l:zlib)))
     
-(define-public clBLAS
+(define-public clblas
   (package
-    (name "clBLAS")
-    (version "v2.10")
+    (name "clblas")
+    (version "2.10")
     (source (origin
              (method url-fetch)
-             (uri (string-append "https://github.com/clMathLibraries/clBLAS/archive/"
+             (uri (string-append "https://github.com/clMathLibraries/clBLAS/archive/v"
                                  version ".tar.gz"))
              (sha256
               (base32
@@ -201,15 +203,16 @@
     (home-page "http://www.glfw.org/")
     (synopsis "glfw is an Open Source, multi-platform library for creating windows with OpenGL contexts and receiving input and events.")
     (description "glfw is an Open Source, multi-platform library for creating windows with OpenGL contexts and receiving input and events.")
-    (license (list license:gpl2))))
+    (license l:gpl2
+             l:asl2.0)))
     
-(define-public clFFT
+(define-public clfft
   (package
-    (name "clFFT")
-    (version "v2.10.1")
+    (name "clfft")
+    (version "2.10.1")
     (source (origin
              (method url-fetch)
-             (uri (string-append "https://github.com/clMathLibraries/clFFT/archive/"
+             (uri (string-append "https://github.com/clMathLibraries/clFFT/archive/v"
                                  version ".tar.gz"))
              (sha256
               (base32
@@ -244,15 +247,16 @@
     (home-page "http://www.glfw.org/")
     (synopsis "glfw is an Open Source, multi-platform library for creating windows with OpenGL contexts and receiving input and events.")
     (description "glfw is an Open Source, multi-platform library for creating windows with OpenGL contexts and receiving input and events.")
-    (license (list license:gpl2))))
+    (license l:gpl2
+             l:asl2.0)))
     
 (define-public compute
   (package
     (name "compute")
-    (version "v0.5")
+    (version "0.5")
     (source (origin
              (method url-fetch)
-             (uri (string-append "https://github.com/boostorg/compute/archive/"
+             (uri (string-append "https://github.com/boostorg/compute/archive/v"
                                  version ".tar.gz"))
              (sha256
               (base32
@@ -288,7 +292,8 @@
     (home-page "http://boost.org")
     (synopsis "Peer-reviewed portable C++ source libraries,BoostCompute")
     (description "Peer-reviewed portable C++ source libraries,BoostCompute")
-    (license (list license:x11-style))))
+    (license l:x11-style
+             l:boost1.0)))
     
 (define-public ocl-icd
   (package
@@ -320,7 +325,8 @@
     (description "OpenCL implementations are provided as ICD (Installable Client Driver).
     An OpenCL program can use several ICD thanks to the use of an ICD Loader as provided by this project.
     This free ICD Loader can load any (free or non free) ICD")
-    (license (list license:gpl2 license:ruby))))
+    (license l:gpl2 
+             l:ruby)))
     
 (define-public opencl-headers
 (let ((commit "c1770dc"))
@@ -354,7 +360,7 @@
     (synopsis "The Khronos OpenCL headers")
     (description "This package provides the Khronos OpenCL headers")
     (home-page "https://www.khronos.org/registry/cl/")
-    (license (list license:gpl2)))))
+    (license l:gpl2))))
     
 
     
