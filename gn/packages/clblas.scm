@@ -93,7 +93,8 @@
     (home-page "http://www.glfw.org/")
     (synopsis "glfw is an Open Source, multi-platform library for creating windows with OpenGL contexts and receiving input and events.")
     (description "glfw is an Open Source, multi-platform library for creating windows with OpenGL contexts and receiving input and events.")
-    (license (list license:gpl2))))
+    (license (list l:gpl2
+                   l:asl2.0))))
     
 (define-public ocl-icd
   (package
@@ -125,7 +126,8 @@
     (description "OpenCL implementations are provided as ICD (Installable Client Driver).
     An OpenCL program can use several ICD thanks to the use of an ICD Loader as provided by this project.
     This free ICD Loader can load any (free or non free) ICD")
-    (license (list license:gpl2 license:ruby))))
+    (license (list l:gpl2
+                   l:ruby))))
     
 (define-public opencl-headers
 (let ((commit "c1770dc"))
@@ -159,6 +161,6 @@
     (synopsis "The Khronos OpenCL headers")
     (description "This package provides the Khronos OpenCL headers")
     (home-page "https://www.khronos.org/registry/cl/")
-    (license (list license:gpl2)))))
+    (license (list l:gpl2)))))
     
 
