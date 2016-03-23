@@ -404,7 +404,7 @@ association studies (GWAS).")
               ("python2-scipy" ,python2-scipy)
               ("python2-simplejson" ,python2-simplejson)
               ("python2-pyyaml" ,python2-pyyaml)
-              ("python-xlsxwriter" ,python-xlsxwriter)
+              ("python2-xlsxwriter" ,python-xlsxwriter)
               ;; python-yolk is not needed
               ("plink" ,plink) 
               ("qtlreaper" ,qtlreaper) 
