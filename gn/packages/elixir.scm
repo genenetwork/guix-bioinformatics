@@ -36,6 +36,7 @@
               (uri (string-append
                     "https://github.com/elixir-lang/elixir/archive/v"
                     version ".tar.gz"))
+              (file-name (string-append name "-" version ".tar.gz"))
               (sha256
                (base32
                 "09s8469830s4070i0m04fxdhqimkdyc5k9jylm5vpfz9l3z4wvl8"))))
