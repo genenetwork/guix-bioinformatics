@@ -45,7 +45,12 @@
      `(("erlang" ,erlang)))
     (arguments
      `(#:phases (modify-phases %standard-phases
-        (delete 'configure)
+         (delete 'configure)
+         (add-before
+          'build 'rewrite-path
+          (lambda* (#:key inputs #:allow-other-keys)
+                   (substitute* "bin/elixir"
+                     (("ERL_EXEC=\"erl\"") (string-append "ERL_EXEC=" (which "erl"))))))                           
         ;; (replace 'check
         ;;          (lambda _
         ;;           (zero? (system* "make" "test")))))))
