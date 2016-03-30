@@ -16,7 +16,7 @@
 ;;; You should have received a copy of the GNU General Public License
 ;;; along with GNU Guix.  If not, see <http://www.gnu.org/licenses/>.
 
-(define-module (gn packages bioinformatics)
+(define-module (gn packages mongodb)
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (guix packages)
   #:use-module (guix utils)
@@ -71,4 +71,4 @@
 schema-free document-oriented database.  A key goal of MongoDB is to bridge
 the gap between key/value stores (which are fast and highly scalable) and
 traditional RDBMS systems (which are deep in functionality).")
-    (license (list agpl3 asl2.0))))
+    (license (list license:agpl3 license:asl2.0))))

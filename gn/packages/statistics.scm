@@ -150,32 +150,6 @@
     "Contains many functions useful for data analysis, high-level graphics, utility operations, functions for computing sample size and power, importing and annotating datasets, imputing missing values, advanced table making, variable clustering, character string manipulation, conversion of R objects to LaTeX code, and recoding variables.")
   (license license:gpl2+)))
 
-(define-public r-doparallel
-(package
-  (name "r-doparallel")
-  (version "1.0.10")
-  (source
-    (origin
-      (method url-fetch)
-      (uri (cran-uri "doParallel" version))
-      (sha256
-        (base32
-          "1mddx25l25pw9d0csnx2q203dbg5hbrhkr1f08kw0p02a1lln0kh"))))
-  (properties `((upstream-name . "doParallel")))
-  (build-system r-build-system)
-  (propagated-inputs
-    `(("r-foreach" ,r-foreach)
-      ("r-iterators" ,r-iterators)
-      ;; ("r-parallel" ,r-parallel)
-      ))
-  (home-page
-    "http://cran.r-project.org/web/packages/doParallel")
-  (synopsis
-    "Foreach Parallel Adaptor for the 'parallel' Package")
-  (description
-    "Provides a parallel backend for the %dopar% function using the parallel package.")
-  (license license:gpl2+)))
-
 (define-public r-iterators
 (package
   (name "r-iterators")
@@ -195,28 +169,6 @@
   (description
     "Support for iterators, which allow a programmer to traverse through all the elements of a vector, list, or other collection of data.")
   (license #f)))
-
-(define-public r-foreach
-(package
-  (name "r-foreach")
-  (version "1.4.3")
-  (source
-    (origin
-      (method url-fetch)
-      (uri (cran-uri "foreach" version))
-      (sha256
-        (base32
-          "10aqsd3rxz03s1qdb6gsb1cj89mj4vmh491zfpin4skj1xvkzw0y"))))
-  (build-system r-build-system)
-  (propagated-inputs `(("r-iterators" ,r-iterators)))
-  (home-page
-    "http://cran.r-project.org/web/packages/foreach")
-  (synopsis
-    "Provides Foreach Looping Construct for R")
-  (description
-    "Support for the foreach looping construct.  Foreach is an idiom that allows for iterating over elements in a collection, without the use of an explicit loop counter.  This package in particular is intended to be used for its return value, rather than for its side effects.  In that sense, it is similar to the standard lapply function, but doesn't require the evaluation of a function.  Using foreach without side effects also facilitates executing the loop in parallel.")
-  (license #f))
-)
 
 (define-public r-fastcluster
 (package

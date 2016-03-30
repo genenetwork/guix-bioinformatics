@@ -42,43 +42,6 @@
   #:use-module (guix build-system trivial)
   #:use-module (srfi srfi-1))
 
-(define-public python-flask
-(package
-  (name "python-flask")
-  (version "0.10.1")
-  (source
-    (origin
-      (method url-fetch)
-      (uri (pypi-uri "Flask" version))
-      (sha256
-        (base32
-          "0wrkavjdjndknhp8ya8j850jq7a1cli4g5a93mg8nh1xz2gq50sc"))))
-  (build-system python-build-system)
-  (inputs
-   `(("python-setuptools" ,python-setuptools)
-     ; ("python-itsdangerous" ,python-itsdangerous)
-     ; ("python-jinja2" ,python-jinja2)
-     ; ("python-werkzeug" ,python-werkzeug)
-     ))
-  (propagated-inputs
-   `(
-     ("python-itsdangerous" ,python-itsdangerous)
-     ("python-jinja2" ,python-jinja2)
-     ("python-werkzeug" ,python-werkzeug)
-     ))
-  
-  (arguments
-   `(#:tests? #f)) ; No tests
-  (home-page "http://github.com/mitsuhiko/flask/")
-  (synopsis
-    "A microframework based on Werkzeug, Jinja2 and good intentions")
-  (description
-    "A microframework based on Werkzeug, Jinja2 and good intentions")
-  (license license:bsd-3)))
-
-(define-public python2-flask
-  (package-with-python2 python-flask))
-
 (define-public python-flask-sqlalchemy
   (package
    (name "python-flask-sqlalchemy")
