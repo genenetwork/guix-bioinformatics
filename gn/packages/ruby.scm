@@ -27,6 +27,7 @@
   #:use-module (gnu packages libffi)
   #:use-module (gnu packages python)
   #:use-module (gnu packages ragel)
+  #:use-module (gnu packages ruby)
   #:use-module (gnu packages tls)
   #:use-module (gnu packages version-control)
   #:use-module (guix packages)
@@ -94,3 +95,57 @@ build process and its dependencies, whereas Make uses Makefile format.")
 a focus on simplicity and productivity.")
     (home-page "https://ruby-lang.org")
     (license license:ruby)))
+
+(define-public bio-vcf
+  (package
+   (name "bio-vcf")
+   (version "0.9.2")
+   (source
+    (origin
+     (method url-fetch)
+     (uri (rubygems-uri "bio-vcf" version))
+     (sha256
+      (base32
+       "1007bn0w8l11q867lxsyqnk0vgvv12skvk9gyglv7g44knr5vh4j"))))
+   (build-system ruby-build-system)
+   (arguments
+    `(#:tests? #f ; There are no tests.
+   ))
+   (synopsis
+    "Smart lazy multi-threaded parser for VCF format with useful
+filtering and output rewriting (JSON, RDF etc.)")
+   (description
+    "Smart lazy multi-threaded parser for VCF format with useful
+filtering and output rewriting (JSON, RDF etc.)")
+   (home-page
+    "http://github.com/pjotrp/bioruby-vcf")
+   (license expat)))
+
+(define-public bio-table
+  (package
+   (name "bio-table")
+   (version "1.0.0")
+   (source
+    (origin
+     (method url-fetch)
+     (uri (rubygems-uri "bio-table" version))
+     (sha256
+      (base32
+       "1jlpls734kd41rffn2y2747nr14k5rwgaj2g3k48i9xgsfcmrn6r"))))
+   (build-system ruby-build-system)
+   (arguments
+    `(#:tests? #f ; There are no tests.
+   ))
+   (propagated-inputs
+    `(("ruby-bio-logger" ,ruby-bio-logger)))
+   (synopsis
+    "Functions and tools for tranforming and changing tab delimited
+and comma separated table files - useful for Excel sheets and SQL/RDF
+output")
+   (description
+    "Functions and tools for tranforming and changing tab delimited
+and comma separated table files - useful for Excel sheets and SQL/RDF
+output")
+   (home-page
+    "http://github.com/pjotrp/bioruby-table")
+   (license expat)))
