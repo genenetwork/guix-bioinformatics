@@ -443,7 +443,6 @@ version ".tgz"))
      (origin
        (method url-fetch)
        (uri (string-append
-             ;; http://sourceforge.net/projects/numpy/files/Old%20Numarray/1.5.2/numarray-1.5.2.tar.gz/download
              "mirror://sourceforge/numpy/numarray-" version ".tar.gz"
              ))
        (file-name (string-append name "-" version ".tar.gz"))
@@ -451,8 +450,6 @@ version ".tgz"))
         (base32
          "0x1i4j7yni7k4p9kjxs1lgln1psdmyrz65wp2yr35yn292iw2vbg"))))
     (build-system python-build-system)
-    ;; (native-inputs
-    ;; `(("python-setuptools" ,python-setuptools)))
     (arguments
      `(#:python ,python-2
        #:tests? #f))   ; no 'setup.py test' really!
