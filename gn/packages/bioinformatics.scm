@@ -703,13 +703,13 @@ length of a short-read sequencing alignment.")
 (define-public r-biocpreprocesscore
   (package
     (name "r-biocpreprocesscore")
-    (version "1.32.0")
+    (version "1.34.0")
     (source (origin
               (method url-fetch)
               (uri (bioconductor-uri "preprocessCore" version))
               (sha256
                (base32
-                "07isghjkqm91rg37l1fzpjrbq36b7w4pbsi95wwh6a8qq7r69z1n"))))
+                "0bcfi26ahs4ybagvz29vlp1wldhhbwwh73xz6v6xb07nakyzb6cf"))))
     (properties
      `((upstream-name . "BiocpreprocessCore")
        (r-repository . bioconductor)))
