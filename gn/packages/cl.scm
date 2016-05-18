@@ -29,6 +29,7 @@
   #:use-module (gnu packages autotools)
   #:use-module (gnu packages bootstrap)
   #:use-module (gnu packages curl)
+  #:use-module (gnu packages compression)
   #:use-module (gnu packages libffi)
   #:use-module (gnu packages gawk)
   #:use-module (gnu packages cmake)
@@ -327,7 +328,7 @@
     (license (list license:gpl2)))))
     
 (define-public pocl
-(let ((commit "2fa2834"))
+(let ((commit "5167ffd"))
 (package
     (name "pocl")
     (version (string-append "0.13-" commit))
@@ -339,7 +340,7 @@
               (file-name (string-append name "-" commit))
               (sha256
                (base32
-                "00b2f17rgddkk0ssn2xvbrgr80i2ycfh4g81ph8cm5lyaby7wl7a"))))
+                "09fgby8kwpp2xs2nr6mi05z0yxx6hvqi9scrc4byb8p7v7a7k9gj"))))
     (native-inputs `(("autoconf" ,autoconf)
         ("automake" ,automake)
         ("gawk" ,gawk)
@@ -354,6 +355,7 @@
        ("ocl-icd" ,ocl-icd)
        ("enca" ,enca)
        ("clang" ,clang-3.8)
+       ("clang-runtime-3.8" ,clang-runtime-3.8)
        ("eudev" ,eudev)
        ("glib" ,glib)
        ("hwloc" ,hwloc)
@@ -365,6 +367,7 @@
        ("libtiff" ,libtiff)
        ("libyajl" ,libyajl)
        ("llvm" ,llvm-3.8)
+       ("zlib" ,zlib)
        ("mesa-utils" ,mesa-utils)
        ("python" ,python-2)
        ("perl" ,perl)
@@ -379,6 +382,7 @@
     (build-system gnu-build-system)
     (arguments
      '(#:phases (modify-phases %standard-phases
+                    (delete 'tests)
                     (add-after 'unpack `bootstrap
                       (lambda _
                         (zero? (system* "autoreconf" "-vfi")))))))   
