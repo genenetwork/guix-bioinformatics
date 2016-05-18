@@ -29,8 +29,10 @@
   #:use-module (gnu packages autotools)
   #:use-module (gnu packages bootstrap)
   #:use-module (gnu packages curl)
+  #:use-module (gnu packages libffi)
   #:use-module (gnu packages gawk)
   #:use-module (gnu packages cmake)
+  #:use-module (gnu packages compression)
   #:use-module (gnu packages boost)
   #:use-module (gnu packages glib)
   #:use-module (gnu packages image)
@@ -576,7 +578,20 @@ code analysis tools.")
                            version "/llvm-" version ".src.tar.xz"))
        (sha256
         (base32
-         "0ikfq0gxac8xpvxj23l4hk8f12ydx48fljgrz1gl9xp0ks704nsm"))))))
+         "0ikfq0gxac8xpvxj23l4hk8f12ydx48fljgrz1gl9xp0ks704nsm"))))
+    (native-inputs
+     `(("python" ,python-wrapper)
+       ("perl"   ,perl)
+       ("libffi" ,libffi)
+       ("zlib" ,zlib)))
+    (arguments
+     `(#:configure-flags '("-DCMAKE_SKIP_BUILD_RPATH=FALSE"
+                           "-DCMAKE_BUILD_WITH_INSTALL_RPATH=FALSE"
+                           "-DLLVM_ENABLE_PIC=ON"
+                           ;"-DLLVM_ENABLE_RTTI=ON"
+                           "-DLLVM_ENABLE_WERROR=OFF"
+                           ;;"-DLLVM_REQUIRES_RTTI=ON"
+                           )))))
 
 (define-public clang-runtime-3.8
   (clang-runtime-from-llvm
