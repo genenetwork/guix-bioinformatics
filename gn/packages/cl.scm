@@ -60,7 +60,7 @@
 (define-public arrayfire
 (package
     (name "arrayfire")
-    (version "3.3.1")
+    (version "3.3.2")
     (source (origin
               (method url-fetch)
               (uri (string-append "http://arrayfire.com/arrayfire_source/arrayfire-full-" version 
@@ -68,7 +68,7 @@
               (file-name (string-append name "-" version ".tar.bz2"))
               (sha256
                (base32
-                "045adww6dqmyz6kkfmq7xawi5v9a894yp5j9pzn6j568gi48pyqc"))))
+                "0n51pndah1x1kcbcj9x6y8188lf459mi3w3h67kx860ph7r4qk9m"))))
     (native-inputs `(("autoconf" ,autoconf)
         ("automake" ,automake)
         ("gawk" ,gawk)
@@ -194,6 +194,7 @@
        ("mesa-utils" ,mesa-utils)
        ("openmpi" ,openmpi)
        ("opencl-headers" ,opencl-headers)
+       ("ocd-icd" ,ocl-icd)
        ("randrproto" ,randrproto)
        ("libxrandr" ,libxrandr)
        ("xineramaproto" ,xineramaproto)
@@ -209,16 +210,16 @@
 (define-public clfft
   (package
     (name "clfft")
-    (version "2.10.1")
+    (version "2.12.0")
     (source (origin
              (method url-fetch)
              (uri (string-append "https://github.com/clMathLibraries/clFFT/archive/v"
                                  version ".tar.gz"))
              (sha256
               (base32
-               "19hrk1lf06kch8x9dpbdj0waycn2mldrmj2y4vzi7zn2gdfw6g73"))))
+               "004n14q8bp1yvf6hja0nljyv7lnhs3w9ipa461c33znq1jqa28y6"))))
     (build-system cmake-build-system)    
-    (arguments `(#:configure-flags '("../clFFT-2.10.1/src" "-DBUILD_SHARED_LIBS=ON" "-DCMAKE_BUILD_TYPE=Release") #:tests? #f))
+    (arguments `(#:configure-flags '("../clFFT-2.12.0/src" "-DBUILD_SHARED_LIBS=ON" "-DCMAKE_BUILD_TYPE=Release") #:tests? #f))
     (native-inputs `(("autoconf" ,autoconf)
         ("automake" ,automake)
         ("cmake" ,cmake)
@@ -237,6 +238,7 @@
        ("mesa-utils" ,mesa-utils)
        ("openmpi" ,openmpi)
        ("opencl-headers" ,opencl-headers)
+       ("ocd-icd" ,ocl-icd)
        ("randrproto" ,randrproto)
        ("libxrandr" ,libxrandr)
        ("xineramaproto" ,xineramaproto)
@@ -252,14 +254,14 @@
 (define-public compute
   (package
     (name "compute")
-    (version "0.5")
+    (version "1.61.0")
     (source (origin
              (method url-fetch)
-             (uri (string-append "https://github.com/boostorg/compute/archive/v"
+             (uri (string-append "https://github.com/boostorg/compute/archive/boost-"
                                  version ".tar.gz"))
              (sha256
               (base32
-               "1r16zd1wdnn9gx278mkvr13k3i79hr35v6vj0fn7v3n92ngwxnhd"))))
+               "1jkdad65yqqrldi5h3rzph57yl350zn7bl3xv6a923l2p2a6zl2z"))))
     (build-system cmake-build-system)    
     (arguments `(#:configure-flags '("-DBUILD_SHARED_LIBS=ON" "-DCMAKE_BUILD_TYPE=Release") #:tests? #f))
     (native-inputs `(("autoconf" ,autoconf)
@@ -281,6 +283,7 @@
        ("mesa-utils" ,mesa-utils)
        ("openmpi" ,openmpi)
        ("opencl-headers" ,opencl-headers)
+       ("ocd-icd" ,ocl-icd)
        ("randrproto" ,randrproto)
        ("libxrandr" ,libxrandr)
        ("xineramaproto" ,xineramaproto)
