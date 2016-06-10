@@ -22,51 +22,48 @@
   #:use-module (guix packages)
   #:use-module (guix download)
   #:use-module (guix build-system gnu)
+  #:use-module (gnu packages autotools)
   #:use-module (gnu packages ncurses)
   #:use-module (gnu packages perl)
+  #:use-module (gnu packages wxwidgets)
   #:use-module (gnu packages tls))
 
 (define-public erlang
   (package
-    (name "erlang")
+   (name "erlang")
+    ;; This is the from git install
     ;; When updating, remember to update the hash of erlang-manpages!
-    (version "18.3")
+    (version "19.0-rc2")
     (source (origin
               (method url-fetch)
               (uri (string-append
-                    "http://erlang.org/download/otp_src_"
-                    version
-                    ".tar.gz"))
+                    "https://github.com/erlang/otp/archive/OTP-"
+                    version ".tar.gz"))
+              (file-name (string-append name "-" version ".tar.gz"))
               (sha256
                (base32
-                "1hy9slq9gjvwdb504dmvp6rax90isnky6chqkyq5v4ybl4lq3azx"))))
+                "1ny2c3n9v8ifjpmnhlj5gpmzcsi882qv2vfhsssrk2f9rk4z4hpb"))))
     (build-system gnu-build-system)
     (native-inputs
      `(("perl" ,perl)
+       ("autoconf" ,autoconf)
+       ("automake" ,automake)
+       ("wxwidgets" ,wxwidgets)
+      ))
 
        ;; Erlang's documentation is distributed in a separate tarball.
-       ("erlang-manpages"
-        ,(origin
-           (method url-fetch)
-           (uri (string-append "http://erlang.org/download/otp_doc_man_"
-                               version ".tar.gz"))
-           (sha256
-            (base32
-             "1hpcr7a3dx2y9gnb53bvb4g6lyvbwigadl9s3f978s01x40f32wp"))))))
     (inputs
      `(("ncurses" ,ncurses)
        ("openssl" ,openssl)))
     (arguments
      `(#:configure-flags
-       (list (string-append "--with-ssl=" (assoc-ref %build-inputs "openssl")))
+       (list "--disable-saved-compile-time" (string-append "--with-ssl=" (assoc-ref %build-inputs "openssl")))
        #:phases
        (modify-phases %standard-phases
-         (add-after 'unpack 'path-to-rm
-           (lambda _
-             (substitute* "erts/configure"
-               (("/bin/rm") (which "rm")))
-             (substitute* "lib/odbc/configure"
-               (("/bin/rm") (which "rm")))))
+        (add-before 'configure 'autoconf
+          (lambda _
+            ;; (zero? (system* "autoreconf" "-vfi"))))
+            (zero? (system* "./otp_build" "autoconf"))))
          (add-after 'patch-source-shebangs 'patch-source-env
            (lambda _
              (let ((escripts
@@ -91,19 +88,7 @@
            (lambda _
              (substitute* (string-append (assoc-ref %outputs "out") "/bin/erl")
                (("sed") (which "sed")))))
-         (add-after 'install 'install-doc
-           (lambda* (#:key inputs outputs #:allow-other-keys)
-             (let* ((out (assoc-ref outputs "out"))
-                    (manpages (assoc-ref inputs "erlang-manpages"))
-                    (share (string-append out "/share/")))
-             (mkdir-p share)
-             (with-directory-excursion share
-               (and
-                 (zero? (system* "tar" "xvf" manpages))
-                 ;; Delete superfluous files.
-                 (for-each delete-file '("COPYRIGHT"
-                                         "PR.template"
-                                         "README"))))))))
+         )
        #:test-target "release_tests"))
     (home-page "http://erlang.org/")
     (synopsis "The Erlang programming language")
