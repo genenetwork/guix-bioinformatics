@@ -19,6 +19,23 @@ or using a checked out Guix repo with
 Some (or most) of these package definitions should make it upstream
 into the GNU Guix repository when tested and stable.
 
+## Erlang
+
+Installation of erlang with debugger:
+
+    env GUIX_PACKAGE_PATH=./guix-bioinformatics guix package -i erlang
+    erl
+    Erlang/OTP 19 [erts-8.0] [source] [64-bit] [smp:4:4] [async-threads:10] [kernel-poll:false]
+
+## Elixir
+
+Installation:
+
+    env GUIX_PACKAGE_PATH=./guix-bioinformatics guix package -i elixir
+    iex
+    Erlang/OTP 19 [erts-8.0] [source] [64-bit] [smp:4:4] [async-threads:10] [kernel-poll:false]
+    Interactive Elixir (1.2.6) - press Ctrl+C to exit (type h() ENTER for help)
+
 ## Slurm and munge
 
 Install slurm with

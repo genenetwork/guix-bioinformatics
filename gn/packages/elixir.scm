@@ -30,7 +30,7 @@
 (define-public elixir
   (package
     (name "elixir")
-    (version "1.2.3")
+    (version "1.2.6")
     (source (origin
               (method url-fetch)
               (uri (string-append
@@ -39,7 +39,7 @@
               (file-name (string-append name "-" version ".tar.gz"))
               (sha256
                (base32
-                "09s8469830s4070i0m04fxdhqimkdyc5k9jylm5vpfz9l3z4wvl8"))))
+                "05h9bd752rs88p4sb1k1fp7xfr3df8wnpbyda7qxjjwbgnfyvm1g"))))
     (build-system gnu-build-system)
     (inputs
      `(("erlang" ,erlang)))
