@@ -23,6 +23,7 @@
   #:use-module (guix download)
   #:use-module (guix build-system gnu)
   #:use-module (gnu packages autotools)
+  #:use-module (gnu packages fontutils)
   #:use-module (gnu packages gl)
   #:use-module (gnu packages ncurses)
   #:use-module (gnu packages perl)
@@ -58,8 +59,9 @@
        ("wxwidgets" ,wxwidgets)
        ("openssl" ,openssl)))
     (propagated-inputs
-     ;; Headers from Mesa and GLU are needed.
+     ;; Headers from Mesa are needed for wxwidgets (and erlang debugger)
      `(("glu" ,glu)
+       ("fontconfig" ,fontconfig)
        ("mesa" ,mesa)))
 
     (arguments
