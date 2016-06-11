@@ -23,6 +23,7 @@
   #:use-module (guix download)
   #:use-module (guix build-system gnu)
   #:use-module (gnu packages autotools)
+  #:use-module (gnu packages gl)
   #:use-module (gnu packages ncurses)
   #:use-module (gnu packages perl)
   #:use-module (gnu packages wxwidgets)
@@ -48,16 +49,25 @@
      `(("perl" ,perl)
        ("autoconf" ,autoconf)
        ("automake" ,automake)
-       ("wxwidgets" ,wxwidgets)
       ))
 
        ;; Erlang's documentation is distributed in a separate tarball.
     (inputs
      `(("ncurses" ,ncurses)
+       ("mesa" ,mesa)
+       ("wxwidgets" ,wxwidgets)
        ("openssl" ,openssl)))
+    (propagated-inputs
+     ;; Headers from Mesa and GLU are needed.
+     `(("glu" ,glu)
+       ("mesa" ,mesa)))
+
     (arguments
      `(#:configure-flags
-       (list "--disable-saved-compile-time" (string-append "--with-ssl=" (assoc-ref %build-inputs "openssl")))
+       (list "--disable-saved-compile-time" "--enable-wx" "--enable-native-libs"
+             "--enable-threads" "--enable-dynamic-ssl-lib" "--enable-shared-zlib"
+             "--enable-smp-support"
+             (string-append "--with-ssl=" (assoc-ref %build-inputs "openssl")))
        #:phases
        (modify-phases %standard-phases
         (add-before 'configure 'autoconf
