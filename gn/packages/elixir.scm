@@ -46,17 +46,17 @@
     (arguments
      `(#:phases (modify-phases %standard-phases
          (delete 'configure)
+         (replace 'check
+                  (lambda _
+                    (zero? (system* "make" "test"))))
          (add-before
           'build 'rewrite-path
           (lambda* (#:key inputs #:allow-other-keys)
                    (substitute* "bin/elixir"
-                     (("ERL_EXEC=\"erl\"") (string-append "ERL_EXEC=" (which "erl"))))))
-        ;; (replace 'check
-        ;;          (lambda _
-        ;;           (zero? (system* "make" "test")))))))
-        )
+                     (("ERL_EXEC=\"erl\"") (string-append "ERL_EXEC=" (which "erl")))))))
        #:make-flags (list (string-append "PREFIX=" %output))
-       #:tests? #f)) ;; 2845 tests, 12 failures
+       #:tests? #t)) ;; 3115 tests, 14 failures
+
     (home-page "http://elixir-lang.org/")
     (synopsis "The Elixir programming language")
 (description "Elixir is a dynamic, functional language designed for
