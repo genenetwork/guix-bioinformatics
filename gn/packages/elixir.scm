@@ -30,7 +30,7 @@
 (define-public elixir
   (package
     (name "elixir")
-    (version "1.2.6")
+    (version "1.3.0")
     (source (origin
               (method url-fetch)
               (uri (string-append
@@ -39,7 +39,7 @@
               (file-name (string-append name "-" version ".tar.gz"))
               (sha256
                (base32
-                "05h9bd752rs88p4sb1k1fp7xfr3df8wnpbyda7qxjjwbgnfyvm1g"))))
+                "0jh0wid7ld78apzqqii6j0n1jcpp2ck4qmds26npqfb0vm489jv6"))))
     (build-system gnu-build-system)
     (inputs
      `(("erlang" ,erlang)))
@@ -50,7 +50,7 @@
           'build 'rewrite-path
           (lambda* (#:key inputs #:allow-other-keys)
                    (substitute* "bin/elixir"
-                     (("ERL_EXEC=\"erl\"") (string-append "ERL_EXEC=" (which "erl"))))))                           
+                     (("ERL_EXEC=\"erl\"") (string-append "ERL_EXEC=" (which "erl"))))))
         ;; (replace 'check
         ;;          (lambda _
         ;;           (zero? (system* "make" "test")))))))

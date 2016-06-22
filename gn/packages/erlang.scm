@@ -35,7 +35,7 @@
    (name "erlang")
     ;; This is the from git install
     ;; When updating, remember to update the hash of erlang-manpages!
-    (version "19.0-rc2")
+    (version "19.0")
     (source (origin
               (method url-fetch)
               (uri (string-append
@@ -44,7 +44,7 @@
               (file-name (string-append name "-" version ".tar.gz"))
               (sha256
                (base32
-                "1ny2c3n9v8ifjpmnhlj5gpmzcsi882qv2vfhsssrk2f9rk4z4hpb"))))
+                "1dxyz6x1yfv33fd0xfry2ihylkyfa2d655q1vxvbz8dflyd64yqh"))))
     (build-system gnu-build-system)
     (native-inputs
      `(("perl" ,perl)
@@ -65,13 +65,52 @@
        ("mesa" ,mesa)))
 
     (arguments
-     `(#:configure-flags
+     `(;; I don't know if specifying the modules here is the right way or not.
+       #:modules ((srfi srfi-19)
+                  (guix build utils)
+                  (guix build gnu-build-system))
+       #:configure-flags
        (list "--disable-saved-compile-time" "--enable-wx" "--enable-native-libs"
              "--enable-threads" "--enable-dynamic-ssl-lib" "--enable-shared-zlib"
              "--enable-smp-support"
              (string-append "--with-ssl=" (assoc-ref %build-inputs "openssl")))
        #:phases
        (modify-phases %standard-phases
+        (add-after 'unpack 'remove-timestamps
+          (lambda _
+            (let ((source-date-epoch
+                    (time-utc->date
+                      (make-time time-utc 0 (string->number
+                                              (getenv "SOURCE_DATE_EPOCH"))))))
+              (substitute* "lib/reltool/src/reltool_target.erl"
+                (("Date = date\\(\\),")
+                 (string-append "Date = "
+                                (date->string source-date-epoch
+                                              "'{~Y,~m,~d}',"))))
+              (substitute* "lib/reltool/src/reltool_target.erl"
+                (("Time = time\\(\\),")
+                 (string-append "Time = "
+                                (date->string source-date-epoch
+                                              "'{~H,~M,~S}',"))))
+              (substitute* '("lib/reltool/src/reltool_target.erl"
+                             "lib/sasl/src/systools_make.erl")
+                (("date\\(\\), time\\(\\),")
+                 (date->string source-date-epoch
+                               "{~Y,~m,~d}, {~H,~M,~S},")))
+              (substitute* '("lib/dialyzer/test/small_SUITE_data/src/gs_make.erl"
+                             "lib/gs/src/gs_make.erl")
+                (("tuple_to_list\\(date\\(\\)\\),tuple_to_list\\(time\\(\\)\\)")
+                 (date->string
+                   source-date-epoch
+                   "tuple_to_list({~Y,~m,~d}), tuple_to_list({~H,~M,~S})")))
+              (substitute* "lib/snmp/src/compile/snmpc_mib_to_hrl.erl"
+                (("\\{Y,Mo,D\\} = date\\(\\),")
+                 (date->string source-date-epoch
+                               "{Y,Mo,D} = {~Y,~m,~d},")))
+              (substitute* "lib/snmp/src/compile/snmpc_mib_to_hrl.erl"
+                (("\\{H,Mi,S\\} = time\\(\\),")
+                 (date->string source-date-epoch
+                               "{H,Mi,S} = {~H,~M,~S},"))))))
         (add-before 'configure 'autoconf
           (lambda _
             ;; (zero? (system* "autoreconf" "-vfi"))))
