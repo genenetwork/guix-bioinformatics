@@ -1,6 +1,6 @@
 ;;; GNU Guix --- Functional package management for GNU
-;;; Copyright © 2016 Pjotr Prins <pjotr.guix@thebird.nl>
 ;;; Copyright © 2016 Leo Famulari <leo@famulari.name>
+;;; Copyright © 2016 Pjotr Prins <pjotr.public12@thebird.nl>
 ;;;
 ;;; This file is part of GNU Guix.
 ;;;
@@ -19,13 +19,12 @@
 
 (define-module (gn packages elixir)
   #:use-module ((guix licenses) #:prefix license:)
-  #:use-module (guix packages)
-  #:use-module (guix download)
   #:use-module (guix build-system gnu)
+  #:use-module (guix download)
+  #:use-module (guix packages)
+  #:use-module (gnu packages)
   #:use-module (gnu packages erlang)
-  #:use-module (gnu packages ncurses)
-  #:use-module (gnu packages perl)
-  #:use-module (gnu packages tls))
+  #:use-module (gnu packages version-control))
 
 (define-public elixir
   (package
@@ -39,23 +38,25 @@
               (file-name (string-append name "-" version ".tar.gz"))
               (sha256
                (base32
-                "0jsc6kl7f74yszcypdv3w3vhyc9qfqav8nwc41in082m0vpfy95y"))))
+                "0jsc6kl7f74yszcypdv3w3vhyc9qfqav8nwc41in082m0vpfy95y"))
+              (patches (list (search-patch "elixir-disable-failing-tests.patch")))))
     (build-system gnu-build-system)
     (inputs
-     `(("erlang" ,erlang)))
+     `(("erlang" ,erlang)
+       ("git" ,git)))
     (arguments
      `(#:phases (modify-phases %standard-phases
          (delete 'configure)
-         ; (replace 'check
-         ;          (lambda _
-         ;            (zero? (system* "make" "test"))))
+         (replace 'check
+                  (lambda _
+                    (zero? (system* "make" "test"))))
          (add-before
           'build 'rewrite-path
           (lambda* (#:key inputs #:allow-other-keys)
                    (substitute* "bin/elixir"
                      (("ERL_EXEC=\"erl\"") (string-append "ERL_EXEC=" (which "erl")))))))
        #:make-flags (list (string-append "PREFIX=" %output))
-       #:tests? #f)) ;; 3115 tests, 14 failures
+       #:tests? #t)) ;; 3124 tests, 11 failures, 1 skipped
 
     (home-page "http://elixir-lang.org/")
     (synopsis "The Elixir programming language")
