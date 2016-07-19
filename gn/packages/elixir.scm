@@ -65,6 +65,8 @@
             (and
              (zero? (system* "patch" "--force" "-p1" "-i" (assoc-ref inputs "patch/elixir-disable-failing-tests")))
              (zero? (system* "patch" "--force" "-p1" "-i" (assoc-ref inputs "patch/elixir-disable-mix-tests")))
+             (delete-file "./lib/mix/test/mix/tasks/deps.git_test.exs")
+             (delete-file "./lib/mix/test/mix/shell_test.exs")
             )))
 
          (replace 'check
