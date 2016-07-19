@@ -1,0 +1,140 @@
+diff --git a/lib/mix/test/mix/dep_test.exs b/lib/mix/test/mix/dep_test.exs
+index fff3351..d6ed1b3 100644
+--- a/lib/mix/test/mix/dep_test.exs
++++ b/lib/mix/test/mix/dep_test.exs
+@@ -244,6 +244,7 @@ defmodule Mix.DepTest do
+     end
+   end
+ 
++  @tag :skip
+   test "remote converger" do
+     deps = [{:deps_repo, "0.1.0", path: "custom/deps_repo"},
+             {:git_repo, "0.2.0", git: MixTest.Case.fixture_path("git_repo")}]
+@@ -301,6 +302,7 @@ defmodule Mix.DepTest do
+     end
+   end
+ 
++  @tag :skip
+   test "remote converger is not invoked if deps diverge" do
+     deps = [{:deps_repo, "0.1.0", path: "custom/deps_repo"},
+             {:git_repo, "0.2.0", git: MixTest.Case.fixture_path("git_repo"), only: :test}]
+diff --git a/lib/mix/test/mix/rebar_test.exs b/lib/mix/test/mix/rebar_test.exs
+index d2dd098..12cef15 100644
+--- a/lib/mix/test/mix/rebar_test.exs
++++ b/lib/mix/test/mix/rebar_test.exs
+@@ -120,6 +120,7 @@ defmodule Mix.RebarTest do
+     assert Enum.all?(deps, &(&1.manager == :rebar3))
+   end
+ 
++  @tag :skip
+   test "Rebar overrides" do
+     Mix.Project.push(RebarOverrideAsDep)
+ 
+@@ -150,6 +151,7 @@ defmodule Mix.RebarTest do
+     end
+   end
+ 
++  @tag :skip
+   test "get and compile dependencies for Rebar" do
+     Mix.Project.push(RebarAsDep)
+ 
+@@ -180,6 +182,7 @@ defmodule Mix.RebarTest do
+     end
+   end
+ 
++  @tag :skip
+   test "get and compile dependencies for rebar3" do
+     Mix.Project.push(Rebar3AsDep)
+ 
+diff --git a/lib/mix/test/mix/shell/io_test.exs b/lib/mix/test/mix/shell/io_test.exs
+index 9bfb6b4..d982ef3 100644
+--- a/lib/mix/test/mix/shell/io_test.exs
++++ b/lib/mix/test/mix/shell/io_test.exs
+@@ -29,6 +29,7 @@ defmodule Mix.Shell.IOTest do
+     assert capture_io("", fn -> refute yes?("Ok?") end)
+   end
+ 
++  @tag :skip
+   test "runs a given command" do
+     assert capture_io("", fn -> assert cmd("echo hello") == 0 end) == "hello\n"
+ 
+diff --git a/lib/mix/test/mix/tasks/cmd_test.exs b/lib/mix/test/mix/tasks/cmd_test.exs
+index db4bf06..4d441f7 100644
+--- a/lib/mix/test/mix/tasks/cmd_test.exs
++++ b/lib/mix/test/mix/tasks/cmd_test.exs
+@@ -3,6 +3,7 @@ Code.require_file "../../test_helper.exs", __DIR__
+ defmodule Mix.Tasks.CmdTest do
+   use MixTest.Case
+ 
++  @tag :skip
+   test "runs the command for each app" do
+     in_fixture "umbrella_dep/deps/umbrella", fn ->
+       Mix.Project.in_project(:umbrella, ".", fn _ ->
+diff --git a/lib/mix/test/mix/tasks/deps.tree_test.exs b/lib/mix/test/mix/tasks/deps.tree_test.exs
+index 4f09ff3..c371997 100644
+--- a/lib/mix/test/mix/tasks/deps.tree_test.exs
++++ b/lib/mix/test/mix/tasks/deps.tree_test.exs
+@@ -29,6 +29,7 @@ defmodule Mix.Tasks.Deps.TreeTest do
+     end
+   end
+ 
++  @tag :skip
+   test "shows the dependency tree", context do
+     Mix.Project.push ConvergedDepsApp
+ 
+@@ -109,6 +110,7 @@ defmodule Mix.Tasks.Deps.TreeTest do
+     end
+   end
+ 
++  @tag :skip
+   test "shows the dependency tree in DOT graph format", context do
+     Mix.Project.push ConvergedDepsApp
+ 
+diff --git a/lib/mix/test/mix/tasks/deps_test.exs b/lib/mix/test/mix/tasks/deps_test.exs
+index b061777..cc45cf8 100644
+--- a/lib/mix/test/mix/tasks/deps_test.exs
++++ b/lib/mix/test/mix/tasks/deps_test.exs
+@@ -409,6 +409,7 @@ defmodule Mix.Tasks.DepsTest do
+     end
+   end
+ 
++  @tag :skip
+   test "fails on diverged dependencies by requirement" do
+     Mix.Project.push ConvergedDepsApp
+ 
+@@ -440,6 +441,7 @@ defmodule Mix.Tasks.DepsTest do
+     end
+   end
+ 
++  @tag :skip
+   test "fails on diverged dependencies even when optional" do
+     Mix.Project.push ConvergedDepsApp
+ 
+@@ -469,6 +471,7 @@ defmodule Mix.Tasks.DepsTest do
+     end
+   end
+ 
++  @tag :skip
+   test "works with converged dependencies" do
+     Mix.Project.push ConvergedDepsApp
+ 
+@@ -491,6 +494,7 @@ defmodule Mix.Tasks.DepsTest do
+     purge [GitRepo, GitRepo.Mixfile]
+   end
+ 
++  @tag :skip
+   test "works with overridden dependencies" do
+     Mix.Project.push OverriddenDepsApp
+ 
+diff --git a/lib/mix/test/mix/umbrella_test.exs b/lib/mix/test/mix/umbrella_test.exs
+index 69f9428..406668a 100644
+--- a/lib/mix/test/mix/umbrella_test.exs
++++ b/lib/mix/test/mix/umbrella_test.exs
+@@ -98,6 +98,7 @@ defmodule Mix.UmbrellaTest do
+     end
+   end
+ 
++  @tag :skip
+   test "loads umbrella child dependencies in all environments" do
+     in_fixture "umbrella_dep/deps/umbrella", fn ->
+       Mix.Project.in_project :umbrella, ".", fn _ ->
