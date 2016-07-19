@@ -23,6 +23,7 @@
   #:use-module (guix download)
   #:use-module (guix packages)
   #:use-module (gnu packages)
+  #:use-module (gnu packages base)  ; for patch
   #:use-module (gnu packages erlang)
   #:use-module (gnu packages version-control))
 
@@ -39,22 +40,32 @@
               (sha256
                (base32
                 "0jsc6kl7f74yszcypdv3w3vhyc9qfqav8nwc41in082m0vpfy95y"))
-              (patches (list (search-patch "elixir-disable-failing-tests.patch")))))
+              ))
     (build-system gnu-build-system)
+    (native-inputs
+     `(("patch" ,patch)
+       ("patch/disable-tests" ,(search-patch "elixir-disable-failing-tests.patch"))))
     (inputs
      `(("erlang" ,erlang)
        ("git" ,git)))
     (arguments
      `(#:phases (modify-phases %standard-phases
          (delete 'configure)
-         (replace 'check
-                  (lambda _
-                    (zero? (system* "make" "test"))))
          (add-before
           'build 'rewrite-path
           (lambda* (#:key inputs #:allow-other-keys)
                    (substitute* "bin/elixir"
-                     (("ERL_EXEC=\"erl\"") (string-append "ERL_EXEC=" (which "erl")))))))
+                     (("ERL_EXEC=\"erl\"") (string-append "ERL_EXEC=" (which "erl"))))))
+         (add-after 'build 'patch-elixir-tests ;; patching earlier breaks the build
+          (lambda* (#:key inputs #:allow-other-keys)
+
+
+             (zero? (system* "patch" "--force" "-p1" "-i" (assoc-ref inputs "patch/disable-tests")
+            ))))
+
+         (replace 'check
+                  (lambda _
+                    (zero? (system* "make" "test")))))
        #:make-flags (list (string-append "PREFIX=" %output))
        #:tests? #t)) ;; 3124 tests, 11 failures, 1 skipped
 
