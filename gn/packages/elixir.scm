@@ -59,7 +59,7 @@
           (lambda* (#:key inputs #:allow-other-keys)
                    (substitute* "bin/elixir"
                      (("ERL_EXEC=\"erl\"") (string-append "ERL_EXEC=" (which "erl"))))))
-         (add-after 'build 'patch-elixir-tests ;; patching earlier breaks the build
+         (add-after 'build 'disable-breaking-elixir-tests ;; when making this convential part of source the build breaks!
           (lambda* (#:key inputs #:allow-other-keys)
 
             (and

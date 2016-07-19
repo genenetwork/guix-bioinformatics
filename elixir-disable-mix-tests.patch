@@ -58,6 +58,18 @@ index 9bfb6b4..d982ef3 100644
    test "runs a given command" do
      assert capture_io("", fn -> assert cmd("echo hello") == 0 end) == "hello\n"
  
+diff --git a/lib/mix/test/mix/shell/quiet_test.exs b/lib/mix/test/mix/shell/quiet_test.exs
+index 626429b..99fab35 100644
+--- a/lib/mix/test/mix/shell/quiet_test.exs
++++ b/lib/mix/test/mix/shell/quiet_test.exs
+@@ -29,6 +29,7 @@ defmodule Mix.Shell.QuietTest do
+     assert capture_io("", fn -> refute yes?("Ok?") end)
+   end
+ 
++  @tag :skip
+   test "runs a given command" do
+     assert capture_io("", fn -> assert cmd("echo hello") == 0 end) == ""
+ 
 diff --git a/lib/mix/test/mix/tasks/cmd_test.exs b/lib/mix/test/mix/tasks/cmd_test.exs
 index db4bf06..4d441f7 100644
 --- a/lib/mix/test/mix/tasks/cmd_test.exs
