@@ -125,7 +125,7 @@
               ; ("python2-simplejson" ,python2-simplejson)
               ; ("python2-pyyaml" ,python2-pyyaml)
               ;; python-yolk is not needed
-              ("python2-pil" ,python2-pil)
+              ("python2-pillow" ,python2-pillow)
               ("python2-numarray" ,python2-numarray)
               ("plink" ,plink) ;; gn1
               ; ("r-qtl" ,r-qtl)
@@ -182,7 +182,7 @@
               ("python2-passlib" ,python2-passlib)
               ("python2-piddle-gn" ,python2-piddle-gn)
               ("python2-redis" ,python2-redis)
-              ("python2-pil" ,python2-pil)
+              ("python2-pillow" ,python2-pillow)
               ("python2-requests" ,python2-requests)
               ("python2-rpy2" ,python2-rpy2)
               ("python2-scipy" ,python2-scipy)
