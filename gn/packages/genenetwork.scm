@@ -98,13 +98,13 @@
                    (url "https://github.com/genenetwork/genenetwork.git")
                    ;; (url "https://github.com/pjotrp/genenetwork.git")
                    (commit commit)))
-             (file-name (string-append name "-" commit)) 
+             (file-name (string-append name "-" commit))
              (sha256
               (base32
                "14fzfcm4vl20mlhxjslfa01i1nmxpk8lbxmfvpq6dyfc22ir62py"))))
     (propagated-inputs `(
               ("python" ,python-2) ;; probably superfluous
-              ("r" ,r) 
+              ("r" ,r)
     ))
     (inputs `(
               ;; http://spring211.uthsc.edu/gn/thirdparty.tbz
@@ -125,7 +125,7 @@
               ; ("python2-simplejson" ,python2-simplejson)
               ; ("python2-pyyaml" ,python2-pyyaml)
               ;; python-yolk is not needed
-              ("python2-pillow" ,python2-pillow)
+              ("python2-pil" ,python2-pil)
               ("python2-numarray" ,python2-numarray)
               ("plink" ,plink) ;; gn1
               ; ("r-qtl" ,r-qtl)
@@ -181,14 +181,14 @@
               ("python2-passlib" ,python2-passlib)
               ("python2-piddle-gn" ,python2-piddle-gn)
               ("python2-redis" ,python2-redis)
-              ("python2-pillow" ,python2-pillow)
+              ("python2-pil" ,python2-pil) ; should move to pillow some day
               ("python2-requests" ,python2-requests)
               ("python2-rpy2" ,python2-rpy2)
               ("python2-scipy" ,python2-scipy)
               ("python2-simplejson" ,python2-simplejson)
               ("python2-pyyaml" ,python2-pyyaml)
               ("python2-xlsxwriter" ,python2-xlsxwriter)
-              ("qtlreaper" ,qtlreaper) 
+              ("qtlreaper" ,qtlreaper)
               ))
     (build-system python-build-system)
     (arguments
@@ -203,7 +203,7 @@
                              ;; (plink2cmd (string-append (assoc-ref inputs "plink2") "/bin/plink2"))
                              (gemmacmd (string-append (assoc-ref inputs "gemma") "/bin/gemma"))
                              )
-                             
+
                (substitute* '("etc/default_settings.py")
                             (("^GENENETWORK_FILES =.*") (string-append "GENENETWORK_FILES = \"" datafiles "\"\n" ))
                             (("^PYLMM_COMMAND =.*") (string-append "PYLMM_COMMAND = \"" pylmmcmd "\"\n" ))
@@ -229,7 +229,7 @@
      (origin
        (method url-fetch)
        (uri "http://files.genenetwork.org/data_files/gn2_data_s-20160303-C9E672ECED1F51B915DE419B5B2C524E.tar.lz4")
-       (file-name (string-append name "-" pfff)) 
+       (file-name (string-append name "-" pfff))
        (sha256
         (base32 "058ymx3af6abdhdxyxj0i9qfvb6v7j091frjpp6jh4ahks7r23lj"))))
     (build-system trivial-build-system)
@@ -251,7 +251,7 @@
                    (lz4unpack (string-append (assoc-ref %build-inputs "lz4") "/bin/lz4"))
                    (tar (string-append (assoc-ref %build-inputs "tar") "/bin/tar"))
                    )
-               (and 
+               (and
                     (zero? (system* lz4unpack source "-d" tarfn))
                     (zero? (system* tar "xf" tarfn))
                     (mkdir-p targetdir)
@@ -271,7 +271,7 @@
      (origin
        (method url-fetch)
        (uri "http://files.genenetwork.org/raw_database/db_webqtl_s.zip")
-       (file-name (string-append name "-" md5)) 
+       (file-name (string-append name "-" md5))
        (sha256
         (base32 "0sscjh0wml2lx0mb43vf4chg9gpbfi7abpjxb34n3kyny9ll557x"))))
     (build-system trivial-build-system)
@@ -292,4 +292,3 @@
     (synopsis "Small database to run on genenetwork")
     (description "Genenetwork installation + database.")
     (license license:agpl3+))))
-

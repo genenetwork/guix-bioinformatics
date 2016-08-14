@@ -308,7 +308,7 @@ version "-gn.tar.gz"))
                          (install-file "ImageH.pyc" lib)
                          (install-file "ImagePaletteH.pyc" lib)
                          (install-file "__init__.pyc" lib)
-              ))) ; install 
+              ))) ; install
      ) ; phases
      #:tests? #f))
   (home-page
@@ -343,7 +343,7 @@ project)")
       `(("freetype" ,freetype)
         ("libjpeg" ,libjpeg)
         ("libtiff" ,libtiff)
-        ("python-setuptools" ,python-setuptools)
+        ("python2-setuptools" ,python2-setuptools)
         ("zlib" ,zlib)))
     (arguments
      ;; Only the fork python-pillow works with Python 3.
