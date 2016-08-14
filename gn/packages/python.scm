@@ -337,7 +337,7 @@ project)")
         ;; there is no use in creating a patch and reporting it.
         '(substitute* "_imagingft.c"
            (("freetype/")
-            "freetype2/")))))
+            "freetype2/freetype/")))))
     (build-system python-build-system)
     (inputs
       `(("freetype" ,freetype)
