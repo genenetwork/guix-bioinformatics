@@ -164,7 +164,7 @@
               ("gemma" ,gemma-git)
               ("genenetwork2-files-small" ,genenetwork2-files-small)
               ("pylmm-gn2" ,pylmm-gn2)
-              ("plink2" ,plink-ng)
+              ;; ("plink2" ,plink-ng) disabled - FIXME
               ("nginx" ,nginx)
               ("python2-flask" ,python2-flask)
               ("python2-htmlgen-gn" ,python2-htmlgen-gn)
@@ -173,7 +173,6 @@
               ("python2-flask-sqlalchemy" ,python2-flask-sqlalchemy)
               ("python2-setuptools" ,python2-setuptools)
               ("python2-scipy" ,python2-scipy)
-              ;; looks like python-numarray is not needed
               ("python2-mysqlclient" ,python2-mysqlclient)
               ("python2-numarray" ,python2-numarray)
               ("python2-numpy" ,python2-numpy)
@@ -189,8 +188,6 @@
               ("python2-simplejson" ,python2-simplejson)
               ("python2-pyyaml" ,python2-pyyaml)
               ("python2-xlsxwriter" ,python2-xlsxwriter)
-              ;; python-yolk is not needed
-              ("plink" ,plink) 
               ("qtlreaper" ,qtlreaper) 
               ))
     (build-system python-build-system)
@@ -203,14 +200,14 @@
                       (let* (
                              (datafiles (string-append (assoc-ref inputs "genenetwork2-files-small") "/share/genenetwork2" ))
                              (pylmmcmd (string-append (assoc-ref inputs "pylmm-gn2") "/bin/pylmm_redis"))
-                             (plink2cmd (string-append (assoc-ref inputs "plink2") "/bin/plink2"))
+                             ;; (plink2cmd (string-append (assoc-ref inputs "plink2") "/bin/plink2"))
                              (gemmacmd (string-append (assoc-ref inputs "gemma") "/bin/gemma"))
                              )
                              
                (substitute* '("etc/default_settings.py")
                             (("^GENENETWORK_FILES =.*") (string-append "GENENETWORK_FILES = \"" datafiles "\"\n" ))
                             (("^PYLMM_COMMAND =.*") (string-append "PYLMM_COMMAND = \"" pylmmcmd "\"\n" ))
-                            (("^PLINK_COMMAND =.*") (string-append "PLINK_COMMAND = \"" plink2cmd "\"\n" ))
+                            ;; (("^PLINK_COMMAND =.*") (string-append "PLINK_COMMAND = \"" plink2cmd "\"\n" ))
                             (("^GEMMA_COMMAND =.*") (string-append "GEMMA_COMMAND = \"" gemmacmd "\"\n" ))
                             )
                ))))

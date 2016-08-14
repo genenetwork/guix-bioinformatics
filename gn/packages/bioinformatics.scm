@@ -840,8 +840,8 @@ confidence region for the location of a putative QTL.")
     (inputs
      `(("zlib" ,zlib)
        ("openblas" ,openblas)
-       ("atlas" ,atlas)
-       ("lapack" ,lapack)
+       ;; ("atlas" ,atlas)
+       ;; ("lapack" ,lapack)
        ("gfortran" ,gfortran)
        ))
     (native-inputs
@@ -861,7 +861,7 @@ subsequent visualization, annotation and storage of results.")
     (license (list license:gpl2 license:lgpl2.1+))))
 
 (define-public plink-ng
-  (let ((commit "516d730f9"))
+  (let ((commit "6ab6ecf81e904b7db76454422ea59baae437d961"))
   (package
     (name "plink-ng")
     (version (string-append "1.90b3-" commit ))
@@ -873,8 +873,8 @@ subsequent visualization, annotation and storage of results.")
              (file-name (string-append name "-" commit)) 
              (sha256
               (base32
-               "0cv824wkdml9h9imsc30s2x3l8g65j44cpjbr1ydkk49g5qmf580"))
-    (patches (list (search-patch "plink-ng-Makefile-zlib-git.patch")))))
+               "0djnfcr3lm6839lkglpq1p4w09zlgv68p618c2i5dng4jhwji94k"))))
+    ;;; (patches (list (search-patch "plink-ng-Makefile-zlib-git.patch"))
     (build-system gnu-build-system)
     (arguments
      '(#:tests? #f ;no "check" target
@@ -894,8 +894,8 @@ subsequent visualization, annotation and storage of results.")
     (inputs
      `(("zlib" ,zlib)
        ("openblas" ,openblas)
-       ("atlas" ,atlas)
-       ("lapack" ,lapack)
+       ;; ("atlas" ,atlas)
+       ;; ("lapack" ,lapack)
        ("gfortran" ,gfortran)
        ))
     (native-inputs
