@@ -163,8 +163,8 @@
               ("mysql" ,mysql)
               ("gemma" ,gemma-git)
               ("genenetwork2-files-small" ,genenetwork2-files-small)
+              ("plink-ng" ,plink-ng)
               ("pylmm-gn2" ,pylmm-gn2)
-              ;; ("plink2" ,plink-ng) disabled - FIXME
               ("nginx" ,nginx)
               ("python2-flask" ,python2-flask)
               ("python2-htmlgen-gn" ,python2-htmlgen-gn)
@@ -200,14 +200,14 @@
                       (let* (
                              (datafiles (string-append (assoc-ref inputs "genenetwork2-files-small") "/share/genenetwork2" ))
                              (pylmmcmd (string-append (assoc-ref inputs "pylmm-gn2") "/bin/pylmm_redis"))
-                             ;; (plink2cmd (string-append (assoc-ref inputs "plink2") "/bin/plink2"))
+                             (plink2cmd (string-append (assoc-ref inputs "plink-ng") "/bin/plink2"))
                              (gemmacmd (string-append (assoc-ref inputs "gemma") "/bin/gemma"))
                              )
 
                (substitute* '("etc/default_settings.py")
                             (("^GENENETWORK_FILES =.*") (string-append "GENENETWORK_FILES = \"" datafiles "\"\n" ))
                             (("^PYLMM_COMMAND =.*") (string-append "PYLMM_COMMAND = \"" pylmmcmd "\"\n" ))
-                            ;; (("^PLINK_COMMAND =.*") (string-append "PLINK_COMMAND = \"" plink2cmd "\"\n" ))
+                            (("^PLINK_COMMAND =.*") (string-append "PLINK_COMMAND = \"" plink2cmd "\"\n" ))
                             (("^GEMMA_COMMAND =.*") (string-append "GEMMA_COMMAND = \"" gemmacmd "\"\n" ))
                             )
                ))))

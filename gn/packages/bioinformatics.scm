@@ -830,7 +830,7 @@ confidence region for the location of a putative QTL.")
         (replace 'build
                  (lambda _
                    (zero? (system* "make" "-f" "Makefile.std"))
-                   ))                 
+                   ))
         (replace 'install
                   (lambda* (#:key outputs #:allow-other-keys)
                     (let ((bin (string-append (assoc-ref outputs "out")
@@ -861,45 +861,46 @@ subsequent visualization, annotation and storage of results.")
     (license (list license:gpl2 license:lgpl2.1+))))
 
 (define-public plink-ng
-  (let ((commit "6ab6ecf81e904b7db76454422ea59baae437d961"))
+  (let ((commit "5d1db4313ba0cc976562da233db4aced78975d10"))
   (package
     (name "plink-ng")
-    (version (string-append "1.90b3-" commit ))
+    (version (string-append "1.90b3-" commit )) ; Aug 11, 2016
     (source (origin
              (method git-fetch)
              (uri (git-reference
-                   (url "https://github.com/chrchang/plink-ng.git")
+                   (url "https://github.com/genenetwork/plink-ng.git")
                    (commit commit)))
-             (file-name (string-append name "-" commit)) 
+             (file-name (string-append name "-" commit))
              (sha256
               (base32
-               "0djnfcr3lm6839lkglpq1p4w09zlgv68p618c2i5dng4jhwji94k"))))
-    ;;; (patches (list (search-patch "plink-ng-Makefile-zlib-git.patch"))
+               "1366li3ks9076bblvd1rpzkjq4j8f8f08lhga4c1ckrkil3xww4m"))))
+            ;; no longer (patches (list (search-patch "plink-ng-Makefile-zlib-git.patch")))))
+    (inputs
+     `(("zlib" ,zlib)
+       ("openblas" ,openblas)
+       ;; ("atlas" ,atlas) ; openblas replaces atlas
+       ("lapack" ,lapack)  ; lapack is disabled in GUIX openblas
+       ;; ("gfortran" ,gfortran)
+       ;; ("python" ,python-2)   ;; for tests - currently disabled
+       ))
+    (native-inputs
+     `(("unzip" ,unzip)))
     (build-system gnu-build-system)
     (arguments
-     '(#:tests? #f ;no "check" target
+     '(#:tests? #f ;no "check" target. Some of the python-based tests fail
        #:phases
        (modify-phases %standard-phases
         (delete 'configure)
         (replace 'build
                  (lambda _
-                   (zero? (system* "make" "-f" "Makefile.std"))
-                   ))                 
+                   (zero? (system* "make" "-f" "Makefile.guix"))
+                   ))
         (replace 'install
                   (lambda* (#:key outputs #:allow-other-keys)
                     (let ((bin (string-append (assoc-ref outputs "out")
                                               "/bin/")))
                       (install-file "plink2" bin)
                       #t))))))
-    (inputs
-     `(("zlib" ,zlib)
-       ("openblas" ,openblas)
-       ;; ("atlas" ,atlas)
-       ;; ("lapack" ,lapack)
-       ("gfortran" ,gfortran)
-       ))
-    (native-inputs
-     `(("unzip" ,unzip)))
     (home-page "https://www.cog-genomics.org/plink2")
     (synopsis "Whole genome association analysis toolset")
     (description
@@ -922,7 +923,7 @@ subsequent visualization, annotation and storage of results.")
              (uri (git-reference
                    (url "https://github.com/genenetwork/GEMMA.git")
                    (commit commit)))
-             (file-name (string-append name "-" commit)) 
+             (file-name (string-append name "-" commit))
              (sha256
               (base32
                "1drffdgwbzgiw9sf55ghl3zjv58f8i9kfz0zys5mp6n06syp4ira"))))
