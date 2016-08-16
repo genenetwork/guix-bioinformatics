@@ -57,7 +57,7 @@ Install the common workflow language tool cwltool with
     git clone https://github.com/genenetwork/guix-bioinformatics.git
     export GUIX_PACKAGE_PATH=$PWD/guix-bioinformatics/
     guix package -i python2-cwltool
-    
+
     cwtool --version
       1.0.20150916041152
 
@@ -68,7 +68,14 @@ Install the common workflow language tool cwltool with
 The LLVM D compiler was added to GNU Guix main stream!
 
     guix package -i ldc
-    
+
+## Elixir and Erlang
+
+Both languages have gone in to main line Guix:
+
+    guix package -i elixir
+    guix package -i erlang
+
 ## R/qtl
 
 R-qtl is now part of main stream GNU Guix:
