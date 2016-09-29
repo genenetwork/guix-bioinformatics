@@ -88,20 +88,20 @@
     (license #f)))
 
 (define-public qtlreaper
+  (let ((commit "cf6f307271e9d958adad1fe1bd03730822555c78"))
   (package
     (name "qtlreaper")
-    (version "1.1.1")
-    (source
-     (origin
-       (method url-fetch)
-       (uri (string-append
-             "mirror://sourceforge/qtlreaper/qtlreaper-" version ".tar.gz"
-             ;; "http://downloads.sourceforge.net/project/qtlreaper/qtlreaper/1.1.1/qtlreaper-1.1.1.tar.gz?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fqtlreaper%2Ffiles%2Flatest%2Fdownload&ts=1358975786&use_mirror=iweb"))
-             ))
-       (file-name (string-append name "-" version ".tar.gz"))
-       (sha256
-        (base32
-         "0rbf030940nbbbkggdq2dxiy3c0jv8l4y3vvyfxhqimgj0qv3l1x"))))
+    (version (string-append "1.1-gn2" (string-take commit 7) ))
+    (source (origin
+             (method git-fetch)
+             (uri (git-reference
+                   ;; (url "https://github.com/genenetwork/genenetwork2.git")
+                   (url "https://github.com/pjotrp/QTLreaper.git")
+                   (commit commit)))
+             (file-name (string-append name "-" (string-take commit 7)))
+             (sha256
+              (base32
+               "02j0ybzp7rc7n4vingqqssfcrswxg6d3pqysdhjzga3mjwbc0q02"))))
     (build-system python-build-system)
     ;; (native-inputs
     ;; `(("python-setuptools" ,python-setuptools)))
@@ -120,7 +120,7 @@ test, it performs only as many permutations as are necessary to define
 the empirical P-value to a reasonable precision. It also performs
 bootstrap resampling to estimate the confidence region for the
 location of a putative QTL.")
-    (license license:gpl2+)))
+    (license license:gpl2+))))
 
 (define-public genenetwork1
   (let ((commit "d622c803b"))
