@@ -88,7 +88,7 @@
     (license #f)))
 
 (define-public qtlreaper
-  (let ((commit "cf6f307271e9d958adad1fe1bd03730822555c78"))
+  (let ((commit "71fbbe2b35e4f54937be2d54d09fb71d25fe5fad"))
   (package
     (name "qtlreaper")
     (version (string-append "1.1-gn2" (string-take commit 7) ))
@@ -101,13 +101,13 @@
              (file-name (string-append name "-" (string-take commit 7)))
              (sha256
               (base32
-               "02j0ybzp7rc7n4vingqqssfcrswxg6d3pqysdhjzga3mjwbc0q02"))))
+               "0g0v20lh7773cm2xdqz6xzwjw4130y265n79z5x20p5aja5y5kmg"))))
     (build-system python-build-system)
     ;; (native-inputs
     ;; `(("python-setuptools" ,python-setuptools)))
     (arguments
      `(#:python ,python-2
-       #:tests? #f))   ; no 'setup.py test'
+    ))
     (home-page "http://qtlreaper.sourceforge.net/")
     (synopsis "Tool for scanning expression data for QTLs")
     (description
