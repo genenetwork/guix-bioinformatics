@@ -192,6 +192,7 @@ location of a putative QTL.")
     (propagated-inputs `(  ;; propagated for development purposes
               ("python" ,python-2) ;; probably superfluous
               ("r" ,r)
+              ("r-ctl" ,r-ctl)
               ("r-wgcna" ,r-wgcna)
               ("r-qtl" ,r-qtl)
               ("redis" ,redis)
