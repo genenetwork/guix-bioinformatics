@@ -162,6 +162,8 @@ output")
         (base32
          "14801gr34g0rmqz9pv4rkfa3crfdbyfk6r48vpg5a5407v0sixqi"))))
     (build-system ruby-build-system)
+    (arguments
+     `(#:tests? #f))
     (synopsis
      "An implementation of RFC 2617 - Digest Access Authentication.  At this time
 the gem does not drop in to Net::HTTP and can be used for with other HTTP
@@ -194,6 +196,8 @@ for an example.")
         (base32
          "0yx01ffrw87wya1syivqzf8hz02axk7jdpw6aw221xwvib767d36"))))
     (build-system ruby-build-system)
+    (arguments
+     `(#:tests? #f))
     (synopsis
      "Ruby/NTLM HTTP provides NTLM authentication over http.")
     (description
@@ -213,6 +217,8 @@ for an example.")
         (base32
          "19ndcbba8s8m62hhxxfwn83nax34rg2k5x066awa23wknhnamg7b"))))
     (build-system ruby-build-system)
+    (arguments
+     `(#:tests? #f))
     (synopsis
      "This library helps write robots.txt compliant web robots in Ruby.
 ")
@@ -234,6 +240,8 @@ for an example.")
         (base32
          "1f861x62kmggy60krv229s5jl7afq9nblwcfih3kp9bm5c5jn16y"))))
     (build-system ruby-build-system)
+    (arguments
+     `(#:tests? #f))
     (propagated-inputs
      `(("ruby-domain-name" ,ruby-domain-name)
        ("ruby-http-cookie" ,ruby-http-cookie)
