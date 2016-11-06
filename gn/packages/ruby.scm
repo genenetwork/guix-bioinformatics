@@ -240,8 +240,9 @@ for an example.")
         (base32
          "1f861x62kmggy60krv229s5jl7afq9nblwcfih3kp9bm5c5jn16y"))))
     (build-system ruby-build-system)
+    (arguments '(#:gem-flags '("--trace")))
     (inputs
-     `(("ruby-rake" ,ruby-rake)))
+     `(("ruby" ,ruby)))
     (propagated-inputs
      `(("ruby-domain-name" ,ruby-domain-name)
        ("ruby-http-cookie" ,ruby-http-cookie)
@@ -268,122 +269,3 @@ a history.")
   (home-page
    "http://docs.seattlerb.org/mechanize/")
   (license expat)))
-
-(define-public ruby-rake
-  (package
-    (name "ruby-rake")
-    (version "11.3.0")
-    (source
-     (origin
-       (method url-fetch)
-       (uri (rubygems-uri "rake" version))
-       (sha256
-        (base32
-         "0cnjmbcyhm4hacpjn337mg1pnaw6hj09f74clwgh6znx8wam9xla"))))
-    (build-system ruby-build-system)
-    (inputs
-     `(("bundler" ,bundler)
-       ("ruby-minitest" ,ruby-minitest)
-       ("ruby-hoe" ,ruby-hoe)))
-    (synopsis
-     "Rake is a Make-like program implemented in Ruby. Tasks and dependencies are
-specified in standard Ruby syntax.")
-    (description
-     "Rake is a Make-like program implemented in Ruby.  Tasks and dependencies are
-specified in standard Ruby syntax.
-
-Rake has the following features:
-
-* Rakefiles (rake's version of Makefiles) are completely defined in
-  standard Ruby syntax.  No XML files to edit.  No quirky Makefile
-  syntax to worry about (is that a tab or a space?)
-
-* Users can specify tasks with prerequisites.
-
-* Rake supports rule patterns to synthesize implicit tasks.
-
-* Flexible FileLists that act like arrays but know about manipulating
-  file names and paths.
-
-* A library of prepackaged tasks to make building rakefiles easier.  For example,
-  tasks for building tarballs and publishing to FTP or SSH sites.  (Formerly
-  tasks for building RDoc and Gems were included in rake but they're now
-  available in RDoc and RubyGems respectively.)
-
-* Supports parallel execution of tasks.")
-    (home-page "https://github.com/ruby/rake")
-    (license license:expat)))
-
-(define-public ruby-minitest
-  (package
-    (name "ruby-minitest")
-    (version "5.9.1")
-    (source
-     (origin
-       (method url-fetch)
-       (uri (rubygems-uri "minitest" version))
-       (sha256
-        (base32
-         "0300naf4ilpd9sf0k8si9h9sclkizaschn8bpnri5fqmvm9ybdbq"))))
-    (build-system ruby-build-system)
-    (inputs
-     `(("ruby-hoe" ,ruby-hoe)))
-    (synopsis
-     "minitest provides a complete suite of testing facilities supporting
-TDD, BDD, mocking, and benchmarking.")
-    (description
-     "minitest provides a complete suite of testing facilities supporting
-TDD, BDD, mocking, and benchmarking.
-
-    \"I had a class with Jim Weirich on testing last week and we were
-     allowed to choose our testing frameworks.  Kirk Haines and I were\n     paired up and we cracked open the code for a few test
-     frameworks...
-
-     I MUST say that minitest is *very* readable / understandable
-     compared to the 'other two' options we looked at.  Nicely done and
-     thank you for helping us keep our mental sanity.\"
-
-    -- Wayne E.  Seguin
-
-minitest/test is a small and incredibly fast unit testing framework.
-It provides a rich set of assertions to make your tests clean and
-readable.
-
-minitest/spec is a functionally complete spec engine.  It hooks onto
-minitest/test and seamlessly bridges test assertions over to spec
-expectations.
-
-minitest/benchmark is an awesome way to assert the performance of your
-algorithms in a repeatable manner.  Now you can assert that your newb
-co-worker doesn't replace your linear algorithm with an exponential
-one!
-
-minitest/mock by Steven Baker, is a beautifully tiny mock (and stub)
-object framework.
-
-minitest/pride shows pride in testing and adds coloring to your test
-output.  I guess it is an example of how to write IO pipes too. :P
-
-minitest/test is meant to have a clean implementation for language
-implementors that need a minimal set of methods to bootstrap a working
-test suite.  For example, there is no magic involved for test-case
-discovery.
-
-    \"Again, I can't praise enough the idea of a testing/specing
-     framework that I can actually read in full in one sitting!\"
-
-    -- Piotr Szotkowski
-
-Comparing to rspec:
-
-    rspec is a testing DSL.  minitest is ruby.
-
-    -- Adam Hawkins, \"Bow Before MiniTest\"
-
-minitest doesn't reinvent anything that ruby already provides, like:
-classes, modules, inheritance, methods.  This means you only have to
-learn ruby to use minitest and all of your regular OO practices like
-extract-method refactorings still apply.")
-    (home-page
-     "https://github.com/seattlerb/minitest")
-    (license license:expat)))
