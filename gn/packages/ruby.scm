@@ -149,3 +149,123 @@ output")
    (home-page
     "http://github.com/pjotrp/bioruby-table")
    (license expat)))
+
+(define-public ruby-net-http-digest-auth
+  (package
+    (name "ruby-net-http-digest-auth")
+    (version "1.4")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (rubygems-uri "net-http-digest_auth" version))
+       (sha256
+        (base32
+         "14801gr34g0rmqz9pv4rkfa3crfdbyfk6r48vpg5a5407v0sixqi"))))
+    (build-system ruby-build-system)
+    (arguments
+     `(#:tests? #f))
+    (synopsis
+     "An implementation of RFC 2617 - Digest Access Authentication.  At this time
+the gem does not drop in to Net::HTTP and can be used for with other HTTP
+clients.
+
+In order to use net-http-digest_auth you'll need to perform some request
+wrangling on your own.  See the class documentation at Net::HTTP::DigestAuth
+for an example.")
+    (description
+     "An implementation of RFC 2617 - Digest Access Authentication.  At this time
+the gem does not drop in to Net::HTTP and can be used for with other HTTP
+clients.
+
+In order to use net-http-digest_auth you'll need to perform some request
+wrangling on your own.  See the class documentation at Net::HTTP::DigestAuth
+for an example.")
+    (home-page
+     "http://github.com/drbrain/net-http-digest_auth")
+    (license #f)))
+
+(define-public ruby-ntlm-http
+  (package
+    (name "ruby-ntlm-http")
+    (version "0.1.1")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (rubygems-uri "ntlm-http" version))
+       (sha256
+        (base32
+         "0yx01ffrw87wya1syivqzf8hz02axk7jdpw6aw221xwvib767d36"))))
+    (build-system ruby-build-system)
+    (arguments
+     `(#:tests? #f))
+    (synopsis
+     "Ruby/NTLM HTTP provides NTLM authentication over http.")
+    (description
+     "Ruby/NTLM HTTP provides NTLM authentication over http.")
+    (home-page "http://www.mindflowsolutions.net")
+    (license #f)))
+
+(define-public ruby-webrobots
+  (package
+    (name "ruby-webrobots")
+    (version "0.1.2")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (rubygems-uri "webrobots" version))
+       (sha256
+        (base32
+         "19ndcbba8s8m62hhxxfwn83nax34rg2k5x066awa23wknhnamg7b"))))
+    (build-system ruby-build-system)
+    (arguments
+     `(#:tests? #f))
+    (synopsis
+     "This library helps write robots.txt compliant web robots in Ruby.
+")
+    (description
+     "This library helps write robots.txt compliant web robots in Ruby.
+")
+    (home-page "https://github.com/knu/webrobots")
+    (license #f)))
+
+(define-public ruby-mechanize
+  (package
+    (name "ruby-mechanize")
+    (version "2.7.5")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (rubygems-uri "mechanize" version))
+       (sha256
+        (base32
+         "1f861x62kmggy60krv229s5jl7afq9nblwcfih3kp9bm5c5jn16y"))))
+    (build-system ruby-build-system)
+    (arguments '(#:gem-flags '("--trace")))
+    (inputs
+     `(("ruby" ,ruby)))
+    (propagated-inputs
+     `(("ruby-domain-name" ,ruby-domain-name)
+       ("ruby-http-cookie" ,ruby-http-cookie)
+       ("ruby-mime-types" ,ruby-mime-types)
+       ("ruby-net-http-digest-auth"
+        ,ruby-net-http-digest-auth)
+       ("ruby-net-http-persistent"
+        ,ruby-net-http-persistent)
+       ("ruby-nokogiri" ,ruby-nokogiri)
+       ("ruby-ntlm-http" ,ruby-ntlm-http)
+       ("ruby-webrobots" ,ruby-webrobots)))
+    (synopsis
+     "The Mechanize library is used for automating interaction with websites.
+Mechanize automatically stores and sends cookies, follows redirects,
+and can follow links and submit forms.  Form fields can be populated and
+submitted.  Mechanize also keeps track of the sites that you have visited as
+a history.")
+    (description
+     "The Mechanize library is used for automating interaction with websites.
+Mechanize automatically stores and sends cookies, follows redirects,
+and can follow links and submit forms.  Form fields can be populated and
+submitted.  Mechanize also keeps track of the sites that you have visited as
+a history.")
+  (home-page
+   "http://docs.seattlerb.org/mechanize/")
+  (license expat)))
