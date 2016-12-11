@@ -183,3 +183,44 @@
              "0jp54hyi75i9g41rvgmm3zg21yzv57q8dghrhb432rb0n9j15mbp"))))))))
 
 (define-public ldc ldc-1.1.0-beta4)
+
+;; https://github.com/dlang/tools/archive/v2.072.1.tar.gz
+(define-public rdmd
+    (package
+      (name "rdmd")
+      (version "v2.072.1") ;; remove v when putting in mainline
+      (source (origin
+                (method url-fetch)
+                (uri (string-append
+                    "https://github.com/dlang/tools/archive/"
+                    version ".tar.gz"))
+              (file-name (string-append name "-" version ".tar.gz"))
+              (sha256
+               (base32
+                "0ryn4fv1mj8c8d7y4lrr43baahl3z7sk5bryj9kd829paz573va6"))))
+      (build-system gnu-build-system)
+      (arguments
+       '(#:phases
+         (modify-phases %standard-phases
+           (delete 'configure)
+           (delete 'check) ; There is no Makefile, so there's no 'make check'.
+           (replace
+            'build
+            (lambda _
+              (zero? (system* "ldc2" "rdmd.d"))))
+           (replace
+            'install
+            (lambda* (#:key outputs #:allow-other-keys)
+              (let ((bin (string-append (assoc-ref outputs "out") "/bin")))
+                (install-file "rdmd" bin)))))))
+      (native-inputs
+       `(("ldc" ,ldc)))
+      (home-page "https://github.com/D-Programming-Language/tools/")
+      (synopsis "Specialized equivalent to 'make' for the D language")
+      (description
+       "rdmd is a companion to the dmd compiler that simplifies the typical
+edit-compile-link-run or edit-make-run cycle to a rapid edit-run cycle.  Like
+make and other tools, rdmd uses the relative dates of the files involved to
+minimize the amount of work necessary.  Unlike make, rdmd tracks dependencies
+and freshness without requiring additional information from the user.")
+      (license license:boost1.0)))
