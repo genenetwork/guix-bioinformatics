@@ -301,27 +301,6 @@ project includes the Clang front end, the Clang static analyzer, and several
 code analysis tools.")
     (license license:ncsa)))
          
-(define-public llvm-3.7.1
-  (package (inherit llvm)
-    (version "3.7.1")
-    (source
-     (origin
-       (method url-fetch)
-       (uri (string-append "http://llvm.org/releases/"
-                           version "/llvm-" version ".src.tar.xz"))
-       (sha256
-        (base32
-         "1masakdp9g2dan1yrazg7md5am2vacbkb3nahb3dchpc1knr8xxy"))))))
-
-(define-public clang-runtime-3.7.1
-  (clang-runtime-from-llvm
-   llvm-3.7.1
-   "0dl1kbrhz96djsxqr61iw5h788s7ncfpfb7aayixky1bhdaydcx4"))
-
-(define-public clang-3.7.1
-  (clang-from-llvm llvm clang-runtime
-                   "12yv3jwdjcbkrx7zjm8wh4jrvb59v8fdw4mnmz3zc1jb00p9k07w"))
-
 
 
     
