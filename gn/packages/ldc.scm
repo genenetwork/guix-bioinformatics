@@ -83,6 +83,7 @@
     (native-inputs
      `(("llvm" ,llvm-3.7)
        ("clang" ,clang-3.7)
+       ("zlib" ,zlib)
        ("unzip" ,unzip)
        ("phobos-src"
         ,(origin
