@@ -155,6 +155,7 @@
     (native-inputs
      `(("llvm" ,llvm-3.7)
        ("ldc" ,ldc-0.17.2)
+       ("zlib" ,zlib)
        ("phobos-src"
         ,(origin
            (method url-fetch)
