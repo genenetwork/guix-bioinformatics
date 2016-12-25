@@ -37,7 +37,7 @@
   #:use-module (gnu packages graphviz)
   #:use-module (gnu packages java)
   #:use-module (gnu packages linux)
-  #:use-module (gnu packages ldc)
+  #:use-module (gn packages ldc)
   #:use-module (gnu packages machine-learning)
   #:use-module (gnu packages maths)
   #:use-module (gnu packages mpi)
@@ -921,36 +921,37 @@ association studies (GWAS).")
     (license license:gpl3))))
 
 (define-public sambamba
-  (let ((commit "c810c7ef14957f16288c205fd7b9d25c4ae7005d"))
-  ;;(let ((commit "2ca5a2dbac5ab90c3b4c588519edc3edcb71df84"))
+  (let ((commit "c6f52cc7f71d2cdb0bafe3bb911042c6e2ef2475"))
     (package
       (name "sambamba")
-      (version (string-append "0.5.9-1." (string-take commit 7)))
+      (version (string-append "0.6.5-" (string-take commit 7)))
       (source (origin
         (method git-fetch)
         (uri (git-reference
-              (url "https://github.com/roelj/sambamba.git")
-              ;;(url "https://github.com/pjotrp/sambamba.git")
+              ;; (url "https://github.com/roelj/sambamba.git")
+              (url "https://github.com/pjotrp/sambamba.git")
               (commit commit)))
         (file-name (string-append name "-" version "-checkout"))
         (sha256
          (base32
-          "0c4c13f021sl7mf5xc2v8dbwsz775n8dlsrrn7qa6qgbx05n54dv"))))
-          ;;"1f14wn9aaxwjkmla6pzq3s28741carbr2v0fd2v2mm1dcpwnrqz5"))))
+          "0ljpiamx4fabm1ha4swfdghl5slwg530y0vzvd9h170shj6gaj91"))))
       (build-system gnu-build-system)
       (native-inputs
        `(("ldc" ,ldc)
-         ;;("lz4" ,lz4)
+         ("lz4" ,lz4)
+         ("coreutils" ,coreutils) ; for env
          ("rdmd" ,rdmd)
          ("zlib" ,zlib)
          ("perl" ,perl) ; Needed for htslib
          ("ruby" ,ruby) ; Needed for htslib
-         ("python" ,python) ; Needed for htslib
+         ("python" ,python-2) ; Needed for htslib
          ("gcc" ,gcc)
+         ("which" ,which)
          ("lz4-src"
           ,(origin
              (method url-fetch)
              (uri "https://github.com/Cyan4973/lz4/archive/160661c7a4cbf805f4af74d2e3932a17a66e6ce7.tar.gz")
+             (file-name (string-append "lz4-" (string-take commit 7) ".tar.gz" ))
              (sha256
               (base32 "131nnbsd5dh7c8sdqzc9kawh3mi0qi4qxznv7zhzfszlx4g2fd20"))))
          ("htslib-src"
@@ -958,7 +959,7 @@ association studies (GWAS).")
              (method url-fetch)
              (uri "https://github.com/lomereiter/htslib/archive/2f3c3ea7b301f9b45737a793c0b2dcf0240e5ee5.tar.gz")
              ;;(uri "https://github.com/samtools/htslib/archive/1.3.tar.gz")
-             ;;(file-name "htslib-1.3.tar.gz")
+             (file-name "htslib-0.2.0-rc10-271-g2f3c3ea-dirty.tar.gz")
              (sha256
               (base32 "0bl6w856afnbgdsw8bybsxpqsyf2ba3f12rqh47hhpxvv866g08w"))))
               ;;(base32 "1bqkif7yrqmiqak5yb74kgpb2lsdlg7y344qa1xkdg7k1l4m86i9"))
@@ -968,12 +969,12 @@ association studies (GWAS).")
              (method git-fetch)
              (uri (git-reference
                    (url "https://github.com/biod/BioD.git")
-                   (commit "7efdb8a2f7fdcd71c9ad9596be48d1262bb1bd5b")))
-             (file-name "biod-src")
+                   (commit "1248586b54af4bd4dfb28ebfebfc6bf012e7a587")))
+             (file-name (string-append "biod-src-" (string-take commit 7) ".tar.gz"))
              (sha256
-              (base32 "09icc2bjsg9y4hxjim4ql275izadf0kh1nnmapg8manyz6bc8svf"))))))
+              (base32 "1m8hi1n7x0ri4l6s9i0x6jg4z4v94xrfdzp7mbizdipfag0m17g3"))))))
       (arguments
-       `(#:tests? #f
+       `(#:tests? #f  ; no tests available
          #:make-flags (list "-f" "Makefile.guix")
          #:phases
          (modify-phases %standard-phases
