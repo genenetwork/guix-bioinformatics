@@ -117,20 +117,26 @@
              "0n7gvalxwfmia4gag53r9qhcnk2cqrw3n4icj1yri0zkgc27pm60"))))))))
 
 (define-public ldc-1.1.0-beta6
-  (let ((version2 "1.1.0-beta4")) ; libraries have not been updated
+  (let ((version2 "1.1.0-beta4") ; libraries have not been updated
+        (commit "a26bfc1223dddf87af882c53c3e305a905252ab2"))
     (package
       (inherit ldcmain:ldc)
       (name "ldc")
       (version "1.1.0-beta6")
+      ; (source (origin
+      ;           (method url-fetch)
+      ;           (uri (string-append
+      ;                 "https://github.com/ldc-developers/ldc/archive/v"
+                                        ;                 version ".tar.gz"))
       (source (origin
-                (method url-fetch)
-                (uri (string-append
-                      "https://github.com/ldc-developers/ldc/archive/v"
-                      version ".tar.gz"))
-                (file-name (string-append name "-" version ".tar.gz"))
-                (sha256
-                 (base32
-                  "0n53brlkm86jjkppy9xmzx7nyxykzj68kcxgv8q7d10s5hfscxs8"))))
+        (method git-fetch)
+        (uri (git-reference
+              (url "https://github.com/ldc-developers/ldc.git")
+              (commit commit)))
+        (file-name (string-append name "-" version "-checkout"))
+        (sha256
+         (base32
+          "1n53brlkm86jjkppy9xmzx7nyxykzj68kcxgv8q7d10s5hfscxs8")))))
       (arguments
        `(#:phases
          (modify-phases %standard-phases
@@ -189,7 +195,7 @@
              (file-name (string-append "dmd-testsuite-" version2 ".tar.gz"))
              (sha256
               (base32
-               "0jp54hyi75i9g41rvgmm3zg21yzv57q8dghrhb432rb0n9j15mbp")))))))))
+               "0jp54hyi75i9g41rvgmm3zg21yzv57q8dghrhb432rb0n9j15mbp"))))))))
 
 (define-public ldc ldc-1.1.0-beta6)
 
