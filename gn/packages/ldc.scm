@@ -136,6 +136,10 @@
       (arguments
        `(#:phases
          (modify-phases %standard-phases
+           (add-after 'unpack 'disable-ncurses-alts
+             (lambda* (#:key outputs #:allow-other-keys)
+               (substitute* "CMakeLists.txt"
+                 (("tinfo terminfo curses") ""))))
            (add-after 'unpack 'unpack-submodule-sources
              (lambda* (#:key inputs #:allow-other-keys)
                (let ((unpack (lambda (source target)
@@ -161,8 +165,8 @@
       (native-inputs
        `(("llvm" ,llvm-3.7)
          ("ldc" ,ldc-0.17.2)
-         ("zlib" ,zlib)
          ("ncurses" ,ncurses)
+         ("zlib" ,zlib)
          ("phobos-src"
           ,(origin
              (method url-fetch)
