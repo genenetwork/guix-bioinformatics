@@ -30,6 +30,7 @@
   #:use-module ((gnu packages ldc) #:prefix ldcmain:)
   #:use-module (gnu packages libedit)
   #:use-module (gnu packages llvm)
+  #:use-module (gnu packages ncurses)
   #:use-module (gnu packages textutils)
   #:use-module (gnu packages zip))
 
@@ -123,20 +124,15 @@
       (inherit ldcmain:ldc)
       (name "ldc")
       (version "1.1.0-beta6")
-      ; (source (origin
-      ;           (method url-fetch)
-      ;           (uri (string-append
-      ;                 "https://github.com/ldc-developers/ldc/archive/v"
-                                        ;                 version ".tar.gz"))
       (source (origin
         (method git-fetch)
         (uri (git-reference
               (url "https://github.com/ldc-developers/ldc.git")
               (commit commit)))
-        (file-name (string-append name "-" version "-checkout"))
+        (file-name (string-append name "-" version "-" (string-take commit 9)))
         (sha256
          (base32
-          "1n53brlkm86jjkppy9xmzx7nyxykzj68kcxgv8q7d10s5hfscxs8")))))
+          "1m3fx0v7dsww253z79kkxjk1yjcmixhhlz7vm0aa2670x4hnw0l5"))))
       (arguments
        `(#:phases
          (modify-phases %standard-phases
@@ -166,6 +162,7 @@
        `(("llvm" ,llvm-3.7)
          ("ldc" ,ldc-0.17.2)
          ("zlib" ,zlib)
+         ("ncurses" ,ncurses)
          ("phobos-src"
           ,(origin
              (method url-fetch)
@@ -195,7 +192,7 @@
              (file-name (string-append "dmd-testsuite-" version2 ".tar.gz"))
              (sha256
               (base32
-               "0jp54hyi75i9g41rvgmm3zg21yzv57q8dghrhb432rb0n9j15mbp"))))))))
+               "0jp54hyi75i9g41rvgmm3zg21yzv57q8dghrhb432rb0n9j15mbp")))))))))
 
 (define-public ldc ldc-1.1.0-beta6)
 
