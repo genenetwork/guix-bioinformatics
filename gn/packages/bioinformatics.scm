@@ -921,7 +921,7 @@ association studies (GWAS).")
     (license license:gpl3))))
 
 (define-public sambamba
-  (let ((commit "c6f52cc7f71d2cdb0bafe3bb911042c6e2ef2475"))
+  (let ((commit "7518a1ff0f07f2013601c05564e1ad1256b479da"))
     (package
       (name "sambamba")
       (version (string-append "0.6.5-" (string-take commit 7)))
@@ -934,7 +934,7 @@ association studies (GWAS).")
         (file-name (string-append name "-" version "-checkout"))
         (sha256
          (base32
-          "0ljpiamx4fabm1ha4swfdghl5slwg530y0vzvd9h170shj6gaj91"))))
+          "14wpj05hycz9fqrzc2mqx5vl4h42kx1sms9dqpapz46vwc2d0zz3"))))
       (build-system gnu-build-system)
       (native-inputs
        `(("ldc" ,ldc)
@@ -975,7 +975,6 @@ association studies (GWAS).")
               (base32 "1m8hi1n7x0ri4l6s9i0x6jg4z4v94xrfdzp7mbizdipfag0m17g3"))))))
       (arguments
        `(#:tests? #f  ; no tests available
-         #:make-flags (list "-f" "Makefile.guix")
          #:phases
          (modify-phases %standard-phases
            (delete 'configure)
@@ -997,7 +996,7 @@ association studies (GWAS).")
            (replace
             'build
             (lambda* (#:key inputs make-flags #:allow-other-keys)
-              (zero? (system* "make" "sambamba-ldmd2-64" "CC=gcc" "D_COMPILER=ldc2"
+              (zero? (system* "make" "-f" "Makefile.guix" "sambamba-ldmd2" "CC=gcc" "D_COMPILER=ldc2"
                        (string-append "LDC_LIB_PATH="
                                              (assoc-ref inputs "ldc")
                                              "/lib")))))
