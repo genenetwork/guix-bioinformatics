@@ -921,20 +921,19 @@ association studies (GWAS).")
     (license license:gpl3))))
 
 (define-public sambamba
-  (let ((commit "7518a1ff0f07f2013601c05564e1ad1256b479da"))
+  (let ((commit "5a33d571339c966477c1f70ed08f64051f7b41c1"))
     (package
       (name "sambamba")
       (version (string-append "0.6.5-" (string-take commit 7)))
       (source (origin
         (method git-fetch)
         (uri (git-reference
-              ;; (url "https://github.com/roelj/sambamba.git")
               (url "https://github.com/pjotrp/sambamba.git")
               (commit commit)))
         (file-name (string-append name "-" version "-checkout"))
         (sha256
          (base32
-          "14wpj05hycz9fqrzc2mqx5vl4h42kx1sms9dqpapz46vwc2d0zz3"))))
+          "05nlhwjw17igcwiz4pq0r4f8flrqcy4065fhx4nhpc0g65p70mi5"))))
       (build-system gnu-build-system)
       (native-inputs
        `(("ldc" ,ldc)
@@ -996,7 +995,7 @@ association studies (GWAS).")
            (replace
             'build
             (lambda* (#:key inputs make-flags #:allow-other-keys)
-              (zero? (system* "make" "-f" "Makefile.guix" "sambamba-ldmd2" "CC=gcc" "D_COMPILER=ldc2"
+              (zero? (system* "make" "-f" "Makefile.guix" "sambamba-ldmd2-debug" "CC=gcc" "D_COMPILER=ldc2"
                        (string-append "LDC_LIB_PATH="
                                              (assoc-ref inputs "ldc")
                                              "/lib")))))
