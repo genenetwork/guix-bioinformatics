@@ -936,25 +936,25 @@ association studies (GWAS).")
           "05nlhwjw17igcwiz4pq0r4f8flrqcy4065fhx4nhpc0g65p70mi5"))))
       (build-system gnu-build-system)
       (outputs '("out"
-                 "debug"))  ;retain debug symbols
+                 "debug"))  ;retain debug symbols - note that -O2 is used
       (native-inputs
        `(("ldc" ,ldc)
          ("lz4" ,lz4)
          ("coreutils" ,coreutils) ; for env
-         ("rdmd" ,rdmd)
+         ;; ("rdmd" ,rdmd)
          ("zlib" ,zlib)
          ("perl" ,perl) ; Needed for htslib
          ("ruby" ,ruby) ; Needed for htslib
          ("python" ,python-2) ; Needed for htslib
          ("gcc" ,gcc)
          ("which" ,which)
-         ("lz4-src"
-          ,(origin
-             (method url-fetch)
-             (uri "https://github.com/Cyan4973/lz4/archive/160661c7a4cbf805f4af74d2e3932a17a66e6ce7.tar.gz")
-             (file-name (string-append "lz4-" (string-take commit 7) ".tar.gz" ))
-             (sha256
-              (base32 "131nnbsd5dh7c8sdqzc9kawh3mi0qi4qxznv7zhzfszlx4g2fd20"))))
+         ; ("lz4-src"
+         ;  ,(origin
+         ;     (method url-fetch)
+         ;     (uri "https://github.com/Cyan4973/lz4/archive/160661c7a4cbf805f4af74d2e3932a17a66e6ce7.tar.gz")
+         ;     (file-name (string-append "lz4-" (string-take commit 7) ".tar.gz" ))
+         ;     (sha256
+         ;      (base32 "131nnbsd5dh7c8sdqzc9kawh3mi0qi4qxznv7zhzfszlx4g2fd20"))))
          ("htslib-src"
           ,(origin
              (method url-fetch)
@@ -988,9 +988,9 @@ association studies (GWAS).")
                (and (with-directory-excursion "htslib"
                       (zero? (system* "tar" "xvf" (assoc-ref inputs "htslib-src")
                                       "--strip-components=1")))
-                    (with-directory-excursion "lz4"
-                      (zero? (system* "tar" "xvf" (assoc-ref inputs "lz4-src")
-                                      "--strip-components=1")))
+                    ; (with-directory-excursion "lz4"
+                    ;   (zero? (system* "tar" "xvf" (assoc-ref inputs "lz4-src")
+                    ;                   "--strip-components=1")))
                     (zero? (system* "rm" "-r" "BioD"))
                     (zero? (system* "ln" "--symbolic" "--no-target-directory"
                                     (assoc-ref inputs "biod-src") "BioD")))))
