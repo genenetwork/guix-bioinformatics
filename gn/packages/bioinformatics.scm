@@ -935,6 +935,8 @@ association studies (GWAS).")
          (base32
           "05nlhwjw17igcwiz4pq0r4f8flrqcy4065fhx4nhpc0g65p70mi5"))))
       (build-system gnu-build-system)
+      (outputs '("out"
+                 "debug"))  ;retain debug symbols
       (native-inputs
        `(("ldc" ,ldc)
          ("lz4" ,lz4)
@@ -995,7 +997,7 @@ association studies (GWAS).")
            (replace
             'build
             (lambda* (#:key inputs make-flags #:allow-other-keys)
-              (zero? (system* "make" "-f" "Makefile.guix" "sambamba-ldmd2-debug" "CC=gcc" "D_COMPILER=ldc2"
+              (zero? (system* "make" "-f" "Makefile.guix" "sambamba-ldmd2"
                        (string-append "LDC_LIB_PATH="
                                              (assoc-ref inputs "ldc")
                                              "/lib")))))
@@ -1005,15 +1007,14 @@ association studies (GWAS).")
               (let ((bin (string-append (assoc-ref outputs "out") "/bin")))
                 (install-file "build/sambamba" bin)))))))
       (home-page "https://github.com/lomereiter/sambamba")
-      (synopsis "A tool for working with SAM and BAM files written in D.")
+      (synopsis "Fast tool for working with SAM, BAM and CRAM files written in D.")
       (description
-       "Sambamba is a high performance modern robust and fast tool (and
-library), written in the D programming language, for working with SAM
-and BAM files.  Current parallelised functionality is an important
-subset of samtools functionality, including view, index, sort,
-markdup, and depth.")
+       "Sambamba is a high performance modern robust and fast
+tool (and library), written in the D programming language, for working
+with SAM, BAM and CRAM files.  Current parallelised functionality is
+an important subset of samtools functionality, including view, index,
+sort, markdup, and depth.")
       (license license:gpl2+))))
-
 
 (define-public vcflib
   (let ((commit "3ce827d8ebf89bb3bdc097ee0fe7f46f9f30d5fb"))
