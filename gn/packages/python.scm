@@ -537,3 +537,34 @@ numpy package, though some legacy software still uses the older versions.")
      "This package that provides some compatibility helpers for Flake8 plugins that
  intend to support Flake8 2.x and 3.x simultaneously")
     (license license:expat)))
+
+(define-public python-radon
+  (package
+    (name "python-radon")
+    (version "1.4.2")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append
+             "https://pypi.python.org/packages/91/48/5853fa60811d6cec1043bd60b057aafc2270"
+             "6e19ab90b33d8df8155e6b8d/radon-"
+             version
+             ".tar.gz"))
+       (sha256
+        (base32
+         "15xyzavfj1zwb5rn07fs2wfi6ccys9b5q0s8hmnpqz712mifl92g"))))
+    (build-system python-build-system)
+    (inputs
+     `(("python-colorama" ,python-colorama)
+       ("python-flake8-polyfill"
+        ,python-flake8-polyfill)
+       ("python-mando" ,python-mando)))
+    (home-page "https://radon.readthedocs.org/")
+    (synopsis "Code Metrics in Python")
+    (description "Radon is a Python tool which computes various code metrics.  Supported
+ metrics are:
+ * raw metrics: SLOC, comment lines, blank lines, &c.
+ * Cyclomatic Complexity (i.e.  McCabe’s Complexity)
+ * Halstead metrics (all of them)
+ * the Maintainability Index (a Visual Studio metric)")
+    (license license:expat)))
