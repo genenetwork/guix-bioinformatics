@@ -396,7 +396,7 @@ version ".tgz"))
     (native-inputs
      `(("python2-setuptools" ,python2-setuptools)))
     (propagated-inputs
-     `(("python2-pillow" ,python2-pillow)))
+     `(("python2-pil" ,python2-pil)))
     (arguments
      `(
        #:python ,python-2

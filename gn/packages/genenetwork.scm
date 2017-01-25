@@ -87,6 +87,41 @@
     (description #f)
     (license #f)))
 
+(define-public qtlreaper
+  (let ((commit "71fbbe2b35e4f54937be2d54d09fb71d25fe5fad"))
+  (package
+    (name "qtlreaper")
+    (version (string-append "1.1-gn2" (string-take commit 7) ))
+    (source (origin
+             (method git-fetch)
+             (uri (git-reference
+                   ;; (url "https://github.com/genenetwork/genenetwork2.git")
+                   (url "https://github.com/pjotrp/QTLreaper.git")
+                   (commit commit)))
+             (file-name (string-append name "-" (string-take commit 7)))
+             (sha256
+              (base32
+               "0g0v20lh7773cm2xdqz6xzwjw4130y265n79z5x20p5aja5y5kmg"))))
+    (build-system python-build-system)
+    ;; (native-inputs
+    ;; `(("python-setuptools" ,python-setuptools)))
+    (arguments
+     `(#:python ,python-2
+    ))
+    (home-page "http://qtlreaper.sourceforge.net/")
+    (synopsis "Tool for scanning expression data for QTLs")
+    (description
+     "Batch-oriented version of WebQTL. It requires, as input,
+expression data from members of a set of recombinant inbred lines and
+genotype information for the same lines.  It searches for an
+association between each expression trait and all genotypes and
+evaluates that association by a permutation test.  For the permutation
+test, it performs only as many permutations as are necessary to define
+the empirical P-value to a reasonable precision. It also performs
+bootstrap resampling to estimate the confidence region for the
+location of a putative QTL.")
+    (license license:gpl2+))))
+
 (define-public genenetwork1
   (let ((commit "d622c803b"))
   (package
@@ -157,6 +192,7 @@
     (propagated-inputs `(  ;; propagated for development purposes
               ("python" ,python-2) ;; probably superfluous
               ("r" ,r)
+              ("r-ctl" ,r-ctl)
               ("r-wgcna" ,r-wgcna)
               ("r-qtl" ,r-qtl)
               ("redis" ,redis)

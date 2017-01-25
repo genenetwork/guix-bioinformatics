@@ -37,7 +37,7 @@
   #:use-module (gnu packages graphviz)
   #:use-module (gnu packages java)
   #:use-module (gnu packages linux)
-  #:use-module (gnu packages ldc)
+  #:use-module (gn packages ldc)
   #:use-module (gnu packages machine-learning)
   #:use-module (gnu packages maths)
   #:use-module (gnu packages mpi)
@@ -772,41 +772,6 @@ to sample traits.  Also includes a number of utility functions for
 data manipulation and visualization.")
   (license license:gpl2+))))
 
-(define-public qtlreaper
-  (package
-    (name "qtlreaper")
-    (version "1.1.1")
-    (source
-     (origin
-       (method url-fetch)
-       (uri (string-append
-             "mirror://sourceforge/qtlreaper/qtlreaper-" version ".tar.gz"
-             ;; "http://downloads.sourceforge.net/project/qtlreaper/qtlreaper/1.1.1/qtlreaper-1.1.1.tar.gz?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fqtlreaper%2Ffiles%2Flatest%2Fdownload&ts=1358975786&use_mirror=iweb"))
-             ))
-       (file-name (string-append name "-" version ".tar.gz"))
-       (sha256
-        (base32
-         "0rbf030940nbbbkggdq2dxiy3c0jv8l4y3vvyfxhqimgj0qv3l1x"))))
-    (build-system python-build-system)
-    ;; (native-inputs
-    ;; `(("python-setuptools" ,python-setuptools)))
-    (arguments
-     `(#:python ,python-2
-       #:tests? #f))   ; no 'setup.py test'
-    (home-page "http://qtlreaper.sourceforge.net/")
-    (synopsis "Tool for scanning expression data for QTLs")
-    (description
-     "It is essentially the batch-oriented version of WebQTL. It
-requires, as input, expression data from members of a set of
-recombinant inbred lines and genotype information for the same
-lines.  It searches for an association between each expression trait
-and all genotypes and evaluates that association by a permutation
-test.  For the permutation test, it performs only as many permutations
-as are necessary to define the empirical P-value to a reasonable
-precision. It also performs bootstrap resampling to estimate the
-confidence region for the location of a putative QTL.")
-    (license license:gpl2+)))
-
 (define-public plink2
   (package
     (name "plink2")
@@ -956,44 +921,38 @@ association studies (GWAS).")
     (license license:gpl3))))
 
 (define-public sambamba
-  (let ((commit "c810c7ef14957f16288c205fd7b9d25c4ae7005d"))
-  ;;(let ((commit "2ca5a2dbac5ab90c3b4c588519edc3edcb71df84"))
+  (let ((commit "5a33d571339c966477c1f70ed08f64051f7b41c1"))
     (package
       (name "sambamba")
-      (version (string-append "0.5.9-1." (string-take commit 7)))
+      (version (string-append "0.6.5-" (string-take commit 7)))
       (source (origin
         (method git-fetch)
         (uri (git-reference
-              (url "https://github.com/roelj/sambamba.git")
-              ;;(url "https://github.com/pjotrp/sambamba.git")
+              (url "https://github.com/pjotrp/sambamba.git")
               (commit commit)))
         (file-name (string-append name "-" version "-checkout"))
         (sha256
          (base32
-          "0c4c13f021sl7mf5xc2v8dbwsz775n8dlsrrn7qa6qgbx05n54dv"))))
-          ;;"1f14wn9aaxwjkmla6pzq3s28741carbr2v0fd2v2mm1dcpwnrqz5"))))
+          "05nlhwjw17igcwiz4pq0r4f8flrqcy4065fhx4nhpc0g65p70mi5"))))
       (build-system gnu-build-system)
+      (outputs '("out"
+                 "debug"))  ;retain debug symbols - note that -O2 is used
       (native-inputs
        `(("ldc" ,ldc)
-         ;;("lz4" ,lz4)
-         ("rdmd" ,rdmd)
+         ("lz4" ,lz4)
+         ("coreutils" ,coreutils) ; for env
          ("zlib" ,zlib)
          ("perl" ,perl) ; Needed for htslib
          ("ruby" ,ruby) ; Needed for htslib
-         ("python" ,python) ; Needed for htslib
+         ("python" ,python-2) ; Needed for htslib
          ("gcc" ,gcc)
-         ("lz4-src"
-          ,(origin
-             (method url-fetch)
-             (uri "https://github.com/Cyan4973/lz4/archive/160661c7a4cbf805f4af74d2e3932a17a66e6ce7.tar.gz")
-             (sha256
-              (base32 "131nnbsd5dh7c8sdqzc9kawh3mi0qi4qxznv7zhzfszlx4g2fd20"))))
+         ("which" ,which)
          ("htslib-src"
           ,(origin
              (method url-fetch)
              (uri "https://github.com/lomereiter/htslib/archive/2f3c3ea7b301f9b45737a793c0b2dcf0240e5ee5.tar.gz")
              ;;(uri "https://github.com/samtools/htslib/archive/1.3.tar.gz")
-             ;;(file-name "htslib-1.3.tar.gz")
+             (file-name "htslib-0.2.0-rc10-271-g2f3c3ea-dirty.tar.gz")
              (sha256
               (base32 "0bl6w856afnbgdsw8bybsxpqsyf2ba3f12rqh47hhpxvv866g08w"))))
               ;;(base32 "1bqkif7yrqmiqak5yb74kgpb2lsdlg7y344qa1xkdg7k1l4m86i9"))
@@ -1003,13 +962,12 @@ association studies (GWAS).")
              (method git-fetch)
              (uri (git-reference
                    (url "https://github.com/biod/BioD.git")
-                   (commit "7efdb8a2f7fdcd71c9ad9596be48d1262bb1bd5b")))
-             (file-name "biod-src")
+                   (commit "1248586b54af4bd4dfb28ebfebfc6bf012e7a587")))
+             (file-name (string-append "biod-src-" (string-take commit 7) ".tar.gz"))
              (sha256
-              (base32 "09icc2bjsg9y4hxjim4ql275izadf0kh1nnmapg8manyz6bc8svf"))))))
+              (base32 "1m8hi1n7x0ri4l6s9i0x6jg4z4v94xrfdzp7mbizdipfag0m17g3"))))))
       (arguments
-       `(#:tests? #f
-         #:make-flags (list "-f" "Makefile.guix")
+       `(#:tests? #f  ; no tests available
          #:phases
          (modify-phases %standard-phases
            (delete 'configure)
@@ -1022,16 +980,13 @@ association studies (GWAS).")
                (and (with-directory-excursion "htslib"
                       (zero? (system* "tar" "xvf" (assoc-ref inputs "htslib-src")
                                       "--strip-components=1")))
-                    (with-directory-excursion "lz4"
-                      (zero? (system* "tar" "xvf" (assoc-ref inputs "lz4-src")
-                                      "--strip-components=1")))
                     (zero? (system* "rm" "-r" "BioD"))
                     (zero? (system* "ln" "--symbolic" "--no-target-directory"
                                     (assoc-ref inputs "biod-src") "BioD")))))
            (replace
             'build
             (lambda* (#:key inputs make-flags #:allow-other-keys)
-              (zero? (system* "make" "sambamba-ldmd2-64" "CC=gcc" "D_COMPILER=ldc2"
+              (zero? (system* "make" "-f" "Makefile.guix" "sambamba-ldmd2"
                        (string-append "LDC_LIB_PATH="
                                              (assoc-ref inputs "ldc")
                                              "/lib")))))
@@ -1041,15 +996,14 @@ association studies (GWAS).")
               (let ((bin (string-append (assoc-ref outputs "out") "/bin")))
                 (install-file "build/sambamba" bin)))))))
       (home-page "https://github.com/lomereiter/sambamba")
-      (synopsis "A tool for working with SAM and BAM files written in D.")
+      (synopsis "Fast tool for working with SAM, BAM and CRAM files written in D.")
       (description
-       "Sambamba is a high performance modern robust and fast tool (and
-library), written in the D programming language, for working with SAM
-and BAM files.  Current parallelised functionality is an important
-subset of samtools functionality, including view, index, sort,
-markdup, and depth.")
+       "Sambamba is a high performance modern robust and fast
+tool (and library), written in the D programming language, for working
+with SAM, BAM and CRAM files.  Current parallelised functionality is
+an important subset of samtools functionality, including view, index,
+sort, markdup, and depth.")
       (license license:gpl2+))))
-
 
 (define-public vcflib
   (let ((commit "3ce827d8ebf89bb3bdc097ee0fe7f46f9f30d5fb"))

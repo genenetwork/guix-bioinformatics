@@ -14,6 +14,7 @@
   #:use-module (gnu packages)
   #:use-module (gnu packages algebra)
   #:use-module (gnu packages base)
+  #:use-module (gnu packages bioinformatics)
   #:use-module (gnu packages boost)
   #:use-module (gnu packages compression)
   #:use-module (gnu packages cpio)
@@ -333,7 +334,7 @@
              (uri (git-reference
                    (url "https://github.com/genenetwork/pylmm.git")
                    (commit commit)))
-             (file-name (string-append name "-" commit)) 
+             (file-name (string-append name "-" commit))
              (sha256
               (base32
                "0wryaadb36i275p9d2i1kzflahvbl9kj5wlk8jlbvjij8gpqg964"))))
@@ -362,3 +363,28 @@
     (description "Fast and lightweight linear mixed-model (LMM) solver
 for use in genome-wide association studies (GWAS).")
     (license license:agpl3+))))
+
+(define-public r-ctl
+ (package
+  (name "r-ctl")
+  (version "1.0.0-0")
+  (source
+   (origin
+    (method url-fetch)
+    (uri (string-append "mirror://cran/src/contrib/ctl_"
+                        version ".tar.gz"))
+    (sha256
+     (base32
+      "12hrrql9wz43s1d3sfyzlqzx7ajrl3hvf96776ik6icbm8by8h6j"))))
+  (build-system r-build-system)
+  (inputs `(
+            ("r-qtl" ,r-qtl)
+            ))
+  (home-page "https://github.com/DannyArends/CTLmapping")
+  (synopsis "R package for analysis of genetical genomic data to identify genetic loci associated with correlation changes in quantitative traits (CTL)")
+  (description "Analysis of experimental crosses to identify genetic
+markers associated with correlation changes in quantitative
+traits (CTL).  The additional correlation information obtained can be
+combined with QTL information to perform de novo reconstruction of
+interaction networks.")
+  (license license:gpl3)))
