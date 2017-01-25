@@ -459,3 +459,30 @@ version ".tgz"))
      "Numarray is an array processing package designed to efficiently manipulate large multi-dimensional arrays. Numarray is modelled after Numeric and features c-code generated from python template scripts, the capacity to operate directly on arrays in files, and improved type promotions. Numarray provides support for manipulating arrays consisting of numbers, strings, records, or objects using the same basic infrastructure and syntax.  Numarray is now part of the
 numpy package, though some legacy software still uses the older versions.")
     (license license:gpl2))) ; actualy PyRAF http://www.stsci.edu/resources/software_hardware/pyraf/LICENSE
+
+(define-public python-rst2ansi
+  (package
+    (name "python-rst2ansi")
+    (version "0.1.5")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append
+             "https://pypi.python.org/packages/3c/19/b29bc04524e7d1dbde13272fbb67e45a8eb2"
+             "4bb6d112cf10c46162b350d7/rst2ansi-"
+             version
+             ".tar.gz"))
+       (sha256
+        (base32
+         "0vzy6gd60l79ff750scl0sz48r1laalkl6md6dwzah4dcadgn5qv"))))
+    (build-system python-build-system)
+    (native-inputs
+     `(("python-docutils" ,python-docutils)))
+    (home-page
+     "https://github.com/Snaipe/python-rst-to-ansi")
+    (synopsis
+     "Python rst converter to ansi-decorated console output")
+    (description
+     "Python module dedicated to rendering RST (reStructuredText) documents to
+ ansi-escaped strings suitable for display in a terminal")
+    (license license:expat)))
