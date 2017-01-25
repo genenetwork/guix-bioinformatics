@@ -512,3 +512,28 @@ numpy package, though some legacy software still uses the older versions.")
      "This package is a wrapper around argparse, allowing you to write complete CLI
  applications in seconds while maintaining all the flexibility")
     (license license:expat)))
+
+(define-public python-flake8-polyfill
+  (package
+    (name "python-flake8-polyfill")
+    (version "1.0.1")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append
+             "https://pypi.python.org/packages/71/6e/dd7e0f0ddf146213d0cc0b963b3d4c643482"
+             "3ebe3992c29b523182bbf785/flake8-polyfill-"
+             version
+             ".tar.gz"))
+       (sha256
+        (base32
+         "02gn2wxvh9vnf7m7dld7ca4l60mg5c370hv3swwppkngwaqmcw67"))))
+    (build-system python-build-system)
+    (inputs
+     `(("python-flake8" ,python-flake8)))
+    (home-page "https://gitlab.com/pycqa/flake8")
+    (synopsis "Polyfill package for Flake8 plugins")
+    (description
+     "This package that provides some compatibility helpers for Flake8 plugins that
+ intend to support Flake8 2.x and 3.x simultaneously")
+    (license license:expat)))
