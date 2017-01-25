@@ -708,3 +708,27 @@ numpy package, though some legacy software still uses the older versions.")
      "This package provides efficient Python bindings to picosat on the C level, i.e.
  when importing pycosat, the picosat solver becomes part of the Python process itself")
     (license license:expat)))
+
+(define-public python-typing
+  (package
+    (name "python-typing")
+    (version "3.5.3.0")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append
+             "https://pypi.python.org/packages/b6/0c/53c42edca789378b8c05a5496e689f44e5dd"
+             "82bc6861d1ae5a926ee51b84/typing-"
+             version
+             ".tar.gz"))
+       (sha256
+        (base32
+         "08gz3grrh3vph5ib1w5x1ssnpzvj077x030lx63fxs4kwg3slbfa"))))
+    (build-system python-build-system)
+    (home-page
+     "https://docs.python.org/3.5/library/typing.html")
+    (synopsis "Type Hints for Python")
+    (description "This module supports type hints as specified by PEP 484.  The most
+ fundamental support consists of the types Any, Union, Tuple, Callable, TypeVar, and
+ Generic.  For full specification please see PEP 484")
+    (license license:psfl)))
