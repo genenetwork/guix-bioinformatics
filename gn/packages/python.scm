@@ -486,3 +486,29 @@ numpy package, though some legacy software still uses the older versions.")
      "Python module dedicated to rendering RST (reStructuredText) documents to
  ansi-escaped strings suitable for display in a terminal")
     (license license:expat)))
+
+(define-public python-mando
+  (package
+    (name "python-mando")
+    (version "0.4")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append
+             "https://pypi.python.org/packages/2b/52/684d9ab8c2ccfb611275f2e44d3ebc76a6a6"
+             "c56f4afacd2e91237fa07ec3/mando-"
+             version
+             ".tar.gz"))
+       (sha256
+        (base32
+         "1bicmnxzxi9bxz9bfgv2rk7297f5rbwc9v2hg2rqfqr6h27zjgw5"))))
+    (build-system python-build-system)
+    (propagated-inputs
+     `(("python-rst2ansi" ,python-rst2ansi)))
+    (home-page "https://mando.readthedocs.org/")
+    (synopsis
+     "Wrapper around argparse, allowing creation of complete CLI applications")
+    (description
+     "This package is a wrapper around argparse, allowing you to write complete CLI
+ applications in seconds while maintaining all the flexibility")
+    (license license:expat)))
