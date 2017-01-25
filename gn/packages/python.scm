@@ -627,3 +627,60 @@ numpy package, though some legacy software still uses the older versions.")
  it with different test data, and make it appear as multiple test cases")
     (license (license:non-copyleft
                "https://github.com/txels/ddt/blob/master/LICENSE.md"))))
+
+(define-public python-auxlib
+  (package
+    (name "python-auxlib")
+    (version "0.0.42")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append
+             "https://pypi.python.org/packages/92/c7/304b651594ebc31fbe1aa201369ab7bd7e71"
+             "8928543d8cc1063d46319c30/auxlib-"
+             version
+             ".tar.gz"))
+       (sha256
+        (base32
+         "0pczs3a8ck3z6qhl2fldhm2dl2czxl4yj9kkhx47qlpwhy0726xj"))))
+    (build-system python-build-system)
+    (arguments
+     '(#:phases
+       (modify-phases %standard-phases
+         (add-before 'build
+                     'set-source-date-epoch
+                     (lambda* (set-source-date-epoch #:rest _)
+                       ;; guix sets environment variable SOURCE_DATE_EPOCH=1 in
+                       ;; guix/build/gnu-build-system.scm file
+                       ;; The build for auxlib, however, calls the make_wheelfile_inner
+                       ;; function which reads from SOURCE_DATE_EPOCH, giving a date in
+                       ;; 1970, which is earlier than 1980, causing the error
+                       ;; 'ZIP does not support timestamps before 1980'
+                       ;; This phase fixes the issue, borrowing from phase
+                       ;; ensure-no-mtimes-pre-1980 in guix/build/python-build-system.scm
+                       (setenv "SOURCE_DATE_EPOCH" "315619200")
+                       #t)))))
+    (inputs
+     `(("python-enum34" ,python-enum34)
+       ("python-tox" ,python-tox)
+       ("python-flake8" ,python-flake8)
+       ("python-radon" ,python-radon)
+       ("python-xenon" ,python-xenon)
+       ("python-wheel" ,python-wheel)
+       ("python-ddt" ,python-ddt)
+       ("python-testtools" ,python-testtools)
+       ("python-pycrypto" ,python-pycrypto)
+       ("python-pyyaml" ,python-pyyaml)
+       ("python-requests" ,python-requests)))
+    (native-inputs
+     `(("python-pytest" ,python-pytest)
+       ("python-pytest-cov" ,python-pytest-cov)))
+    (home-page "https://github.com/kalefranz/auxlib")
+    (synopsis
+     "Auxiliary library to the python standard library")
+    (description
+     "Auxlib is an auxiliary library to the python standard library.  The aim is to
+ provide core generic features for app development in python.  Auxlib fills in some
+ python stdlib gaps much like pytoolz has for functional programming, pyrsistent has for
+ data structures, or boltons has generally")
+    (license license:isc)))
