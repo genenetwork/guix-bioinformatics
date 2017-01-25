@@ -568,3 +568,34 @@ numpy package, though some legacy software still uses the older versions.")
  * Halstead metrics (all of them)
  * the Maintainability Index (a Visual Studio metric)")
     (license license:expat)))
+
+(define-public python-xenon
+  (package
+    (name "python-xenon")
+    (version "0.5.0")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append
+             "https://pypi.python.org/packages/0d/60/649ef1567dac76bf680d5d7498e37d9bf745"
+             "f6a6214da7e5dba530c25481/xenon-"
+             version
+             ".tar.gz"))
+       (sha256
+        (base32
+         "1c03nis488ls50cgcq7ghbj55nxsi6a9683lsvg6z6vaj4smc8g8"))))
+    (build-system python-build-system)
+    (inputs
+     `(("python-pyyaml" ,python-pyyaml)
+       ("python-radon" ,python-radon)
+       ("python-requests" ,python-requests)
+       ("python-pyyaml" ,python-pyyaml)))
+    (home-page "https://xenon.readthedocs.org/")
+    (synopsis
+     "Monitor code metrics for Python on your CI server")
+    (description
+     "Xenon is a monitoring tool based on Radon.  It monitors code’s complexity.  Ideally,
+ Xenon is run every time code is committed.  Through command line options, various
+ thresholds can be set for the complexity of code.  It will fail (i.e.  it will exit with
+ a non-zero exit code) when any of these requirements is not met")
+    (license license:expat)))
