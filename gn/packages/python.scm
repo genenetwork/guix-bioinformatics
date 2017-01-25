@@ -599,3 +599,31 @@ numpy package, though some legacy software still uses the older versions.")
  thresholds can be set for the complexity of code.  It will fail (i.e.  it will exit with
  a non-zero exit code) when any of these requirements is not met")
     (license license:expat)))
+
+(define-public python-ddt
+  (package
+    (name "python-ddt")
+    (version "1.1.1")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append
+             "https://pypi.python.org/packages/83/96/21a2cef2962a07768854d411a97366292669"
+             "3173887560895e962cf952c9/ddt-"
+             version
+             ".tar.gz"))
+       (sha256
+        (base32
+         "1c00ikkxr7lha97c81k938bzhgd4pbwamkjn0h4nkhr3xk00zp6n"))))
+    (build-system python-build-system)
+    (inputs
+     `(("python-six" ,python-six)
+       ("python-pyyaml" ,python-pyyaml)
+       ("python-mock" ,python-mock)
+       ("python-nose" ,python-nose)))
+    (home-page "https://github.com/txels/ddt")
+    (synopsis "Data-Driven/Decorated Tests")
+    (description "DDT (Data-Driven Tests) allows you to multiply one test case by running
+ it with different test data, and make it appear as multiple test cases")
+    (license (license:non-copyleft
+               "https://github.com/txels/ddt/blob/master/LICENSE.md"))))
