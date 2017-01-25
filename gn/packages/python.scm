@@ -684,3 +684,27 @@ numpy package, though some legacy software still uses the older versions.")
  python stdlib gaps much like pytoolz has for functional programming, pyrsistent has for
  data structures, or boltons has generally")
     (license license:isc)))
+
+(define-public python-pycosat
+  (package
+    (name "python-pycosat")
+    (version "0.6.1")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append
+             "https://pypi.python.org/packages/76/0f/16edae7bc75b79376f2c260b7a459829785f"
+             "08e463ecf74a8ccdef62dd4a/pycosat-"
+             version
+             ".tar.gz"))
+       (sha256
+        (base32
+         "1kl3wh1f47rc712n4bmwplbx3fqz3x9i1b587jrbpmvdva4c8f6l"))))
+    (build-system python-build-system)
+    (home-page
+     "https://github.com/ContinuumIO/pycosat")
+    (synopsis "Bindings to picosat (a SAT solver)")
+    (description
+     "This package provides efficient Python bindings to picosat on the C level, i.e.
+ when importing pycosat, the picosat solver becomes part of the Python process itself")
+    (license license:expat)))
