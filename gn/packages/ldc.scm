@@ -116,12 +116,12 @@
             (base32
              "0n7gvalxwfmia4gag53r9qhcnk2cqrw3n4icj1yri0zkgc27pm60"))))))))
 
-(define-public ldc-1.1.0-beta6
-  (let ((version2 "1.1.0-beta4")) ; libraries have not been updated
+(define-public ldc-1.1.0
+  (let ((version2 "1.1.0")) ; libraries have not been updated
     (package
       (inherit ldcmain:ldc)
       (name "ldc")
-      (version "1.1.0-beta6")
+      (version "1.1.0")
       (source (origin
                 (method url-fetch)
                 (uri (string-append
@@ -130,7 +130,7 @@
                 (file-name (string-append name "-" version ".tar.gz"))
                 (sha256
                  (base32
-                  "0n53brlkm86jjkppy9xmzx7nyxykzj68kcxgv8q7d10s5hfscxs8"))))
+                  "10zkrmx9bcmhfxvgykm3fkjamzc8js96wm032bv0fyil5c9ja2y1"))))
       (arguments
        `(#:phases
          (modify-phases %standard-phases
@@ -169,7 +169,7 @@
              (file-name (string-append "ldc-phobos-" version2 ".tar.gz"))
              (sha256
               (base32
-               "1iwy5rs0rqkicj1zfsa5yqvk8ard99bfr8g69qmhlbzb98q0kpks"))))
+               "0z5v55b9s1ppf0c2ivjq7sbmq688c37c92ihc3qwrbxnqvkkvrlk"))))
          ("druntime-src"
           ,(origin
              (method url-fetch)
@@ -179,7 +179,7 @@
              (file-name (string-append "ldc-druntime-" version2 ".tar.gz"))
              (sha256
               (base32
-               "1qsiw5lz1pr8ms9myjf8b94nqi7f1781k226jvxwnhkjg11d0s63"))))
+               "07qvrqj6vgakd6qr4x5f70w6zwkzd1li5x8i1b5ywnds1z5lnfp6"))))
          ("dmd-testsuite-src"
           ,(origin
              (method url-fetch)
@@ -189,9 +189,9 @@
              (file-name (string-append "dmd-testsuite-" version2 ".tar.gz"))
              (sha256
               (base32
-               "0jp54hyi75i9g41rvgmm3zg21yzv57q8dghrhb432rb0n9j15mbp")))))))))
+               "12cak7yqmsgjlflx0dp6fwmwb9dac25amgi86n0bb95ard3547wy")))))))))
 
-(define-public ldc ldc-1.1.0-beta6)
+(define-public ldc ldc-1.1.0)
 
 (define-public rdmd
     (package
