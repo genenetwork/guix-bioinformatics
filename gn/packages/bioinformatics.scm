@@ -921,10 +921,10 @@ association studies (GWAS).")
     (license license:gpl3))))
 
 (define-public sambamba
-  (let ((commit "5a33d571339c966477c1f70ed08f64051f7b41c1"))
+  (let ((commit "91096e78c81162f855b1044a4b2d41895bd27262"))
     (package
       (name "sambamba")
-      (version (string-append "0.6.5-" (string-take commit 7)))
+      (version (string-append "0.6.6-pre1-" (string-take commit 7)))
       (source (origin
         (method git-fetch)
         (uri (git-reference
@@ -933,15 +933,15 @@ association studies (GWAS).")
         (file-name (string-append name "-" version "-checkout"))
         (sha256
          (base32
-          "05nlhwjw17igcwiz4pq0r4f8flrqcy4065fhx4nhpc0g65p70mi5"))))
+          "0d7d0f3ri8qi5r9wq2wy9wzkr1wm68alfsn20q61lqzrfrfwm93k"))))
       (build-system gnu-build-system)
       (outputs '("out"
-                 "debug"))  ;retain debug symbols - note that -O2 is used
+                 "debug"))
       (native-inputs
        `(("ldc" ,ldc)
          ("lz4" ,lz4)
-         ("coreutils" ,coreutils) ; for env
          ("zlib" ,zlib)
+         ("coreutils" ,coreutils) ; for env
          ("perl" ,perl) ; Needed for htslib
          ("ruby" ,ruby) ; Needed for htslib
          ("python" ,python-2) ; Needed for htslib
@@ -963,7 +963,7 @@ association studies (GWAS).")
              (uri (git-reference
                    (url "https://github.com/biod/BioD.git")
                    (commit "1248586b54af4bd4dfb28ebfebfc6bf012e7a587")))
-             (file-name (string-append "biod-src-" (string-take commit 7) ".tar.gz"))
+             (file-name (string-append "biod-src-" (string-take commit 7) "-checkout"))
              (sha256
               (base32 "1m8hi1n7x0ri4l6s9i0x6jg4z4v94xrfdzp7mbizdipfag0m17g3"))))))
       (arguments
@@ -980,13 +980,12 @@ association studies (GWAS).")
                (and (with-directory-excursion "htslib"
                       (zero? (system* "tar" "xvf" (assoc-ref inputs "htslib-src")
                                       "--strip-components=1")))
-                    (zero? (system* "rm" "-r" "BioD"))
-                    (zero? (system* "ln" "--symbolic" "--no-target-directory"
-                                    (assoc-ref inputs "biod-src") "BioD")))))
+                    ;; (zero? (system* "cp" "--recursive" (string-append (assoc-ref inputs "biod-src") "/*") "BioD/")))))
+                    (copy-recursively (assoc-ref inputs "biod-src") "BioD"))))
            (replace
             'build
             (lambda* (#:key inputs make-flags #:allow-other-keys)
-              (zero? (system* "make" "-f" "Makefile.guix" "sambamba-ldmd2"
+              (zero? (system* "make" "-f" "Makefile.guix" "guix-debug"
                        (string-append "LDC_LIB_PATH="
                                              (assoc-ref inputs "ldc")
                                              "/lib")))))
