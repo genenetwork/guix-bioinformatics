@@ -1,0 +1,24 @@
+diff --git a/src/rt/sections_elf_shared.d b/src/rt/sections_elf_shared.d
+index a1ea73a..243e3f6 100644
+--- a/src/rt/sections_elf_shared.d
++++ b/src/rt/sections_elf_shared.d
+@@ -149,7 +149,8 @@ version (Shared)
+ 
+     void finiTLSRanges(Array!(ThreadDSO)* tdsos)
+     {
+-        tdsos.reset();
++        // Disabling like static version - not sure this one is misbehaving though
++        // tdsos.reset();
+     }
+ 
+     void scanTLSRanges(Array!(ThreadDSO)* tdsos, scope ScanDG dg) nothrow
+@@ -234,7 +235,8 @@ else
+ 
+     void finiTLSRanges(Array!(void[])* rngs)
+     {
+-        rngs.reset();
++        // Throws exception, see https://github.com/lomereiter/sambamba/issues/219#issuecomment-275838455
++        // rngs.reset();
+     }
+ 
+     void scanTLSRanges(Array!(void[])* rngs, scope ScanDG dg) nothrow

@@ -924,7 +924,7 @@ association studies (GWAS).")
   (let ((commit "91096e78c81162f855b1044a4b2d41895bd27262"))
     (package
       (name "sambamba")
-      (version (string-append "0.6.6-pre1-" (string-take commit 7)))
+      (version (string-append "0.6.6-pre2-" (string-take commit 7)))
       (source (origin
         (method git-fetch)
         (uri (git-reference

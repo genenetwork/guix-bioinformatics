@@ -177,6 +177,7 @@
                    "https://github.com/ldc-developers/druntime/archive/ldc-v"
                    version2 ".tar.gz"))
              (file-name (string-append "ldc-druntime-" version2 ".tar.gz"))
+             (patches (search-patches "ldc-druntime-finiTLSRanges.patch"))
              (sha256
               (base32
                "07qvrqj6vgakd6qr4x5f70w6zwkzd1li5x8i1b5ywnds1z5lnfp6"))))
@@ -202,10 +203,10 @@
                 (uri (string-append
                     "https://github.com/dlang/tools/archive/"
                     version ".tar.gz"))
-              (file-name (string-append name "-" version ".tar.gz"))
-              (sha256
-               (base32
-                "0ryn4fv1mj8c8d7y4lrr43baahl3z7sk5bryj9kd829paz573va6"))))
+                (file-name (string-append name "-" version ".tar.gz"))
+                (sha256
+                 (base32
+                  "0ryn4fv1mj8c8d7y4lrr43baahl3z7sk5bryj9kd829paz573va6"))))
       (build-system gnu-build-system)
       (arguments
        '(#:phases
