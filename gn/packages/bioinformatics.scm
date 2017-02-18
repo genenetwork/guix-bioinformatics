@@ -720,58 +720,6 @@ length of a short-read sequencing alignment.")
      "A library of core preprocessing routines.")
     (license license:lgpl2.0+)))
 
-(define-public r-wgcna
-  (let ((commit "425bc170cc0873ddbd414675ac40f6d4d724c7cb"))
-(package
-  (name "r-wgcna")
-  (version (string-append "1.49-" commit))
-  (source (origin
-           (method git-fetch)
-           (uri (git-reference
-                 ;; (url "https://github.com/genenetwork/WGCNA.git")
-                 (url "https://github.com/pjotrp/WGCNA.git")
-                 (commit commit)))
-           (file-name (string-append name "-" commit))
-           (sha256
-            (base32
-             "1zqnsb8s3065rq1y2y3l79zi8wmdwjkcjls96ypycrb7pmdil58j"))))
-  (properties `((upstream-name . "WGCNA")))
-  (build-system r-build-system)
-  (propagated-inputs
-   `( ;; ("r-annotationdbi" ,r-annotationdbi)
-     ; ("r-biocparallel" ,r-biocparallel)
-     ("r-doparallel" ,r-doparallel)
-     ("r-dynamictreecut" ,r-dynamictreecut)
-     ("r-fastcluster" ,r-fastcluster)
-     ("r-foreach" ,r-foreach)
-     ("r-go-db" ,r-go-db)
-     ; ("r-grdevices" ,r-grdevices)
-     ("r-hmisc" ,r-hmisc)
-     ("r-impute" ,r-impute)
-     ("r-matrixstats" ,r-matrixstats)
-     ; ("r-parallel" ,r-parallel)
-     ("r-biocpreprocesscore" ,r-biocpreprocesscore)
-     ; ("r-splines" ,r-splines)
-     ; ("r-stats" ,r-stats)
-     ; ("r-survival" ,r-survival)
-     ; ("r-utils" ,r-utils)
-     ))
-    (arguments
-     `(
-       #:tests? #f))   ; no 'setup.py test'
-  (home-page
-    "http://www.genetics.ucla.edu/labs/horvath/CoexpressionNetwork/Rpackages/WGCNA/")
-  (synopsis
-    "Weighted gene correlation network analysis (wgcna)")
-  (description
-    "Functions necessary to perform Weighted Correlation Network
-Analysis on high-dimensional data.  Includes functions for rudimentary
-data cleaning, construction of correlation networks, module
-identification, summarization, and relating of variables and modules
-to sample traits.  Also includes a number of utility functions for
-data manipulation and visualization.")
-  (license license:gpl2+))))
-
 (define-public plink2
   (package
     (name "plink2")
