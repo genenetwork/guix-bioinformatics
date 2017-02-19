@@ -175,20 +175,20 @@ location of a putative QTL.")
     (license license:agpl3+))))
 
 (define-public genenetwork2
-  (let ((commit "a8fcff44d3bd768d02e7ed0c80b84d2516bdad2a"))
+  (let ((commit "dab2425d6395c900b1d90ae224f039edfc560061"))
   (package
     (name "genenetwork2")
     (version (string-append "2.0-" (string-take commit 7) ))
     (source (origin
              (method git-fetch)
              (uri (git-reference
-                   ;; (url "https://github.com/genenetwork/genenetwork2.git")
-                   (url "https://github.com/genenetwork/genenetwork2_diet.git")
+                   (url "https://github.com/genenetwork/genenetwork2.git")
+                   ;; (url "https://github.com/genenetwork/genenetwork2_diet.git")
                    (commit commit)))
              (file-name (string-append name "-" (string-take commit 7)))
              (sha256
               (base32
-               "1zs6jgrpwzxmfjz03whnaw8q6h8f53mycl440p058gfn8x7pd618"))))
+               "1jsifrqriqwj2sx8pywwrjxxl6hpzjc323ng06sp2ix6vsszrc6s"))))
     (propagated-inputs `(  ;; propagated for development purposes
               ("python" ,python-2) ;; probably superfluous
               ("r" ,r)
@@ -210,7 +210,7 @@ location of a putative QTL.")
               ("python2-setuptools" ,python2-setuptools)
               ("python2-scipy" ,python2-scipy)
               ("python2-mysqlclient" ,python2-mysqlclient)
-              ("python2-numarray" ,python2-numarray)
+              ; ("python2-numarray" ,python2-numarray)
               ("python2-numpy" ,python2-numpy)
               ("python2-pandas" ,python2-pandas)
               ("python2-parallel" ,python2-parallel)
