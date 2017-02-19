@@ -19,26 +19,44 @@
 (define-module (gn packages perl)
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (gnu packages)
+  #:use-module (gnu packages compression)
+  #:use-module (gnu packages databases)
+  #:use-module (gnu packages readline)
+  #:use-module (gnu packages autotools)
+  #:use-module (gnu packages java)
+  #:use-module (gnu packages libffi)
+  #:use-module (gnu packages python)
+  #:use-module (gnu packages ragel)
+  #:use-module (gnu packages ruby)
+  #:use-module (gnu packages tls)
+  #:use-module (gnu packages version-control)
+  #:use-module (guix packages)
+  #:use-module (guix download)
+  #:use-module (guix git-download)
+  #:use-module (guix utils)
+  #:use-module (guix build-system gnu)
+  #:use-module (gnu packages xml)
+  #:use-module (gnu packages web)
   #:use-module (guix build-system perl))
 
 (define-public perl-time-parsedate
-(package
-  (name "perl-time-parsedate")
-  (version "2015.103")
-  (source
+  (package
+   (name "perl-time-parsedate")
+   (version "2015.103")
+   (source
     (origin
-      (method url-fetch)
-      (uri (string-append
-             "mirror://cpan/authors/id/M/MU/MUIR/modules/Time-ParseDate-"
-             version
-             ".tar.gz"))
-      (sha256
-        (base32
-          "1lgfr87j4qwqnln0hyyzgik5ixqslzdaksn9m8y824gqbcihc6ic"))))
-  (build-system perl-build-system)
-  (arguments `(#:tests? #f))          ;Oh well
-  (home-page
+     (method url-fetch)
+     (uri (string-append
+           "mirror://cpan/authors/id/M/MU/MUIR/modules/Time-ParseDate-"
+           version
+           ".tar.gz"))
+     (sha256
+      (base32
+       "1lgfr87j4qwqnln0hyyzgik5ixqslzdaksn9m8y824gqbcihc6ic"))))
+   (build-system perl-build-system)
+   (arguments `(#:tests? #f))          ;Oh well
+   (home-page
     "http://search.cpan.org/dist/Time-ParseDate")
-  (synopsis "Parse and format time values")
-  (description "ParseDate")
-  (license #f)))
+   (synopsis "Parse and format time values")
+   (description "ParseDate")
+   (license #f)))
