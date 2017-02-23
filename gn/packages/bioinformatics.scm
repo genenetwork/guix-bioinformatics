@@ -940,6 +940,7 @@ association studies (GWAS).")
       (native-inputs
        `(("ldc" ,ldc)
          ("lz4" ,lz4)
+         ("shunit2" ,shunit2)
          ("zlib" ,zlib)
          ("coreutils" ,coreutils) ; for env
          ("perl" ,perl) ; Needed for htslib
