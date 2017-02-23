@@ -11,7 +11,7 @@
   (let ((commit "60dd60bcd1573befe38465010263ab242e55811d"))
     (package
       (name "shunit2")
-      (version (string-append "2.1.7-" (string-take commit 7)))
+      (version (string-append "2.0.4-" (string-take commit 7)))
       (source (origin
         (method git-fetch)
         (uri (git-reference
@@ -31,9 +31,14 @@
                         (replace 'install
                                  (lambda* (#:key outputs #:allow-other-keys)
                                    (let* ((out (assoc-ref outputs "out"))
-                                          (bin (string-append out "/bin")))
-                                     (write (string-append "****************" bin))
-                                     (copy-file "2.1/src/shunit2" (string-append bin "/shunit2"))
+                                          (bin (string-append out "/bin"))
+                                          (shunit2-exec (string-append bin "/shunit2"))
+                                          )
+                                     (write (file-exists? "source/2.0/src/shell/shunit2"))
+                                     (write (format #t "build directory: ~s~%" (getcwd)))
+                                     (mkdir-p bin)
+                                     (copy-file "source/2.0/src/shell/shunit2" shunit2-exec)
+                                     (chmod shunit2-exec #o555)
                                      #t
                                           ))))
            ))
