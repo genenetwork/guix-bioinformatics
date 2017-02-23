@@ -116,17 +116,17 @@
             (base32
              "0n7gvalxwfmia4gag53r9qhcnk2cqrw3n4icj1yri0zkgc27pm60"))))))))
 
-(define-public ldc-1.1.0
-  (let ((version2 "1.1.0")) ; libraries have not been updated
+(define-public ldc-1.1.0-patched
+  (let ((version2 "1.1.0")) ; version for libraries
     (package
       (inherit ldcmain:ldc)
       (name "ldc")
-      (version "1.1.0")
+      (version "1.1.0-patched") ; version for ldc
       (source (origin
                 (method url-fetch)
                 (uri (string-append
                       "https://github.com/ldc-developers/ldc/archive/v"
-                      version ".tar.gz"))
+                      version2 ".tar.gz"))
                 (file-name (string-append name "-" version ".tar.gz"))
                 (sha256
                  (base32
@@ -192,7 +192,7 @@
               (base32
                "12cak7yqmsgjlflx0dp6fwmwb9dac25amgi86n0bb95ard3547wy")))))))))
 
-(define-public ldc ldc-1.1.0)
+(define-public ldc ldc-1.1.0-patched)
 
 (define-public rdmd
     (package
