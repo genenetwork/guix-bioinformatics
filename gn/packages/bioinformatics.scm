@@ -15,7 +15,6 @@
   #:use-module (guix build-system r)
   #:use-module (guix build-system trivial)
   #:use-module (gn packages statistics)
-  #:use-module (gnu packages)
   #:use-module (gnu packages autotools)
   #:use-module (gnu packages algebra)
   #:use-module (gnu packages base)
@@ -37,7 +36,6 @@
   #:use-module (gnu packages graphviz)
   #:use-module (gnu packages java)
   #:use-module (gnu packages linux)
-  #:use-module (gn packages ldc)
   #:use-module (gnu packages machine-learning)
   #:use-module (gnu packages maths)
   #:use-module (gnu packages mpi)
@@ -61,6 +59,9 @@
   #:use-module (gnu packages xml)
   #:use-module (gnu packages zip)
   #:use-module (gnu packages bootstrap)
+  #:use-module (gn packages ldc)
+  #:use-module (gn packages ldc)
+  #:use-module (gn packages shell)
   #:use-module (srfi srfi-1))
 
 (define-public contra
@@ -921,10 +922,10 @@ association studies (GWAS).")
     (license license:gpl3))))
 
 (define-public sambamba
-  (let ((commit "91096e78c81162f855b1044a4b2d41895bd27262"))
+  (let ((commit "6ae174bcb50d3a8f1b6dd10de9c68bbc4770e56a"))
     (package
       (name "sambamba")
-      (version (string-append "0.6.6-pre2-" (string-take commit 7)))
+      (version (string-append "0.6.6-pre3-" (string-take commit 7)))
       (source (origin
         (method git-fetch)
         (uri (git-reference
@@ -933,7 +934,7 @@ association studies (GWAS).")
         (file-name (string-append name "-" version "-checkout"))
         (sha256
          (base32
-          "0d7d0f3ri8qi5r9wq2wy9wzkr1wm68alfsn20q61lqzrfrfwm93k"))))
+          "1m26i8icllclynqia4yi2mp7zfs2zajllva6bzxn188fhlyjwzqr"))))
       (build-system gnu-build-system)
       (outputs '("out"
                  "debug"))
@@ -962,14 +963,22 @@ association studies (GWAS).")
           ,(origin
              (method git-fetch)
              (uri (git-reference
-                   (url "https://github.com/biod/BioD.git")
-                   (commit "1248586b54af4bd4dfb28ebfebfc6bf012e7a587")))
+                   (url "https://github.com/pjotrp/BioD.git")
+                   (commit "b7f1db860d212ee5fb6f9adfb36c6e783aaeb6f5")))
              (file-name (string-append "biod-src-" (string-take commit 7) "-checkout"))
              (sha256
-              (base32 "1m8hi1n7x0ri4l6s9i0x6jg4z4v94xrfdzp7mbizdipfag0m17g3"))))))
+              (base32 "01xkdjdn9lb2b4b5ykzhnrk2rjikagav8b3fyac3zafcfq600cr4"))))
+         ("dlang-undeaD-src"
+          ,(origin
+             (method git-fetch)
+             (uri (git-reference
+                   (url "https://github.com/dlang/undeaD.git")
+                   (commit "610234f159132f91046d4fb893889fb8ee14cd2f")))
+             (file-name (string-append "dlang-undeaD-src-" (string-take commit 7) "-checkout"))
+             (sha256
+              (base32 "12zxsgvka4a82ghp2gaviph6kz13jzjb5pbc8v6i3rmcnifzpbrl"))))))
       (arguments
-       `(#:tests? #f  ; no tests available
-         #:phases
+       `(#:phases
          (modify-phases %standard-phases
            (delete 'configure)
            (delete 'check)
@@ -981,7 +990,7 @@ association studies (GWAS).")
                (and (with-directory-excursion "htslib"
                       (zero? (system* "tar" "xvf" (assoc-ref inputs "htslib-src")
                                       "--strip-components=1")))
-                    ;; (zero? (system* "cp" "--recursive" (string-append (assoc-ref inputs "biod-src") "/*") "BioD/")))))
+                    (copy-recursively (assoc-ref inputs "dlang-undeaD-src") "undeaD")
                     (copy-recursively (assoc-ref inputs "biod-src") "BioD"))))
            (replace
             'build
