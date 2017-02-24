@@ -8,6 +8,7 @@
   #:use-module (guix git-download)
   #:use-module (guix build-system gnu)
   #:use-module (gnu packages base)
+  #:use-module (gnu packages bioinformatics) ; for samtools in sambamba
   #:use-module (gnu packages compression)
   #:use-module (gnu packages gcc)
   #:use-module (gnu packages perl)
@@ -18,10 +19,10 @@
   #:use-module (srfi srfi-1))
 
 (define-public sambamba
-  (let ((commit "6ae174bcb50d3a8f1b6dd10de9c68bbc4770e56a"))
+  (let ((commit "54778aea4c054702d34740d229bbf03e5b907482"))
     (package
       (name "sambamba")
-      (version (string-append "0.6.6-pre3-" (string-take commit 7)))
+      (version (string-append "0.6.6-pre4-" (string-take commit 7)))
       (source (origin
         (method git-fetch)
         (uri (git-reference
@@ -30,19 +31,23 @@
         (file-name (string-append name "-" version "-checkout"))
         (sha256
          (base32
-          "1m26i8icllclynqia4yi2mp7zfs2zajllva6bzxn188fhlyjwzqr"))))
+          "131311h0ccz3r74yvw20f96pc86s760cvvnzgxin0kks7wgixmmz"))))
       (build-system gnu-build-system)
       (outputs '("out"
                  "debug"))
+      (inputs
+       `(("samtools" ,samtools) ; for pileup
+         ("bcftools" ,bcftools) ; for pileup
+         ("lz4" ,lz4)
+         ("zlib" ,zlib)
+       ))
       (native-inputs
        `(("ldc" ,ldc)
-         ("lz4" ,lz4)
          ("shunit2" ,shunit2)
-         ("zlib" ,zlib)
          ("coreutils" ,coreutils) ; for env
-         ("perl" ,perl) ; Needed for htslib
-         ("ruby" ,ruby) ; Needed for htslib
-         ("python" ,python-2) ; Needed for htslib
+         ("perl" ,perl) ; Needed for building htslib
+         ("ruby" ,ruby) ; Needed for building htslib
+         ("python" ,python-2) ; Needed for building htslib and sambamba
          ("gcc" ,gcc)
          ("which" ,which)
          ("htslib-src"
@@ -78,6 +83,11 @@
          (modify-phases %standard-phases
            (delete 'configure)
            (delete 'check)
+           (add-after 'unpack 'patch-pileup-d
+              (lambda* (#:key inputs #:allow-other-keys)
+                (substitute* "sambamba/pileup.d"
+                             (("string samtoolsBin     = null;") (string-append "string samtoolsBin = \"" (which "samtools") "\";"))
+                             (("string bcftoolsBin     = null;") (string-append "string bcftoolsBin = \"" (which "bcftools") "\";")))))
            (add-after 'unpack 'unpack-htslib-sources
              (lambda* (#:key inputs #:allow-other-keys)
                ;; The current build compiles htslib statically into the
