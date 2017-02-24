@@ -42,6 +42,27 @@
   #:use-module (guix build-system trivial)
   #:use-module (srfi srfi-1))
 
+(define-public speedtest-cli
+  (package
+    (name "speedtest-cli")
+    (version "1.0.2")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (string-append
+              "https://github.com/sivel/speedtest-cli/archive/v" version ".tar.gz"))
+        (sha256
+          (base32
+            "1ir9fqwr7cl9kfq7dgh9vkydkwf59wsx0cwbzbffw8i313xhzxa1"))))
+    (build-system python-build-system)
+    (home-page
+      "https://github.com/sivel/speedtest-cli")
+    (synopsis
+      "Internet bandwidth tester")
+    (description
+      "Command line interface for testing internet bandwidth using speedtest.net")
+    (license license:asl2.0)))
+
 (define-public python-flask-sqlalchemy
   (package
    (name "python-flask-sqlalchemy")
