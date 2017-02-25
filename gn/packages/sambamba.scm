@@ -87,7 +87,8 @@
               (lambda* (#:key inputs #:allow-other-keys)
                 (substitute* "sambamba/pileup.d"
                              (("string samtoolsBin     = null;") (string-append "string samtoolsBin = \"" (which "samtools") "\";"))
-                             (("string bcftoolsBin     = null;") (string-append "string bcftoolsBin = \"" (which "bcftools") "\";")))))
+                             (("string samtoolsBin     = null;") (string-append "string samtoolsBin = \"" (which "samtools") "\";"))
+                             (("    this_app = args[0];") (string-append "    this_app = \"" (which "sambamba") "\";")))))
            (add-after 'unpack 'unpack-htslib-sources
              (lambda* (#:key inputs #:allow-other-keys)
                ;; The current build compiles htslib statically into the
