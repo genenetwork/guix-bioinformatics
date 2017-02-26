@@ -364,7 +364,7 @@
 for use in genome-wide association studies (GWAS).")
     (license license:agpl3+))))
 
-(define-public r-ctl
+(define-public r-ctl ; guix: ready
  (package
   (name "r-ctl")
   (version "1.0.0-0")

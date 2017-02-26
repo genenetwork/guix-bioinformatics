@@ -13,7 +13,7 @@
   #:use-module (gnu packages xorg)
   #:use-module (guix licenses))
 
-(define-public environment-modules
+(define-public environment-modules ; guix: fix DL and tests
   (package
     (name "environment-modules")
     (version "3.2.10")
