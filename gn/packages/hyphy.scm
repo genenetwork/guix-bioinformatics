@@ -42,7 +42,7 @@
   #:use-module (gnu packages version-control)  
   #:use-module (gnu packages linux))
 
-(define-public hyphy
+(define-public hyphy ; guix: check
   (package
     (name "hyphy")
     (version "2.2.6")

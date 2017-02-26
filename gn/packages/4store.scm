@@ -39,7 +39,7 @@
   #:use-module (gnu packages file)
   #:use-module (gnu packages xml))
 
-(define-public 4store
+(define-public 4store ; guix ready
   (let ((commit "c5a56d7c7504551a1f2fff6c16c4d9a440e4a317"))
     (package
       (name "4store")

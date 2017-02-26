@@ -42,7 +42,7 @@
   #:use-module (guix build-system trivial)
   #:use-module (srfi srfi-1))
 
-(define-public speedtest-cli
+(define-public speedtest-cli ; guix submitted
   (package
     (name "speedtest-cli")
     (version "1.0.2")
@@ -63,7 +63,7 @@
       "Command line interface for testing internet bandwidth using speedtest.net")
     (license license:asl2.0)))
 
-(define-public python-flask-sqlalchemy
+(define-public python-flask-sqlalchemy-in-mainline ; guix main line
   (package
    (name "python-flask-sqlalchemy")
    (version "2.1")
@@ -88,10 +88,10 @@
     "Adds SQLAlchemy support to your Flask application")
    (license license:bsd-3)))
 
-(define-public python2-flask-sqlalchemy
+(define-public python2-flask-sqlalchemy ; guix?
   (package-with-python2 python-flask-sqlalchemy))
 
-(define-public python-xlsxwriter
+(define-public python-xlsxwriter ; guix ready
 (package
   (name "python-xlsxwriter")
   (version "0.8.4")
@@ -116,7 +116,7 @@
 (define-public python2-xlsxwriter
   (package-with-python2 python-xlsxwriter))
 
-(define-public python-rdflib-jsonld
+(define-public python-rdflib-jsonld ; guix ready
   (package
     (name "python-rdflib-jsonld")
     (version "0.3")
@@ -195,7 +195,7 @@ powerful language for representing information.")
         `(#:python ,python-2
           #:tests? #f))))) ; 3 tests fail, also outside Guix
 
-(define-public python-avro
+(define-public python-avro ; guix ready - used by CWL
 (package
   (name "python-avro")
   (version "1.7.7")
@@ -222,7 +222,7 @@ powerful language for representing information.")
 (define-public python2-avro
   (package-with-python2 python-avro))
 
-(define-public python-shellescape
+(define-public python-shellescape ; guix ready
 (package
   (name "python-shellescape")
   (version "3.4.1")
@@ -251,7 +251,7 @@ powerful language for representing information.")
 (define-public python2-shellescape
   (package-with-python2 python-shellescape))
 
-(define-public python-mysqlclient
+(define-public python-mysqlclient ; guix ready
 (package
   (name "python-mysqlclient")
   (version "1.3.7")
@@ -284,7 +284,7 @@ powerful language for representing information.")
   (package-with-python2 python-mysqlclient))
 
 
-(define-public python2-htmlgen-gn
+(define-public python2-htmlgen-gn ; guix obsolete
 (package
   (name "python2-htmlgen-gn")
   (version "2.2.2")
@@ -339,7 +339,7 @@ project)")
   (description #f)
   (license #f)))
 
-(define-public python2-pil
+(define-public python2-pil ; guix obsolete
   (package
     (name "python2-pil")
     (version "1.1.6")
@@ -400,7 +400,7 @@ capabilities to the Python interpreter.")
                "file://README"
                "See 'README' in the distribution."))))
 
-(define-public python2-piddle-gn
+(define-public python2-piddle-gn ; guix obsolete
   (package
     (name "python2-piddle")
     (version "1.0.15-gn")
@@ -428,7 +428,7 @@ version ".tgz"))
     (description #f)
     (license #f)))
 
-(define-public python2-parallel
+(define-public python2-parallel ; guix fix number of things
   (package
     (name "python2-parallel")
     (version "1.6.4")
@@ -456,7 +456,7 @@ version ".tgz"))
     (description #f)
     (license #f)))
 
-(define-public python2-numarray
+(define-public python2-numarray ; guix: obsolete lib
   (package
     (name "python2-numarray")
     (version "1.5.2")

@@ -15,7 +15,7 @@
   #:use-module (guix build-system trivial)
   #:use-module (srfi srfi-1))
 
-(define-public python-cwltool
+(define-public python-cwltool ; guix: needs work
   (package
     (name "python-cwltool")
     (version "1.0.20150916041152")

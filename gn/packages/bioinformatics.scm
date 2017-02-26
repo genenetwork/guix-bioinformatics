@@ -397,7 +397,7 @@ combinatorial configurations.\" G Ehrlich - Journal of the ACM (JACM),
 replacement for strverscmp.")
       (license license:gpl3+))))
 
-(define-public fastahack
+(define-public fastahack ; guix ready
   (let ((commit "c68cebb4f2e5d5d2b70cf08fbdf1944e9ab2c2dd"))
     (package
       (name "fastahack")
@@ -430,7 +430,7 @@ automatically handles index file generation and use.")
       ;; A part of the program is licensed GPLv2.
       (license (list license:non-copyleft license:gpl2)))))
 
-(define-public vcflib
+(define-public vcflib ; guix duplicat, see below?
   (let ((commit "3ce827d8ebf89bb3bdc097ee0fe7f46f9f30d5fb"))
     (package
       (name "vcflib")
@@ -523,7 +523,7 @@ format, and a collection of command-line utilities for executing complex
 manipulations on VCF files.")
       (license license:expat))))
 
-(define-public bash-tap
+(define-public bash-tap ; guix license issue
   (package
     (name "bash-tap")
     (version "1.0.2")
@@ -565,7 +565,7 @@ in-process output capturing.")
     ;; The author didn't specify a license.
     (license license:public-domain)))
 
-(define-public freebayes
+(define-public freebayes ; guix dependent package issues
   (let ((commit "3ce827d8ebf89bb3bdc097ee0fe7f46f9f30d5fb")
         (revision "1"))
     (package
@@ -701,78 +701,6 @@ complex events (composite insertion and substitution events) smaller than the
 length of a short-read sequencing alignment.")
       (license license:expat))))
 
-(define-public r-biocpreprocesscore
-  (package
-    (name "r-biocpreprocesscore")
-    (version "1.34.0")
-    (source (origin
-              (method url-fetch)
-              (uri (bioconductor-uri "preprocessCore" version))
-              (sha256
-               (base32
-                "0bcfi26ahs4ybagvz29vlp1wldhhbwwh73xz6v6xb07nakyzb6cf"))))
-    (properties
-     `((upstream-name . "BiocpreprocessCore")
-       (r-repository . bioconductor)))
-    (build-system r-build-system)
-    (home-page "http://bioconductor.org/packages/preprocessCore")
-    (synopsis "Preprocess functions for Bioconductor")
-    (description
-     "A library of core preprocessing routines.")
-    (license license:lgpl2.0+)))
-
-(define-public r-wgcna
-  (let ((commit "425bc170cc0873ddbd414675ac40f6d4d724c7cb"))
-(package
-  (name "r-wgcna")
-  (version (string-append "1.49-" commit))
-  (source (origin
-           (method git-fetch)
-           (uri (git-reference
-                 ;; (url "https://github.com/genenetwork/WGCNA.git")
-                 (url "https://github.com/pjotrp/WGCNA.git")
-                 (commit commit)))
-           (file-name (string-append name "-" commit))
-           (sha256
-            (base32
-             "1zqnsb8s3065rq1y2y3l79zi8wmdwjkcjls96ypycrb7pmdil58j"))))
-  (properties `((upstream-name . "WGCNA")))
-  (build-system r-build-system)
-  (propagated-inputs
-   `( ;; ("r-annotationdbi" ,r-annotationdbi)
-     ; ("r-biocparallel" ,r-biocparallel)
-     ("r-doparallel" ,r-doparallel)
-     ("r-dynamictreecut" ,r-dynamictreecut)
-     ("r-fastcluster" ,r-fastcluster)
-     ("r-foreach" ,r-foreach)
-     ("r-go-db" ,r-go-db)
-     ; ("r-grdevices" ,r-grdevices)
-     ("r-hmisc" ,r-hmisc)
-     ("r-impute" ,r-impute)
-     ("r-matrixstats" ,r-matrixstats)
-     ; ("r-parallel" ,r-parallel)
-     ("r-biocpreprocesscore" ,r-biocpreprocesscore)
-     ; ("r-splines" ,r-splines)
-     ; ("r-stats" ,r-stats)
-     ; ("r-survival" ,r-survival)
-     ; ("r-utils" ,r-utils)
-     ))
-    (arguments
-     `(
-       #:tests? #f))   ; no 'setup.py test'
-  (home-page
-    "http://www.genetics.ucla.edu/labs/horvath/CoexpressionNetwork/Rpackages/WGCNA/")
-  (synopsis
-    "Weighted gene correlation network analysis (wgcna)")
-  (description
-    "Functions necessary to perform Weighted Correlation Network
-Analysis on high-dimensional data.  Includes functions for rudimentary
-data cleaning, construction of correlation networks, module
-identification, summarization, and relating of variables and modules
-to sample traits.  Also includes a number of utility functions for
-data manipulation and visualization.")
-  (license license:gpl2+))))
-
 (define-public plink2
   (package
     (name "plink2")
@@ -879,7 +807,7 @@ integration with gPLINK and Haploview, there is some support for the
 subsequent visualization, annotation and storage of results.")
     (license license:gpl3+))))
 
-(define-public gemma-git
+(define-public gemma-git ; guix candidate
   (let ((commit "2de4bfab3"))
   (package
     (name "gemma-git")
@@ -921,7 +849,7 @@ mixed model and some of its close relatives for genome-wide
 association studies (GWAS).")
     (license license:gpl3))))
 
-(define-public vcflib
+(define-public vcflib ; duplicate? See above
   (let ((commit "3ce827d8ebf89bb3bdc097ee0fe7f46f9f30d5fb"))
     (package
       (name "vcflib")

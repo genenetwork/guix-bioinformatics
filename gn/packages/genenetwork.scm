@@ -87,7 +87,7 @@
     (description #f)
     (license #f)))
 
-(define-public qtlreaper
+(define-public qtlreaper ; guix obsolete - but used in GN2
   (let ((commit "71fbbe2b35e4f54937be2d54d09fb71d25fe5fad"))
   (package
     (name "qtlreaper")
@@ -122,7 +122,7 @@ bootstrap resampling to estimate the confidence region for the
 location of a putative QTL.")
     (license license:gpl2+))))
 
-(define-public genenetwork1
+(define-public genenetwork1 ; guix incomplete
   (let ((commit "d622c803b"))
   (package
     (name "genenetwork1")

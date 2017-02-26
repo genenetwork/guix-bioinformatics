@@ -96,7 +96,7 @@ a focus on simplicity and productivity.")
     (home-page "https://ruby-lang.org")
     (license license:ruby)))
 
-(define-public bio-vcf
+(define-public bio-vcf ; guix ready with tests
   (package
    (name "bio-vcf")
    (version "0.9.2")
@@ -121,7 +121,7 @@ filtering and output rewriting (JSON, RDF etc.)")
     "http://github.com/pjotrp/bioruby-vcf")
    (license expat)))
 
-(define-public bio-table
+(define-public bio-table ; guix ready with tests
   (package
    (name "bio-table")
    (version "1.0.0")
@@ -228,7 +228,7 @@ for an example.")
     (home-page "https://github.com/knu/webrobots")
     (license #f)))
 
-(define-public ruby-mechanize
+(define-public ruby-mechanize ; guix maybe ready
   (package
     (name "ruby-mechanize")
     (version "2.7.5")

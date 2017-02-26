@@ -49,7 +49,7 @@
   #:use-module (gnu packages zip)  
   #:use-module (gnu packages linux))
 
-(define-public gtest 
+(define-public gtest ; guix check
   (let ((revision "1")
         (commit "13206d6f53aaff844f2d3595a01ac83a29e383db"))
     (package

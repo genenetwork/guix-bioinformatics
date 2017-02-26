@@ -42,7 +42,7 @@
   #:use-module (gnu packages version-control)  
   #:use-module (gnu packages linux))
 
-(define-public glfw
+(define-public glfw ; guix opengl
   (package
     (name "glfw")
     (version "3.1.2")

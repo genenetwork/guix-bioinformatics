@@ -33,7 +33,7 @@
   #:use-module (gnu packages textutils)
   #:use-module (gnu packages zip))
 
-(define-public ldc-0.17.2
+(define-public ldc-0.17.2 ; guix in main line
   (package
     (inherit ldcmain:ldc)
     (name "ldc")
@@ -116,7 +116,7 @@
             (base32
              "0n7gvalxwfmia4gag53r9qhcnk2cqrw3n4icj1yri0zkgc27pm60"))))))))
 
-(define-public ldc-1.1.0-patched
+(define-public ldc-1.1.0-patched ; guix in main line w.o. patch
   (let ((version2 "1.1.0")) ; version for libraries
     (package
       (inherit ldcmain:ldc)

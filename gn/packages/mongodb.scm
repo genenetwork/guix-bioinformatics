@@ -27,7 +27,7 @@
   #:use-module (gnu packages pkg-config)
   #:use-module (gnu packages python))
 
-(define-public mongodb
+(define-public mongodb ; guix fix tests and maybe non-free
   (package
     (name "mongodb")
     (version "3.3.3")

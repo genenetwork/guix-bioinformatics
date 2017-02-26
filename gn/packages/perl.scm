@@ -39,7 +39,7 @@
   #:use-module (gnu packages web)
   #:use-module (guix build-system perl))
 
-(define-public perl-time-parsedate
+(define-public perl-time-parsedate ; guix: old lib and tests failing - works though
   (package
    (name "perl-time-parsedate")
    (version "2015.103")
