@@ -87,6 +87,27 @@
      ".")
     (license license:expat)))
 
+(define-public r-qvalue
+  (package
+    (name "r-qvalue")
+    (version "2.6.0")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (bioconductor-uri "qvalue" version))
+       (sha256
+        (base32
+         "1dijh11v1kr29gnikq09pkdvm3qwmp1a406ahx9l4j6mgn8hlsfq"))))
+    (build-system r-build-system)
+    (propagated-inputs
+     `(("r-reshape2" ,r-reshape2)
+       ("r-ggplot2" ,r-ggplot2)))
+    (home-page "http://bioconductor.org/packages/qvalue")
+    (synopsis "")
+    (description
+     ".")
+    (license license:expat)))
+
 (define-public r-phewas ; GN2
   (package
    (name "r-phewas")
@@ -99,6 +120,7 @@
       ("r-data-table" ,r-data-table)
       ("r-fgsea" ,r-fgsea)
       ("r-limma" ,r-limma)
+      ("r-qvalue" ,r-qvalue)
     ))
     (arguments
      `(#:guile ,%bootstrap-guile
