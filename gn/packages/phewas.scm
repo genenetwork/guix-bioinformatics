@@ -41,9 +41,55 @@
   #:use-module (gnu packages bootstrap)
   #:use-module (srfi srfi-1))
 
-(define-public r-auwerxlab ; GN2
+(define-public r-fastmatch
+(package
+  (name "r-fastmatch")
+  (version "1.1-0")
+  (source
+    (origin
+      (method url-fetch)
+      (uri (cran-uri "fastmatch" version))
+      (sha256
+        (base32
+          "0z80jxkygmzn11sq0c2iz357s9bpki548lg926g85gldhfj1md90"))))
+  (build-system r-build-system)
+  (home-page "http://www.rforge.net/fastmatch")
+  (synopsis "Fast match() function")
+  (description
+    "Package providing a fast match() replacement for cases that require repeated look-ups.  It is slightly faster that R's built-in match() function on first match against a table, but extremely fast on any subsequent lookup as it keeps the hash table in memory.")
+  (license license:gpl2)))
+
+(define-public r-fgsea
   (package
-   (name "r-auwerxlab")
+    (name "r-fgsea")
+    (version "1.0.2")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (bioconductor-uri "fgsea" version))
+       (sha256
+        (base32
+         "1yq4s4g4xxzcpkv9dpbg29444iy38vfgwj4wgr47rjjq8njfblfx"))))
+    (build-system r-build-system)
+    ; (native-inputs
+                                        ;  `(("gfortran" ,gfortran)))
+    ; ‘Rcpp’, ‘data.table’, ‘BiocParallel’, ‘ggplot2’, ‘gridExtra’, ‘fastmatch
+    (propagated-inputs
+     `(("r-rcpp" ,r-rcpp)
+       ("r-data-table" ,r-data-table)
+       ("r-biocparallel" ,r-biocparallel)
+       ("r-ggplot2" ,r-ggplot2)
+       ("r-gridextra" ,r-gridextra)
+       ("r-fastmatch" ,r-fastmatch)))
+    (home-page "http://bioconductor.org/packages/fgsea")
+    (synopsis "")
+    (description
+     ".")
+    (license license:expat)))
+
+(define-public r-phewas ; GN2
+  (package
+   (name "r-phewas")
    (version "0.0.0-1")
    (source #f)
    (build-system trivial-build-system)
@@ -51,6 +97,8 @@
     `(
       ("r" ,r)
       ("r-data-table" ,r-data-table)
+      ("r-fgsea" ,r-fgsea)
+      ("r-limma" ,r-limma)
     ))
     (arguments
      `(#:guile ,%bootstrap-guile
