@@ -1,0 +1,73 @@
+(define-module (gn packages phewas)
+  #:use-module ((guix licenses) #:prefix license:)
+  #:use-module (guix packages)
+  #:use-module (guix utils)
+  #:use-module (guix download)
+  #:use-module (guix git-download)
+  #:use-module (guix build-system gnu)
+  #:use-module (guix build-system cmake)
+  #:use-module (guix build-system perl)
+  #:use-module (guix build-system python)
+  #:use-module (guix build-system ruby)
+  #:use-module (guix build-system r)
+  #:use-module (guix build-system trivial)
+  #:use-module (gnu packages)
+  #:use-module (gnu packages algebra)
+  #:use-module (gnu packages base)
+  #:use-module (gnu packages bioinformatics)
+  #:use-module (gnu packages boost)
+  #:use-module (gnu packages compression)
+  #:use-module (gnu packages cpio)
+  #:use-module (gnu packages file)
+  #:use-module (gnu packages gcc)
+  #:use-module (gnu packages java)
+  #:use-module (gnu packages linux)
+  #:use-module (gnu packages machine-learning)
+  #:use-module (gnu packages maths)
+  #:use-module (gnu packages ncurses)
+  #:use-module (gnu packages perl)
+  #:use-module (gnu packages pkg-config)
+  #:use-module (gnu packages popt)
+  #:use-module (gnu packages protobuf)
+  #:use-module (gnu packages python)
+  #:use-module (gnu packages ruby)
+  #:use-module (gnu packages statistics)
+  #:use-module (gnu packages tbb)
+  #:use-module (gnu packages textutils)
+  #:use-module (gnu packages vim)
+  #:use-module (gnu packages web)
+  #:use-module (gnu packages xml)
+  #:use-module (gnu packages zip)
+  #:use-module (gnu packages bootstrap)
+  #:use-module (srfi srfi-1))
+
+(define-public r-auwerxlab ; GN2
+  (package
+   (name "r-auwerxlab")
+   (version "0.0.0-1")
+   (source #f)
+   (build-system trivial-build-system)
+   (propagated-inputs
+    `(
+      ("r" ,r)
+      ("r-data-table" ,r-data-table)
+    ))
+    (arguments
+     `(#:guile ,%bootstrap-guile
+       #:modules ((guix build utils))
+       #:builder
+         (let* ((out  (assoc-ref %outputs "out"))
+                (bash (assoc-ref %build-inputs "bash"))
+                (foo  (string-append out "/foo")))
+           (begin
+             (use-modules (guix build utils))
+             (mkdir out)
+             #t))))
+
+   (home-page
+    "None")
+   (synopsis
+    "None")
+   (description
+    "None.")
+   (license license:gpl2+)))
