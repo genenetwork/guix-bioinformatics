@@ -11,6 +11,7 @@
   #:use-module (guix build-system ruby)
   #:use-module (guix build-system r)
   #:use-module (guix build-system trivial)
+  #:use-module (gn packages lmm)
   #:use-module (gnu packages)
   #:use-module (gnu packages algebra)
   #:use-module (gnu packages base)
@@ -40,6 +41,31 @@
   #:use-module (gnu packages zip)
   #:use-module (gnu packages bootstrap)
   #:use-module (srfi srfi-1))
+
+(define-public r-mlmm
+  (let ((commit "9fec9805573e97b44ee121f3651ddb79eafc8f8d"))
+  (package
+    (name "r-mlmm")
+    (version "0.1.0")
+    (source (origin
+              ;; We use the git reference, because there's no CRAN package (yet)
+              (method git-fetch)
+              (uri (git-reference
+                    (url "https://github.com/Gregor-Mendel-Institute/mlmm.git")
+                    (commit commit)))
+              (file-name (string-append name "-" (string-take commit 7) "-checkout" ))
+              (sha256
+               (base32
+                "0dr77bf6i7qpi6kvay84p4lgib20l552ph8mp56v3qk0fbsamh8j"))))
+    (build-system r-build-system)
+    (propagated-inputs
+    `(("r-emma" ,r-emma)))
+    (synopsis "R/mlmm")
+    (description
+     "Implements an efficient multi-locus mixed-model approach for
+genome-wide association studies in structured populations.")
+    (home-page "https://github.com/Gregor-Mendel-Institute/mlmm")
+    (license license:gpl3))))
 
 (define-public r-fastmatch
 (package
@@ -118,8 +144,10 @@
     `(
       ("r" ,r)
       ("r-data-table" ,r-data-table)
+      ; ("r-emma" ,r-emma)
       ("r-fgsea" ,r-fgsea)
       ("r-limma" ,r-limma)
+      ("r-mlmm" ,r-mlmm)
       ("r-qvalue" ,r-qvalue)
     ))
     (arguments
