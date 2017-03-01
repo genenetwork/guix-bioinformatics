@@ -42,6 +42,37 @@
   #:use-module (gnu packages bootstrap)
   #:use-module (srfi srfi-1))
 
+(define-public r-intermediate
+  (let ((commit "1e4ec77a92889f7548da766cb28abab18df952dc"))
+  (package
+    (name "r-intermediate")
+    (version "0.2-4")
+    (source (origin
+              ;; We use the git reference, because there's no CRAN package (yet)
+              (method git-fetch)
+              (uri (git-reference
+                    (url "https://github.com/simecek/intermediate.git")
+                    (commit commit)))
+              (file-name (string-append name "-" (string-take commit 7) "-checkout" ))
+              (sha256
+               (base32
+                "0l7acxmizw8az37365z4gr9wc6ny9d4zx3q42dgvp04yyzwafbr8"))))
+    (build-system r-build-system)
+    ; (propagated-inputs
+                                        ; `(("r-emma" ,r-emma)))
+    (inputs
+     `(("r-ggplot2" ,r-ggplot2)
+       ("r-magrittr" ,r-magrittr)
+       ("r-plotly" ,r-plotly)
+       ("r-htmlwidgets" ,r-htmlwidgets)
+       ("r-testthat" ,r-testthat)))
+    (synopsis "R/intermediate")
+    (description
+     "R package for eQTl/pQTL mediation analysis.")
+    (home-page "https://github.com/simecek/intermediate")
+    (license license:gpl3))))
+
+
 (define-public r-mlmm
   (let ((commit "9fec9805573e97b44ee121f3651ddb79eafc8f8d"))
   (package
@@ -146,6 +177,7 @@ genome-wide association studies in structured populations.")
       ("r-data-table" ,r-data-table)
       ; ("r-emma" ,r-emma)
       ("r-fgsea" ,r-fgsea)
+      ("r-intermediate" ,r-intermediate)
       ("r-limma" ,r-limma)
       ("r-mlmm" ,r-mlmm)
       ("r-qvalue" ,r-qvalue)
