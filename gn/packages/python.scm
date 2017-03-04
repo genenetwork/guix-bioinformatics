@@ -471,6 +471,8 @@ version ".tgz"))
         (base32
          "0x1i4j7yni7k4p9kjxs1lgln1psdmyrz65wp2yr35yn292iw2vbg"))))
     (build-system python-build-system)
+    (inputs
+     `(("python-setuptools" ,python-setuptools)))
     (arguments
      `(#:python ,python-2
        #:tests? #f))   ; no 'setup.py test' really!
