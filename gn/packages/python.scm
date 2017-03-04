@@ -471,14 +471,33 @@ version ".tgz"))
         (base32
          "0x1i4j7yni7k4p9kjxs1lgln1psdmyrz65wp2yr35yn292iw2vbg"))))
     (build-system python-build-system)
-    (inputs
-     `(("python-setuptools" ,python-setuptools)))
+    (native-inputs
+     `(("python2-setuptools" ,python2-setuptools)))
     (arguments
      `(#:python ,python-2
+       #:phases
+       (modify-phases %standard-phases
+         (replace 'build
+           (lambda* (#:key inputs #:allow-other-keys)
+             (zero? (system* "python" "setup.py" "build"))))
+         (replace 'install
+                  (lambda* (#:key outputs #:allow-other-keys)
+                    ;; Build and install the Python bindings.  The underlying
+                    ;; C++ library is apparently not meant to be installed.
+                    (let ((out (assoc-ref outputs "out")))
+                      (system* "python" "setup.py" "install"
+                               (string-append "--prefix=" out))))))
        #:tests? #f))   ; no 'setup.py test' really!
     (home-page "http://www.numpy.org/")
     (synopsis "Numerical library array processing of numbers, strings, records and objects")
     (description
-     "Numarray is an array processing package designed to efficiently manipulate large multi-dimensional arrays. Numarray is modelled after Numeric and features c-code generated from python template scripts, the capacity to operate directly on arrays in files, and improved type promotions. Numarray provides support for manipulating arrays consisting of numbers, strings, records, or objects using the same basic infrastructure and syntax.  Numarray is now part of the
-numpy package, though some legacy software still uses the older versions.")
+     "Numarray is an (OBSOLETE) array processing package designed to
+efficiently manipulate large multi-dimensional arrays. Numarray is
+modelled after Numeric and features c-code generated from python
+template scripts, the capacity to operate directly on arrays in files,
+and improved type promotions. Numarray provides support for
+manipulating arrays consisting of numbers, strings, records, or
+objects using the same basic infrastructure and syntax.  Numarray is
+now part of the numpy package, though some legacy software still uses
+the older versions.")
     (license license:gpl2))) ; actualy PyRAF http://www.stsci.edu/resources/software_hardware/pyraf/LICENSE
