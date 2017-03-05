@@ -92,7 +92,7 @@
   (let ((commit "71fbbe2b35e4f54937be2d54d09fb71d25fe5fad"))
   (package
     (name "qtlreaper")
-    (version (string-append "1.1-gn2" (string-take commit 7) ))
+    (version (string-append "1.1-gn2-" (string-take commit 7) ))
     (source (origin
              (method git-fetch)
              (uri (git-reference
@@ -104,13 +104,26 @@
               (base32
                "0g0v20lh7773cm2xdqz6xzwjw4130y265n79z5x20p5aja5y5kmg"))))
     (build-system python-build-system)
-    ;; (native-inputs
-    ;; `(("python-setuptools" ,python-setuptools)))
+    (native-inputs
+     `(("python2-setuptools" ,python2-setuptools)))
     (arguments
      `(#:python ,python-2
-    ))
+       #:phases
+       (modify-phases %standard-phases
+         (replace 'build
+           (lambda* (#:key inputs #:allow-other-keys)
+             (zero? (system* "python" "setup.py" "build"))))
+         (replace 'install
+                  (lambda* (#:key outputs #:allow-other-keys)
+                    ;; Build and install the Python bindings.  The underlying
+                    ;; C++ library is apparently not meant to be installed.
+                    (let ((out (assoc-ref outputs "out")))
+                      (system* "python" "setup.py" "install"
+                               (string-append "--prefix=" out))))))
+       #:tests? #f))   ; no 'setup.py test' really!
+
     (home-page "http://qtlreaper.sourceforge.net/")
-    (synopsis "Tool for scanning expression data for QTLs")
+    (synopsis "Rapidly scan expression data for QTLs")
     (description
      "Batch-oriented version of WebQTL. It requires, as input,
 expression data from members of a set of recombinant inbred lines and
