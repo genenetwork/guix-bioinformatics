@@ -107,7 +107,6 @@
     (arguments
      `(#:python ,python-2
        #:tests? #f))   ; no 'setup.py test' really!
-
     (home-page "http://qtlreaper.sourceforge.net/")
     (synopsis "Scan expression data for QTLs")
     (description

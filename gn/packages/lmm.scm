@@ -41,6 +41,30 @@
   #:use-module (gnu packages bootstrap)
   #:use-module (srfi srfi-1))
 
+
+(define-public r-lmmlite
+  (package
+    (name "r-lmmlite")
+    (version "0.1-9")
+    (source (origin
+              ;; We use the git reference, because there's no CRAN package (yet)
+              (method git-fetch)
+              (uri (git-reference
+                    (url "https://github.com/kbroman/lmmlite.git")
+                    (commit "5b833d5")))
+              (file-name (string-append name "-" version "-checkout"))
+              (sha256
+               (base32
+                "0v4z4qxa8ki9hlmdwlgslchvg21nqkkq6135nx6w63xikjffxcba"))))
+    (build-system r-build-system)
+    (propagated-inputs
+     `(("r-rcppeigen" ,r-rcppeigen)))
+    (synopsis "R/lmmlite")
+    (description
+     "R/lmmlite")
+    (home-page "https://github.com/kbroman/")
+    (license license:asl2.0)))
+
 (define-public r-emma ; guix potential candidate (not in CRAN)
   (package
    (name "r-emma")

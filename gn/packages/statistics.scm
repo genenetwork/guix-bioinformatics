@@ -301,29 +301,6 @@
     "Data and Functions from the book R Graphics, Second Edition.  There is a function to produce each figure in the book, plus several functions, classes, and methods defined in Chapter 8.")
   (license license:gpl2+)))
 
-(define-public r-lmmlite
-  (package
-    (name "r-lmmlite")
-    (version "0.1-9")
-    (source (origin
-              ;; We use the git reference, because there's no CRAN package (yet)
-              (method git-fetch)
-              (uri (git-reference
-                    (url "https://github.com/kbroman/lmmlite.git")
-                    (commit "5b833d5")))
-              (file-name (string-append name "-" version "-checkout"))
-              (sha256
-               (base32
-                "0v4z4qxa8ki9hlmdwlgslchvg21nqkkq6135nx6w63xikjffxcba"))))
-    (build-system r-build-system)
-    (propagated-inputs
-     `(("r-rcppeigen" ,r-rcppeigen)))
-    (synopsis "R/lmmlite")
-    (description
-     "R/lmmlite")
-    (home-page "https://github.com/kbroman/")
-    (license license:asl2.0)))
-
 (define-public pylmm-gn2
   (let ((commit "3c6d1cac8"))
   (package
