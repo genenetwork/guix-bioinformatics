@@ -89,7 +89,7 @@
     (license #f)))
 
 (define-public qtlreaper ; guix obsolete - but used in GN2
-  (let ((commit "71fbbe2b35e4f54937be2d54d09fb71d25fe5fad"))
+  (let ((commit "dd9c7fb2a9d5fa40b4054e1bcb7c57905d98d5f8"))
   (package
     (name "qtlreaper")
     (version (string-append "1.1-gn2-" (string-take commit 7) ))
@@ -102,28 +102,14 @@
              (file-name (string-append name "-" (string-take commit 7)))
              (sha256
               (base32
-               "0g0v20lh7773cm2xdqz6xzwjw4130y265n79z5x20p5aja5y5kmg"))))
+               "1ldcvyk8y8w6f4ci04hzx85sknd5a3h424p5bfi4fz32sm2p7fja"))))
     (build-system python-build-system)
-    (native-inputs
-     `(("python2-setuptools" ,python2-setuptools)))
     (arguments
      `(#:python ,python-2
-       #:phases
-       (modify-phases %standard-phases
-         (replace 'build
-           (lambda* (#:key inputs #:allow-other-keys)
-             (zero? (system* "python" "setup.py" "build"))))
-         (replace 'install
-                  (lambda* (#:key outputs #:allow-other-keys)
-                    ;; Build and install the Python bindings.  The underlying
-                    ;; C++ library is apparently not meant to be installed.
-                    (let ((out (assoc-ref outputs "out")))
-                      (system* "python" "setup.py" "install"
-                               (string-append "--prefix=" out))))))
        #:tests? #f))   ; no 'setup.py test' really!
 
     (home-page "http://qtlreaper.sourceforge.net/")
-    (synopsis "Rapidly scan expression data for QTLs")
+    (synopsis "Scan expression data for QTLs")
     (description
      "Batch-oriented version of WebQTL. It requires, as input,
 expression data from members of a set of recombinant inbred lines and
