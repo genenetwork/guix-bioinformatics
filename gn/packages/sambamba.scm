@@ -19,10 +19,10 @@
   #:use-module (srfi srfi-1))
 
 (define-public sambamba
-  (let ((commit "54778aea4c054702d34740d229bbf03e5b907482"))
+  (let ((commit "52ab1eff7070cd3dafad94a15c9fd6e243a45a4d"))
     (package
       (name "sambamba")
-      (version (string-append "0.6.6-pre4-" (string-take commit 7)))
+      (version (string-append "0.6.6-" (string-take commit 7)))
       (source (origin
         (method git-fetch)
         (uri (git-reference
@@ -31,9 +31,9 @@
         (file-name (string-append name "-" version "-checkout"))
         (sha256
          (base32
-          "131311h0ccz3r74yvw20f96pc86s760cvvnzgxin0kks7wgixmmz"))))
+          "16nfvmipa1gj7f8c9lqhh5yffdmaic1pzcrm9281dqwywl9w8hsg"))))
       (build-system gnu-build-system)
-      (outputs '("out"
+      (outputs '("out"     ; disable all checks for speed
                  "debug"))
       (inputs
        `(("samtools" ,samtools) ; for pileup
@@ -87,7 +87,7 @@
               (lambda* (#:key inputs #:allow-other-keys)
                 (substitute* "sambamba/pileup.d"
                              (("string samtoolsBin     = null;") (string-append "string samtoolsBin = \"" (which "samtools") "\";"))
-                             (("string samtoolsBin     = null;") (string-append "string samtoolsBin = \"" (which "samtools") "\";"))
+                             (("string bcftoolsBin     = null;") (string-append "string bcftoolsBin = \"" (which "bcftools") "\";"))
                              (("    this_app = args[0];") (string-append "    this_app = \"" (which "sambamba") "\";")))))
            (add-after 'unpack 'unpack-htslib-sources
              (lambda* (#:key inputs #:allow-other-keys)
@@ -101,11 +101,13 @@
                     (copy-recursively (assoc-ref inputs "biod-src") "BioD"))))
            (replace
             'build
-            (lambda* (#:key inputs make-flags #:allow-other-keys)
-              (zero? (system* "make" "-f" "Makefile.guix" "guix-debug"
-                       (string-append "LDC_LIB_PATH="
-                                             (assoc-ref inputs "ldc")
-                                             "/lib")))))
+            (lambda* (#:key inputs outputs make-flags #:allow-other-keys)
+              (let* ((out        (assoc-ref outputs "out"))
+                     (debug-out  (assoc-ref outputs "debug")))
+                (zero? (system* "make" "-f" "Makefile.guix" "guix"
+                                (string-append "LDC_LIB_PATH="
+                                               (assoc-ref inputs "ldc")
+                                               "/lib"))))))
            (replace
             'install
             (lambda* (#:key outputs #:allow-other-keys)
