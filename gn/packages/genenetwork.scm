@@ -44,6 +44,7 @@
   #:use-module (gnu packages zip)
   #:use-module (gnu packages bootstrap)
   #:use-module (gn packages bioinformatics)
+  #:use-module (gn packages gemma)
   #:use-module (gn packages phewas)
   #:use-module (gn packages python)
   #:use-module (gn packages statistics)
