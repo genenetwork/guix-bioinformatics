@@ -807,47 +807,6 @@ integration with gPLINK and Haploview, there is some support for the
 subsequent visualization, annotation and storage of results.")
     (license license:gpl3+))))
 
-(define-public gemma-git ; guix candidate
-  (let ((commit "2de4bfab3"))
-  (package
-    (name "gemma-git")
-    (version (string-append "0.9.5-" commit ))
-    (source (origin
-             (method git-fetch)
-             (uri (git-reference
-                   (url "https://github.com/genenetwork/GEMMA.git")
-                   (commit commit)))
-             (file-name (string-append name "-" commit))
-             (sha256
-              (base32
-               "1drffdgwbzgiw9sf55ghl3zjv58f8i9kfz0zys5mp6n06syp4ira"))))
-    (inputs `(
-              ("gsl" ,gsl)
-              ("lapack" ,lapack)
-              ("zlib" ,zlib)
-              ))
-    (build-system gnu-build-system)
-    (arguments
-     `(#:make-flags '(" FORCE_DYNAMIC=1")
-       #:phases
-        (modify-phases %standard-phases
-         (delete 'configure)
-         (add-before 'build 'bin-mkdir
-                     (lambda _
-                       (mkdir-p "bin")
-                       ))
-         (replace 'install
-                  (lambda* (#:key outputs #:allow-other-keys)
-                           (let ((out (assoc-ref outputs "out")))
-                             (install-file "bin/gemma" (string-append out "/bin"))))))
-       #:tests? #f))
-    (home-page "")
-    (synopsis "Tool for genome-wide efficient mixed model association")
-    (description "GEMMA is the software implementing the Genome-wide
-Efficient Mixed Model Association algorithm for a standard linear
-mixed model and some of its close relatives for genome-wide
-association studies (GWAS).")
-    (license license:gpl3))))
 
 (define-public vcflib ; duplicate? See above
   (let ((commit "3ce827d8ebf89bb3bdc097ee0fe7f46f9f30d5fb"))
