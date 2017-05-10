@@ -232,6 +232,7 @@ location of a putative QTL.")
      `(#:python ,python-2
        #:phases
          (modify-phases %standard-phases
+           (delete 'reset-gzip-timestamps)
            (add-before 'install 'fix-paths
              (lambda* (#:key inputs #:allow-other-keys)
                       (let* (
