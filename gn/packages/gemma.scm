@@ -63,19 +63,19 @@
   #:use-module (srfi srfi-1))
 
 (define-public gemma-git ; guix candidate
-  (let ((commit "2de4bfab3"))
+  (let ((commit "5675bdf0422f63f81752bb1fcf7b436bc30bf9b7"))
   (package
     (name "gemma-git")
-    (version (string-append "0.9.5-" commit ))
+    (version (string-append "0.95.2a" commit ))
     (source (origin
              (method git-fetch)
              (uri (git-reference
-                   (url "https://github.com/genenetwork/GEMMA.git")
+                   (url "https://github.com/xiangzhou/GEMMA")
                    (commit commit)))
              (file-name (string-append name "-" commit))
              (sha256
               (base32
-               "1drffdgwbzgiw9sf55ghl3zjv58f8i9kfz0zys5mp6n06syp4ira"))))
+               "0qc8dx8m4cqggnin2vsbc9l91ay6h04l0mpjv8z0wcickqb4lby6"))))
     (inputs `(
               ("gsl" ,gsl)
               ("lapack" ,lapack)
