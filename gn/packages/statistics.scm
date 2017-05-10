@@ -214,32 +214,6 @@
     "Contains methods for detection of clusters in hierarchical clustering dendrograms.")
   (license license:gpl2+)))
 
-(define-public r-rcppeigen
-(package
-  (name "r-rcppeigen")
-  (version "0.3.2.5.1")
-  (source
-    (origin
-      (method url-fetch)
-      (uri (cran-uri "RcppEigen" version))
-      (sha256
-        (base32
-          "1j41kyr2xsq0ha3dhd0iz62kghkvhnf8zp15qb4kgj6www086b4s"))))
-  (properties `((upstream-name . "RcppEigen")))
-  (build-system r-build-system)
-  (propagated-inputs
-    `(("r-matrix" ,r-matrix)
-      ("r-rcpp" ,r-rcpp)
-      ;; ("r-stats" ,r-stats)
-      ;; ("r-utils" ,r-utils)
-      ))
-  (home-page "http://eigen.tuxfamily.org")
-  (synopsis
-    "'Rcpp' Integration for the 'Eigen' Templated Linear Algebra Library")
-  (description
-    "R and 'Eigen' integration using 'Rcpp'. 'Eigen' is a C++ template library for linear algebra: matrices, vectors, numerical solvers and related algorithms.  It supports dense and sparse matrices on integer, floating point and complex numbers, decompositions of such matrices, and solutions of linear systems.  Its performance on many algorithms is comparable with some of the best implementations based on 'Lapack' and level-3 'BLAS'. .  The 'RcppEigen' package includes the header files from the 'Eigen' C++ template library (currently version 3.2.5).  Thus users do not need to install 'Eigen' itself in order to use 'RcppEigen'. .  Since version 3.1.1, 'Eigen' is licensed under the Mozilla Public License (version 2); earlier version were licensed under the GNU LGPL version 3 or later. 'RcppEigen' (the 'Rcpp' bindings/bridge to 'Eigen') is licensed under the GNU GPL version 2 or later, as is the rest of 'Rcpp'.")
-  (license #f)))
-
 
 (define-public r-matrix
 (package
