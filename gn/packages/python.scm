@@ -501,3 +501,276 @@ objects using the same basic infrastructure and syntax.  Numarray is
 now part of the numpy package, though some legacy software still uses
 the older versions.")
     (license license:gpl2))) ; actualy PyRAF http://www.stsci.edu/resources/software_hardware/pyraf/LICENSE
+
+(define-public python-rst2ansi
+  (package
+    (name "python-rst2ansi")
+    (version "0.1.5")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append
+             "https://pypi.python.org/packages/3c/19/b29bc04524e7d1dbde13272fbb67e45a8eb2"
+             "4bb6d112cf10c46162b350d7/rst2ansi-"
+             version
+             ".tar.gz"))
+       (sha256
+        (base32
+         "0vzy6gd60l79ff750scl0sz48r1laalkl6md6dwzah4dcadgn5qv"))))
+    (build-system python-build-system)
+    (native-inputs
+     `(("python-docutils" ,python-docutils)))
+    (home-page
+     "https://github.com/Snaipe/python-rst-to-ansi")
+    (synopsis
+     "Python rst converter to ansi-decorated console output")
+    (description
+     "Python module dedicated to rendering RST (reStructuredText) documents to
+ ansi-escaped strings suitable for display in a terminal")
+    (license license:expat)))
+
+(define-public python-mando
+  (package
+    (name "python-mando")
+    (version "0.4")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append
+             "https://pypi.python.org/packages/2b/52/684d9ab8c2ccfb611275f2e44d3ebc76a6a6"
+             "c56f4afacd2e91237fa07ec3/mando-"
+             version
+             ".tar.gz"))
+       (sha256
+        (base32
+         "1bicmnxzxi9bxz9bfgv2rk7297f5rbwc9v2hg2rqfqr6h27zjgw5"))))
+    (build-system python-build-system)
+    (propagated-inputs
+     `(("python-rst2ansi" ,python-rst2ansi)))
+    (home-page "https://mando.readthedocs.org/")
+    (synopsis
+     "Wrapper around argparse, allowing creation of complete CLI applications")
+    (description
+     "This package is a wrapper around argparse, allowing you to write complete CLI
+ applications in seconds while maintaining all the flexibility")
+    (license license:expat)))
+
+(define-public python-flake8-polyfill
+  (package
+    (name "python-flake8-polyfill")
+    (version "1.0.1")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append
+             "https://pypi.python.org/packages/71/6e/dd7e0f0ddf146213d0cc0b963b3d4c643482"
+             "3ebe3992c29b523182bbf785/flake8-polyfill-"
+             version
+             ".tar.gz"))
+       (sha256
+        (base32
+         "02gn2wxvh9vnf7m7dld7ca4l60mg5c370hv3swwppkngwaqmcw67"))))
+    (build-system python-build-system)
+    (inputs
+     `(("python-flake8" ,python-flake8)))
+    (home-page "https://gitlab.com/pycqa/flake8")
+    (synopsis "Polyfill package for Flake8 plugins")
+    (description
+     "This package that provides some compatibility helpers for Flake8 plugins that
+ intend to support Flake8 2.x and 3.x simultaneously")
+    (license license:expat)))
+
+(define-public python-radon
+  (package
+    (name "python-radon")
+    (version "1.4.2")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append
+             "https://pypi.python.org/packages/91/48/5853fa60811d6cec1043bd60b057aafc2270"
+             "6e19ab90b33d8df8155e6b8d/radon-"
+             version
+             ".tar.gz"))
+       (sha256
+        (base32
+         "15xyzavfj1zwb5rn07fs2wfi6ccys9b5q0s8hmnpqz712mifl92g"))))
+    (build-system python-build-system)
+    (inputs
+     `(("python-colorama" ,python-colorama)
+       ("python-flake8-polyfill"
+        ,python-flake8-polyfill)
+       ("python-mando" ,python-mando)))
+    (home-page "https://radon.readthedocs.org/")
+    (synopsis "Code Metrics in Python")
+    (description "Radon is a Python tool which computes various code metrics.  Supported
+ metrics are:
+ * raw metrics: SLOC, comment lines, blank lines, &c.
+ * Cyclomatic Complexity (i.e.  McCabe’s Complexity)
+ * Halstead metrics (all of them)
+ * the Maintainability Index (a Visual Studio metric)")
+    (license license:expat)))
+
+(define-public python-xenon
+  (package
+    (name "python-xenon")
+    (version "0.5.0")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append
+             "https://pypi.python.org/packages/0d/60/649ef1567dac76bf680d5d7498e37d9bf745"
+             "f6a6214da7e5dba530c25481/xenon-"
+             version
+             ".tar.gz"))
+       (sha256
+        (base32
+         "1c03nis488ls50cgcq7ghbj55nxsi6a9683lsvg6z6vaj4smc8g8"))))
+    (build-system python-build-system)
+    (inputs
+     `(("python-pyyaml" ,python-pyyaml)
+       ("python-radon" ,python-radon)
+       ("python-requests" ,python-requests)
+       ("python-pyyaml" ,python-pyyaml)))
+    (home-page "https://xenon.readthedocs.org/")
+    (synopsis
+     "Monitor code metrics for Python on your CI server")
+    (description
+     "Xenon is a monitoring tool based on Radon.  It monitors code’s complexity.  Ideally,
+ Xenon is run every time code is committed.  Through command line options, various
+ thresholds can be set for the complexity of code.  It will fail (i.e.  it will exit with
+ a non-zero exit code) when any of these requirements is not met")
+    (license license:expat)))
+
+(define-public python-ddt
+  (package
+    (name "python-ddt")
+    (version "1.1.1")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append
+             "https://pypi.python.org/packages/83/96/21a2cef2962a07768854d411a97366292669"
+             "3173887560895e962cf952c9/ddt-"
+             version
+             ".tar.gz"))
+       (sha256
+        (base32
+         "1c00ikkxr7lha97c81k938bzhgd4pbwamkjn0h4nkhr3xk00zp6n"))))
+    (build-system python-build-system)
+    (inputs
+     `(("python-six" ,python-six)
+       ("python-pyyaml" ,python-pyyaml)
+       ("python-mock" ,python-mock)
+       ("python-nose" ,python-nose)))
+    (home-page "https://github.com/txels/ddt")
+    (synopsis "Data-Driven/Decorated Tests")
+    (description "DDT (Data-Driven Tests) allows you to multiply one test case by running
+ it with different test data, and make it appear as multiple test cases")
+    (license (license:non-copyleft
+               "https://github.com/txels/ddt/blob/master/LICENSE.md"))))
+
+(define-public python-auxlib
+  (package
+    (name "python-auxlib")
+    (version "0.0.42")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append
+             "https://pypi.python.org/packages/92/c7/304b651594ebc31fbe1aa201369ab7bd7e71"
+             "8928543d8cc1063d46319c30/auxlib-"
+             version
+             ".tar.gz"))
+       (sha256
+        (base32
+         "0pczs3a8ck3z6qhl2fldhm2dl2czxl4yj9kkhx47qlpwhy0726xj"))))
+    (build-system python-build-system)
+    (arguments
+     '(#:phases
+       (modify-phases %standard-phases
+         (add-before 'build
+                     'set-source-date-epoch
+                     (lambda* (set-source-date-epoch #:rest _)
+                       ;; guix sets environment variable SOURCE_DATE_EPOCH=1 in
+                       ;; guix/build/gnu-build-system.scm file
+                       ;; The build for auxlib, however, calls the make_wheelfile_inner
+                       ;; function which reads from SOURCE_DATE_EPOCH, giving a date in
+                       ;; 1970, which is earlier than 1980, causing the error
+                       ;; 'ZIP does not support timestamps before 1980'
+                       ;; This phase fixes the issue, borrowing from phase
+                       ;; ensure-no-mtimes-pre-1980 in guix/build/python-build-system.scm
+                       (setenv "SOURCE_DATE_EPOCH" "315619200")
+                       #t)))))
+    (inputs
+     `(("python-enum34" ,python-enum34)
+       ("python-tox" ,python-tox)
+       ("python-flake8" ,python-flake8)
+       ("python-radon" ,python-radon)
+       ("python-xenon" ,python-xenon)
+       ("python-wheel" ,python-wheel)
+       ("python-ddt" ,python-ddt)
+       ("python-testtools" ,python-testtools)
+       ("python-pycrypto" ,python-pycrypto)
+       ("python-pyyaml" ,python-pyyaml)
+       ("python-requests" ,python-requests)))
+    (native-inputs
+     `(("python-pytest" ,python-pytest)
+       ("python-pytest-cov" ,python-pytest-cov)))
+    (home-page "https://github.com/kalefranz/auxlib")
+    (synopsis
+     "Auxiliary library to the python standard library")
+    (description
+     "Auxlib is an auxiliary library to the python standard library.  The aim is to
+ provide core generic features for app development in python.  Auxlib fills in some
+ python stdlib gaps much like pytoolz has for functional programming, pyrsistent has for
+ data structures, or boltons has generally")
+    (license license:isc)))
+
+(define-public python-pycosat
+  (package
+    (name "python-pycosat")
+    (version "0.6.1")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append
+             "https://pypi.python.org/packages/76/0f/16edae7bc75b79376f2c260b7a459829785f"
+             "08e463ecf74a8ccdef62dd4a/pycosat-"
+             version
+             ".tar.gz"))
+       (sha256
+        (base32
+         "1kl3wh1f47rc712n4bmwplbx3fqz3x9i1b587jrbpmvdva4c8f6l"))))
+    (build-system python-build-system)
+    (home-page
+     "https://github.com/ContinuumIO/pycosat")
+    (synopsis "Bindings to picosat (a SAT solver)")
+    (description
+     "This package provides efficient Python bindings to picosat on the C level, i.e.
+ when importing pycosat, the picosat solver becomes part of the Python process itself")
+    (license license:expat)))
+
+(define-public python-typing
+  (package
+    (name "python-typing")
+    (version "3.5.3.0")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append
+             "https://pypi.python.org/packages/b6/0c/53c42edca789378b8c05a5496e689f44e5dd"
+             "82bc6861d1ae5a926ee51b84/typing-"
+             version
+             ".tar.gz"))
+       (sha256
+        (base32
+         "08gz3grrh3vph5ib1w5x1ssnpzvj077x030lx63fxs4kwg3slbfa"))))
+    (build-system python-build-system)
+    (home-page
+     "https://docs.python.org/3.5/library/typing.html")
+    (synopsis "Type Hints for Python")
+    (description "This module supports type hints as specified by PEP 484.  The most
+ fundamental support consists of the types Any, Union, Tuple, Callable, TypeVar, and
+ Generic.  For full specification please see PEP 484")
+    (license license:psfl)))
