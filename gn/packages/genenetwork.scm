@@ -175,20 +175,20 @@ location of a putative QTL.")
     (license license:agpl3+))))
 
 (define-public genenetwork2
-  (let ((commit "a8fcff44d3bd768d02e7ed0c80b84d2516bdad2a"))
+  (let ((commit "edfb1d0cc19e3734c8e8acd7c74d76aff1bc76f9"))
   (package
     (name "genenetwork2")
-    (version (string-append "2.0-" (string-take commit 7) ))
+    (version (string-append "2.10rc2-" (string-take commit 7) ))
     (source (origin
              (method git-fetch)
              (uri (git-reference
-                   ;; (url "https://github.com/genenetwork/genenetwork2.git")
-                   (url "https://github.com/genenetwork/genenetwork2_diet.git")
+                   (url "https://pjotrp@gitlab.com/genenetwork/gn2_diet.git")
+                   ;; (url "https://github.com/genenetwork/genenetwork2_diet.git")
                    (commit commit)))
              (file-name (string-append name "-" (string-take commit 7)))
              (sha256
               (base32
-               "1zs6jgrpwzxmfjz03whnaw8q6h8f53mycl440p058gfn8x7pd618"))))
+               "12d2hp5529h9i6f5yarzkhprya8nv7gzvscd4m64s777hlz3hj31"))))
     (propagated-inputs `(  ;; propagated for development purposes
               ("python" ,python-2) ;; probably superfluous
               ("r" ,r)
