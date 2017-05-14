@@ -27,7 +27,7 @@
   #:use-module (gnu packages compression)
   #:use-module (gnu packages cpio)
   #:use-module (gnu packages curl)
-  #:use-module (gnu packages doxygen)
+  #:use-module (gnu packages documentation)
   #:use-module (gnu packages datastructures)
   #:use-module (gnu packages check)
   #:use-module (gnu packages file)

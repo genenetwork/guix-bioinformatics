@@ -175,7 +175,7 @@ location of a putative QTL.")
     (license license:agpl3+))))
 
 (define-public genenetwork2
-  (let ((commit "edfb1d0cc19e3734c8e8acd7c74d76aff1bc76f9"))
+  (let ((commit "48c04bb5c6a8d974697f6904857ebd377c4c0ce5"))
   (package
     (name "genenetwork2")
     (version (string-append "2.10rc2-" (string-take commit 7) ))
@@ -188,7 +188,7 @@ location of a putative QTL.")
              (file-name (string-append name "-" (string-take commit 7)))
              (sha256
               (base32
-               "12d2hp5529h9i6f5yarzkhprya8nv7gzvscd4m64s777hlz3hj31"))))
+               "0mwhq3w436xk57p02kjwmjl2xjbi3m1s0a6m2qk54bpr1k50zxqi"))))
     (propagated-inputs `(  ;; propagated for development purposes
               ("python" ,python-2) ;; probably superfluous
               ("r" ,r)
