@@ -251,9 +251,9 @@ powerful language for representing information.")
 (define-public python2-shellescape
   (package-with-python2 python-shellescape))
 
-(define-public python-mysqlclient ; guix ready
+(define-public python-mysqlclient-old ; guix ready
 (package
-  (name "python-mysqlclient")
+  (name "python-mysqlclient-old")
   (version "1.3.7")
   (source
     (origin
@@ -280,8 +280,8 @@ powerful language for representing information.")
   (description "Python interface to MySQL")
   (license license:gpl3)))
 
-(define-public python2-mysqlclient
-  (package-with-python2 python-mysqlclient))
+(define-public python2-mysqlclient-old
+  (package-with-python2 python-mysqlclient-old))
 
 
 (define-public python2-htmlgen-gn ; guix obsolete

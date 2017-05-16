@@ -330,7 +330,7 @@ for use in genome-wide association studies (GWAS).")
   (build-system r-build-system)
   (inputs `(
             ("r-qtl" ,r-qtl)
-            ;; ("r-mass" ,r-mass)
+            ("r-mass" ,r-mass)
             ))
   (home-page "https://github.com/DannyArends/CTLmapping")
   (synopsis "R package for analysis of genetical genomic data to identify genetic loci associated with correlation changes in quantitative traits (CTL)")
