@@ -95,7 +95,7 @@
                   (lambda* (#:key outputs #:allow-other-keys)
                            (let ((out (assoc-ref outputs "out")))
                              (install-file "bin/gemma" (string-append out "/bin"))))))
-       #:tests? #f))
+       #:tests? #t))
     (home-page "")
     (synopsis "Tool for genome-wide efficient mixed model association")
     (description "GEMMA is the software implementing the Genome-wide
@@ -103,3 +103,40 @@ Efficient Mixed Model Association algorithm for a standard linear
 mixed model and some of its close relatives for genome-wide
 association studies (GWAS).")
     (license license:gpl3))))
+
+(define-public gemma
+  (package
+   (name "gemma")
+   (version "0.95a") ; this build fails
+   (source (origin
+            (method url-fetch)
+            (uri (string-append "https://github.com/xiangzhou/GEMMA/archive/v"
+                                version ".tar.gz"))
+            (sha256
+             (base32
+              "1h0fqs45gy0n1nr76pzzagrv1cbcp7zaz34ljqb09jljc7c3lw9p"))))
+   (inputs `(("gsl" ,gsl)
+             ("lapack" ,lapack)
+             ("zlib" ,zlib)))
+   (build-system gnu-build-system)
+   (arguments
+    `(#:make-flags '("FORCE_DYNAMIC=1")
+      #:phases
+      (modify-phases %standard-phases
+                     (delete 'configure)
+                     (add-before 'build 'bin-mkdir
+                                 (lambda _
+                                   (mkdir-p "bin")
+                                   ))
+                     (replace 'install
+                              (lambda* (#:key outputs #:allow-other-keys)
+                                (let ((out (assoc-ref outputs "out")))
+                                  (install-file "bin/gemma" (string-append out "/bin"))))))
+      #:tests? #f)) ; no tests included
+   (home-page "")
+   (synopsis "Tool for genome-wide efficient mixed model association")
+   (description "GEMMA is software implementing the Genome-wide
+Efficient Mixed Model Association algorithm for a standard linear
+mixed model and some of its close relatives for genome-wide
+association studies (GWAS).")
+   (license license:gpl3)))
