@@ -95,7 +95,7 @@
                   (lambda* (#:key outputs #:allow-other-keys)
                            (let ((out (assoc-ref outputs "out")))
                              (install-file "bin/gemma" (string-append out "/bin"))))))
-       #:tests? #t))
+       #:tests? #f))
     (home-page "")
     (synopsis "Tool for genome-wide efficient mixed model association")
     (description "GEMMA is the software implementing the Genome-wide

@@ -42,52 +42,6 @@
   #:use-module (guix build-system trivial)
   #:use-module (srfi srfi-1))
 
-(define-public speedtest-cli ; guix submitted
-  (package
-    (name "speedtest-cli")
-    (version "1.0.2")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (string-append
-              "https://github.com/sivel/speedtest-cli/archive/v" version ".tar.gz"))
-        (sha256
-          (base32
-            "1ir9fqwr7cl9kfq7dgh9vkydkwf59wsx0cwbzbffw8i313xhzxa1"))))
-    (build-system python-build-system)
-    (home-page
-      "https://github.com/sivel/speedtest-cli")
-    (synopsis
-      "Internet bandwidth tester")
-    (description
-      "Command line interface for testing internet bandwidth using speedtest.net")
-    (license license:asl2.0)))
-
-(define-public python-flask-sqlalchemy-in-mainline ; guix main line
-  (package
-   (name "python-flask-sqlalchemy")
-   (version "2.1")
-   (source
-    (origin
-     (method url-fetch)
-     (uri (pypi-uri "Flask-SQLAlchemy" version))
-     (sha256
-      (base32
-       "1i9ps5d5snih9xlqhrvmi3qfiygkmqzxh92n25kj4pf89kj4s965"))))
-   (build-system python-build-system)
-   (inputs
-    `(("python-setuptools" ,python-setuptools)
-      ("python-flask" ,python-flask)
-      ("python-sqlalchemy" ,python-sqlalchemy)
-      ))
-   (home-page
-    "http://github.com/mitsuhiko/flask-sqlalchemy")
-   (synopsis
-    "Adds SQLAlchemy support to your Flask application")
-   (description
-    "Adds SQLAlchemy support to your Flask application")
-   (license license:bsd-3)))
-
 (define-public python2-flask-sqlalchemy ; guix?
   (package-with-python2 python-flask-sqlalchemy))
 
@@ -250,39 +204,6 @@ powerful language for representing information.")
 
 (define-public python2-shellescape
   (package-with-python2 python-shellescape))
-
-(define-public python-mysqlclient-old ; guix ready
-(package
-  (name "python-mysqlclient-old")
-  (version "1.3.7")
-  (source
-    (origin
-      (method url-fetch)
-      (uri (pypi-uri "mysqlclient" version))
-      (sha256
-        (base32
-          "06qzgwk7j66k8ggx51i6wxx0f0zsppp7w4bh6gjd0cr9rfs86jn7"))))
-  (build-system python-build-system)
-  (propagated-inputs
-   `(
-     ("mysql" ,mysql)
-     ("python-nose" ,python-nose)
-     ("zlib" ,zlib)
-     ("openssl" ,openssl)
-     ("libgcrypt" ,libgcrypt)
-     ("python-setuptools" ,python-setuptools)
-     ))
-  (arguments
-   `(#:tests? #f))   ; wants a running MySQL server
-  (home-page
-    "https://github.com/PyMySQL/mysqlclient-python")
-  (synopsis "Python interface to MySQL")
-  (description "Python interface to MySQL")
-  (license license:gpl3)))
-
-(define-public python2-mysqlclient-old
-  (package-with-python2 python-mysqlclient-old))
-
 
 (define-public python2-htmlgen-gn ; guix obsolete
 (package
