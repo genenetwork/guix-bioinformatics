@@ -24,23 +24,19 @@
               (base32
                "05w2wiqw84lb778nkivn421m1kk6h66xk4cjjqng1bri3d2kfzjv"))))
     (build-system trivial-build-system)
-    (native-inputs `(
-                     ("source" ,source)))
+    (native-inputs `(("source" ,source)))
     (arguments
      `(#:modules ((guix build utils))
        #:builder
        (let* ((out (assoc-ref %outputs "out"))
-              (name "gn2_data_s")
-              (tarfn (string-append name ".tar"))
-              (targetdir (string-append out "/share/genenetwork2/"))
+              (name "Twitter-Post-Fetcher")
+              (targetdir (string-append out "/share/genenetwork2/javascript/" name))
               )
            (begin
              (use-modules (guix build utils))
              (let ((source (assoc-ref %build-inputs "source"))
                    )
                (and
-                    ; (zero? (system* lz4unpack source "-d" tarfn))
-                    ; (zero? (system* tar "xf" tarfn))
                     ; (mkdir-p targetdir)
                     (copy-recursively source targetdir)
                     ))))))
