@@ -123,60 +123,8 @@ bootstrap resampling to estimate the confidence region for the
 location of a putative QTL.")
     (license license:gpl2+))))
 
-(define-public genenetwork1 ; guix incomplete
-  (let ((commit "d622c803b"))
-  (package
-    (name "genenetwork1")
-    (version (string-append "1.0-" commit ))
-    (source (origin
-             (method git-fetch)
-             (uri (git-reference
-                   (url "https://github.com/genenetwork/genenetwork.git")
-                   ;; (url "https://github.com/pjotrp/genenetwork.git")
-                   (commit commit)))
-             (file-name (string-append name "-" commit))
-             (sha256
-              (base32
-               "14fzfcm4vl20mlhxjslfa01i1nmxpk8lbxmfvpq6dyfc22ir62py"))))
-    (propagated-inputs `(
-              ("python" ,python-2) ;; probably superfluous
-              ("r" ,r)
-    ))
-    (inputs `(
-              ;; http://spring211.uthsc.edu/gn/thirdparty.tbz
-              ;; graphviz-2.22.2  htmlgen  json  numarray-1.5.2  piddle  PIL  pp-1.5.7  pyx  pyXLWriter  svg
-              ("mysql" ,mysql)
-              ("nginx" ,nginx)
-              ("graphviz" ,graphviz)
-              ; ("python2-jinja2" ,python2-jinja2)
-              ; ("python2-sqlalchemy" ,python2-sqlalchemy)
-              ; ("python2-setuptools" ,python2-setuptools)
-              ; ("python2-scipy" ,python2-scipy)
-              ;; looks like python-numarray is not needed
-              ; ("python2-numpy" ,python2-numpy)
-              ; ("python2-pandas" ,python2-pandas)
-              ; ("python2-passlib" ,python2-passlib)
-              ; ("python2-redis" ,python2-redis)
-              ; ("python2-requests" ,python2-requests)
-              ; ("python2-simplejson" ,python2-simplejson)
-              ; ("python2-pyyaml" ,python2-pyyaml)
-              ;; python-yolk is not needed
-              ("python2-pil" ,python2-pil)
-              ("python2-numarray" ,python2-numarray)
-              ("plink" ,plink) ;; gn1
-              ; ("r-qtl" ,r-qtl)
-              ))
-    (build-system python-build-system)
-    (arguments
-     `(#:python ,python-2
-       #:tests? #f))   ; no 'setup.py test'
-    (home-page "http://genenetwork.org/")
-    (synopsis "Full genenetwork services")
-    (description "Genenetwork installation sumo.")
-    (license license:agpl3+))))
-
 (define-public genenetwork2
-  (let ((commit "48c04bb5c6a8d974697f6904857ebd377c4c0ce5"))
+  (let ((commit "5fa50d0779ea8a8713b0fba9ee45ecd50e6f28e3"))
   (package
     (name "genenetwork2")
     (version (string-append "2.10rc2-" (string-take commit 7) ))
@@ -189,7 +137,7 @@ location of a putative QTL.")
              (file-name (string-append name "-" (string-take commit 7)))
              (sha256
               (base32
-               "0mwhq3w436xk57p02kjwmjl2xjbi3m1s0a6m2qk54bpr1k50zxqi"))))
+               "1z674057hcmfv58b0k2v4n1wgcrnfpshpr3xhm2nchwm22lq8krw"))))
     (propagated-inputs `(  ;; propagated for development purposes
               ("python" ,python-2) ;; probably superfluous
               ("r" ,r)
