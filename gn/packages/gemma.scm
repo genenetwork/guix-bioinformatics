@@ -107,14 +107,14 @@ association studies (GWAS).")
 (define-public gemma
   (package
    (name "gemma")
-   (version "0.95a") ; this build fails
+   (version "0.96")
    (source (origin
             (method url-fetch)
             (uri (string-append "https://github.com/xiangzhou/GEMMA/archive/v"
                                 version ".tar.gz"))
             (sha256
              (base32
-              "1h0fqs45gy0n1nr76pzzagrv1cbcp7zaz34ljqb09jljc7c3lw9p"))))
+              "055ynn16gd12pf78n4vr2a9jlwsbwzajpdnf2y2yilg1krfff222"))))
    (inputs `(("gsl" ,gsl)
              ("lapack" ,lapack)
              ("zlib" ,zlib)))
