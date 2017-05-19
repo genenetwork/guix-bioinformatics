@@ -43,6 +43,7 @@
   #:use-module (gnu packages xml)
   #:use-module (gnu packages zip)
   #:use-module (gnu packages bootstrap)
+  #:use-module (gnu packages version-control)
   #:use-module (gn packages bioinformatics)
   #:use-module (gn packages gemma)
   #:use-module (gn packages javascript)
@@ -124,22 +125,23 @@ location of a putative QTL.")
     (license license:gpl2+))))
 
 (define-public genenetwork2
-  (let ((commit "5fa50d0779ea8a8713b0fba9ee45ecd50e6f28e3"))
+  (let ((commit "93e1b740a5503d9c29c058e9f0c99e6b7396f1c0"))
   (package
     (name "genenetwork2")
-    (version (string-append "2.10rc2-" (string-take commit 7) ))
+    (version (string-append "2.10rc3-" (string-take commit 7) ))
     (source (origin
              (method git-fetch)
              (uri (git-reference
                    (url "https://pjotrp@gitlab.com/genenetwork/gn2_diet.git")
                    ;; (url "https://github.com/genenetwork/genenetwork2_diet.git")
                    (commit commit)))
-             (file-name (string-append name "-" (string-take commit 7)))
+             (file-name (string-append name "-" version))
              (sha256
               (base32
-               "1z674057hcmfv58b0k2v4n1wgcrnfpshpr3xhm2nchwm22lq8krw"))))
+               "1a3j7a4bpfki44w57wlk8qm51wkcvj2kjp95rk64n3in25l8w3x9"))))
     (propagated-inputs `(  ;; propagated for development purposes
               ("python" ,python-2) ;; probably superfluous
+              ("git" ,git)
               ("r" ,r)
               ("r-ctl" ,r-ctl)
               ("r-phewas" ,r-phewas)
@@ -183,6 +185,20 @@ location of a putative QTL.")
        #:phases
          (modify-phases %standard-phases
            (delete 'reset-gzip-timestamps)
+           (add-after 'unpack 'fix-paths-scripts
+             (lambda* _
+               (substitute* "bin/genenetwork2"
+                            (("/usr/bin/env") (which "env"))
+                            (("python ") (string-append (which "python2") " "))
+                            (("readlink") (which "readlink"))
+                            (("dirname") (which "dirname"))
+                            (("basename") (which "basename"))
+                            (("cat") (which "cat"))
+                            (("echo") (which "echo"))
+                            (("redis-server") (which "redis-server"))
+                            (("git") (which "git"))
+                            ; (("read") (which "read"))
+                            )#t))
            (add-before 'install 'fix-paths
              (lambda* (#:key inputs #:allow-other-keys)
                       (let* (
@@ -193,7 +209,7 @@ location of a putative QTL.")
                              )
 
                (substitute* '("etc/default_settings.py")
-                            (("^GENENETWORK_FILES =.*") (string-append "GENENETWORK_FILES = \"" datafiles "\"\n" ))
+                            (("^GENENETWORK_FILES +=.*") (string-append "GENENETWORK_FILES = \"" datafiles "\"\n" ))
                             (("^PYLMM_COMMAND =.*") (string-append "PYLMM_COMMAND = \"" pylmmcmd "\"\n" ))
                             (("^PLINK_COMMAND =.*") (string-append "PLINK_COMMAND = \"" plink2cmd "\"\n" ))
                             (("^GEMMA_COMMAND =.*") (string-append "GEMMA_COMMAND = \"" gemmacmd "\"\n" ))
