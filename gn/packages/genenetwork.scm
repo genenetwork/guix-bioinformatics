@@ -125,7 +125,7 @@ location of a putative QTL.")
     (license license:gpl2+))))
 
 (define-public genenetwork2
-  (let ((commit "93e1b740a5503d9c29c058e9f0c99e6b7396f1c0"))
+  (let ((commit "1538ffd33af19e6ac922b4ee85fe701408968dfd"))
   (package
     (name "genenetwork2")
     (version (string-append "2.10rc3-" (string-take commit 7) ))
@@ -138,10 +138,11 @@ location of a putative QTL.")
              (file-name (string-append name "-" version))
              (sha256
               (base32
-               "1a3j7a4bpfki44w57wlk8qm51wkcvj2kjp95rk64n3in25l8w3x9"))))
+               "0ji929xgzypyhchcfy9xa1sz04w322ibs2khc8s3qiddxjqdglrz"))))
     (propagated-inputs `(  ;; propagated for development purposes
               ("python" ,python-2) ;; probably superfluous
               ("git" ,git)
+              ("which" ,which)
               ("r" ,r)
               ("r-ctl" ,r-ctl)
               ("r-phewas" ,r-phewas)
@@ -197,7 +198,7 @@ location of a putative QTL.")
                             (("echo") (which "echo"))
                             (("redis-server") (which "redis-server"))
                             (("git") (which "git"))
-                            ; (("read") (which "read"))
+                            (("which") (which "which")) ; three wiches in a row!
                             )#t))
            (add-before 'install 'fix-paths
              (lambda* (#:key inputs #:allow-other-keys)

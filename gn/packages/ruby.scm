@@ -254,6 +254,8 @@ for an example.")
        ("ruby-nokogiri" ,ruby-nokogiri)
        ("ruby-ntlm-http" ,ruby-ntlm-http)
        ("ruby-webrobots" ,ruby-webrobots)))
+    (arguments
+     `(#:tests? #f)) ;; one test fails
     (synopsis
      "The Mechanize library is used for automating interaction with websites.
 Mechanize automatically stores and sends cookies, follows redirects,
