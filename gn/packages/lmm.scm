@@ -46,17 +46,17 @@
 (define-public r-lmmlite
   (package
     (name "r-lmmlite")
-    (version "0.1-9")
+    (version "0.1-11")
     (source (origin
               ;; We use the git reference, because there's no CRAN package (yet)
               (method git-fetch)
               (uri (git-reference
                     (url "https://github.com/kbroman/lmmlite.git")
-                    (commit "5b833d5")))
+                    (commit "7c0d6316e10b4c2e4384a495e437698d57a4df4a")))
               (file-name (string-append name "-" version "-checkout"))
               (sha256
                (base32
-                "0v4z4qxa8ki9hlmdwlgslchvg21nqkkq6135nx6w63xikjffxcba"))))
+                "0ka55frvwi1xmkflflg6kgpf5qrxhrl2gmfyhryygb0ghlamlani"))))
     (build-system r-build-system)
     (propagated-inputs
      `(("r-rcppeigen" ,r-rcppeigen)))
