@@ -3,6 +3,7 @@
   #:use-module (guix download)
   #:use-module (guix build-system gnu)
   #:use-module (gnu packages)
+  #:use-module (gnu packages base)
   #:use-module (guix git-download)
   #:use-module ((guix licenses) #:prefix license:)
   )
@@ -20,6 +21,9 @@
                 (file-name (string-append name "-" version "-checkout"))
                 (sha256
                  (base32 "11savxc6qliqv25kv59qak6j7syjv95hbpmq1szn1mzn32g2gc25"))))
+    (inputs `(
+              ("coreutils" ,coreutils) ; for mktemp and od
+              ))
       (build-system gnu-build-system)
       (arguments
        `(
@@ -28,6 +32,14 @@
          (modify-phases %standard-phases
            (delete 'configure)
            (delete 'build)
+           (add-after 'unpack 'replace-binary-paths
+                      (lambda _
+                        (substitute* "source/2.0/src/shell/shunit2"
+                                     (("/bin/sh") (which "sh"))
+                                     (("exec mktemp") (string-append "exec " (which "mktemp")))
+                                     (("/usr/bin/od") (which "od"))
+                                     )#t))
+
            (replace 'install
              (lambda* (#:key outputs #:allow-other-keys)
                (let* ((out (assoc-ref outputs "out"))

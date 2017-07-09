@@ -91,7 +91,32 @@
     (description #f)
     (license #f)))
 
-(define-public qtlreaper ; guix obsolete - but used in GN2
+(define-public qn-server ; guix obsolete - but used in GN2
+  (let ((commit "dd9c7fb2a9d5fa40b4054e1bcb7c57905d98d5f8"))
+  (package
+    (name "qn-server")
+    (version (string-append "1.1-gn2-" (string-take commit 7) ))
+    (source (origin
+             (method git-fetch)
+             (uri (git-reference
+                   ;; (url "https://github.com/genenetwork/genenetwork2.git")
+                   (url "https://github.com/pjotrp/QTLreaper.git")
+                   (commit commit)))
+             (file-name (string-append name "-" (string-take commit 7)))
+             (sha256
+              (base32
+               "1ldcvyk8y8w6f4ci04hzx85sknd5a3h424p5bfi4fz32sm2p7fja"))))
+    (build-system python-build-system)
+    (arguments
+     `(#:python ,python-2
+       #:tests? #f))   ; no 'setup.py test' really!
+    (home-page "")
+    (synopsis "GeneNetwork REST API")
+    (description
+"")
+    (license license:gpl2+))))
+
+(define-public qtlreaper
   (let ((commit "dd9c7fb2a9d5fa40b4054e1bcb7c57905d98d5f8"))
   (package
     (name "qtlreaper")
@@ -143,6 +168,7 @@ location of a putative QTL.")
               ("python" ,python-2) ;; probably superfluous
               ("git" ,git)
               ("which" ,which)
+              ("grep" ,grep)
               ("r" ,r)
               ("r-ctl" ,r-ctl)
               ("r-phewas" ,r-phewas)
@@ -198,6 +224,8 @@ location of a putative QTL.")
                             (("echo") (which "echo"))
                             (("redis-server") (which "redis-server"))
                             (("git") (which "git"))
+                            (("grep") (which "grep"))
+                            (("rm") (which "rm"))
                             (("which") (which "which")) ; three wiches in a row!
                             )#t))
            (add-before 'install 'fix-paths

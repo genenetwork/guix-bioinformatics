@@ -63,28 +63,42 @@
   #:use-module (srfi srfi-1))
 
 (define-public gemma-git ; guix candidate
-  (let ((commit "5675bdf0422f63f81752bb1fcf7b436bc30bf9b7"))
+  (let ((commit "c978835c3630286414df6076d38aad16277cdb6b"))
   (package
     (name "gemma-git")
-    (version (string-append "0.95.2a" commit ))
+    (version (string-append "0.97-" (string-take commit 7)))
     (source (origin
              (method git-fetch)
              (uri (git-reference
-                   (url "https://github.com/xiangzhou/GEMMA")
+                   (url "https://github.com/genenetwork/GEMMA")
                    (commit commit)))
              (file-name (string-append name "-" commit))
              (sha256
               (base32
-               "0qc8dx8m4cqggnin2vsbc9l91ay6h04l0mpjv8z0wcickqb4lby6"))))
+               "1hw8y7vka79v84lv5vyhkinx864yjh1wd8vfd16cvqs1bi8qw3n2"))))
     (inputs `(
               ("gsl" ,gsl)
+              ("eigen" ,eigen)
               ("lapack" ,lapack)
+              ("openblas" ,openblas)
               ("zlib" ,zlib)
               ))
+    (native-inputs ; for running tests
+     `(("shunit2" ,shunit2)
+       ("which" ,which)
+       ))
+
     (build-system gnu-build-system)
     (arguments
-     `(#:make-flags '(" FORCE_DYNAMIC=1")
+     `(#:make-flags
+       (list
+        (string-append "EIGEN_INCLUDE_PATH="
+                       (assoc-ref %build-inputs "eigen")
+                       "/include/eigen3/")
+        "FORCE_DYNAMIC=1"
+        "WITH_OPENBLAS=1")
        #:phases
+        ; "/include/eigen3/"
         (modify-phases %standard-phases
          (delete 'configure)
          (add-before 'build 'bin-mkdir
@@ -95,8 +109,8 @@
                   (lambda* (#:key outputs #:allow-other-keys)
                            (let ((out (assoc-ref outputs "out")))
                              (install-file "bin/gemma" (string-append out "/bin"))))))
-       #:tests? #f))
-    (home-page "")
+       #:parallel-tests? #f))
+    (home-page "http://www.xzlab.org/software.html")
     (synopsis "Tool for genome-wide efficient mixed model association")
     (description "GEMMA is the software implementing the Genome-wide
 Efficient Mixed Model Association algorithm for a standard linear
