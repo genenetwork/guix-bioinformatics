@@ -55,7 +55,7 @@
   #:use-module (gnu packages vim)
   #:use-module (gnu packages web)
   #:use-module (gnu packages xml)
-  #:use-module (gnu packages zip)
+  ; #:use-module (gnu packages zip)
   #:use-module (gnu packages bootstrap)
   #:use-module (gn packages ldc)
   #:use-module (gn packages ldc)
@@ -66,7 +66,7 @@
   (let ((commit "c978835c3630286414df6076d38aad16277cdb6b"))
   (package
     (name "gemma-git")
-    (version (string-append "0.97-" (string-take commit 7)))
+    (version (string-append "0.97-pre-" (string-take commit 7)))
     (source (origin
              (method git-fetch)
              (uri (git-reference

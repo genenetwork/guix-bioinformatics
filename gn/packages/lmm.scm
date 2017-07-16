@@ -38,7 +38,6 @@
   #:use-module (gnu packages vim)
   #:use-module (gnu packages web)
   #:use-module (gnu packages xml)
-  #:use-module (gnu packages zip)
   #:use-module (gnu packages bootstrap)
   #:use-module (srfi srfi-1))
 

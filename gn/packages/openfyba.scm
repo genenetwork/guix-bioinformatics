@@ -27,7 +27,7 @@
   #:use-module (gnu packages textutils)
   #:use-module (gnu packages base)
   ;;#:use-module (gnu packages tls)
-  #:use-module (gnu packages zip)
+  #:use-module (gnu packages compression)
   #:use-module (gnu packages gnupg)
   #:use-module (gnu packages bootstrap)
   #:use-module (guix git-download))
@@ -48,13 +48,13 @@
              ("autoconf" ,autoconf)
              ("automake" ,automake)
              ("libtool" ,libtool)
-             ("libgcrypt" ,libgcrypt)))                                              
+             ("libgcrypt" ,libgcrypt)))
     (build-system gnu-build-system)
      (arguments
      '(#:phases (modify-phases %standard-phases
                     (add-after 'unpack `bootstrap
                       (lambda _
-                        (zero? (system* "autoreconf" "-vfi")))))))    
+                        (zero? (system* "autoreconf" "-vfi")))))))
     (home-page "http://labs.kartverket.no/sos/")
     (synopsis "source code release of the FYBA library")
     (description "OpenFYBA is the source code release of the FYBA library.")

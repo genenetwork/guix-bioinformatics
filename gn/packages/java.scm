@@ -33,7 +33,7 @@
   #:use-module (gnu packages java)
   #:use-module (gnu packages perl)
   #:use-module (gnu packages certs)
-  #:use-module (gnu packages zip))
+  )
 
 ;; ----------------------------------------------------------------------------
 ;; WORKING PACKAGES

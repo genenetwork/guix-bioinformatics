@@ -31,7 +31,7 @@
   #:use-module (gnu packages libedit)
   #:use-module (gnu packages llvm)
   #:use-module (gnu packages textutils)
-  #:use-module (gnu packages zip))
+)
 
 (define-public ldc-0.17.2 ; guix in main line
   (package
@@ -192,4 +192,4 @@
               (base32
                "12cak7yqmsgjlflx0dp6fwmwb9dac25amgi86n0bb95ard3547wy")))))))))
 
-(define-public ldc ldc-1.1.0-patched)
+(define-public ldc-patched ldc-1.1.0-patched)

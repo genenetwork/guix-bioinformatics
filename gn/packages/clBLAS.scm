@@ -24,10 +24,11 @@
   #:use-module (guix build-system cmake)
   #:use-module (guix packages)
   #:use-module (gnu packages algebra)
+  #:use-module (gnu packages autotools)
   #:use-module (gnu packages bootstrap)
   #:use-module (gnu packages base)
-  #:use-module (gnu packages autotools)
   #:use-module (gnu packages curl)
+  #:use-module (gnu packages compression)
   #:use-module (gnu packages gawk)
   #:use-module (gnu packages cmake)
   #:use-module (gnu packages boost)
@@ -46,7 +47,6 @@
   #:use-module (gnu packages python)
   #:use-module (gnu packages xorg)
   #:use-module (gnu packages version-control)
-  #:use-module (gnu packages zip)  
   #:use-module (gnu packages linux))
 
 (define-public clBLAS
@@ -60,8 +60,8 @@
              (sha256
               (base32
                "0adlb02lqzrklfybhnv4n0p37mvkvdi3vqiwa05x2mv05ywnr93j"))))
-    (build-system cmake-build-system)    
-    (arguments `(#:tests? #f 
+    (build-system cmake-build-system)
+    (arguments `(#:tests? #f
                  #:configure-flags '("../clBLAS-2.10/src" "-DBUILD_SHARED_LIBS=ON" "-DCMAKE_BUILD_TYPE=Release" "-DBUILD_TEST=OFF")))
     (native-inputs `(("autoconf" ,autoconf)
         ("automake" ,automake)
@@ -75,7 +75,7 @@
        ("enca" ,enca)
        ("eudev" ,eudev)
        ("fftw-openmpi" ,fftw-openmpi)
-       ("glew" ,glew)       
+       ("glew" ,glew)
        ("libcap" ,libcap)
        ("libjpeg" ,libjpeg)
        ("libltdl" ,libltdl)
@@ -89,12 +89,12 @@
        ("xineramaproto" ,xineramaproto)
        ("libxinerama" ,libxinerama)
        ("libxcursor" ,libxcursor)
-       ("python" ,python-2)))       
+       ("python" ,python-2)))
     (home-page "http://www.glfw.org/")
     (synopsis "glfw is an Open Source, multi-platform library for creating windows with OpenGL contexts and receiving input and events.")
     (description "glfw is an Open Source, multi-platform library for creating windows with OpenGL contexts and receiving input and events.")
     (license (list license:gpl2))))
-    
+
 (define-public ocl-icd
   (package
    (name "ocl-icd")
@@ -113,20 +113,20 @@
              ("ruby" ,ruby)
              ("libtool" ,libtool)
              ("opencl-headers" ,opencl-headers)
-             ("libgcrypt" ,libgcrypt)))                                              
+             ("libgcrypt" ,libgcrypt)))
     (build-system gnu-build-system)
      (arguments
      '(#:phases (modify-phases %standard-phases
                     (add-after 'unpack `bootstrap
                       (lambda _
-                        (zero? (system* "autoreconf" "-vfi")))))))    
+                        (zero? (system* "autoreconf" "-vfi")))))))
     (home-page "https://forge.imag.fr/projects/ocl-icd/")
     (synopsis "OpenCL implementations are provided as ICD (Installable Client Driver).")
     (description "OpenCL implementations are provided as ICD (Installable Client Driver).
     An OpenCL program can use several ICD thanks to the use of an ICD Loader as provided by this project.
     This free ICD Loader can load any (free or non free) ICD")
     (license (list license:gpl2 license:ruby))))
-    
+
 (define-public opencl-headers
 (let ((commit "c1770dc"))
   (package
@@ -160,5 +160,3 @@
     (description "This package provides the Khronos OpenCL headers")
     (home-page "https://www.khronos.org/registry/cl/")
     (license (list license:gpl2)))))
-    
-

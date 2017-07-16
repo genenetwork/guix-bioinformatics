@@ -47,7 +47,6 @@
   #:use-module (gnu packages xorg)
   #:use-module (gnu packages xdisorg)
   #:use-module (gnu packages version-control)
-  #:use-module (gnu packages zip)  
   #:use-module (gnu packages linux))
 
 (define-public beignet
@@ -81,14 +80,14 @@
              ("freeglut" ,freeglut)
              ("mesa-utils" ,mesa-utils)
              ("ncurses" ,ncurses)
-             ("ocl-icd" ,ocl-icd)))                                              
+             ("ocl-icd" ,ocl-icd)))
     (build-system cmake-build-system)
-    (arguments `(#:configure-flags '("-DCMAKE_BUILD_TYPE=Release" "-DCOMPILER=CLANG") #:tests? #f))   
+    (arguments `(#:configure-flags '("-DCMAKE_BUILD_TYPE=Release" "-DCOMPILER=CLANG") #:tests? #f))
     (home-page "https://forge.imag.fr/projects/ocl-icd/")
     (synopsis "Intel's OpenCL framework")
     (description "Intel's OpenCL framework that works with Intel IvyBridge GPUs and above")
     (license license:gpl2)))
-        
+
 (define-public ocl-icd
   (package
    (name "ocl-icd")
@@ -107,20 +106,20 @@
              ("ruby" ,ruby)
              ("libtool" ,libtool)
              ("opencl-headers" ,opencl-headers)
-             ("libgcrypt" ,libgcrypt)))                                              
+             ("libgcrypt" ,libgcrypt)))
     (build-system gnu-build-system)
      (arguments
      '(#:phases (modify-phases %standard-phases
                     (add-after 'unpack `bootstrap
                       (lambda _
-                        (zero? (system* "autoreconf" "-vfi")))))))    
+                        (zero? (system* "autoreconf" "-vfi")))))))
     (home-page "https://forge.imag.fr/projects/ocl-icd/")
     (synopsis "OpenCL implementations are provided as ICD (Installable Client Driver).")
     (description "OpenCL implementations are provided as ICD (Installable Client Driver).
     An OpenCL program can use several ICD thanks to the use of an ICD Loader as provided by this project.
     This free ICD Loader can load any (free or non free) ICD")
     (license license:gpl2)))
-    
+
 (define-public opencl-headers
 (let ((commit "c1770dc"))
   (package
@@ -154,5 +153,3 @@
     (description "This package provides the Khronos OpenCL headers")
     (home-page "https://www.khronos.org/registry/cl/")
     (license license:gpl2))))
-    
-    

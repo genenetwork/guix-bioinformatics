@@ -23,13 +23,13 @@
   #:use-module (guix packages)
   #:use-module (guix download)
   #:use-module (guix build-system gnu)
+  #:use-module (gnu packages bootstrap)
   #:use-module (gnu packages linux)
   #:use-module (gnu packages textutils)
   #:use-module (gnu packages base)
-  #:use-module (gnu packages ruby)
-  #:use-module (gnu packages zip)
+  #:use-module (gnu packages compression)
   #:use-module (gnu packages gnupg)
-  #:use-module (gnu packages bootstrap)
+  #:use-module (gnu packages ruby)
   #:use-module (guix git-download))
 
 (define-public ocl-icd
@@ -50,20 +50,20 @@
              ("ruby" ,ruby)
              ("libtool" ,libtool)
              ("opencl-headers" ,opencl-headers)
-             ("libgcrypt" ,libgcrypt)))                                              
+             ("libgcrypt" ,libgcrypt)))
     (build-system gnu-build-system)
      (arguments
      '(#:phases (modify-phases %standard-phases
                     (add-after 'unpack `bootstrap
                       (lambda _
-                        (zero? (system* "autoreconf" "-vfi")))))))    
+                        (zero? (system* "autoreconf" "-vfi")))))))
     (home-page "https://forge.imag.fr/projects/ocl-icd/")
     (synopsis "OpenCL implementations are provided as ICD (Installable Client Driver).")
     (description "OpenCL implementations are provided as ICD (Installable Client Driver).
     An OpenCL program can use several ICD thanks to the use of an ICD Loader as provided by this project.
     This free ICD Loader can load any (free or non free) ICD")
     (license license:gpl2)))
-    
+
     (define-public opencl-headers
 (let ((commit "c1770dc"))
   (package

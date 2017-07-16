@@ -16,6 +16,7 @@
   #:use-module (gnu packages base)
   #:use-module (gnu packages bioinformatics)
   #:use-module (gnu packages boost)
+  #:use-module (gnu packages bootstrap)
   #:use-module (gnu packages compression)
   #:use-module (gnu packages cpio)
   #:use-module (gnu packages file)
@@ -37,8 +38,6 @@
   #:use-module (gnu packages vim)
   #:use-module (gnu packages web)
   #:use-module (gnu packages xml)
-  #:use-module (gnu packages zip)
-  #:use-module (gnu packages bootstrap)
   #:use-module (srfi srfi-1))
 
 (define-public r-acepack

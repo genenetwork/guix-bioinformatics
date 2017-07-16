@@ -38,8 +38,6 @@
   #:use-module (gnu packages vim)
   #:use-module (gnu packages web)
   #:use-module (gnu packages xml)
-  #:use-module (gnu packages zip)
-  #:use-module (gnu packages bootstrap)
   #:use-module (srfi srfi-1))
 
 (define-public r-intermediate
@@ -183,7 +181,7 @@ genome-wide association studies in structured populations.")
       ("r-qvalue" ,r-qvalue)
     ))
     (arguments
-     `(#:guile ,%bootstrap-guile
+     `(; #:guile ,%bootstrap-guile
        #:modules ((guix build utils))
        #:builder
          (let* ((out  (assoc-ref %outputs "out"))

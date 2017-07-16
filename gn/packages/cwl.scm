@@ -10,9 +10,9 @@
   #:use-module (guix packages)
   #:use-module (guix git-download)
   #:use-module (guix utils)
-  #:use-module (guix build-system gnu)
+  ; #:use-module (guix build-system gnu)
   #:use-module (guix build-system python)
-  #:use-module (guix build-system trivial)
+  ; #:use-module (guix build-system trivial)
   #:use-module (srfi srfi-1))
 
 (define-public python-cwltool ; guix: needs work
@@ -85,6 +85,6 @@
     (description
       "Schema Annotations for Linked Avro Data (SALAD)")
     (license license:asl2.0)))
-    
+
 (define-public python2-schema-salad
   (package-with-python2 python-schema-salad))

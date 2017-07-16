@@ -46,7 +46,6 @@
   #:use-module (gnu packages python)
   #:use-module (gnu packages xorg)
   #:use-module (gnu packages version-control)
-  #:use-module (gnu packages zip)  
   #:use-module (gnu packages linux))
 
 (define-public gtest ; guix check

@@ -48,7 +48,7 @@
   #:use-module (gnu packages web)
   #:use-module (gnu packages xml)
   #:use-module (gnu packages xorg)
-  #:use-module (gnu packages zip)
+  #:use-module (gnu packages compression)
   #:use-module (guix packages)
   #:use-module (guix download)
   #:use-module (guix git-download)
@@ -76,9 +76,9 @@
     ;; `(("python-setuptools" ,python-setuptools)))
     (arguments
      `(#:python ,python-2
-       #:tests? #f)) 
+       #:tests? #f))
     (home-page "https://github.com/FilipeMaia/afnumpy")
     (synopsis "Numerical library array processing of numbers, strings, records and objects")
     (description
      "A GPGPU-accelerated drop-in of python's numpy")
-    (license license:gpl2)))) 
+    (license license:gpl2))))
