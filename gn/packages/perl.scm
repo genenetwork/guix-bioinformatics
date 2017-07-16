@@ -60,3 +60,36 @@
    (synopsis "Parse and format time values")
    (description "ParseDate")
    (license #f)))
+
+(define-public logtodo
+  (let ((commit "acda8f2a7aa67f590ae03487306794b039eaba68"))
+  (package
+    (name "logtodo")
+    (version (string-append "1.0.5-" (string-take commit 7) ))
+    (source (origin
+             (method git-fetch)
+             (uri (git-reference
+                   ;; (url "https://github.com/genenetwork/genenetwork2.git")
+                   (url "https://gitlab.com/pjotrp/logtodo.git")
+                   (commit commit)))
+             (file-name (string-append name "-" (string-take commit 7)))
+             (sha256
+              (base32
+               "0bcjnb09sxgv7c45nk4sipxw38a6ldhmijgn614h7bibwqyvybmc"))))
+    (build-system perl-build-system)
+    (propagated-inputs `(("perl-time-parsedate" ,perl-time-parsedate)))
+    (arguments
+     `(
+       #:phases
+        (modify-phases %standard-phases
+         (delete 'configure)
+         (delete 'build)
+         (replace 'install
+                  (lambda* (#:key outputs #:allow-other-keys)
+                           (let ((out (assoc-ref outputs "out")))
+                             (install-file "logtodo" (string-append out "/bin"))))))
+       #:tests? #f))   ; no 'setup.py test' really!
+    (home-page "https://gitlab.com/pjotrp/logtodo")
+    (synopsis "Pjotr's time logger")
+    (description "None")
+    (license license:gpl2+))))
