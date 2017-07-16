@@ -62,6 +62,9 @@
    (license #f)))
 
 (define-public logtodo
+  ;; this package does not have a proper perl build, so no wrapper
+  ;; will be added and we need to explicitely set
+  ;; export PERL5LIB=~/.guix-profile/lib/perl5/site_perl/5.24.0
   (let ((commit "acda8f2a7aa67f590ae03487306794b039eaba68"))
   (package
     (name "logtodo")
