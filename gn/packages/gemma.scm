@@ -62,7 +62,7 @@
   #:use-module (srfi srfi-1))
 
 (define-public gemma-git ; guix candidate
-  (let ((commit "c978835c3630286414df6076d38aad16277cdb6b"))
+  (let ((commit "c91dfaef84d08ce151eecca50bf8ffdaf4b327f6"))
   (package
     (name "gemma-git")
     (version (string-append "0.97-pre-" (string-take commit 7)))
@@ -74,7 +74,7 @@
              (file-name (string-append name "-" commit))
              (sha256
               (base32
-               "1hw8y7vka79v84lv5vyhkinx864yjh1wd8vfd16cvqs1bi8qw3n2"))))
+               "1ix4p6av88i6jfv84v2qqcmdlnxznp64bm93avrrl68v04jq6psm"))))
     (inputs `(
               ("gsl" ,gsl)
               ("eigen" ,eigen)
@@ -83,7 +83,8 @@
               ("zlib" ,zlib)
               ))
     (native-inputs ; for running tests
-     `(("shunit2" ,shunit2)
+     `(("perl" ,perl)
+       ("shunit2" ,shunit2)
        ("which" ,which)
        ))
 
