@@ -152,7 +152,7 @@ location of a putative QTL.")
   (let ((commit "1538ffd33af19e6ac922b4ee85fe701408968dfd"))
   (package
     (name "genenetwork2")
-    (version (string-append "2.10rc3-" (string-take commit 7) ))
+    (version (string-append "2.10rc4-" (string-take commit 7) ))
     (source (origin
              (method git-fetch)
              (uri (git-reference
