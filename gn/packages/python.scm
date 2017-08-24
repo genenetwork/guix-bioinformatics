@@ -259,26 +259,25 @@ project)")
   (description #f)
   (license #f)))
 
-(define-public python2-pil ; guix obsolete
+(define-public python2-pil1 ; guix obsolete
   (package
-    (name "python2-pil")
+    (name "python2-pil1")
     (version "1.1.6")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (string-append
-              "http://effbot.org/downloads/Imaging-"
-              version ".tar.gz"))
-        (sha256
-          (base32
-            "141zidl3s9v4vfi3nsbg42iq1lc2a932gprqr1kij5hrnn53bmvx"))
-       (modules '((guix build utils)))
-       (snippet
-        ;; Adapt to newer freetype. As the package is unmaintained upstream,
-        ;; there is no use in creating a patch and reporting it.
-        '(substitute* "_imagingft.c"
-           (("freetype/")
-            "freetype2/freetype/")))))
+    (source (origin
+             (method url-fetch)
+             (uri (string-append
+                   "http://files.genenetwork.org/software/contrib/Imaging-"
+                   version "-gn.tar.gz"))
+             (sha256
+              (base32
+               "0jhinbcq2k899c76m1jc5a3z39k6ajghiavpzi6991hbg6xhxdzg"))
+    (modules '((guix build utils)))
+    (snippet
+     ;; Adapt to newer freetype. As the package is unmaintained upstream,
+     ;; there is no use in creating a patch and reporting it.
+     '(substitute* "_imagingft.c"
+                   (("freetype/")
+                    "freetype2/freetype/")))))
     (build-system python-build-system)
     (inputs
       `(("freetype" ,freetype)
@@ -323,7 +322,7 @@ capabilities to the Python interpreter.")
 (define-public python2-piddle-gn ; guix obsolete
   (package
     (name "python2-piddle")
-    (version "1.0.15-gn")
+    (version "1.0.15-gn-PIL1")
     (source (origin
      (method url-fetch)
      (uri (string-append
@@ -331,13 +330,13 @@ capabilities to the Python interpreter.")
 version ".tgz"))
      (sha256
       (base32
-       "05gjnn31v7p0kh58qixrpcizcxqf3b7zv4a5kk8nsmqwgxh0c6gq"))))
+       "1m89xp0d7d5a0nd483qir7zq99ci6wab1r018i698wjdpr8zf86b"))))
 
     (build-system python-build-system)
     (native-inputs
      `(("python2-setuptools" ,python2-setuptools)))
     (propagated-inputs
-     `(("python2-pil" ,python2-pil)))
+     `(("python2-pil1" ,python2-pil1)))
     (arguments
      `(
        #:python ,python-2
