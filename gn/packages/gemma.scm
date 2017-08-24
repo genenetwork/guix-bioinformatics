@@ -61,6 +61,31 @@
   #:use-module (gn packages shell)
   #:use-module (srfi srfi-1))
 
+
+(define-public gsl
+  (package
+   (name "gsl")
+    (version "1.16")
+    (source (origin
+              (method url-fetch)
+              (uri (string-append "mirror://gnu/gsl/gsl-"
+                                  version ".tar.gz"))
+              (sha256
+               (base32
+                "26yfs5n444s03np1naj6yp1fsysd42kdscxzkg0k2yvfjixx0ijd"))
+              ))
+    (build-system gnu-build-system)
+    (home-page "https://www.gnu.org/software/gsl/")
+    (synopsis "Numerical library for C and C++")
+    (description
+     "The GNU Scientific Library is a library for numerical analysis in C
+and C++.  It includes a wide range of mathematical routines, with over 1000
+functions in total.  Subject areas covered by the library include:
+differential equations, linear algebra, Fast Fourier Transforms and random
+numbers.")
+    (license license:gpl3+)))
+
+
 (define-public gemma-git ; guix candidate
   (let ((commit "c91dfaef84d08ce151eecca50bf8ffdaf4b327f6"))
   (package
