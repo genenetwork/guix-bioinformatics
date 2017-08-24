@@ -19,6 +19,7 @@
   #:use-module (gnu packages boost)
   #:use-module (gnu packages compression)
   #:use-module (gnu packages cpio)
+  #:use-module (gnu packages cran)
   #:use-module (gnu packages file)
   #:use-module (gnu packages gcc)
   #:use-module (gnu packages java)
@@ -117,14 +118,14 @@ genome-wide association studies in structured populations.")
 (define-public r-fgsea
   (package
     (name "r-fgsea")
-    (version "1.0.2")
+    (version "1.2.1")
     (source
      (origin
        (method url-fetch)
        (uri (bioconductor-uri "fgsea" version))
        (sha256
         (base32
-         "1yq4s4g4xxzcpkv9dpbg29444iy38vfgwj4wgr47rjjq8njfblfx"))))
+         "1vl9i889800avi8valkl0bz9jrjz71anzmal245ls9gwydrv0dpc"))))
     (build-system r-build-system)
     ; (native-inputs
                                         ;  `(("gfortran" ,gfortran)))
@@ -145,14 +146,14 @@ genome-wide association studies in structured populations.")
 (define-public r-qvalue
   (package
     (name "r-qvalue")
-    (version "2.6.0")
+    (version "2.8.0")
     (source
      (origin
        (method url-fetch)
        (uri (bioconductor-uri "qvalue" version))
        (sha256
         (base32
-         "1dijh11v1kr29gnikq09pkdvm3qwmp1a406ahx9l4j6mgn8hlsfq"))))
+         "1dxdwa767a9r8n61r272ypi09qblcdfpzzwkmri74y5mbp1r3y4i"))))
     (build-system r-build-system)
     (propagated-inputs
      `(("r-reshape2" ,r-reshape2)

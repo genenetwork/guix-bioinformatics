@@ -61,7 +61,6 @@
   #:use-module (gn packages shell)
   #:use-module (srfi srfi-1))
 
-
 (define-public gsl
   (package
    (name "gsl")
@@ -86,30 +85,30 @@ numbers.")
     (license license:gpl3+)))
 
 
-(define-public gemma-git ; guix candidate
-  (let ((commit "c91dfaef84d08ce151eecca50bf8ffdaf4b327f6"))
+(define-public gemma-git-gn2 ; guix candidate
+  (let ((commit "48da44bf2da05f76008b083923ddf5701b9c029a"))
   (package
-    (name "gemma-git")
-    (version (string-append "0.97-pre-" (string-take commit 7)))
+    (name "gemma-git-gn2")
+    (version (string-append "0.97-gn2-" (string-take commit 7)))
     (source (origin
              (method git-fetch)
              (uri (git-reference
                    (url "https://github.com/genenetwork/GEMMA")
                    (commit commit)))
-             (file-name (string-append name "-" commit))
+             (file-name (string-append name "-" version))
              (sha256
               (base32
-               "1ix4p6av88i6jfv84v2qqcmdlnxznp64bm93avrrl68v04jq6psm"))))
+               "1bvf03aimk1nywv4z8dr75f2qi8mav346w787wzddckakn29yymb"))))
     (inputs `(
               ("gsl" ,gsl)
               ("eigen" ,eigen)
+              ("shunit2" ,shunit2)
               ("lapack" ,lapack)
               ("openblas" ,openblas)
               ("zlib" ,zlib)
               ))
     (native-inputs ; for running tests
      `(("perl" ,perl)
-       ("shunit2" ,shunit2)
        ("which" ,which)
        ))
 
@@ -121,6 +120,7 @@ numbers.")
                        (assoc-ref %build-inputs "eigen")
                        "/include/eigen3/")
         "FORCE_DYNAMIC=1"
+        "DEBUG=1"
         "WITH_OPENBLAS=1")
        #:phases
         ; "/include/eigen3/"
@@ -143,7 +143,7 @@ mixed model and some of its close relatives for genome-wide
 association studies (GWAS).")
     (license license:gpl3))))
 
-(define-public gemma
+(define-public gemma-gn2
   (package
    (name "gemma")
    (version "0.96")
