@@ -9,7 +9,7 @@
   #:use-module (guix build-system cmake)
   #:use-module (guix build-system perl)
   #:use-module (guix build-system python)
-  ;; #:use-module (guix build-system ruby)
+  #:use-module (guix build-system ruby)
   #:use-module (guix build-system r)
   #:use-module (guix build-system trivial)
   #:use-module (gn packages statistics)
@@ -61,9 +61,9 @@
   #:use-module (gn packages shell)
   #:use-module (srfi srfi-1))
 
-(define-public gsl
+(define-public gsl1
   (package
-   (name "gsl")
+   (name "gsl1")
     (version "1.16")
     (source (origin
               (method url-fetch)
@@ -86,19 +86,19 @@ numbers.")
 
 
 (define-public gemma-git-gn2 ; guix candidate
-  (let ((commit "48da44bf2da05f76008b083923ddf5701b9c029a"))
+  (let ((commit "ffc99d62013b1a5025b21cc385dd9892360ebe49"))
   (package
     (name "gemma-git-gn2")
-    (version (string-append "0.97-gn2-" (string-take commit 7)))
+    (version (string-append "0.97.2-gn2-" (string-take commit 7)))
     (source (origin
              (method git-fetch)
              (uri (git-reference
-                   (url "https://github.com/genenetwork/GEMMA")
+                   (url "https://github.com/genetics-statistics/GEMMA")
                    (commit commit)))
              (file-name (string-append name "-" version))
              (sha256
               (base32
-               "1bvf03aimk1nywv4z8dr75f2qi8mav346w787wzddckakn29yymb"))))
+               "0v68p469a5x8m0sdh408zbxc8gqb5ysqpp5hvh8h51sjf8lwyxv6"))))
     (inputs `(
               ("gsl" ,gsl)
               ("eigen" ,eigen)
@@ -179,3 +179,24 @@ Efficient Mixed Model Association algorithm for a standard linear
 mixed model and some of its close relatives for genome-wide
 association studies (GWAS).")
    (license license:gpl3)))
+
+(define-public gemma-wrapper
+  (package
+    (name "gemma-wrapper")
+    (version "0.0.1")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (rubygems-uri "bio-gemma-wrapper" version))
+       (sha256
+        (base32
+         "16csqx5y63i5z0zkk1nq671n0vba482faskgsp1x1h75majqjdql"))))
+    (build-system ruby-build-system)
+    (propagated-inputs `(("gemma-git-gn2" ,gemma-git-gn2)))
+    (arguments
+     `(#:tests? #f))
+    (synopsis
+     "Gemma wrapper for LOCO and caching")
+    (description "Gemma wrapper")
+    (home-page "https://rubygems.org/gems/bio-gemma-wrapper")
+    (license license:gpl3)))
