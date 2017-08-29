@@ -71,7 +71,7 @@
                                   version ".tar.gz"))
               (sha256
                (base32
-                "26yfs5n444s03np1naj6yp1fsysd42kdscxzkg0k2yvfjixx0ijd"))
+                "0lrgipi0z6559jqh82yx8n4xgnxkhzj46v96dl77hahdp58jzg3k"))
               ))
     (build-system gnu-build-system)
     (home-page "https://www.gnu.org/software/gsl/")
