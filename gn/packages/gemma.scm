@@ -192,9 +192,18 @@ association studies (GWAS).")
         (base32
          "16csqx5y63i5z0zkk1nq671n0vba482faskgsp1x1h75majqjdql"))))
     (build-system ruby-build-system)
-    (propagated-inputs `(("gemma-git-gn2" ,gemma-git-gn2)))
+    (inputs `(("gemma-git-gn2" ,gemma-git-gn2)))
     (arguments
-     `(#:tests? #f))
+     `(#:tests? #f
+       #:phases
+       (modify-phases %standard-phases
+         (add-before
+          'install 'set-gemma-path
+          (lambda* (#:key outputs #:allow-other-keys)
+                   (let ((out (assoc-ref outputs "out")))
+                     (substitute* "bin/gemma-wrapper"
+                      (("GEMMA_COMMAND=options[:gemma_command]")
+                       (string-append "GEMMA_COMMAND=" (which "gemma"))))))))))
     (synopsis
      "Gemma wrapper for LOCO and caching")
     (description "Gemma wrapper")
