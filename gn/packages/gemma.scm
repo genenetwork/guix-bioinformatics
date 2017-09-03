@@ -183,14 +183,14 @@ association studies (GWAS).")
 (define-public gemma-wrapper
   (package
     (name "gemma-wrapper")
-    (version "0.0.1")
+    (version "0.92.2")
     (source
      (origin
        (method url-fetch)
        (uri (rubygems-uri "bio-gemma-wrapper" version))
        (sha256
         (base32
-         "16csqx5y63i5z0zkk1nq671n0vba482faskgsp1x1h75majqjdql"))))
+         "08apz0imsxzwhzv2iicq2g5zx1iq1vlfrhk7khsfaydshbq5g741"))))
     (build-system ruby-build-system)
     (inputs `(("gemma-git-gn2" ,gemma-git-gn2)))
     (arguments
@@ -198,12 +198,14 @@ association studies (GWAS).")
        #:phases
        (modify-phases %standard-phases
          (add-before
-          'install 'set-gemma-path
+          'build 'set-gemma-path
           (lambda* (#:key outputs #:allow-other-keys)
-                   (let ((out (assoc-ref outputs "out")))
+            (let ((out (assoc-ref outputs "out")))
                      (substitute* "bin/gemma-wrapper"
-                      (("GEMMA_COMMAND=options[:gemma_command]")
-                       (string-append "GEMMA_COMMAND=" (which "gemma"))))))))))
+                      ; (("gemma_command = ENV['GEMMA_COMMAND']")
+                      (("gemma_command = ENV.*")
+                       (string-append "gemma_command = '" (which "gemma") "'")))
+                     ))))))
     (synopsis
      "Gemma wrapper for LOCO and caching")
     (description "Gemma wrapper")
