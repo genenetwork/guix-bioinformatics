@@ -47,8 +47,8 @@
   #:use-module (gn packages phewas)
   #:use-module (gn packages python)
   #:use-module (gn packages statistics)
+  #:use-module (gn packages web)
   #:use-module (srfi srfi-1))
-
 
 (define-public yaj
   (let ((md5 "93e745e9c"))
@@ -70,6 +70,7 @@
        ("python-flask" ,python-flask)
        ("python-jinja2" ,python-jinja2)
        ("python-mako" ,python-mako)
+       ("web-bootstrap-native-css" ,web-bootstrap-native-css)
        ))
     (arguments
      `(#:modules ((guix build utils))

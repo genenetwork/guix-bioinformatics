@@ -9,7 +9,7 @@
   #:use-module (guix build-system trivial)
   #:use-module (srfi srfi-1))
 
-(define-public web-bootstrap-css
+(define-public web-bootstrap-native-css
   (let ((commit "2e48d7ee29d4063e3bd2024ff83ddc50a550c4dd"))
   (package
     (name "web-bootstrap-native-css")
