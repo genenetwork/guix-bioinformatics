@@ -65,12 +65,14 @@
     (build-system trivial-build-system)
     (native-inputs `(("unzip" ,unzip)
                      ("source" ,source)))
+    (inputs `(("sassc" ,sassc)))
     (propagated-inputs
      `(("python" ,python)
        ("python-flask" ,python-flask)
        ("python-jinja2" ,python-jinja2)
        ("python-mako" ,python-mako)
        ("web-bootstrap-native-css" ,web-bootstrap-native-css)
+       ("sassc" ,sassc)
        ))
     (arguments
      `(#:modules ((guix build utils))
