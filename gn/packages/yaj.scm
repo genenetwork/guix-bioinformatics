@@ -65,11 +65,12 @@
     (build-system trivial-build-system)
     (native-inputs `(("unzip" ,unzip)
                      ("source" ,source)))
-    (inputs `(("python" ,python)
-              ("python2-flask" ,python2-flask)
-              ("python2-jinja2" ,python2-jinja2)
-              ; ("python2-mak" ,python2-mak)
-             ))
+    (propagated-inputs
+     `(("python" ,python)
+       ("python-flask" ,python-flask)
+       ("python-jinja2" ,python-jinja2)
+       ("python-mako" ,python-mako)
+       ))
     (arguments
      `(#:modules ((guix build utils))
        #:builder
