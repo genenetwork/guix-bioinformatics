@@ -65,26 +65,23 @@
     (build-system trivial-build-system)
     (native-inputs `(("unzip" ,unzip)
                      ("source" ,source)))
-    (inputs `(("python" ,python)))
-    ;           ("python2-flask" ,python2-flask)
-    ;           ("python2-jinja2" ,python2-jinja2)
-    ;           ("python2-mak" ,python2-mak)
-    ;           ))
-
-    ; (arguments
-    ;  `(#:modules ((guix build utils))
-    ;    #:python ,python-2
-    ;    #:builder #f))
+    (inputs `(("python" ,python)
+              ("python2-flask" ,python2-flask)
+              ("python2-jinja2" ,python2-jinja2)
+              ; ("python2-mak" ,python2-mak)
+             ))
     (arguments
      `(#:modules ((guix build utils))
-       #:builder (begin
-                   (use-modules (guix build utils))
-                   (let ((source (assoc-ref %build-inputs "source"))
-                         (unzip (string-append (assoc-ref %build-inputs "unzip") "/bin/unzip"))
-                         )
-                   (and (mkdir "db")
-                        (zero? (system* unzip source "-d" "db"))
-                        (chdir "db"))))))
+       #:builder
+       (begin
+         (use-modules (guix build utils))
+         (let ((target (string-append (assoc-ref %outputs "out")
+                                      "/share")))
+             (write target)
+             (mkdir-p target)
+             ; (copy-recursively (assoc-ref %build-inputs "source") target)
+             #t))))
+
     (home-page "http://github.com/pjotrp/yaj/")
     (synopsis "Yet another journal")
     (description "YAJ.")
