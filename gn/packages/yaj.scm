@@ -71,6 +71,7 @@
        ("python-flask" ,python-flask)
        ("python-jinja2" ,python-jinja2)
        ("python-mako" ,python-mako)
+       ("python-misaka" ,python-misaka)
        ("web-bootstrap" ,web-bootstrap)
        ("sassc" ,sassc)
        ))
