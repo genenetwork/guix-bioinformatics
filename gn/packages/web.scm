@@ -10,6 +10,44 @@
   #:use-module (guix build-system trivial)
   #:use-module (srfi srfi-1))
 
+; <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+
+(define-public web-jquery
+  (package
+   (name "web-jquery")
+   (version "3.2.1")
+   (source
+    (origin
+     (method url-fetch)
+     ; https://github.com/jquery/jquery/archive/3.2.1.zip
+     (uri (string-append "https://github.com/jquery/jquery/archive/" version ".zip"))
+     (file-name (string-append name "-" version))
+     (sha256
+      (base32 "0a8sq7a52bh3a4slf03yfclwsv4iadlzmha4v6kqfby5sd66si18"))))
+   (build-system trivial-build-system)
+   (native-inputs `(("source" ,source)
+                    ("unzip" ,unzip)))
+   (arguments
+    `(#:modules ((guix build utils))
+      #:builder
+      (let* ((out (assoc-ref %outputs "out"))
+             (name "jquery")
+             (targetdir (string-append out "/share/web/" name))
+             )
+        (begin
+          (use-modules (guix build utils))
+          (let ((source (assoc-ref %build-inputs "source"))
+                   (unzip (string-append (assoc-ref %build-inputs "unzip") "/bin/unzip"))
+                )
+            (and
+             (mkdir-p targetdir)
+             (zero? (system* unzip source "-d" targetdir))
+             ))))))
+   (home-page "http://jquery.com/")
+   (synopsis "JQuery web framework")
+   (description "jQuery.")
+   (license license:expat)))
+
 (define-public web-bootstrap
   (let ((commit "betabeta"))
   (package

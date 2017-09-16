@@ -72,6 +72,7 @@
        ("python-jinja2" ,python-jinja2)
        ("python-mako" ,python-mako)
        ("python-misaka" ,python-misaka)
+       ("python-pygit2" ,python-pygit2)
        ("web-bootstrap" ,web-bootstrap)
        ("sassc" ,sassc)
        ))
