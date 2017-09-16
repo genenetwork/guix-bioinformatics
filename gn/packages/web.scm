@@ -19,7 +19,6 @@
    (source
     (origin
      (method url-fetch)
-     ; https://github.com/jquery/jquery/archive/3.2.1.zip
      (uri (string-append "https://github.com/jquery/jquery/archive/" version ".zip"))
      (file-name (string-append name "-" version))
      (sha256
@@ -40,8 +39,14 @@
                    (unzip (string-append (assoc-ref %build-inputs "unzip") "/bin/unzip"))
                 )
             (and
+             (mkdir-p "source")
+             (chdir "source")
+             (zero? (system* unzip source))
              (mkdir-p targetdir)
-             (zero? (system* unzip source "-d" targetdir))
+             (copy-recursively "jquery-3.2.1/dist" targetdir)
+
+             ; (copy-recursively source targetdir)
+             ; (file-copy (string-append out "/dist/jquery.slim.min.j") source)
              ))))))
    (home-page "http://jquery.com/")
    (synopsis "JQuery web framework")
@@ -78,7 +83,6 @@
                (and
                 (mkdir-p targetdir)
                 (zero? (system* unzip source "-d" targetdir))
-                ; (copy-recursively source targetdir)
                 ))))))
     (home-page "http://getbootstrap.com/")
     (synopsis "Bootstrap web framework")
