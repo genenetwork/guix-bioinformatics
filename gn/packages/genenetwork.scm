@@ -21,6 +21,7 @@
   #:use-module (gnu packages compression)
   #:use-module (gnu packages databases)
   #:use-module (gnu packages cpio)
+  #:use-module (gnu packages elixir)
   #:use-module (gnu packages file)
   #:use-module (gnu packages gcc)
   #:use-module (gnu packages graphviz)
@@ -90,30 +91,43 @@
     (description #f)
     (license #f)))
 
-(define-public qn-server ; guix obsolete - but used in GN2
-  (let ((commit "dd9c7fb2a9d5fa40b4054e1bcb7c57905d98d5f8"))
-  (package
-    (name "qn-server")
-    (version (string-append "1.1-gn2-" (string-take commit 7) ))
-    (source (origin
-             (method git-fetch)
-             (uri (git-reference
-                   ;; (url "https://github.com/genenetwork/genenetwork2.git")
-                   (url "https://github.com/pjotrp/QTLreaper.git")
-                   (commit commit)))
-             (file-name (string-append name "-" (string-take commit 7)))
-             (sha256
-              (base32
-               "1ldcvyk8y8w6f4ci04hzx85sknd5a3h424p5bfi4fz32sm2p7fja"))))
-    (build-system python-build-system)
+(define-public gn-server
+  (let ((md5 "93e745e9c"))
+    (package
+    (name "gn-server")
+    (version "0.0.1")
+    (source
+     (origin
+       (method url-fetch)
+       (uri "http://files.genenetwork.org/raw_database/md5sum.txt") ; any old file
+       (file-name (string-append name "-" md5))
+       (sha256
+        (base32 "1cnkiwid4h0nnf93rm647ji9vhfzjl23arp1xj374la7mmic9jqs"))))
+    (build-system trivial-build-system)
+    (native-inputs `(("unzip" ,unzip)
+                     ("source" ,source)))
+    (inputs `(("sassc" ,sassc)))
+    (propagated-inputs
+     `(("python" ,python)
+       ("elixir" ,elixir)
+       ("mysql" ,mysql)
+       ))
     (arguments
-     `(#:python ,python-2
-       #:tests? #f))   ; no 'setup.py test' really!
-    (home-page "")
-    (synopsis "GeneNetwork REST API")
-    (description
-"")
-    (license license:gpl2+))))
+     `(#:modules ((guix build utils))
+       #:builder
+       (begin
+         (use-modules (guix build utils))
+         (let ((target (string-append (assoc-ref %outputs "out")
+                                      "/share")))
+             (write target)
+             (mkdir-p target)
+             ; (copy-recursively (assoc-ref %build-inputs "source") target)
+             #t))))
+
+    (home-page "http://github.com/genenetwork/gn_server/")
+    (synopsis "GN REST server API")
+    (description "REST Server")
+    (license license:agpl3+))))
 
 (define-public qtlreaper
   (let ((commit "dd9c7fb2a9d5fa40b4054e1bcb7c57905d98d5f8"))
