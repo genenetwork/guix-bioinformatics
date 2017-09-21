@@ -25,6 +25,7 @@
   ; #:use-module (gnu packages ldc)
   #:use-module (gnu packages python)
   #:use-module (gnu packages statistics)
+  #:use-module (gnu packages tls)
   #:use-module (gnu packages vim)
   ; #:use-module (gnu packages web)
   ; #:use-module (gnu packages xml)
@@ -36,7 +37,7 @@
   ; #:use-module (gn packages statistics)
   #:use-module (srfi srfi-1))
 
-(define-public r-gener
+(define-public r-gener ;; poor implementation
   (package
     (name "r-gener")
     (version "2.20.0")
@@ -54,6 +55,54 @@
     (description
      ".")
     (license license:expat))) ; CeCILL-2.0
+
+(define-public r-soap ;; obsolete package and fails to build
+  (package
+    (name "r-soap")
+    (version "1.1.4")
+    (source
+     (origin
+       (method url-fetch)
+       (uri "https://sourceforge.net/projects/rsoap/files/RSOAP/1.1.4/RSOAP-1.1.4.tar.gz/download")
+       (sha256
+        (base32
+         "0vggycbjnjpx2c4q4wgaxfd0ig3prw31gdw9djjkbmzc3crbhj8j"))))
+    (propagated-inputs
+     `(("python" ,python)
+       ("r" ,r)
+       ))
+    (build-system r-build-system)
+    (home-page "https://sourceforge.net/projects/rsoap/")
+    (synopsis "SOAP server for R")
+    (description
+     ".")
+    (license license:expat))) ; CeCILL-2.0
+
+(define-public r-rserve
+  (package
+    (name "r-rserve")
+    (version "1.8-4")
+    (source
+     (origin
+       (method url-fetch)
+       (uri "https://github.com/s-u/Rserve/releases/download/1.8-4/Rserve_1.8-4.tar.gz")
+       (sha256
+        (base32
+         "1dncwiyhy1s1pimb6f2dzs3ivahah5id3chw4r10j92754bxmrn2"))))
+    (propagated-inputs
+     `(
+       ; ("python" ,python)
+       ("r" ,r)
+       ))
+    (inputs `(("zlib" ,zlib)
+              ("openssl" ,openssl)))
+
+    (build-system r-build-system)
+    (home-page "https://github.com/s-u/Rserve")
+    (synopsis "Fast, flexible and powerful server providing access to R from many languages and systems http://RForge.net/Rserve")
+    (description
+     ".")
+    (license license:gpl2)))
 
 (define-public book-evolutionary-genomics
   (let ((md5 "93e745e9c"))
@@ -73,10 +122,9 @@
     (propagated-inputs
      `(("python" ,python)
        ("r" ,r)
-       ))
-    (inputs
-     `(
        ("r-gener" ,r-gener)
+       ("r-biostrings" ,r-biostrings)
+       ("r-rserve" ,r-rserve)
        ))
     (arguments
      `(#:modules ((guix build utils))
