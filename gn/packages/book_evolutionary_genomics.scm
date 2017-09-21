@@ -33,7 +33,7 @@
 
   #:use-module (gn packages bioinformatics)
   #:use-module (gn packages javascript)
-  ; #:use-module (gn packages python)
+  #:use-module (gn packages python)
   ; #:use-module (gn packages statistics)
   #:use-module (srfi srfi-1))
 
@@ -90,10 +90,7 @@
         (base32
          "1dncwiyhy1s1pimb6f2dzs3ivahah5id3chw4r10j92754bxmrn2"))))
     (propagated-inputs
-     `(
-       ; ("python" ,python)
-       ("r" ,r)
-       ))
+     `(("r" ,r)))
     (inputs `(("zlib" ,zlib)
               ("openssl" ,openssl)))
 
@@ -101,7 +98,14 @@
     (home-page "https://github.com/s-u/Rserve")
     (synopsis "Fast, flexible and powerful server providing access to R from many languages and systems http://RForge.net/Rserve")
     (description
-     ".")
+     "Rserve acts as a socket server (TCP/IP or local sockets) which
+allows binary requests to be sent to R. Every connection has a
+separate workspace and working directory. Client-side implementations
+are available for popular languages such as C/C++ and Java, allowing
+any application to use facilities of R without the need of linking to
+R code. Rserve supports remote connection, user authentication and
+file transfer. A simple R client is included in this package as
+well.")
     (license license:gpl2)))
 
 (define-public book-evolutionary-genomics
@@ -121,6 +125,8 @@
                      ("source" ,source)))
     (propagated-inputs
      `(("python" ,python)
+       ("python-biopython" ,python-biopython)
+       ("python-rserve" ,python-rserve)
        ("r" ,r)
        ("r-gener" ,r-gener)
        ("r-biostrings" ,r-biostrings)

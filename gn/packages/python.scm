@@ -148,6 +148,38 @@ powerful language for representing information.")
         `(#:python ,python-2
           #:tests? #f))))) ; 3 tests fail, also outside Guix
 
+(define-public python-rserve
+  (package
+   (name "python-rserve")
+   (version "0.91")
+   (source
+    (origin
+     (method url-fetch)
+                                        ; https://pypi.python.org/packages/27/e8/b23e0e3d38dadc721947bc9f4b6f1b3e5e1e6c26ac67d8ad88376c5555a0/pyRserve-0.9.1.tar.gz#md5=6da1978f908dd7bdc2d22ee5c29238c0
+     (uri (string-append
+           "https://pypi.python.org/packages/27/e8/b23e0e3d38dadc721947bc9f4b6f1b3e5e1e6c26ac67d8ad88376c5555a0/pyRserve-0.9.1.tar.gz"))
+     (sha256
+      (base32
+       "162dg7d0ni035b75qskrjdzd1yyxwnvybcv115aiapcvyfw2vbsm"))))
+   (build-system python-build-system)
+   (propagated-inputs
+    `(
+      ("python-numpy" ,python-numpy)
+      ))
+   (inputs
+    `(("python-setuptools" ,python-setuptools)
+      ("python-pytest" ,python-pytest)
+      ))
+   (home-page "https://pypi.python.org/pypi/pyRserve")
+   (synopsis
+    "RServe.")
+   (description
+    ".")
+   (license license:expat)))
+
+(define-public python2-rserve
+  (package-with-python2 python-rserve))
+
 (define-public python-avro ; guix ready - used by CWL
 (package
   (name "python-avro")
