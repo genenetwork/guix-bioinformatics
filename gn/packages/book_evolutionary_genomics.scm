@@ -1,6 +1,6 @@
 ;; Module that goes with the 'Evolutionary Genomics' book
 
-(define-module (gn packages genenetwork)
+(define-module (gn packages book_evolutionary_genomics)
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (guix packages)
   #:use-module (guix utils)
