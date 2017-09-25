@@ -21,7 +21,7 @@
   #:use-module (gnu packages compression)
   #:use-module (gnu packages databases)
   #:use-module (gnu packages cpio)
-  #:use-module (gnu packages elixir)
+  #:use-module (gn packages elixir)
   #:use-module (gnu packages file)
   #:use-module (gnu packages gcc)
   #:use-module (gnu packages graphviz)
@@ -111,6 +111,7 @@
      `(("python" ,python)
        ("elixir" ,elixir)
        ("mysql" ,mysql)
+       ("gnu-make" ,gnu-make) ; needed for mysqlex
        ))
     (arguments
      `(#:modules ((guix build utils))
