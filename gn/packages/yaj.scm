@@ -58,10 +58,10 @@
     (source
      (origin
        (method url-fetch)
-       (uri "http://files.genenetwork.org/raw_database/md5sum.txt") ; any old file
+       (uri "http://biogems.info/genenetwork2-2.0-a8fcff4.svg") ; any old file
        (file-name (string-append name "-" md5))
        (sha256
-        (base32 "1cnkiwid4h0nnf93rm647ji9vhfzjl23arp1xj374la7mmic9jqs"))))
+        (base32 "0rir1mcn3a8i1mbw3ppgnjl7wg71mapljik7n3v5i8j5ic95mqr5"))))
     (build-system trivial-build-system)
     (native-inputs `(("unzip" ,unzip)
                      ("source" ,source)))
