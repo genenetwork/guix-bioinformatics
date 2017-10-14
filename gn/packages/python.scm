@@ -41,6 +41,29 @@
   #:use-module (guix build-system trivial)
   #:use-module (srfi srfi-1))
 
+
+(define-public python-plotly ; guix candidate
+   ; python-plotly, python-requests, python-pytz
+(package
+  (name "python-plotly")
+  (version "2.1.0")
+  (source
+    (origin
+      (method url-fetch)
+      (uri (pypi-uri "plotly" version))
+      (sha256
+        (base32
+          "1r4y9l5z62sqyd2r205vchlvlc1f7dcgjyagjkxiwywh27f9js7z"))))
+  (build-system python-build-system)
+  (arguments `(#:tests? #f)) ;; No tests.
+  (home-page "https://plot.ly/python/")
+  (synopsis
+    "Python plotting library for collaborative, interactive, publication-quality graphs.")
+  (description
+    "Python plotting library for collaborative, interactive, publication-quality graphs.")
+  (license license:expat))
+)
+
 (define-public python2-flask-sqlalchemy ; guix?
   (package-with-python2 python-flask-sqlalchemy))
 
