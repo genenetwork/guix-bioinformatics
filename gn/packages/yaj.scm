@@ -68,9 +68,11 @@
     (inputs `(("sassc" ,sassc)))
     (propagated-inputs
      `(("python" ,python)
+       ("python-elasticsearch" ,python-elasticsearch)
        ("python-flask" ,python-flask)
        ("python-jinja2" ,python-jinja2)
        ("python-mako" ,python-mako)
+       ("python-markdown" ,python-markdown)
        ("python-misaka" ,python-misaka)
        ("python-pygit2" ,python-pygit2)
        ("web-bootstrap" ,web-bootstrap)
