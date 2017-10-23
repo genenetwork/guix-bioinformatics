@@ -753,10 +753,10 @@ subsequent visualization, annotation and storage of results.")
     ;; LGPLv2.1+
     (license (list license:gpl2 license:lgpl2.1+))))
 
-(define-public plink-ng
+(define-public plink-ng-gn
   (let ((commit "5d1db4313ba0cc976562da233db4aced78975d10"))
   (package
-    (name "plink-ng")
+    (name "plink-ng-gn")
     (version (string-append "1.90b3-" commit )) ; Aug 11, 2016
     (source (origin
              (method git-fetch)
