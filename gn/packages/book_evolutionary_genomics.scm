@@ -23,6 +23,7 @@
   ; #:use-module (gnu packages java)
   ; #:use-module (gnu packages linux)
   ; #:use-module (gnu packages ldc)
+  #:use-module (gnu packages libffi)
   #:use-module (gnu packages perl)
   #:use-module (gnu packages python)
   #:use-module (gnu packages ruby)
@@ -111,10 +112,10 @@ well.")
     (license license:gpl2)))
 
 (define-public book-evolutionary-genomics
-  (let ((commit "591fe14b3f8719277e9fa2db77ae71ba93c21be3"))
+  (let ((commit "53a7aefefcedd52b94b38195f8daae94c07d89db"))
     (package
     (name "book-evolutionary-genomics")
-    (version (string-append "0.2" "-" (string-take commit 7) ))
+    (version (string-append "0.2.1" "-" (string-take commit 7) ))
     (source (origin
              (method git-fetch)
              (uri (git-reference
@@ -123,7 +124,7 @@ well.")
              (file-name (string-append name "-" version))
              (sha256
               (base32
-               "0r7rd760s4lgypn80ik93yg0sm8zqg4n428lrwy5bsx10i75ysqg"))))
+               "00amdba2vjwxjhrikaym2xacszhcmiqyc6iknlhdbi86ccmf5qbp"))))
     (build-system trivial-build-system)
     (native-inputs `(("unzip" ,unzip)
                      ("source" ,source)))
@@ -134,9 +135,11 @@ well.")
        ("r" ,r)
        ("r-gener" ,r-gener)
        ("r-biostrings" ,r-biostrings)
+       ("python-cffi" ,python-cffi)
        ("python-rpy2" ,python-rpy2)
        ("r-rserve" ,r-rserve)
        ("ruby" ,ruby)
+       ("ruby-ffi" ,ruby-ffi)
        ("bioruby" ,bioruby)
        ("perl" ,perl)
        ("bioperl-minimal" ,bioperl-minimal)
