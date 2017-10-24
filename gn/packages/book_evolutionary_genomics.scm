@@ -111,17 +111,19 @@ well.")
     (license license:gpl2)))
 
 (define-public book-evolutionary-genomics
-  (let ((md5 "93e745e9c"))
+  (let ((commit "591fe14b3f8719277e9fa2db77ae71ba93c21be3"))
     (package
     (name "book-evolutionary-genomics")
-    (version "0.0.1")
-    (source
-     (origin
-       (method url-fetch)
-       (uri "http://files.genenetwork.org/raw_database/md5sum.txt") ; any old file
-       (file-name (string-append name "-" md5))
-       (sha256
-        (base32 "1cnkiwid4h0nnf93rm647ji9vhfzjl23arp1xj374la7mmic9jqs"))))
+    (version (string-append "0.2" "-" (string-take commit 7) ))
+    (source (origin
+             (method git-fetch)
+             (uri (git-reference
+                   (url "https://github.com/pjotrp/Cross-language-interfacing.git")
+                   (commit commit)))
+             (file-name (string-append name "-" version))
+             (sha256
+              (base32
+               "0r7rd760s4lgypn80ik93yg0sm8zqg4n428lrwy5bsx10i75ysqg"))))
     (build-system trivial-build-system)
     (native-inputs `(("unzip" ,unzip)
                      ("source" ,source)))
@@ -146,13 +148,14 @@ well.")
        (begin
          (use-modules (guix build utils))
          (let ((target (string-append (assoc-ref %outputs "out")
-                                      "/share")))
+                                      "/share/book-evolutionary-genomics")))
              (write target)
              (mkdir-p target)
-             ; (copy-recursively (assoc-ref %build-inputs "source") target)
+             (copy-recursively (assoc-ref %build-inputs "source") target)
              #t))))
 
     (home-page "http://github.com/pjotrp/")
     (synopsis "Packages for Evolutionary Genomics book")
     (description "More later...")
-    (license license:agpl3+))))
+    (license license:agpl3+)))
+  )
