@@ -42,6 +42,47 @@
   #:use-module (srfi srfi-1))
 
 
+(define-public python2-rpy2
+  (package
+    (name "python2-rpy2")
+    (version "2.7.6")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (pypi-uri "rpy2" version))
+       (sha256
+        (base32
+         "0nhan2qvrw7b7gg5zddwa22kybdv3x1g26vkd7q8lvnkgzrs4dga"))))
+    (build-system python-build-system)
+    (arguments
+     '(#:phases
+       (modify-phases %standard-phases
+         (delete 'check)
+         (add-after 'install 'check
+           (lambda* (#:key outputs inputs #:allow-other-keys)
+             ;; It's easier to run tests after install.
+             ;; Make installed package available for running the tests
+             (add-installed-pythonpath inputs outputs)
+             (zero? (system* "python" "-m" "rpy2.tests" "-v")))))))
+    (propagated-inputs
+     `(("python2-six" ,python2-six)))
+    (inputs
+     `(("readline" ,readline)
+       ("icu4c" ,icu4c)
+       ("pcre" ,pcre)
+       ("r-minimal" ,r-minimal)
+       ("r-survival" ,r-survival)))
+    (native-inputs
+     `(("zlib" ,zlib)))
+    (home-page "http://rpy.sourceforge.net/")
+    (synopsis "Python interface to the R language")
+    (description "rpy2 is a redesign and rewrite of rpy.  It is providing a
+low-level interface to R from Python, a proposed high-level interface,
+including wrappers to graphical libraries, as well as R-like structures and
+functions.")
+    (license license:gpl3+)))
+
+
 (define-public python-plotly ; guix candidate
    ; python-plotly, python-requests, python-pytz
 (package

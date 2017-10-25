@@ -86,19 +86,19 @@ numbers.")
 
 
 (define-public gemma-git-gn2 ; guix candidate
-  (let ((commit "ffc99d62013b1a5025b21cc385dd9892360ebe49"))
+  (let ((commit "715b1c321d9aa7c5eb243982afc3f698e39ce8bc"))
   (package
     (name "gemma-git-gn2")
     (version (string-append "0.97.2-gn2-" (string-take commit 7)))
     (source (origin
              (method git-fetch)
              (uri (git-reference
-                   (url "https://github.com/genetics-statistics/GEMMA")
+                   (url "https://github.com/genenetwork/GEMMA")
                    (commit commit)))
-             (file-name (string-append name "-" version))
+             (file-name (string-append name "-" version "-checkout"))
              (sha256
               (base32
-               "0v68p469a5x8m0sdh408zbxc8gqb5ysqpp5hvh8h51sjf8lwyxv6"))))
+               "1masl1h4l851aipzwd1jh7kbs28aizjla4dlv8hzvv0h2ir742h0"))))
     (inputs `(
               ("gsl" ,gsl)
               ("eigen" ,eigen)
