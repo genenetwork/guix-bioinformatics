@@ -61,7 +61,7 @@
   #:use-module (gn packages shell)
   #:use-module (srfi srfi-1))
 
-(define-public gsl1
+(define-public gsl1 ; supporting older GSL tests
   (package
    (name "gsl1")
     (version "1.16")
@@ -134,6 +134,7 @@ numbers.")
                   (lambda* (#:key outputs #:allow-other-keys)
                            (let ((out (assoc-ref outputs "out")))
                              (install-file "bin/gemma" (string-append out "/bin"))))))
+       ; #:tests? #f
        #:parallel-tests? #f))
     (home-page "http://www.xzlab.org/software.html")
     (synopsis "Tool for genome-wide efficient mixed model association")
