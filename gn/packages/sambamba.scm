@@ -19,10 +19,10 @@
   #:use-module (srfi srfi-1))
 
 (define-public sambamba
-  (let ((commit "52ab1eff7070cd3dafad94a15c9fd6e243a45a4d"))
+  (let ((commit "7cff06533b539a99b4e0db681fb573214d63aae2"))
     (package
       (name "sambamba")
-      (version (string-append "0.6.6-" (string-take commit 7)))
+      (version (string-append "0.6.7-pre1-" (string-take commit 7)))
       (source (origin
         (method git-fetch)
         (uri (git-reference
@@ -31,7 +31,7 @@
         (file-name (string-append name "-" version "-checkout"))
         (sha256
          (base32
-          "16nfvmipa1gj7f8c9lqhh5yffdmaic1pzcrm9281dqwywl9w8hsg"))))
+          "11k2xqgmbvxwki569439kvzf2b0cqy2x21kbgjijwvpqk9j8czx4"))))
       (build-system gnu-build-system)
       (outputs '("out"     ; disable all checks for speed
                  "debug"))
@@ -52,37 +52,35 @@
          ("which" ,which)
          ("htslib-src"
           ,(origin
-             (method url-fetch)
-             (uri "https://github.com/lomereiter/htslib/archive/2f3c3ea7b301f9b45737a793c0b2dcf0240e5ee5.tar.gz")
-             ;;(uri "https://github.com/samtools/htslib/archive/1.3.tar.gz")
-             (file-name "htslib-0.2.0-rc10-271-g2f3c3ea-dirty.tar.gz")
+             (method git-fetch)
+             (uri (git-reference
+                   (url "https://github.com/pjotrp/htslib.git")
+                   (commit "2f3c3ea7b301f9b45737a793c0b2dcf0240e5ee5")))
+             (file-name (string-append "htslib-src-" (string-take commit 7) "-checkout"))
              (sha256
-              (base32 "0bl6w856afnbgdsw8bybsxpqsyf2ba3f12rqh47hhpxvv866g08w"))))
-              ;;(base32 "1bqkif7yrqmiqak5yb74kgpb2lsdlg7y344qa1xkdg7k1l4m86i9"))
-             ;;(patches (list (search-patch "htslib-add-cram_to_bam.patch")))))
+              (base32 "0g38g8s3npr0gjm9fahlbhiskyfws9l5i0x1ml3rakzj7az5l9c9"))))
          ("biod-src"
           ,(origin
              (method git-fetch)
              (uri (git-reference
-                   (url "https://github.com/pjotrp/BioD.git")
-                   (commit "b7f1db860d212ee5fb6f9adfb36c6e783aaeb6f5")))
+                   (url "https://github.com/biod/BioD.git")
+                   (commit "c778e4f2d8bacea7499283ce39f5577b232732c6")))
              (file-name (string-append "biod-src-" (string-take commit 7) "-checkout"))
              (sha256
-              (base32 "01xkdjdn9lb2b4b5ykzhnrk2rjikagav8b3fyac3zafcfq600cr4"))))
+              (base32 "1z90562hg47i63gx042wb3ak2vqjg5z7hwgn9bp2pdxfg3nxrw37"))))
          ("dlang-undeaD-src"
           ,(origin
              (method git-fetch)
              (uri (git-reference
                    (url "https://github.com/dlang/undeaD.git")
-                   (commit "610234f159132f91046d4fb893889fb8ee14cd2f")))
+                   (commit "92803d25c88657e945511f0976a0c79d8da46e89")))
              (file-name (string-append "dlang-undeaD-src-" (string-take commit 7) "-checkout"))
              (sha256
-              (base32 "12zxsgvka4a82ghp2gaviph6kz13jzjb5pbc8v6i3rmcnifzpbrl"))))))
+              (base32 "0vq6n81vzqvgphjw54lz2isc1j8lcxwjdbrhqz1h5gwrvw9w5138"))))))
       (arguments
        `(#:phases
          (modify-phases %standard-phases
            (delete 'configure)
-           (delete 'check)
            (add-after 'unpack 'patch-pileup-d
               (lambda* (#:key inputs #:allow-other-keys)
                 (substitute* "sambamba/pileup.d"
@@ -94,9 +92,8 @@
                ;; The current build compiles htslib statically into the
                ;; executable.  On top of that, we need to patch the latest
                ;; version of htslib to have it working with Sambamba.
-               (and (with-directory-excursion "htslib"
-                      (zero? (system* "tar" "xvf" (assoc-ref inputs "htslib-src")
-                                      "--strip-components=1")))
+               (and 
+                    (copy-recursively (assoc-ref inputs "htslib-src") "htslib")
                     (copy-recursively (assoc-ref inputs "dlang-undeaD-src") "undeaD")
                     (copy-recursively (assoc-ref inputs "biod-src") "BioD"))))
            (replace
@@ -104,7 +101,16 @@
             (lambda* (#:key inputs outputs make-flags #:allow-other-keys)
               (let* ((out        (assoc-ref outputs "out"))
                      (debug-out  (assoc-ref outputs "debug")))
-                (zero? (system* "make" "-f" "Makefile.guix" "guix"
+                (zero? (system* "make" "-f" "Makefile.guix" "guix" "-j" "8"
+                                (string-append "LDC_LIB_PATH="
+                                               (assoc-ref inputs "ldc")
+                                               "/lib"))))))
+           (replace
+            'check
+            (lambda* (#:key inputs outputs make-flags #:allow-other-keys)
+              (let* ((out        (assoc-ref outputs "out"))
+                     (debug-out  (assoc-ref outputs "debug")))
+                (zero? (system* "make" "-f" "Makefile.guix" "check"
                                 (string-append "LDC_LIB_PATH="
                                                (assoc-ref inputs "ldc")
                                                "/lib"))))))
