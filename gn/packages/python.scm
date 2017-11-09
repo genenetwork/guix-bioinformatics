@@ -105,6 +105,28 @@ functions.")
   (license license:expat))
 )
 
+(define-public gunicorn ; guix candidate
+   ; python-plotly, python-requests, python-pytz
+(package
+  (name "gunicorn")
+  (version "19.7.1")
+  (source
+    (origin
+      (method url-fetch)
+      (uri (pypi-uri "gunicorn" version))
+      (sha256
+        (base32
+          "08mnl5l1p47q5wk38d7mafnhsqk50yba0l9kvc2vwrx61jgidqgf"))))
+  (build-system python-build-system)
+  (arguments `(#:tests? #f)) ;; No tests.
+  (home-page "http://gunicorn.org")
+  (synopsis
+    ".")
+  (description
+    ".")
+  (license license:expat))
+)
+
 (define-public python2-flask-sqlalchemy ; guix?
   (package-with-python2 python-flask-sqlalchemy))
 
