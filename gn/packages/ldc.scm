@@ -27,9 +27,11 @@
   #:use-module (gnu packages)
   #:use-module (gnu packages base)
   #:use-module (gnu packages compression)
+  #:use-module (gnu packages gdb)
   #:use-module ((gnu packages ldc) #:prefix ldcmain:)
   #:use-module (gnu packages libedit)
   #:use-module (gnu packages llvm)
+  #:use-module (gnu packages python)
   #:use-module (gnu packages textutils)
 )
 
@@ -115,6 +117,109 @@
            (sha256
             (base32
              "0n7gvalxwfmia4gag53r9qhcnk2cqrw3n4icj1yri0zkgc27pm60"))))))))
+
+
+(define-public ldc
+  ;; The phobos, druntime and dmd-testsuite dependencies do not have a newer
+  ;; release than 1.1.0-beta4, hence the need to make use of the older-version
+  ;; variable to hold this variable.
+  (let ((older-version "1.6.0"))
+    (package
+      ;; (inherit ldc-bootstrap)
+      (inherit ldcmain:ldc)
+      (name "ldc")
+      (version "1.6.0")
+      ;; Beta version needed to compile various scientific tools that require
+      ;; the newer beta versions, and won't compile successfully with the
+      ;; older stable version.
+      (source (origin
+                (method url-fetch)
+                (uri (string-append
+                      "https://github.com/ldc-developers/ldc/archive/v"
+                      version ".tar.gz"))
+                (file-name (string-append name "-" version ".tar.gz"))
+                (sha256
+                 (base32
+                  "0yjiwg8pnlm2286bwdkwasaqw6ys7lymrqvhh5xyb1adha1ndcav"))))
+      (arguments
+       `(#:phases
+         (modify-phases %standard-phases
+           (add-after 'unpack 'unpack-submodule-sources
+             (lambda* (#:key inputs #:allow-other-keys)
+               (let ((unpack (lambda (source target)
+                               (with-directory-excursion target
+                                 (zero? (system* "tar" "xvf"
+                                                 (assoc-ref inputs source)
+                                                 "--strip-components=1"))))))
+                 (and (unpack "phobos-src" "runtime/phobos")
+                      (unpack "druntime-src" "runtime/druntime")
+                      (unpack "dmd-testsuite-src" "tests/d2/dmd-testsuite")))))
+           ;; The 'patch-dmd2 step in ldc causes the build to fail since
+           ;; dmd2/root/port.c no longer exists.  Arguments needed to have
+           ;; 'patch-dmd2 step removed, but retain everything else.
+           (add-after 'unpack-submodule-sources 'patch-phobos
+             (lambda* (#:key inputs #:allow-other-keys)
+               (substitute* "runtime/phobos/std/process.d"
+                 (("/bin/sh") (which "sh"))
+                 (("echo") (which "echo")))
+               (substitute* "runtime/phobos/std/datetime.d"
+                 (("/usr/share/zoneinfo/")
+                  (string-append (assoc-ref inputs "tzdata") "/share/zoneinfo")))
+               (substitute* "tests/d2/dmd-testsuite/Makefile"
+                 (("/bin/bash") (which "bash")))
+               #t)))))
+      (native-inputs
+       `(("llvm" ,llvm)
+         ("clang" ,clang)
+         ;; ("ldc" ,ldc-bootstrap)
+         ("ldc" ,ldcmain:ldc)
+         ("python-lit" ,python-lit)
+         ("python-wrapper" ,python-wrapper)
+         ("unzip" ,unzip)
+         ("gdb" ,gdb)
+         ("phobos-src"
+          ,(origin
+             (method url-fetch)
+             (uri (string-append
+                   "https://github.com/ldc-developers/phobos/archive/ldc-v"
+                   older-version ".tar.gz"))
+             (sha256
+              (base32
+               "0z5v55b9s1ppf0c2ivjq7sbmq688c37c92ihc3qwrbxnqvkkvrlk"))
+             ;; This patch deactivates some tests that depend on network access
+             ;; to pass.  It also deactivates some tests that have some reliance
+             ;; on timezone.
+             ;;
+             ;; For the network tests, there's an effort to get a version flag
+             ;; added to deactivate these tests for distribution packagers
+             ;; that is being pursued at
+             ;; <https://forum.dlang.org/post/zmdbdgnzrxyvtpqafvyg@forum.dlang.org>.
+             ;; It also deactivates a test that requires /root
+             (patches (search-patches "ldc-1.1.0-disable-phobos-tests.patch"))))
+         ("druntime-src"
+          ,(origin
+             (method url-fetch)
+             (uri (string-append
+                   "https://github.com/ldc-developers/druntime/archive/ldc-v"
+                   older-version ".tar.gz"))
+             (sha256
+              (base32
+               "07qvrqj6vgakd6qr4x5f70w6zwkzd1li5x8i1b5ywnds1z5lnfp6"))))
+         ("dmd-testsuite-src"
+          ,(origin
+             (method url-fetch)
+             (uri (string-append
+                   "https://github.com/ldc-developers/dmd-testsuite/archive/ldc-v"
+                   older-version ".tar.gz"))
+             (sha256
+              (base32
+               "12cak7yqmsgjlflx0dp6fwmwb9dac25amgi86n0bb95ard3547wy"))
+             ;; Remove the gdb tests that fails with a "Error: No such file or
+             ;; directory" error, despite the files being present in the debug
+             ;; files left with the --keep-failed flag to guix build.
+             (patches (search-patches "ldc-1.1.0-disable-dmd-tests.patch")))))))))
+
+(define-public ldc-beta ldc)
 
 (define-public ldc-1.1.0-patched ; guix in main line w.o. patch
   (let ((version2 "1.1.0")) ; version for libraries

@@ -86,7 +86,7 @@ numbers.")
 
 
 (define-public gemma-git-gn2 ; guix candidate
-  (let ((commit "dfc7a67aaab9ec752fadd4c29b4fd2646a57c8aa"))
+  (let ((commit "915b65391d4267da75ce3deeba8b9aafb2184c0a"))
   (package
     (name "gemma-git-gn2")
     (version (string-append "0.97-pre5-" (string-take commit 7)))
@@ -98,7 +98,7 @@ numbers.")
              (file-name (string-append name "-" version "-checkout"))
              (sha256
               (base32
-               "12rggrzi8kqm801sbpw0r44lh22xkhh78ys2a49h5xy9spcny4fi"))))
+               "1xvjhhx7djzi2dffqnfwh6w9gn20xqavbwn5yshg0lrr035pabq6"))))
     (inputs `(
               ("gsl" ,gsl)
               ("eigen" ,eigen)
