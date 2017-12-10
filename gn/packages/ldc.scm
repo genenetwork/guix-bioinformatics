@@ -167,12 +167,10 @@
                ; disable unittests in these files:
                (substitute* '("runtime/phobos/std/net/curl.d"
                               "runtime/phobos/std/datetime/systime.d"
+                              "runtime/phobos/std/datetime/timezone.d"
                               )
                  (("version(unittest)") "version(skipunittest)")
                  ((" unittest") " version(skipunittest) unittest"))
-               (substitute* "runtime/phobos/std/datetime/timezone.d"
-                 (("/usr/share/zoneinfo/")
-                  (string-append (assoc-ref inputs "tzdata") "/share/zoneinfo")))
                (substitute* "tests/d2/dmd-testsuite/Makefile"
                  (("/bin/bash") (which "bash")))
                #t)))
