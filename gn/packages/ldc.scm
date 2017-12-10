@@ -157,15 +157,27 @@
            ;; The 'patch-dmd2 step in ldc causes the build to fail since
            ;; dmd2/root/port.c no longer exists.  Arguments needed to have
            ;; 'patch-dmd2 step removed, but retain everything else.
+
+           ;; 99% tests passed, 11 tests failed out of 1589
            (add-after 'unpack-submodule-sources 'patch-phobos
              (lambda* (#:key inputs #:allow-other-keys)
                (substitute* "runtime/phobos/std/process.d"
                  (("/bin/sh") (which "sh"))
                  (("echo") (which "echo")))
+               ; disable unittests in these files:
+               (substitute* '("runtime/phobos/std/net/curl.d"
+                              "runtime/phobos/std/datetime/systime.d"
+                              )
+                 (("version(unittest)") "version(skipunittest)")
+                 ((" unittest") " version(skipunittest) unittest"))
+               (substitute* "runtime/phobos/std/datetime/timezone.d"
+                 (("/usr/share/zoneinfo/")
+                  (string-append (assoc-ref inputs "tzdata") "/share/zoneinfo")))
                (substitute* "tests/d2/dmd-testsuite/Makefile"
                  (("/bin/bash") (which "bash")))
                #t)))
-           #:tests? #f))
+           #:make-flags (list "PHOBOS_TEST_ALLOW_NET=0")
+           #:tests? #t))
       (native-inputs
        `(("llvm" ,llvm)
          ("clang" ,clang)
@@ -178,13 +190,14 @@
          ("phobos-src"
           ,(origin
              (method url-fetch)
-             (uri (string-append 
+             (uri (string-append
              ; https://github.com/ldc-developers/phobos/releases/tag/ldc-v1.6.0-beta1
                    "https://github.com/ldc-developers/phobos/archive/ldc-v"
                    beta-version ".tar.gz"))
              (sha256
               (base32
                "00xsc00wjqz5xklps7ca696c83gwlkz5wb68q5cnq5axhshg553n"))
+             (patches (search-patches "ldc-disable-tests2.patch"))
              ;; This patch deactivates some tests that depend on network access
              ;; to pass.  It also deactivates some tests that have some reliance
              ;; on timezone.
