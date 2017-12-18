@@ -74,6 +74,7 @@
        ("r-survival" ,r-survival)))
     (native-inputs
      `(("zlib" ,zlib)))
+  (arguments `(#:tests? #f)) ;; No tests.
     (home-page "http://rpy.sourceforge.net/")
     (synopsis "Python interface to the R language")
     (description "rpy2 is a redesign and rewrite of rpy.  It is providing a
