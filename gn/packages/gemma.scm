@@ -76,7 +76,10 @@
          "1bd03c5xni0bla0wg1wba841b36b0sg13sjja955kn5xzvy4i61a"))))
     (build-system gnu-build-system)
     (arguments
-     `(#:tests? #f  ;no "check" target
+
+     `(
+       #:tests? #f  ;no "check" target
+
        ;; DYNAMIC_ARCH is only supported on x86.  When it is disabled and no
        ;; TARGET is specified, OpenBLAS will tune itself to the build host, so
        ;; we need to disable substitutions.
@@ -87,8 +90,16 @@
                (string-prefix? "mips" system)
                (string-prefix? "aarch64" system)))
        #:make-flags
-       (list (string-append "PREFIX=" (assoc-ref %outputs "out"))
+       (list (string-append 
+             "PREFIX=" (assoc-ref %outputs "out"))
              "SHELL=bash"
+             "NUM_THREADS=64"
+             "BINARY=64"
+             "NO_WARMUP=0"
+             "GEMM_MULTITHREAD_THRESHOLD=4"
+             "USE_THREAD=1"
+             "NO_AFFINITY=0"
+             "NO_LAPACK=1"
              ;; Build the library for all supported CPUs.  This allows
              ;; switching CPU targets at runtime with the environment variable
              ;; OPENBLAS_CORETYPE=<type>, where "type" is a supported CPU type.
@@ -98,7 +109,7 @@
                  (cond
                   ((or (string-prefix? "x86_64" system)
                        (string-prefix? "i686" system))
-                   '("BINARY=64 @@ NO_WARMUP=0 GEMM_MULTITHREAD_THRESHOLD=4 USE_THREAD=1 NO_AFFINITY=0 NO_LAPACK=1 NUM_THREADS=64"))
+                   '("BINARY=64 NO_WARMUP=0 GEMM_MULTITHREAD_THRESHOLD=4 USE_THREAD=1 NO_AFFINITY=0 NO_LAPACK=1 NUM_THREADS=64"))
                   ;; On MIPS we force the "SICORTEX" TARGET, as for the other
                   ;; two available MIPS targets special extended instructions
                   ;; for Loongson cores are used.
@@ -183,6 +194,7 @@ numbers.")
                        "/include/eigen3/")
         "FORCE_DYNAMIC=1"
         "DEBUG=1"
+        "fast-check"
         )
        #:phases
         ; "/include/eigen3/"
@@ -196,7 +208,7 @@ numbers.")
                   (lambda* (#:key outputs #:allow-other-keys)
                            (let ((out (assoc-ref outputs "out")))
                              (install-file "bin/gemma" (string-append out "/bin"))))))
-       ; #:tests? #f
+       #:tests? #f
        #:parallel-tests? #f))
     (home-page "http://www.xzlab.org/software.html")
     (synopsis "Tool for genome-wide efficient mixed model association")
