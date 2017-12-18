@@ -33,6 +33,8 @@
   #:use-module (gnu packages popt)
   #:use-module (gnu packages protobuf)
   #:use-module (gnu packages python)
+  #:use-module (gnu packages python-web)
+  #:use-module (gnu packages check)
   #:use-module (gnu packages statistics)
   #:use-module (gnu packages tbb)
   #:use-module (gnu packages textutils)

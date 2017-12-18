@@ -98,7 +98,7 @@
                  (cond
                   ((or (string-prefix? "x86_64" system)
                        (string-prefix? "i686" system))
-                   '("DYNAMIC_ARCH=1 BINARY=64 NO_WARMUP=0 GEMM_MULTITHREAD_THRESHOLD=4 USE_THREAD=1 NO_AFFINITY=0 NO_LAPACK=1 NUM_THREADS=64"))
+                   '("BINARY=64 @@ NO_WARMUP=0 GEMM_MULTITHREAD_THRESHOLD=4 USE_THREAD=1 NO_AFFINITY=0 NO_LAPACK=1 NUM_THREADS=64"))
                   ;; On MIPS we force the "SICORTEX" TARGET, as for the other
                   ;; two available MIPS targets special extended instructions
                   ;; for Loongson cores are used.
