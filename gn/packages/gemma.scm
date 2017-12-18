@@ -61,6 +61,68 @@
   #:use-module (gn packages shell)
   #:use-module (srfi srfi-1))
 
+(define-public openblas-parallel
+  (package
+    (name "openblas-parallel")
+    (version "0.2.20")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append "https://github.com/xianyi/OpenBLAS/tarball/v"
+                           version))
+       (file-name (string-append name "-" version ".tar.gz"))
+       (sha256
+        (base32
+         "1bd03c5xni0bla0wg1wba841b36b0sg13sjja955kn5xzvy4i61a"))))
+    (build-system gnu-build-system)
+    (arguments
+     `(#:tests? #f  ;no "check" target
+       ;; DYNAMIC_ARCH is only supported on x86.  When it is disabled and no
+       ;; TARGET is specified, OpenBLAS will tune itself to the build host, so
+       ;; we need to disable substitutions.
+       #:substitutable?
+        ,(let ((system (or (%current-target-system) (%current-system))))
+           (or (string-prefix? "x86_64" system)
+               (string-prefix? "i686" system)
+               (string-prefix? "mips" system)
+               (string-prefix? "aarch64" system)))
+       #:make-flags
+       (list (string-append "PREFIX=" (assoc-ref %outputs "out"))
+             "SHELL=bash"
+             ;; Build the library for all supported CPUs.  This allows
+             ;; switching CPU targets at runtime with the environment variable
+             ;; OPENBLAS_CORETYPE=<type>, where "type" is a supported CPU type.
+             ;; Unfortunately, this is not supported on non-x86 architectures,
+             ;; where it leads to failed builds.
+             ,@(let ((system (or (%current-target-system) (%current-system))))
+                 (cond
+                  ((or (string-prefix? "x86_64" system)
+                       (string-prefix? "i686" system))
+                   '("DYNAMIC_ARCH=1 BINARY=64 NO_WARMUP=0 GEMM_MULTITHREAD_THRESHOLD=4 USE_THREAD=1 NO_AFFINITY=0 NO_LAPACK=1 NUM_THREADS=64"))
+                  ;; On MIPS we force the "SICORTEX" TARGET, as for the other
+                  ;; two available MIPS targets special extended instructions
+                  ;; for Loongson cores are used.
+                  ((string-prefix? "mips" system)
+                   '("TARGET=SICORTEX"))
+                  ;; On aarch64 force the generic 'armv8-a' target
+                  ((string-prefix? "aarch64" system)
+                   '("TARGET=ARMV8"))
+                  (else '()))))
+       ;; no configure script
+       #:phases (alist-delete 'configure %standard-phases)))
+    (inputs
+     `(("gfortran" ,gfortran)
+       ("gfortran:lib" ,gfortran "lib")))
+    (native-inputs
+     `(("cunit" ,cunit)
+       ("perl" ,perl)))
+    (home-page "http://www.openblas.net/")
+    (synopsis "Optimized BLAS library based on GotoBLAS")
+    (description
+     "OpenBLAS is a BLAS library forked from the GotoBLAS2-1.13 BSD version.")
+    (license license:bsd-3)))
+
+
 (define-public gsl1 ; supporting older GSL tests
   (package
    (name "gsl1")
@@ -86,10 +148,10 @@ numbers.")
 
 
 (define-public gemma-git-gn2 ; guix candidate
-  (let ((commit "915b65391d4267da75ce3deeba8b9aafb2184c0a"))
+  (let ((commit "e69b71e0ea4ee307dca5f48c48a21103129c8635"))
   (package
     (name "gemma-git-gn2")
-    (version (string-append "0.97-pre5-" (string-take commit 7)))
+    (version (string-append "0.97-" (string-take commit 7)))
     (source (origin
              (method git-fetch)
              (uri (git-reference
@@ -98,13 +160,13 @@ numbers.")
              (file-name (string-append name "-" version "-checkout"))
              (sha256
               (base32
-               "1xvjhhx7djzi2dffqnfwh6w9gn20xqavbwn5yshg0lrr035pabq6"))))
+               "0xfny3cmh4y78jhhr0dnnyywsc5kx91jvxdnbpsy2xfg2imm46mq"))))
     (inputs `(
               ("gsl" ,gsl)
               ("eigen" ,eigen)
               ("shunit2" ,shunit2)
               ("lapack" ,lapack)
-              ("openblas" ,openblas)
+              ("openblas-parallel" ,openblas-parallel)
               ("zlib" ,zlib)
               ))
     (native-inputs ; for running tests
@@ -121,7 +183,7 @@ numbers.")
                        "/include/eigen3/")
         "FORCE_DYNAMIC=1"
         "DEBUG=1"
-        "WITH_OPENBLAS=1")
+        )
        #:phases
         ; "/include/eigen3/"
         (modify-phases %standard-phases
