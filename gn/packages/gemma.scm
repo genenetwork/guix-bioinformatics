@@ -91,16 +91,16 @@
                (string-prefix? "aarch64" system)))
                ; BINARY=64 NO_WARMUP=0 GEMM_MULTITHREAD_THRESHOLD=4 USE_THREAD=1 NO_AFFINITY=0 NO_LAPACK=0 NUM_THREADS=64
        #:make-flags
-       (list (string-append 
-             "PREFIX=" (assoc-ref %outputs "out"))
+       (list (string-append "PREFIX=" (assoc-ref %outputs "out"))
              "SHELL=bash"
              "NUM_THREADS=64"
              "BINARY=64"
              "NO_WARMUP=0"
              "GEMM_MULTITHREAD_THRESHOLD=4"
              "USE_THREAD=1"
+             "USE_THREAD=1"
              "NO_AFFINITY=0"
-             "NO_LAPACK=0"
+             "NO_LAPACK=0"    ; use OpenBlas LAPACK
              "COMMON_PROF=0"  ; disable profiling
              "DEBUG=0"
 
