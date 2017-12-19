@@ -61,9 +61,9 @@
   #:use-module (gn packages shell)
   #:use-module (srfi srfi-1))
 
-(define-public openblas-parallel
+(define-public openblas-haswell
   (package
-    (name "openblas-parallel")
+    (name "openblas-haswell")
     (version "0.2.20")
     (source
      (origin
@@ -96,10 +96,13 @@
              "NUM_THREADS=64"
              "BINARY=64"
              "NO_WARMUP=0"
-             "GEMM_MULTITHREAD_THRESHOLD=4"
+             ; "GEMM_MULTITHREAD_THRESHOLD=4"
              "USE_THREAD=1"
-             "NO_AFFINITY=0"
-             "NO_LAPACK=1"
+             ; "NO_AFFINITY=0"
+             "NO_LAPACK=0"
+             "COMMON_PROF="  ; disable profiling
+             "DEBUG=0"
+
              ;; Build the library for all supported CPUs.  This allows
              ;; switching CPU targets at runtime with the environment variable
              ;; OPENBLAS_CORETYPE=<type>, where "type" is a supported CPU type.
@@ -107,9 +110,10 @@
              ;; where it leads to failed builds.
              ,@(let ((system (or (%current-target-system) (%current-system))))
                  (cond
-                  ((or (string-prefix? "x86_64" system)
-                       (string-prefix? "i686" system))
-                   '("BINARY=64 NO_WARMUP=0 GEMM_MULTITHREAD_THRESHOLD=4 USE_THREAD=1 NO_AFFINITY=0 NO_LAPACK=1 NUM_THREADS=64"))
+                  ; ((or (string-prefix? "x86_64" system)
+                  ;     (string-prefix? "i686" system))
+                  ((string-prefix? "x86_64" system)
+                   '("TARGET=HASWELL"))
                   ;; On MIPS we force the "SICORTEX" TARGET, as for the other
                   ;; two available MIPS targets special extended instructions
                   ;; for Loongson cores are used.
@@ -128,7 +132,7 @@
      `(("cunit" ,cunit)
        ("perl" ,perl)))
     (home-page "http://www.openblas.net/")
-    (synopsis "Optimized BLAS library based on GotoBLAS")
+    (synopsis "Platform optimized BLAS library based on GotoBLAS")
     (description
      "OpenBLAS is a BLAS library forked from the GotoBLAS2-1.13 BSD version.")
     (license license:bsd-3)))
@@ -159,7 +163,7 @@ numbers.")
 
 
 (define-public gemma-git-gn2 ; guix candidate
-  (let ((commit "e69b71e0ea4ee307dca5f48c48a21103129c8635"))
+  (let ((commit "89690967e33bcde4fd8736fe048d0e9dce5c6266"))
   (package
     (name "gemma-git-gn2")
     (version (string-append "0.97-" (string-take commit 7)))
@@ -171,13 +175,13 @@ numbers.")
              (file-name (string-append name "-" version "-checkout"))
              (sha256
               (base32
-               "0xfny3cmh4y78jhhr0dnnyywsc5kx91jvxdnbpsy2xfg2imm46mq"))))
+               "1kj1vsqdwnszyd2523snfiamgqgjdal65p1m9454p2ck72gxf7kn"))))
     (inputs `(
               ("gsl" ,gsl)
               ("eigen" ,eigen)
               ("shunit2" ,shunit2)
-              ("lapack" ,lapack)
-              ("openblas-parallel" ,openblas-parallel)
+              ; ("lapack" ,lapack) - included in openblas-haswell
+              ("openblas-haswell" ,openblas-haswell)
               ("zlib" ,zlib)
               ))
     (native-inputs ; for running tests
@@ -192,8 +196,6 @@ numbers.")
         (string-append "EIGEN_INCLUDE_PATH="
                        (assoc-ref %build-inputs "eigen")
                        "/include/eigen3/")
-        "FORCE_DYNAMIC=1"
-        "DEBUG=1"
         "fast-check"
         )
        #:phases
