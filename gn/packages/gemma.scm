@@ -62,18 +62,19 @@
   #:use-module (srfi srfi-1))
 
 (define-public openblas-haswell
+  (let ((commit "893bd14e924fa72a4ed345a75d64c637f1b1c550"))
   (package
     (name "openblas-haswell")
-    (version "0.2.20")
-    (source
-     (origin
-       (method url-fetch)
-       (uri (string-append "https://github.com/xianyi/OpenBLAS/tarball/v"
-                           version))
-       (file-name (string-append name "-" version ".tar.gz"))
-       (sha256
-        (base32
-         "1bd03c5xni0bla0wg1wba841b36b0sg13sjja955kn5xzvy4i61a"))))
+    (version (string-append "0.2.20-git-" (string-take commit 7)))
+    (source (origin
+             (method git-fetch)
+             (uri (git-reference
+                   (url "https://github.com/xianyi/OpenBLAS.git")
+                   (commit commit)))
+             (file-name (string-append name "-" version "-checkout"))
+             (sha256
+              (base32
+               "0qv03c2yq46p9sajc3a3f56ijfifyv6f4n51a81wc2hihy4ilcap"))))
     (build-system gnu-build-system)
     (arguments
 
@@ -97,7 +98,6 @@
              "BINARY=64"
              "NO_WARMUP=0"
              "GEMM_MULTITHREAD_THRESHOLD=4"
-             "USE_THREAD=1"
              "USE_THREAD=1"
              "NO_AFFINITY=0"
              "NO_LAPACK=0"    ; use OpenBlas LAPACK
@@ -136,7 +136,7 @@
     (synopsis "Platform optimized BLAS library based on GotoBLAS")
     (description
      "OpenBLAS is a BLAS library forked from the GotoBLAS2-1.13 BSD version.")
-    (license license:bsd-3)))
+    (license license:bsd-3))))
 
 
 (define-public gsl1 ; supporting older GSL tests
@@ -183,7 +183,7 @@ numbers.")
               ("eigen" ,eigen)
               ("shunit2" ,shunit2)
               ; ("lapack" ,lapack) - included in openblas-haswell
-              ("openblas-haswell" ,openblas-haswell)
+              ("openblas" ,openblas-haswell)
               ("zlib" ,zlib)
               ))
     (native-inputs ; for running tests
@@ -198,7 +198,6 @@ numbers.")
         (string-append "EIGEN_INCLUDE_PATH="
                        (assoc-ref %build-inputs "eigen")
                        "/include/eigen3/")
-        "fast-check"
         )
        #:phases
         ; "/include/eigen3/"
@@ -212,7 +211,7 @@ numbers.")
                   (lambda* (#:key outputs #:allow-other-keys)
                            (let ((out (assoc-ref outputs "out")))
                              (install-file "bin/gemma" (string-append out "/bin"))))))
-       #:tests? #f
+       ; #:tests? #f
        #:parallel-tests? #f))
     (home-page "http://www.xzlab.org/software.html")
     (synopsis "Tool for genome-wide efficient mixed model association")
