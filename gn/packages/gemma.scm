@@ -89,6 +89,7 @@
                (string-prefix? "i686" system)
                (string-prefix? "mips" system)
                (string-prefix? "aarch64" system)))
+               ; BINARY=64 NO_WARMUP=0 GEMM_MULTITHREAD_THRESHOLD=4 USE_THREAD=1 NO_AFFINITY=0 NO_LAPACK=0 NUM_THREADS=64
        #:make-flags
        (list (string-append 
              "PREFIX=" (assoc-ref %outputs "out"))
@@ -96,11 +97,11 @@
              "NUM_THREADS=64"
              "BINARY=64"
              "NO_WARMUP=0"
-             ; "GEMM_MULTITHREAD_THRESHOLD=4"
+             "GEMM_MULTITHREAD_THRESHOLD=4"
              "USE_THREAD=1"
-             ; "NO_AFFINITY=0"
+             "NO_AFFINITY=0"
              "NO_LAPACK=0"
-             "COMMON_PROF="  ; disable profiling
+             "COMMON_PROF=0"  ; disable profiling
              "DEBUG=0"
 
              ;; Build the library for all supported CPUs.  This allows
@@ -163,7 +164,7 @@ numbers.")
 
 
 (define-public gemma-git-gn2 ; guix candidate
-  (let ((commit "89690967e33bcde4fd8736fe048d0e9dce5c6266"))
+  (let ((commit "c760aa09c2aa91ca6270b5f898c27e9aed376a73"))
   (package
     (name "gemma-git-gn2")
     (version (string-append "0.97-" (string-take commit 7)))
@@ -175,8 +176,9 @@ numbers.")
              (file-name (string-append name "-" version "-checkout"))
              (sha256
               (base32
-               "1kj1vsqdwnszyd2523snfiamgqgjdal65p1m9454p2ck72gxf7kn"))))
+               "0s61w8av70kqvkb00znrqnr59axygh9gnlxar8rfyasr5g6xvl8w"))))
     (inputs `(
+              ("gfortran:lib" ,gfortran "lib")
               ("gsl" ,gsl)
               ("eigen" ,eigen)
               ("shunit2" ,shunit2)
