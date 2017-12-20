@@ -58,7 +58,9 @@
          "0nhan2qvrw7b7gg5zddwa22kybdv3x1g26vkd7q8lvnkgzrs4dga"))))
     (build-system python-build-system)
     (arguments
-     '(#:phases
+     `(#:python ,python-2 ; apparently incompatible with Python 3
+       #:tests? #f
+       #:phases
        (modify-phases %standard-phases
          (delete 'check)
          (add-after 'install 'check
@@ -68,7 +70,9 @@
              (add-installed-pythonpath inputs outputs)
              (zero? (system* "python" "-m" "rpy2.tests" "-v")))))))
     (propagated-inputs
-     `(("python2-six" ,python2-six)))
+     `(("python2-six" ,python2-six)
+       ("python2-singledispatch" ,python2-singledispatch)
+     ))
     (inputs
      `(("readline" ,readline)
        ("icu4c" ,icu4c)
@@ -77,7 +81,6 @@
        ("r-survival" ,r-survival)))
     (native-inputs
      `(("zlib" ,zlib)))
-  (arguments `(#:tests? #f)) ;; No tests.
     (home-page "http://rpy.sourceforge.net/")
     (synopsis "Python interface to the R language")
     (description "rpy2 is a redesign and rewrite of rpy.  It is providing a
