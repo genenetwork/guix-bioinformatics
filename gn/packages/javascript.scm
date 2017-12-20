@@ -10,19 +10,19 @@
   #:use-module (srfi srfi-1))
 
 (define-public javascript-twitter-post-fetcher
-  (let ((commit "377c050def3a1076c15cb24fd20b71f801d0e78f"))
+  (let ((commit "12d1693980ef836af4d5eee74a0aec5c65b8e6c3"))
   (package
     (name "javascript-twitter-post-fetcher")
-    (version (string-append "16.0.3" "-" (string-take commit 7)))
+    (version (string-append "17.0.2" "-" (string-take commit 7)))
     (source (origin
              (method git-fetch)
              (uri (git-reference
-                   (url "https://github.com/genenetwork/Twitter-Post-Fetcher.git")
+                   (url "https://github.com/jasonmayes/Twitter-Post-Fetcher.git")
                    (commit commit)))
              (file-name (string-append name "-" commit))
              (sha256
               (base32
-               "05w2wiqw84lb778nkivn421m1kk6h66xk4cjjqng1bri3d2kfzjv"))))
+               "1afs5dd3mbih016vganvm9bcmn3cg3cvwh34hhk5n04qvb2aphdm"))))
     (build-system trivial-build-system)
     (native-inputs `(("source" ,source)))
     (arguments
