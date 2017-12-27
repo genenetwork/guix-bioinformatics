@@ -234,6 +234,27 @@ association studies (GWAS).")
              ("openblas" ,openblas-haswell)
              ("zlib" ,zlib)
              ))
+    (arguments
+     `(#:make-flags
+       (list
+        (string-append "EIGEN_INCLUDE_PATH="
+                       (assoc-ref %build-inputs "eigen")
+                       "/include/eigen3/")
+        )
+       #:phases
+        ; "/include/eigen3/"
+        (modify-phases %standard-phases
+         (delete 'configure)
+         (add-before 'build 'bin-mkdir
+                     (lambda _
+                       (mkdir-p "bin")
+                       ))
+         (replace 'install
+                  (lambda* (#:key outputs #:allow-other-keys)
+                           (let ((out (assoc-ref outputs "out")))
+                             (install-file "bin/gemma" (string-append out "/bin"))))))
+       ; #:tests? #f
+       #:parallel-tests? #f))
    ))
 
 (define-public gemma-wrapper
