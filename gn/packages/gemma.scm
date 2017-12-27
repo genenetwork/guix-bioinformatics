@@ -33,6 +33,7 @@
   #:use-module (gnu packages gcc)
   #:use-module (gnu packages graphviz)
   #:use-module (gnu packages java)
+  #:use-module (gnu packages ldc)
   #:use-module (gnu packages linux)
   #:use-module (gnu packages machine-learning)
   #:use-module (gnu packages maths)
@@ -61,9 +62,53 @@
   #:use-module (gn packages shell)
   #:use-module (srfi srfi-1))
 
+(define-public faster-lmm-d ; incomplete, just creates builid environment
+  (let ((commit "dea6abf61b633ed55e6a2997068f2d54abe5376b"))
+    (package
+     (name "faster-lmm-d")
+     (version (string-append "0.0.1-" (string-take commit 7)))
+     (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url "https://github.com/pjotrp/faster_lmm_d.git")
+                    (commit commit)))
+              (file-name (string-append name "-" version "-checkout"))
+              (sha256
+               (base32
+                "1syrn32g1q06bsnrk9wl7q2m5mvvglys2zl92rx0bi49kp2i0ngv"))))
+     (build-system trivial-build-system)
+     (propagated-inputs
+      `(("openblas" ,openblas)
+        ("gsl" ,gsl)
+        ("lapack" ,lapack)
+        ("dub" ,dub)
+        ; ("make" ,make)
+        ))
+     (native-inputs
+      `(("ldc" ,ldc)
+        ("shunit2" ,shunit2)
+        ("which" ,which)
+        ))
+     (arguments
+      `(#:modules ((guix build utils))
+        #:builder
+        (begin
+          (use-modules (guix build utils))
+          (let ((target (string-append (assoc-ref %outputs "out")
+                                       "/share")))
+            (write target)
+            (mkdir-p target)
+            (copy-recursively (assoc-ref %build-inputs "source") target)
+            #t))))
+     (home-page "https://github.com/pjotrp")
+     (synopsis "Parallel LMM")
+     (description
+      ".")
+     (license license:gpl3))))
+
 (define-public openblas-haswell
   (let ((commit "893bd14e924fa72a4ed345a75d64c637f1b1c550"))
-  (package
+    (package
     (name "openblas-haswell")
     (version (string-append "0.2.20-git-" (string-take commit 7)))
     (source (origin
@@ -137,30 +182,6 @@
     (description
      "OpenBLAS is a BLAS library forked from the GotoBLAS2-1.13 BSD version.")
     (license license:bsd-3))))
-
-
-(define-public gsl1 ; supporting older GSL tests - no longer really used
-  (package
-   (name "gsl1")
-    (version "1.16")
-    (source (origin
-              (method url-fetch)
-              (uri (string-append "mirror://gnu/gsl/gsl-"
-                                  version ".tar.gz"))
-              (sha256
-               (base32
-                "0lrgipi0z6559jqh82yx8n4xgnxkhzj46v96dl77hahdp58jzg3k"))
-              ))
-    (build-system gnu-build-system)
-    (home-page "https://www.gnu.org/software/gsl/")
-    (synopsis "Numerical library for C and C++")
-    (description
-     "The GNU Scientific Library is a library for numerical analysis in C
-and C++.  It includes a wide range of mathematical routines, with over 1000
-functions in total.  Subject areas covered by the library include:
-differential equations, linear algebra, Fast Fourier Transforms and random
-numbers.")
-    (license license:gpl3+)))
 
 
 (define-public gemma-gn2 ; guix candidate - generic openblas version

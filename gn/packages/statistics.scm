@@ -339,3 +339,27 @@ traits (CTL).  The additional correlation information obtained can be
 combined with QTL information to perform de novo reconstruction of
 interaction networks.")
   (license license:gpl3)))
+
+
+(define-public gsl1 ; supporting older GSL tests - no longer really used
+  (package
+   (name "gsl1")
+    (version "1.16")
+    (source (origin
+              (method url-fetch)
+              (uri (string-append "mirror://gnu/gsl/gsl-"
+                                  version ".tar.gz"))
+              (sha256
+               (base32
+                "0lrgipi0z6559jqh82yx8n4xgnxkhzj46v96dl77hahdp58jzg3k"))
+              ))
+    (build-system gnu-build-system)
+    (home-page "https://www.gnu.org/software/gsl/")
+    (synopsis "Numerical library for C and C++")
+    (description
+     "The GNU Scientific Library is a library for numerical analysis in C
+and C++.  It includes a wide range of mathematical routines, with over 1000
+functions in total.  Subject areas covered by the library include:
+differential equations, linear algebra, Fast Fourier Transforms and random
+numbers.")
+    (license license:gpl3+)))
