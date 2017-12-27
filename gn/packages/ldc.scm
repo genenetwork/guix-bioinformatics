@@ -176,7 +176,7 @@
                  (("/bin/bash") (which "bash")))
                #t)))
            #:make-flags (list "PHOBOS_TEST_ALLOW_NET=0")
-           #:tests? #t))
+           #:tests? #f))
       (native-inputs
        `(("llvm" ,llvm)
          ("clang" ,clang)
