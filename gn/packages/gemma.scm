@@ -139,7 +139,7 @@
     (license license:bsd-3))))
 
 
-(define-public gsl1 ; supporting older GSL tests
+(define-public gsl1 ; supporting older GSL tests - no longer really used
   (package
    (name "gsl1")
     (version "1.16")
@@ -163,10 +163,10 @@ numbers.")
     (license license:gpl3+)))
 
 
-(define-public gemma-git-gn2 ; guix candidate
+(define-public gemma-gn2 ; guix candidate - generic openblas version
   (let ((commit "c760aa09c2aa91ca6270b5f898c27e9aed376a73"))
   (package
-    (name "gemma-git-gn2")
+    (name "gemma-gn2")
     (version (string-append "0.97-" (string-take commit 7)))
     (source (origin
              (method git-fetch)
@@ -182,8 +182,8 @@ numbers.")
               ("gsl" ,gsl)
               ("eigen" ,eigen)
               ("shunit2" ,shunit2)
-              ; ("lapack" ,lapack) - included in openblas-haswell
-              ("openblas" ,openblas-haswell)
+              ("lapack" ,lapack)
+              ("openblas" ,openblas)
               ("zlib" ,zlib)
               ))
     (native-inputs ; for running tests
@@ -198,6 +198,7 @@ numbers.")
         (string-append "EIGEN_INCLUDE_PATH="
                        (assoc-ref %build-inputs "eigen")
                        "/include/eigen3/")
+                       "WITH_LAPACK=1"
         )
        #:phases
         ; "/include/eigen3/"
@@ -221,42 +222,19 @@ mixed model and some of its close relatives for genome-wide
 association studies (GWAS).")
     (license license:gpl3))))
 
-(define-public gemma-gn2
+(define-public gemma-gn2-haswell ; openblas optimized for haswell
   (package
-   (name "gemma")
-   (version "0.96")
-   (source (origin
-            (method url-fetch)
-            (uri (string-append "https://github.com/xiangzhou/GEMMA/archive/v"
-                                version ".tar.gz"))
-            (sha256
-             (base32
-              "055ynn16gd12pf78n4vr2a9jlwsbwzajpdnf2y2yilg1krfff222"))))
-   (inputs `(("gsl" ,gsl)
-             ("lapack" ,lapack)
-             ("zlib" ,zlib)))
-   (build-system gnu-build-system)
-   (arguments
-    `(#:make-flags '("FORCE_DYNAMIC=1")
-      #:phases
-      (modify-phases %standard-phases
-                     (delete 'configure)
-                     (add-before 'build 'bin-mkdir
-                                 (lambda _
-                                   (mkdir-p "bin")
-                                   ))
-                     (replace 'install
-                              (lambda* (#:key outputs #:allow-other-keys)
-                                (let ((out (assoc-ref outputs "out")))
-                                  (install-file "bin/gemma" (string-append out "/bin"))))))
-      #:tests? #f)) ; no tests included
-   (home-page "")
-   (synopsis "Tool for genome-wide efficient mixed model association")
-   (description "GEMMA is software implementing the Genome-wide
-Efficient Mixed Model Association algorithm for a standard linear
-mixed model and some of its close relatives for genome-wide
-association studies (GWAS).")
-   (license license:gpl3)))
+   (inherit gemma-gn2)
+   (name "gemma-gn2-haswell")
+   (inputs `(
+             ("gfortran:lib" ,gfortran "lib")
+             ("gsl" ,gsl)
+             ("eigen" ,eigen)
+             ("shunit2" ,shunit2)
+             ("openblas" ,openblas-haswell)
+             ("zlib" ,zlib)
+             ))
+   ))
 
 (define-public gemma-wrapper
   (package
@@ -270,7 +248,7 @@ association studies (GWAS).")
         (base32
          "08apz0imsxzwhzv2iicq2g5zx1iq1vlfrhk7khsfaydshbq5g741"))))
     (build-system ruby-build-system)
-    (inputs `(("gemma-git-gn2" ,gemma-git-gn2)))
+    (inputs `(("gemma-gn2" ,gemma-gn2-haswell)))
     (arguments
      `(#:tests? #f
        #:phases
