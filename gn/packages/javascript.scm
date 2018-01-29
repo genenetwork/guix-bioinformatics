@@ -10,10 +10,10 @@
   #:use-module (srfi srfi-1))
 
 (define-public javascript-twitter-post-fetcher
-  (let ((commit "12d1693980ef836af4d5eee74a0aec5c65b8e6c3"))
+  (let ((commit "27440ffebd4c1ba7abc9aec92a581155715f2e4e"))
   (package
     (name "javascript-twitter-post-fetcher")
-    (version (string-append "17.0.2" "-" (string-take commit 7)))
+    (version (string-append "17.0.3" "-" (string-take commit 7)))
     (source (origin
              (method git-fetch)
              (uri (git-reference
@@ -22,7 +22,7 @@
              (file-name (string-append name "-" commit))
              (sha256
               (base32
-               "1afs5dd3mbih016vganvm9bcmn3cg3cvwh34hhk5n04qvb2aphdm"))))
+               "159z8izf510086d8sa79k4mml6sw1gycb1r1r9ri1kyw2k9knmqa"))))
     (build-system trivial-build-system)
     (native-inputs `(("source" ,source)))
     (arguments

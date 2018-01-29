@@ -118,14 +118,14 @@ genome-wide association studies in structured populations.")
 (define-public r-fgsea
   (package
     (name "r-fgsea")
-    (version "1.4.0")
+    (version "1.4.1")
     (source
      (origin
        (method url-fetch)
        (uri (bioconductor-uri "fgsea" version))
        (sha256
         (base32
-         "049p2hqsq8iqradqm63ahbn2y6f4y1ys4piz1j6cr00fcfm041jq"))))
+         "187c8xckx0s1p19i85nsiapgb3mppjqxp7zyld5hqyjvw3zcdj50"))))
     (build-system r-build-system)
     ; (native-inputs
                                         ;  `(("gfortran" ,gfortran)))
