@@ -92,7 +92,7 @@
                ;; The current build compiles htslib statically into the
                ;; executable.  On top of that, we need to patch the latest
                ;; version of htslib to have it working with Sambamba.
-               (and 
+               (and
                     (copy-recursively (assoc-ref inputs "htslib-src") "htslib")
                     (copy-recursively (assoc-ref inputs "dlang-undeaD-src") "undeaD")
                     (copy-recursively (assoc-ref inputs "biod-src") "BioD"))))
