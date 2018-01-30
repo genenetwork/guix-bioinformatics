@@ -125,7 +125,9 @@ functions.")
         (base32
           "08mnl5l1p47q5wk38d7mafnhsqk50yba0l9kvc2vwrx61jgidqgf"))))
   (build-system python-build-system)
-  (arguments `(#:tests? #f)) ;; No tests.
+  (arguments `(
+     #:python ,python-2 ; GN2 is still python2
+     #:tests? #f)) ;; No tests.
   (home-page "http://gunicorn.org")
   (synopsis
     ".")
