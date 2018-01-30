@@ -182,10 +182,11 @@ location of a putative QTL.")
                "0ji929xgzypyhchcfy9xa1sz04w322ibs2khc8s3qiddxjqdglrz"))))
     (propagated-inputs `(  ;; propagated for development purposes
               ("python" ,python-2) ;; probably superfluous
+              ("coreutils" ,coreutils)
               ("git" ,git)
+              ("vim" ,vim)
               ("which" ,which)
               ("grep" ,grep)
-              ("inotify-tools" ,inotify-tools)
               ("r" ,r)
               ("r-ctl" ,r-ctl)
               ("r-phewas" ,r-phewas)

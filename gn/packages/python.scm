@@ -112,8 +112,34 @@ functions.")
   (license license:expat))
 )
 
+(define-public python-inotify ; guix candidate
+(package
+  (name "python-inotify")
+  (version "0.2.9")
+  (source
+    (origin
+      (method url-fetch)
+      (uri (pypi-uri "inotify" version))
+      (sha256
+        (base32
+          "043sbm9q8ca4fhn19knwpsxgzfgm5ik75m0bl7dp9hjy6p3v3zzn"))))
+  (build-system python-build-system)
+  (propagated-inputs
+      `(("inotify-tools" ,inotify-tools)))
+  (arguments `(#:tests? #f)) ;; No tests.
+  (home-page "https://pypi.python.org/pypi/inotify")
+  (synopsis
+    "Python inotify.")
+  (description
+    "Python inotify.")
+  (license license:gpl2))
+)
+
+(define-public python2-inotify
+  (package-with-python2 python-inotify))
+
+
 (define-public gunicorn ; guix candidate
-   ; python-plotly, python-requests, python-pytz
 (package
   (name "gunicorn")
   (version "19.7.1")
@@ -125,6 +151,10 @@ functions.")
         (base32
           "08mnl5l1p47q5wk38d7mafnhsqk50yba0l9kvc2vwrx61jgidqgf"))))
   (build-system python-build-system)
+  ; (inputs
+  ;     `(("python2-inotify" ,python2-inotify)))
+  (propagated-inputs
+      `(("inotify-tools" ,inotify-tools)))
   (arguments `(
      #:python ,python-2 ; GN2 is still python2
      #:tests? #f)) ;; No tests.
@@ -136,7 +166,7 @@ functions.")
   (license license:expat))
 )
 
-(define-public python2-flask-sqlalchemy 
+(define-public python2-flask-sqlalchemy
   (package-with-python2 python-flask-sqlalchemy))
 
 (define-public python-xlsxwriter ; guix ready
