@@ -62,7 +62,7 @@
   #:use-module (gn packages shell)
   #:use-module (srfi srfi-1))
 
-(define-public faster-lmm-d ; incomplete, just creates builid environment
+(define-public faster-lmm-d ; incomplete, just creates build environment
   (let ((commit "dea6abf61b633ed55e6a2997068f2d54abe5376b"))
     (package
      (name "faster-lmm-d")
@@ -82,6 +82,10 @@
         ("gsl" ,gsl)
         ("lapack" ,lapack)
         ("dub" ,dub)
+        ("gcc" ,gcc) 
+        ("glibc" ,glibc) 
+        ("binutils" ,binutils) ; for ld linker
+        ("gfortran:lib" ,gfortran "lib")
         ; ("make" ,make)
         ))
      (native-inputs
@@ -106,10 +110,10 @@
       ".")
      (license license:gpl3))))
 
-(define-public openblas-haswell
+(define-public openblas-git
   (let ((commit "893bd14e924fa72a4ed345a75d64c637f1b1c550"))
     (package
-    (name "openblas-haswell")
+    (name "openblas-git")
     (version (string-append "0.2.20-git-" (string-take commit 7)))
     (source (origin
              (method git-fetch)
@@ -159,7 +163,7 @@
                   ; ((or (string-prefix? "x86_64" system)
                   ;     (string-prefix? "i686" system))
                   ((string-prefix? "x86_64" system)
-                   '("TARGET=HASWELL"))
+                   '("DYNAMIC_ARCH=1"))
                   ;; On MIPS we force the "SICORTEX" TARGET, as for the other
                   ;; two available MIPS targets special extended instructions
                   ;; for Loongson cores are used.
@@ -243,16 +247,16 @@ mixed model and some of its close relatives for genome-wide
 association studies (GWAS).")
     (license license:gpl3))))
 
-(define-public gemma-gn2-haswell ; openblas optimized for haswell
+(define-public gemma-gn2-git ; openblas optimized
   (package
    (inherit gemma-gn2)
-   (name "gemma-gn2-haswell")
+   (name "gemma-gn2-git")
    (inputs `(
              ("gfortran:lib" ,gfortran "lib")
              ("gsl" ,gsl)
              ("eigen" ,eigen)
              ("shunit2" ,shunit2)
-             ("openblas" ,openblas-haswell)
+             ("openblas" ,openblas-git)
              ("zlib" ,zlib)
              ))
     (arguments
@@ -290,7 +294,7 @@ association studies (GWAS).")
         (base32
          "08apz0imsxzwhzv2iicq2g5zx1iq1vlfrhk7khsfaydshbq5g741"))))
     (build-system ruby-build-system)
-    (inputs `(("gemma-gn2" ,gemma-gn2-haswell)))
+    (inputs `(("gemma-gn2" ,gemma-gn2-git)))
     (arguments
      `(#:tests? #f
        #:phases
