@@ -82,8 +82,8 @@
         ("gsl" ,gsl)
         ("lapack" ,lapack)
         ("dub" ,dub)
-        ("gcc" ,gcc) 
-        ("glibc" ,glibc) 
+        ("gcc" ,gcc)
+        ("glibc" ,glibc)
         ("binutils" ,binutils) ; for ld linker
         ("gfortran:lib" ,gfortran "lib")
         ; ("make" ,make)
@@ -285,14 +285,14 @@ association studies (GWAS).")
 (define-public gemma-wrapper
   (package
     (name "gemma-wrapper")
-    (version "0.92.2")
+    (version "0.97")
     (source
      (origin
        (method url-fetch)
        (uri (rubygems-uri "bio-gemma-wrapper" version))
        (sha256
         (base32
-         "08apz0imsxzwhzv2iicq2g5zx1iq1vlfrhk7khsfaydshbq5g741"))))
+         "0nypw1fnq03ssm73rij7xcgz3fqgx5rdzksbpggylbnvn7fz1q17"))))
     (build-system ruby-build-system)
     (inputs `(("gemma-gn2" ,gemma-gn2-git)))
     (arguments
