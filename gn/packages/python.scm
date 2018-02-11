@@ -151,8 +151,9 @@ functions.")
         (base32
           "08mnl5l1p47q5wk38d7mafnhsqk50yba0l9kvc2vwrx61jgidqgf"))))
   (build-system python-build-system)
-  ; (inputs
-  ;     `(("python2-inotify" ,python2-inotify)))
+  (inputs
+     `(("python2-eventlet" ,python2-eventlet)
+       ("python2-gevent" ,python2-gevent)))
   (propagated-inputs
       `(("inotify-tools" ,inotify-tools)))
   (arguments `(
