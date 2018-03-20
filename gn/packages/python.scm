@@ -44,6 +44,27 @@
   #:use-module (guix build-system trivial)
   #:use-module (srfi srfi-1))
 
+(define-public python-pyvcf
+  (package
+   (name "python-pyvcf")
+   (version "0.6.8")
+   (source
+    (origin
+     (method url-fetch)
+     (uri (pypi-uri "pyvcf" version))
+     (sha256
+      (base32
+       "1ngryr12d3izmhmwplc46xhyj9i7yhrpm90xnsd2578p7m8p5n79"))))
+   (build-system python-build-system)
+   (home-page
+    "https://github.com/jamescasbon/PyVCF")
+   (synopsis
+    "Variant Call Format (VCF) parser for Python")
+   (description
+    "Variant Call Format (VCF) parser for Python")
+   (license #f)))
+
+
 (define-public python-elasticsearch
   (package
     (name "python-elasticsearch")
