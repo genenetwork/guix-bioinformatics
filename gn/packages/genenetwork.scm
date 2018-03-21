@@ -353,3 +353,134 @@ location of a putative QTL.")
     (synopsis "Small database to run on genenetwork")
     (description "Genenetwork installation + database.")
     (license license:agpl3+))))
+
+
+(define-public genenetwork3
+  (let ((commit "1538ffd33af19e6ac922b4ee85fe701408968dfd"))
+    (package
+     (name "genenetwork3")
+     (version (string-append "2.10rc5-" (string-take commit 7) ))
+     (source (origin
+	      (method git-fetch)
+	      (uri (git-reference
+		    (url "https://pjotrp@gitlab.com/genenetwork/gn2_diet.git")
+		    ;; (url "https://github.com/genenetwork/genenetwork2_diet.git")
+		    (commit commit)))
+	      (file-name (string-append name "-" version))
+	      (sha256
+	       (base32
+		"0ji929xgzypyhchcfy9xa1sz04w322ibs2khc8s3qiddxjqdglrz"))))
+     (propagated-inputs ;; propagated for development purposes
+      `( ;; Agnostic to Python
+	("r" ,r)
+	("git" ,git)
+	("vim" ,vim)
+	("grep" ,grep)
+	("which" ,which)
+	("r-ctl" ,r-ctl)
+	("r-qtl" ,r-qtl)
+	("redis" ,redis)
+	("mysql" ,mysql)
+	("nginx" ,nginx)
+	("r-wgcna" ,r-wgcna)
+	("r-phewas" ,r-phewas)
+	("coreutils" ,coreutils)
+	("gemma" ,gemma-gn2-git)
+	("plink-ng-gn" ,plink-ng-gn)
+	("python-lxml" ,python-lxml) ;; used for the tests
+	("gemma-wrapper" ,gemma-wrapper)
+	("python-unittest" ,python-unittest2) ;; used for the tests
+	("python-parameterized" ,python-parameterized) ;; used for the tests
+	("genenetwork2-files-small" ,genenetwork2-files-small)
+	("javascript-twitter-post-fetcher" ,javascript-twitter-post-fetcher)
+
+
+	;; With Python3 support
+	("gunicorn" ,gunicorn)
+	("python-rpy2" ,python-rpy2)
+	("python-flask" ,python-flask)
+	("python-scipy" ,python-scipy)
+	("python-numpy" ,python-numpy)
+	("python-redis" ,python-redis)
+	("python-scipy" ,python-scipy)
+	("python-pyyaml" ,python-pyyaml)
+	("python-jinja2" ,python-jinja2)
+	("python-pandas" ,python-pandas)
+	("python-passlib" ,python-passlib)
+	("python-requests" ,python-requests)
+	("python-sqlalchemy" ,python-sqlalchemy)
+	("python-setuptools" ,python-setuptools)
+	("python-simplejson" ,python-simplejson)
+	("python-xlsxwriter" ,python-xlsxwriter)
+	("python-mysqlclient" ,python-mysqlclient)
+	("python-elasticsearch" ,python-elasticsearch)
+	("python-flask-sqlalchemy" ,python-flask-sqlalchemy)
+
+
+	;; Without Python3 support
+	("qtlreaper" ,qtlreaper) ;; Run as an external program
+	("pylmm-gn2" ,pylmm-gn2) ;; To be run as an external python2 program
+	("python2-pil1" ,python2-pil1) ; should move to pillow some day. Run as external python2 program
+	("python2-numarray" ,python2-numarray) ;; Update gn2 code and drop this (IMPORTANT)
+	("python2-piddle-gn" ,python2-piddle-gn) ;; Run as external python2 program
+	("python2-htmlgen-gn" ,python2-htmlgen-gn) ;; pjotrp and zsloan to give directions
+
+
+	;; Removed packages
+	;; ("python2-mechanize" ,python2-mechanize)
+	;; ("python2-parallel" ,python2-parallel)
+	))
+     (build-system python-build-system)
+     (arguments
+      `(#:phases
+	(modify-phases
+	 %standard-phases
+	 (delete 'reset-gzip-timestamps)
+	 (add-after
+	  'unpack 'fix-paths-scripts
+	  (lambda* _
+	    (substitute* "bin/genenetwork2"
+			 (("/usr/bin/env") (which "env"))
+			 (("python ") (string-append (which "python") " "))
+			 (("readlink") (which "readlink"))
+			 (("dirname") (which "dirname"))
+			 (("basename") (which "basename"))
+			 (("cat") (which "cat"))
+			 (("echo") (which "echo"))
+			 (("redis-server") (which "redis-server"))
+			 (("git") (which "git"))
+			 (("grep") (which "grep"))
+			 (("rm") (which "rm"))
+			 (("which") (which "which")))
+	    #t))
+	 (add-before
+	  'install 'fix-paths
+	  (lambda* (#:key inputs #:allow-other-keys)
+	    (let* ((datafiles
+		    (string-append
+		     (assoc-ref inputs "genenetwork2-files-small")
+		     "/share/genenetwork2" ))
+		   (pylmmcmd
+		    (string-append
+		     (assoc-ref inputs "pylmm-gn2") "/bin/pylmm_redis"))
+		   (plink2cmd
+		    (string-append
+		     (assoc-ref inputs "plink-ng-gn") "/bin/plink2"))
+		   (gemmacmd
+		    (string-append (assoc-ref inputs "gemma") "/bin/gemma")))
+
+	      (substitute*
+	       '("etc/default_settings.py")
+	       (("^GENENETWORK_FILES +=.*")
+		(string-append "GENENETWORK_FILES = \"" datafiles "\"\n" ))
+	       (("^PYLMM_COMMAND =.*")
+		(string-append "PYLMM_COMMAND = \"" pylmmcmd "\"\n" ))
+	       (("^PLINK_COMMAND =.*")
+		(string-append "PLINK_COMMAND = \"" plink2cmd "\"\n" ))
+	       (("^GEMMA_COMMAND =.*")
+		(string-append "GEMMA_COMMAND = \"" gemmacmd "\"\n" )))))))
+	#:tests? #f))   ; no 'setup.py test'
+     (home-page "http://genenetwork.org/")
+     (synopsis "Full genenetwork services")
+     (description "Genenetwork installation sumo.")
+     (license license:agpl3+))))
