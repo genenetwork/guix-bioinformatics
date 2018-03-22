@@ -133,10 +133,10 @@
     (description "REST Server")
     (license license:agpl3+))))
 
-(define-public qtlreaper
+(define-public python2-qtlreaper
   (let ((commit "dd9c7fb2a9d5fa40b4054e1bcb7c57905d98d5f8"))
   (package
-    (name "qtlreaper")
+    (name "python2-qtlreaper")
     (version (string-append "1.1-gn2-" (string-take commit 7) ))
     (source (origin
              (method git-fetch)
@@ -151,6 +151,46 @@
     (build-system python-build-system)
     (arguments
      `(#:python ,python-2
+       #:tests? #f))   ; no 'setup.py test' really!
+    (home-page "http://qtlreaper.sourceforge.net/")
+    (synopsis "Scan expression data for QTLs")
+    (description
+     "Batch-oriented version of WebQTL. It requires, as input,
+expression data from members of a set of recombinant inbred lines and
+genotype information for the same lines.  It searches for an
+association between each expression trait and all genotypes and
+evaluates that association by a permutation test.  For the permutation
+test, it performs only as many permutations as are necessary to define
+the empirical P-value to a reasonable precision. It also performs
+bootstrap resampling to estimate the confidence region for the
+location of a putative QTL.")
+    (license license:gpl2+))))
+
+(define-public python-qtlreaper
+  (let ((commit "dd9c7fb2a9d5fa40b4054e1bcb7c57905d98d5f8"))
+  (package
+    (name "python-qtlreaper")
+    (version (string-append "1.1-gn2-" (string-take commit 7) ))
+    (source (origin
+             (method git-fetch)
+             (uri (git-reference
+                   ;; (url "https://github.com/genenetwork/genenetwork2.git")
+                   (url "https://github.com/pjotrp/QTLreaper.git")
+                   (commit commit)))
+             (file-name (string-append name "-" (string-take commit 7)))
+             (sha256
+              (base32
+               "1ldcvyk8y8w6f4ci04hzx85sknd5a3h424p5bfi4fz32sm2p7fja"))))
+    (build-system python-build-system)
+    (arguments
+     `(
+       #:phases
+       (modify-phases %standard-phases
+         (add-after
+          'unpack 'fix-tests
+          (lambda* (#:key inputs #:allow-other-keys)
+            (substitute* '("./test/example1.py" "./test/example2.py")
+              (("/usr/bin/python") (which "python3"))))))
        #:tests? #f))   ; no 'setup.py test' really!
     (home-page "http://qtlreaper.sourceforge.net/")
     (synopsis "Scan expression data for QTLs")
@@ -231,7 +271,7 @@ location of a putative QTL.")
               ("python2-pyyaml" ,python2-pyyaml)
               ("python2-unittest2" ,python2-unittest2)
               ("python2-xlsxwriter" ,python2-xlsxwriter)
-              ("qtlreaper" ,qtlreaper)
+              ("python2-qtlreaper" ,python2-qtlreaper)
               ("javascript-twitter-post-fetcher" ,javascript-twitter-post-fetcher)
               ))
     (build-system python-build-system)
@@ -418,7 +458,7 @@ location of a putative QTL.")
 
 
 	;; Without Python3 support
-	("qtlreaper" ,qtlreaper) ;; Run as an external program
+	("python-qtlreaper" ,python-qtlreaper) ;; Run as an external program
 	("pylmm-gn2" ,pylmm-gn2) ;; To be run as an external python2 program
 	("python2-pil1" ,python2-pil1) ; should move to pillow some day. Run as external python2 program
 	("python2-numarray" ,python2-numarray) ;; Update gn2 code and drop this (IMPORTANT)
