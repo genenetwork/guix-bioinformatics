@@ -210,7 +210,7 @@ functions.")
   (propagated-inputs
       `(("inotify-tools" ,inotify-tools)))
   (arguments `(
-     #:python ,python-2 ; GN2 is still python2
+     ;; #:python ,python-2 ; GN2 is still python2
      #:tests? #f)) ;; No tests.
   (home-page "http://gunicorn.org")
   (synopsis
