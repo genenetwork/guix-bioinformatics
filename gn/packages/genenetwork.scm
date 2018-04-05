@@ -28,7 +28,7 @@
   #:use-module (gnu packages graphviz)
   #:use-module (gnu packages java)
   #:use-module (gnu packages linux)
-  #:use-module (gnu packages ldc)
+  ; #:use-module (gnu packages ldc)
   #:use-module (gnu packages machine-learning)
   #:use-module (gnu packages maths)
   #:use-module (gnu packages ncurses)
@@ -273,6 +273,7 @@ location of a putative QTL.")
               ("python2-xlsxwriter" ,python2-xlsxwriter)
               ("python2-qtlreaper" ,python2-qtlreaper)
               ("javascript-twitter-post-fetcher" ,javascript-twitter-post-fetcher)
+              ("javascript-cytoscape" ,javascript-cytoscape)
               ))
     (build-system python-build-system)
     (arguments
@@ -433,7 +434,7 @@ location of a putative QTL.")
 	("python-parameterized" ,python-parameterized) ;; used for the tests
 	("genenetwork2-files-small" ,genenetwork2-files-small)
 	("javascript-twitter-post-fetcher" ,javascript-twitter-post-fetcher)
-
+	; ("javascript-cytoscape" ,javascript-cytoscape)
 
 	;; With Python3 support
 	("gunicorn" ,gunicorn)

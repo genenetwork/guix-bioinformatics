@@ -57,7 +57,7 @@
   #:use-module (gnu packages web)
   #:use-module (gnu packages xml)
   #:use-module (gnu packages bootstrap)
-  #:use-module (gn packages ldc)
+  ; #:use-module (gn packages ldc)
   #:use-module (gn packages ldc)
   #:use-module (gn packages shell)
   #:use-module (srfi srfi-1))
