@@ -272,8 +272,11 @@ location of a putative QTL.")
               ("python2-unittest2" ,python2-unittest2)
               ("python2-xlsxwriter" ,python2-xlsxwriter)
               ("python2-qtlreaper" ,python2-qtlreaper)
-              ("javascript-twitter-post-fetcher" ,javascript-twitter-post-fetcher)
-              ("javascript-cytoscape" ,javascript-cytoscape)
+	            ("javascript-twitter-post-fetcher" ,javascript-twitter-post-fetcher)
+	            ("javascript-cytoscape" ,javascript-cytoscape)
+	            ("javascript-panzoom" ,javascript-cytoscape-panzoom)
+	            ("javascript-qtip" ,javascript-cytoscape-qtip)
+
               ))
     (build-system python-build-system)
     (arguments
