@@ -434,7 +434,9 @@ location of a putative QTL.")
 	("python-parameterized" ,python-parameterized) ;; used for the tests
 	("genenetwork2-files-small" ,genenetwork2-files-small)
 	("javascript-twitter-post-fetcher" ,javascript-twitter-post-fetcher)
-	; ("javascript-cytoscape" ,javascript-cytoscape)
+	("javascript-cytoscape" ,javascript-cytoscape)
+	("javascript-panzoom" ,javascript-cytoscape-panzoom)
+	("javascript-qtip" ,javascript-cytoscape-qtip)
 
 	;; With Python3 support
 	("gunicorn" ,gunicorn)

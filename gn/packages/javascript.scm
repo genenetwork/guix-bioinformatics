@@ -11,6 +11,8 @@
   #:use-module (guix build-system trivial)
   #:use-module (srfi srfi-1))
 
+;; see color-make package for great example - also install-file and invoke
+
 (define-public javascript-twitter-post-fetcher
   (let ((commit "27440ffebd4c1ba7abc9aec92a581155715f2e4e"))
     (package
@@ -79,6 +81,84 @@
            (copy-recursively "dist" targetdir)
            ))))
 
+    (home-page "https://github.com/cytoscape/cytoscape.js")
+    (synopsis "Cytoscape.js")
+    (description "Cytoscape.")
+    (license license:expat)))
+
+(define-public javascript-cytoscape-panzoom
+  (package
+   ;; (inherit javascript-cytoscape)
+   (name "javascript-cytoscape-panzoom")
+   (version "2.5.2") ; ancient version
+   (source
+    (origin
+     (method url-fetch)
+     (uri (string-append "https://github.com/cytoscape/cytoscape.js-panzoom/archive/" version ".tar.gz"))
+     (file-name (string-append name "-" version ".tar.gz"))
+     (sha256
+      (base32 "154xzi693gbv89y221gkpi03k84lccmr55v5z43mn1i1s1fdhm2b"))))
+   (inputs `(("javascript-cytoscape" ,javascript-cytoscape)))
+   (build-system trivial-build-system)
+   (native-inputs `(("gzip" ,gzip)
+                    ("tar" ,tar)
+                    ("source" ,source)))
+   (arguments
+    `(#:modules ((guix build utils))
+      #:builder
+      (begin
+        (use-modules (guix build utils))
+        (let* ((out (assoc-ref %outputs "out"))
+               (tarcmd (string-append (assoc-ref %build-inputs "tar") "/bin/tar"))
+               (targetdir (string-append out "/share/genenetwork2/javascript/cytoscape-panzoom"))
+               (source (assoc-ref %build-inputs "source")))
+          (setenv "PATH" (string-append
+                          (assoc-ref %build-inputs "tar") "/bin" ":"
+                          (assoc-ref %build-inputs "gzip") "/bin"))
+          (invoke "tar" "xvf" (assoc-ref %build-inputs "source") "--strip-components=1")
+          (mkdir-p targetdir)
+          (install-file "cytoscape-panzoom.js" targetdir)
+          (install-file "cytoscape.js-panzoom.css" targetdir)
+          ))))
+    (home-page "https://github.com/cytoscape/cytoscape.js")
+    (synopsis "Cytoscape.js")
+    (description "Cytoscape.")
+    (license license:expat)))
+
+;; https://github.com/cytoscape/cytoscape.js-qtip/archive/2.7.1.tar.gz
+(define-public javascript-cytoscape-qtip
+  (package
+   ;; (inherit javascript-cytoscape)
+   (name "javascript-cytoscape-qtip")
+   (version "2.7.1") ; ancient version
+   (source
+    (origin
+     (method url-fetch)
+     (uri (string-append "https://github.com/cytoscape/cytoscape.js-qtip/archive/" version ".tar.gz"))
+     (file-name (string-append name "-" version ".tar.gz"))
+     (sha256
+      (base32 "0f2qhxi9qx5r3rcmxqgdqnwd9apnjlb4s4hckwhaqgsp6rf8lzlb"))))
+   (inputs `(("javascript-cytoscape" ,javascript-cytoscape)))
+   (build-system trivial-build-system)
+   (native-inputs `(("gzip" ,gzip)
+                    ("tar" ,tar)
+                    ("source" ,source)))
+   (arguments
+    `(#:modules ((guix build utils))
+      #:builder
+      (begin
+        (use-modules (guix build utils))
+        (let* ((out (assoc-ref %outputs "out"))
+               (tarcmd (string-append (assoc-ref %build-inputs "tar") "/bin/tar"))
+               (targetdir (string-append out "/share/genenetwork2/javascript/cytoscape-qtip"))
+               (source (assoc-ref %build-inputs "source")))
+          (setenv "PATH" (string-append
+                          (assoc-ref %build-inputs "tar") "/bin" ":"
+                          (assoc-ref %build-inputs "gzip") "/bin"))
+          (invoke "tar" "xvf" (assoc-ref %build-inputs "source") "--strip-components=1")
+          (mkdir-p targetdir)
+          (install-file "cytoscape-qtip.js" targetdir)
+          ))))
     (home-page "https://github.com/cytoscape/cytoscape.js")
     (synopsis "Cytoscape.js")
     (description "Cytoscape.")
