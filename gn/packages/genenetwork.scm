@@ -399,6 +399,34 @@ location of a putative QTL.")
     (license license:agpl3+))))
 
 
+
+(define-public python-reaper
+  (let (;;(commit "b8db1fb0857bc76a5881aba980a912fc774389ff")
+	(commit "a873abe18e3a7469c9c700aba6454fee69b32686"))
+    (package
+     (name "python-reaper")
+     (version (string-append "0.0.1-"
+			     (string-take commit 7)))
+     (source (origin
+	       (method git-fetch)
+	       (uri (git-reference
+		     (url "https://github.com/fredmanglis/reaper.git")
+		     (commit commit)))
+	       (sha256
+		(base32
+		 "140gzadz52dwfl2m1c8vwh6ckyl8q681w7rwfl1z1h8yw42nm2n7"
+		 ;;"1mg4b6avf0fq8kjpxv3ag33ivsyrj0amhvna0kvyjj49aj1gmhr7"
+		 ;; "0klgjra2qisfzs8mk0s8vzdr190l4n56xcm66dk0asqs7zswi8di" ;; default
+		 ))))
+     (build-system python-build-system)
+     (arguments
+      `(#:tests? #f))
+     (home-page "https://github.com/fredmanglis/reaper")
+     (synopsis "Parser for .geno files")
+     (description "Parser for .geno files.  It replaces the Python2 library
+written in C")
+     (license license:agpl3+))))
+
 (define-public genenetwork3
   (let (;; (commit "1538ffd33af19e6ac922b4ee85fe701408968dfd")
 	(commit "5bff4f49dffb4ac982d36cd0d39e0a9ec6bc66e9"))
@@ -446,7 +474,6 @@ location of a putative QTL.")
 	("javascript-qtip" ,javascript-cytoscape-qtip)
 
 	;; With Python3 support
-	("python-wrapper" ,python-wrapper)
 	("gunicorn" ,gunicorn)
 	("python-rpy2" ,python-rpy2)
 	("python-flask" ,python-flask)
@@ -454,11 +481,13 @@ location of a putative QTL.")
 	("python-numpy" ,python-numpy)
 	("python-redis" ,python-redis)
 	("python-scipy" ,python-scipy)
+	("python-reaper" ,python-reaper)
 	("python-pyyaml" ,python-pyyaml)
 	("python-jinja2" ,python-jinja2)
 	("python-pandas" ,python-pandas)
 	("python-htmlgen" ,python-htmlgen)
 	("python-passlib" ,python-passlib)
+	("python-wrapper" ,python-wrapper)
 	("python-requests" ,python-requests)
 	("python-cssselect" ,python-cssselect)
 	("python-sqlalchemy" ,python-sqlalchemy)
