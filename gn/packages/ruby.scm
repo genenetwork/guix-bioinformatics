@@ -340,3 +340,107 @@ a history.")
   (home-page
     "http://github.com/pjotrp/bioruby-vcf")
   (license license:expat)))
+
+(define-public ruby-faraday
+(package
+  (name "ruby-faraday")
+  (version "0.14.0")
+  (source
+    (origin
+      (method url-fetch)
+      (uri (rubygems-uri "faraday" version))
+      (sha256
+        (base32
+          "1c3x3s8vb5nf7inyfvhdxwa4q3swmnacpxby6pish5fgmhws7zrr"))))
+  (build-system ruby-build-system)
+  (propagated-inputs
+    `(("ruby-multipart-post" ,ruby-multipart-post)))
+  (arguments
+   `(#:tests? #f)) ;; no bundler/cucumber
+  (synopsis "HTTP/REST API client library.")
+  (description "HTTP/REST API client library.")
+  (home-page
+    "https://github.com/lostisland/faraday")
+  (license license:expat)))
+
+(define-public ruby-elasticsearch-transport
+(package
+  (name "ruby-elasticsearch-transport")
+  (version "6.0.2")
+  (source
+    (origin
+      (method url-fetch)
+      (uri (rubygems-uri "elasticsearch-transport" version))
+      (sha256
+        (base32
+          "0gpwbw70qisx681j1bw8xq6shg5kdxmcdzg6425af0b5881jg7iy"))))
+  (build-system ruby-build-system)
+  (propagated-inputs
+    `(("ruby-faraday" ,ruby-faraday)
+      ("ruby-multi-json" ,ruby-multi-json)))
+  (arguments
+   `(#:tests? #f)) ;; no bundler/cucumber
+  (synopsis
+    "Ruby client for Elasticsearch. See the `elasticsearch` gem for full integration.
+")
+  (description
+    "Ruby client for Elasticsearch.  See the `elasticsearch` gem for full integration.
+")
+  (home-page
+    "https://github.com/elasticsearch/elasticsearch-ruby/tree/master/elasticsearch-transport")
+  (license #f)))
+
+(define-public ruby-elasticsearch-api
+(package
+  (name "ruby-elasticsearch-api")
+  (version "6.0.2")
+  (source
+    (origin
+      (method url-fetch)
+      (uri (rubygems-uri "elasticsearch-api" version))
+      (sha256
+        (base32
+          "1vkahknqn85vvwr1gzh8jf3pvdial0c0d524icg8x06vibqgzd5h"))))
+  (build-system ruby-build-system)
+  (propagated-inputs
+    `(("ruby-multi-json" ,ruby-multi-json)))
+  (arguments
+   `(#:tests? #f)) ;; no bundler/cucumber
+  (synopsis
+    "Ruby API for Elasticsearch. See the `elasticsearch` gem for full integration.
+")
+  (description
+    "Ruby API for Elasticsearch.  See the `elasticsearch` gem for full integration.
+")
+  (home-page
+    "https://github.com/elasticsearch/elasticsearch-ruby/tree/master/elasticsearch-api")
+  (license #f)))
+
+(define-public ruby-elasticsearch
+  (package
+   (name "ruby-elasticsearch")
+   (version "6.0.2")
+   (source
+    (origin
+     (method url-fetch)
+     (uri (rubygems-uri "elasticsearch" version))
+     (sha256
+      (base32
+       "0a08ynvxz5clfm2ndqpgjrv4aiga9m2y1ab34s3qkihdfdzdzhj8"))))
+   (build-system ruby-build-system)
+   (propagated-inputs
+    `(("ruby-elasticsearch-api"
+       ,ruby-elasticsearch-api)
+      ("ruby-elasticsearch-transport"
+       ,ruby-elasticsearch-transport)))
+  (arguments
+   `(#:tests? #f)) ;; no bundler/cucumber
+   (synopsis
+    "Ruby integrations for Elasticsearch (client, API, etc.)
+")
+   (description
+    "Ruby integrations for Elasticsearch (client, API, etc.)
+")
+   (home-page
+    "http://github.com/elasticsearch/elasticsearch-ruby")
+   (license #f)))

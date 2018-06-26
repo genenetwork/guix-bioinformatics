@@ -163,3 +163,41 @@
     (synopsis "Cytoscape.js")
     (description "Cytoscape.")
     (license license:expat)))
+
+;; https://github.com/DataTables/DataTables/archive/1.10.12.tar.gz
+(define-public javascript-datatables
+  (package
+   (name "javascript-datatables")
+   (version "1.10.12") ; ancient version
+   (source
+    (origin
+     (method url-fetch)
+     (uri (string-append "https://github.com/DataTables/DataTables/archive/" version ".tar.gz"))
+     (file-name (string-append name "-" version ".tar.gz"))
+     (sha256
+      (base32 "0blzsd2zqmvnqi6pl1xq0dr457kjrdaaa86d2cmdakls0j2mj92s"))))
+   (inputs `(("javascript-cytoscape" ,javascript-cytoscape)))
+   (build-system trivial-build-system)
+   (native-inputs `(("gzip" ,gzip)
+                    ("tar" ,tar)
+                    ("source" ,source)))
+   (arguments
+    `(#:modules ((guix build utils))
+      #:builder
+      (begin
+        (use-modules (guix build utils))
+        (let* ((out (assoc-ref %outputs "out"))
+               (tarcmd (string-append (assoc-ref %build-inputs "tar") "/bin/tar"))
+               (targetdir (string-append out "/share/genenetwork2/javascript/DataTables"))
+               (source (assoc-ref %build-inputs "source")))
+          (setenv "PATH" (string-append
+                          (assoc-ref %build-inputs "tar") "/bin" ":"
+                          (assoc-ref %build-inputs "gzip") "/bin"))
+          (invoke "tar" "xvf" (assoc-ref %build-inputs "source") "--strip-components=1")
+          (mkdir-p targetdir)
+           (copy-recursively "media" targetdir)
+          ))))
+    (home-page "https://github.com/DataTables/")
+    (synopsis "Datatables")
+    (description "Datatables.")
+    (license license:expat)))
