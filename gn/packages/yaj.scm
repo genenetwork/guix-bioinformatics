@@ -52,6 +52,38 @@
   #:use-module (gn packages web)
   #:use-module (srfi srfi-1))
 
+(define-public python-elasticsearch
+  (package
+    (name "python-elasticsearch")
+    (version "6.3.0")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "elasticsearch" version))
+        (sha256
+         (base32
+          "1gpgb2vxl1q7hqrxxdlmfp9dxcl5wg3k78vxk2lka1cjaqd7mzw0"))))
+    (build-system python-build-system)
+    (native-inputs
+     `(("python-mock" ,python-mock)
+       ("python-nosexcover" ,python-nosexcover)
+       ("python-pyaml" ,python-pyaml)
+       ("python-requests" ,python-requests)))
+    (propagated-inputs
+     `(("urllib3" ,python-urllib3)))
+    (arguments
+     ;; tests require the test_elasticsearch module but it is not distributed.
+     `(#:tests? #f))
+    (home-page "https://github.com/elastic/elasticsearch-py")
+    (synopsis "Low-level client for Elasticsearch")
+    (description "Official low-level client for Elasticsearch.  Its goal is to
+provide common ground for all Elasticsearch-related code in Python; because of
+this it tries to be opinion-free and very extendable.")
+    (license license:expat)))
+
+(define-public python2-elasticsearch
+  (package-with-python2 python-elasticsearch))
+
 (define-public yaj
   (let ((md5 "93e745e9c"))
     (package
