@@ -401,8 +401,7 @@ location of a putative QTL.")
 
 
 (define-public python-reaper
-  (let (;;(commit "b8db1fb0857bc76a5881aba980a912fc774389ff")
-	(commit "a873abe18e3a7469c9c700aba6454fee69b32686"))
+  (let ((commit "63391333a6619771277bfffa9bd9d33811fa0d28"))
     (package
      (name "python-reaper")
      (version (string-append "0.0.1-"
@@ -414,10 +413,7 @@ location of a putative QTL.")
 		     (commit commit)))
 	       (sha256
 		(base32
-		 "140gzadz52dwfl2m1c8vwh6ckyl8q681w7rwfl1z1h8yw42nm2n7"
-		 ;;"1mg4b6avf0fq8kjpxv3ag33ivsyrj0amhvna0kvyjj49aj1gmhr7"
-		 ;; "0klgjra2qisfzs8mk0s8vzdr190l4n56xcm66dk0asqs7zswi8di" ;; default
-		 ))))
+		 "1rq2qn0vrqd8k676yy8drm0zxzkj065ywhxjl0j1n2r25zifay7r"))))
      (build-system python-build-system)
      (arguments
       `(#:tests? #f))
