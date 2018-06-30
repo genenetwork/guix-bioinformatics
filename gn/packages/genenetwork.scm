@@ -399,21 +399,49 @@ location of a putative QTL.")
     (license license:agpl3+))))
 
 
+
+(define-public python-reaper
+  (let ((commit "63391333a6619771277bfffa9bd9d33811fa0d28"))
+    (package
+     (name "python-reaper")
+     (version (string-append "0.0.1-"
+			     (string-take commit 7)))
+     (source (origin
+	       (method git-fetch)
+	       (uri (git-reference
+		     (url "https://github.com/fredmanglis/reaper.git")
+		     (commit commit)))
+	       (sha256
+		(base32
+		 "1rq2qn0vrqd8k676yy8drm0zxzkj065ywhxjl0j1n2r25zifay7r"))))
+     (build-system python-build-system)
+     (arguments
+      `(#:tests? #f))
+     (home-page "https://github.com/fredmanglis/reaper")
+     (synopsis "Parser for .geno files")
+     (description "Parser for .geno files.  It replaces the Python2 library
+written in C")
+     (license license:agpl3+))))
+
 (define-public genenetwork3
-  (let ((commit "1538ffd33af19e6ac922b4ee85fe701408968dfd"))
+  (let (;; (commit "1538ffd33af19e6ac922b4ee85fe701408968dfd")
+	(commit "5bff4f49dffb4ac982d36cd0d39e0a9ec6bc66e9"))
     (package
      (name "genenetwork3")
      (version (string-append "2.10rc5-" (string-take commit 7) ))
      (source (origin
 	      (method git-fetch)
 	      (uri (git-reference
-		    (url "https://pjotrp@gitlab.com/genenetwork/gn2_diet.git")
+		    (url "https://github.com/fredmanglis/genenetwork2.git")
+		    ;; (url "https://pjotrp@gitlab.com/genenetwork/gn2_diet.git")
 		    ;; (url "https://github.com/genenetwork/genenetwork2_diet.git")
 		    (commit commit)))
 	      (file-name (string-append name "-" version))
 	      (sha256
 	       (base32
-		"0ji929xgzypyhchcfy9xa1sz04w322ibs2khc8s3qiddxjqdglrz"))))
+		"0klgjra2qisfzs8mk0s8vzdr190l4n56xcm66dk0asqs7zswi8di"
+		;; "0ji929xgzypyhchcfy9xa1sz04w322ibs2khc8s3qiddxjqdglrz"
+		))))
      (propagated-inputs ;; propagated for development purposes
       `( ;; Agnostic to Python
 	("r" ,r)
@@ -427,7 +455,7 @@ location of a putative QTL.")
 	("mysql" ,mysql)
 	("nginx" ,nginx)
 	("r-wgcna" ,r-wgcna)
-	("r-phewas" ,r-phewas)
+	;; ("r-phewas" ,r-phewas)
 	("coreutils" ,coreutils)
 	("gemma" ,gemma-gn2-git)
 	("plink-ng-gn" ,plink-ng-gn)
@@ -449,11 +477,15 @@ location of a putative QTL.")
 	("python-numpy" ,python-numpy)
 	("python-redis" ,python-redis)
 	("python-scipy" ,python-scipy)
+	("python-reaper" ,python-reaper)
 	("python-pyyaml" ,python-pyyaml)
 	("python-jinja2" ,python-jinja2)
 	("python-pandas" ,python-pandas)
+	("python-htmlgen" ,python-htmlgen)
 	("python-passlib" ,python-passlib)
+	("python-wrapper" ,python-wrapper)
 	("python-requests" ,python-requests)
+	("python-cssselect" ,python-cssselect)
 	("python-sqlalchemy" ,python-sqlalchemy)
 	("python-setuptools" ,python-setuptools)
 	("python-simplejson" ,python-simplejson)
@@ -464,12 +496,12 @@ location of a putative QTL.")
 
 
 	;; Without Python3 support
-	("python-qtlreaper" ,python-qtlreaper) ;; Run as an external program
-	("pylmm-gn2" ,pylmm-gn2) ;; To be run as an external python2 program
-	("python2-pil1" ,python2-pil1) ; should move to pillow some day. Run as external python2 program
-	("python2-numarray" ,python2-numarray) ;; Update gn2 code and drop this (IMPORTANT)
-	("python2-piddle-gn" ,python2-piddle-gn) ;; Run as external python2 program
-	("python2-htmlgen-gn" ,python2-htmlgen-gn) ;; pjotrp and zsloan to give directions
+	;; ("python-qtlreaper" ,python-qtlreaper) ;; Run as an external program
+	;; ("pylmm-gn2" ,pylmm-gn2) ;; To be run as an external python2 program
+	;; ("python2-pil1" ,python2-pil1) ; should move to pillow some day. Run as external python2 program
+	;; ("python2-numarray" ,python2-numarray) ;; Update gn2 code and drop this (IMPORTANT)
+	;; ("python2-piddle-gn" ,python2-piddle-gn) ;; Run as external python2 program
+	;; ("python2-htmlgen-gn" ,python2-htmlgen-gn) ;; pjotrp and zsloan to give directions
 
 
 	;; Removed packages
@@ -506,9 +538,9 @@ location of a putative QTL.")
 		    (string-append
 		     (assoc-ref inputs "genenetwork2-files-small")
 		     "/share/genenetwork2" ))
-		   (pylmmcmd
-		    (string-append
-		     (assoc-ref inputs "pylmm-gn2") "/bin/pylmm_redis"))
+		   ;; (pylmmcmd
+		   ;;  (string-append
+		   ;;   (assoc-ref inputs "pylmm-gn2") "/bin/pylmm_redis"))
 		   (plink2cmd
 		    (string-append
 		     (assoc-ref inputs "plink-ng-gn") "/bin/plink2"))
@@ -524,7 +556,7 @@ location of a putative QTL.")
 	       (("^PLINK_COMMAND =.*")
 		(string-append "PLINK_COMMAND = \"" plink2cmd "\"\n" ))
 	       (("^GEMMA_COMMAND =.*")
-		(string-append "GEMMA_COMMAND = \"" gemmacmd "\"\n" )))))))
+		(string-append "GEMMA_COMMAND = \"" gemmacmd "\"\n")))))))
 	#:tests? #f))   ; no 'setup.py test'
      (home-page "http://genenetwork.org/")
      (synopsis "Full genenetwork services")

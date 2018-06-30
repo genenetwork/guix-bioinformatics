@@ -176,7 +176,7 @@ functions.")
   (propagated-inputs
       `(("inotify-tools" ,inotify-tools)))
   (arguments `(
-     #:python ,python-2 ; GN2 is still python2
+     ;; #:python ,python-2 ; GN2 is still python2
      #:tests? #f)) ;; No tests.
   (home-page "http://gunicorn.org")
   (synopsis
@@ -597,3 +597,24 @@ objects using the same basic infrastructure and syntax.  Numarray is
 now part of the numpy package, though some legacy software still uses
 the older versions.")
     (license license:gpl2))) ; actualy PyRAF http://www.stsci.edu/resources/software_hardware/pyraf/LICENSE
+
+(define-public python-htmlgen
+  (package
+    (name "python-htmlgen")
+    (version "1.0.0")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append
+	     "https://github.com/srittau/python-htmlgen/archive/v"
+	     version ".tar.gz"))
+       (sha256
+	(base32
+	 "1rwgqxhmc93l60wf4ay7ph619710kvyp73s22i0snjpm5i0bhc46"))))
+    (build-system python-build-system)
+    (arguments
+     `(#:tests? #f))
+    (synopsis "Python HTML 5 Generator")
+    (description "This is a python library for generating html from classes.")
+    (home-page "https://github.com/srittau/python-htmlgen")
+    (license license:expat)))
