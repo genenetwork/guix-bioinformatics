@@ -112,9 +112,11 @@
 
 (define-public openblas-git
   (let ((commit "893bd14e924fa72a4ed345a75d64c637f1b1c550"))
+  ; (let ((commit "36aea5ce2d5565e006a027a23e805cd9ff0e2eee"))
     (package
     (name "openblas-git")
     (version (string-append "0.2.20-git-" (string-take commit 7)))
+    ; (version (string-append "0.3.1-git-" (string-take commit 7)))
     (source (origin
              (method git-fetch)
              (uri (git-reference
@@ -124,6 +126,7 @@
              (sha256
               (base32
                "0qv03c2yq46p9sajc3a3f56ijfifyv6f4n51a81wc2hihy4ilcap"))))
+               ; "1rva61y4lwi6zkja5349r59fxichdhqaqk608kklw5bwk04fjh86"))))
     (build-system gnu-build-system)
     (arguments
 
@@ -314,11 +317,11 @@ association studies (GWAS).")
     (home-page "https://rubygems.org/gems/bio-gemma-wrapper")
     (license license:gpl3)))
 
-(define-public gemma-dev
+(define-public gemma-dev-env
   (let ((md5 "93e745e9c"))
     (package
-    (name "gemma-dev")
-    (version "0.0.1")
+    (name "gemma-dev-env")
+    (version "0.98")
     (source
      (origin
        (method url-fetch)
@@ -332,6 +335,7 @@ association studies (GWAS).")
     (inputs `(("sassc" ,sassc)))
     (propagated-inputs
      `(("gemma-wrapper" ,gemma-wrapper)
+        ;; ("gcc" ,gcc-8)
        ))
     (arguments
      `(#:modules ((guix build utils))
