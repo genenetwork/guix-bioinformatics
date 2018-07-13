@@ -313,3 +313,39 @@ association studies (GWAS).")
     (description "Gemma wrapper")
     (home-page "https://rubygems.org/gems/bio-gemma-wrapper")
     (license license:gpl3)))
+
+(define-public gemma-dev
+  (let ((md5 "93e745e9c"))
+    (package
+    (name "gemma-dev")
+    (version "0.0.1")
+    (source
+     (origin
+       (method url-fetch)
+       (uri "http://biogems.info/genenetwork2-2.0-a8fcff4.svg") ; any old file
+       (file-name (string-append name "-" md5))
+       (sha256
+        (base32 "0rir1mcn3a8i1mbw3ppgnjl7wg71mapljik7n3v5i8j5ic95mqr5"))))
+    (build-system trivial-build-system)
+    (native-inputs `(("unzip" ,unzip)
+                     ("source" ,source)))
+    (inputs `(("sassc" ,sassc)))
+    (propagated-inputs
+     `(("gemma-wrapper" ,gemma-wrapper)
+       ))
+    (arguments
+     `(#:modules ((guix build utils))
+       #:builder
+       (begin
+         (use-modules (guix build utils))
+         (let ((target (string-append (assoc-ref %outputs "out")
+                                      "/share")))
+             (write target)
+             (mkdir-p target)
+             ; (copy-recursively (assoc-ref %build-inputs "source") target)
+             #t))))
+
+    (home-page "http://github.com/genetics-statistics/")
+    (synopsis "GEMMA development environment imports build tools, gemma-wrapper and faster-lmm-d")
+    (description "Gemma-development")
+    (license license:gpl3))))
