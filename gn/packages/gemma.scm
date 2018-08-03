@@ -31,6 +31,7 @@
   #:use-module (gnu packages file)
   #:use-module (gnu packages gawk)
   #:use-module (gnu packages gcc)
+  #:use-module (gnu packages gdb)
   #:use-module (gnu packages graphviz)
   #:use-module (gnu packages java)
   #:use-module (gnu packages ldc)
@@ -112,9 +113,11 @@
 
 (define-public openblas-git
   (let ((commit "893bd14e924fa72a4ed345a75d64c637f1b1c550"))
+  ; (let ((commit "36aea5ce2d5565e006a027a23e805cd9ff0e2eee"))
     (package
     (name "openblas-git")
     (version (string-append "0.2.20-git-" (string-take commit 7)))
+    ; (version (string-append "0.3.1-git-" (string-take commit 7)))
     (source (origin
              (method git-fetch)
              (uri (git-reference
@@ -124,6 +127,7 @@
              (sha256
               (base32
                "0qv03c2yq46p9sajc3a3f56ijfifyv6f4n51a81wc2hihy4ilcap"))))
+               ; "1rva61y4lwi6zkja5349r59fxichdhqaqk608kklw5bwk04fjh86"))))
     (build-system gnu-build-system)
     (arguments
 
@@ -313,3 +317,51 @@ association studies (GWAS).")
     (description "Gemma wrapper")
     (home-page "https://rubygems.org/gems/bio-gemma-wrapper")
     (license license:gpl3)))
+
+(define-public gemma-dev-env
+  (let ((md5 "93e745e9c"))
+    (package
+    (name "gemma-dev-env")
+    (version "0.98")
+    (source
+     (origin
+       (method url-fetch)
+       (uri "http://biogems.info/genenetwork2-2.0-a8fcff4.svg") ; any old file
+       (file-name (string-append name "-" md5))
+       (sha256
+        (base32 "0rir1mcn3a8i1mbw3ppgnjl7wg71mapljik7n3v5i8j5ic95mqr5"))))
+    (build-system trivial-build-system)
+    (native-inputs `(("unzip" ,unzip)
+                     ("source" ,source)))
+    (inputs `(("sassc" ,sassc)))
+    (propagated-inputs
+     `(("binutils" ,binutils) ; for ld
+       ("gemma-gn2" ,gemma-gn2-git)
+       ; ("gemma-wrapper" ,gemma-wrapper)
+       ("gcc" ,gcc-7)
+       ("gdb" ,gdb)
+       ("gfortran:lib" ,gfortran "lib")
+       ("glibc" ,glibc) ; for crt1.o
+       ("gsl" ,gsl)
+       ("eigen" ,eigen)
+       ("linux-libre-headers" ,linux-libre-headers)
+       ("openblas" ,openblas-git)
+       ("shunit2" ,shunit2)
+       ("zlib" ,zlib)
+       ))
+    (arguments
+     `(#:modules ((guix build utils))
+       #:builder
+       (begin
+         (use-modules (guix build utils))
+         (let ((target (string-append (assoc-ref %outputs "out")
+                                      "/share")))
+             (write target)
+             (mkdir-p target)
+             ; (copy-recursively (assoc-ref %build-inputs "source") target)
+             #t))))
+
+    (home-page "http://github.com/genetics-statistics/")
+    (synopsis "GEMMA development environment imports build tools, gemma-wrapper and faster-lmm-d")
+    (description "Gemma-development")
+    (license license:gpl3))))
