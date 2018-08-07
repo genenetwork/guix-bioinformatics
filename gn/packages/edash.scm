@@ -10,7 +10,8 @@
   #:use-module (gnu packages compression)
   #:use-module (gnu packages time)
   #:use-module (gnu packages check)
-  #:use-module (gn packages web))
+  #:use-module (gn packages web)
+  #:use-module (gn packages python))
 
 (define-public python-s3transfer-0.1.13
   (package
@@ -101,9 +102,10 @@ interface to the Amazon Web Services (AWS) API.")
     (build-system trivial-build-system)
     (native-inputs `(("unzip" ,unzip)
                      ("source" ,source)))
-    (inputs `(("sassc" ,sassc)))
+    ;;(inputs `(("sassc" ,sassc)))
     (propagated-inputs
      `(("python" ,python)
+       ("gunicorn" ,gunicorn)
        ("python-wrapper" ,python-wrapper)
        ("python-elasticsearch" ,python-elasticsearch)
        ("python-flask" ,python-flask)
@@ -113,7 +115,7 @@ interface to the Amazon Web Services (AWS) API.")
        ("python-misaka" ,python-misaka)
        ("python-pygit2" ,python-pygit2)
        ("web-bootstrap" ,web-bootstrap)
-       ("sassc" ,sassc)
+       ;;("sassc" ,sassc)
        ("python-boto3" ,python-boto3)
        ("python-pytest" ,python-pytest)))
     (arguments
