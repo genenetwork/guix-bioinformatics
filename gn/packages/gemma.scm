@@ -58,58 +58,9 @@
   #:use-module (gnu packages web)
   #:use-module (gnu packages xml)
   #:use-module (gnu packages bootstrap)
-  ; #:use-module (gn packages ldc)
-  #:use-module (gn packages ldc)
   #:use-module (gn packages shell)
   #:use-module (srfi srfi-1))
 
-(define-public faster-lmm-d ; incomplete, just creates build environment
-  (let ((commit "dea6abf61b633ed55e6a2997068f2d54abe5376b"))
-    (package
-     (name "faster-lmm-d")
-     (version (string-append "0.0.1-" (string-take commit 7)))
-     (source (origin
-              (method git-fetch)
-              (uri (git-reference
-                    (url "https://github.com/pjotrp/faster_lmm_d.git")
-                    (commit commit)))
-              (file-name (string-append name "-" version "-checkout"))
-              (sha256
-               (base32
-                "1syrn32g1q06bsnrk9wl7q2m5mvvglys2zl92rx0bi49kp2i0ngv"))))
-     (build-system trivial-build-system)
-     (propagated-inputs
-      `(("openblas" ,openblas)
-        ("gsl" ,gsl)
-        ("lapack" ,lapack)
-        ("dub" ,dub)
-        ("gcc" ,gcc)
-        ("glibc" ,glibc)
-        ("binutils" ,binutils) ; for ld linker
-        ("gfortran:lib" ,gfortran "lib")
-        ; ("make" ,make)
-        ))
-     (native-inputs
-      `(("ldc" ,ldc)
-        ("shunit2" ,shunit2)
-        ("which" ,which)
-        ))
-     (arguments
-      `(#:modules ((guix build utils))
-        #:builder
-        (begin
-          (use-modules (guix build utils))
-          (let ((target (string-append (assoc-ref %outputs "out")
-                                       "/share")))
-            (write target)
-            (mkdir-p target)
-            (copy-recursively (assoc-ref %build-inputs "source") target)
-            #t))))
-     (home-page "https://github.com/pjotrp")
-     (synopsis "Parallel LMM")
-     (description
-      ".")
-     (license license:gpl3))))
 
 (define-public openblas-git
   (let ((commit "893bd14e924fa72a4ed345a75d64c637f1b1c550"))
@@ -365,3 +316,55 @@ association studies (GWAS).")
     (synopsis "GEMMA development environment imports build tools, gemma-wrapper and faster-lmm-d")
     (description "Gemma-development")
     (license license:gpl3))))
+
+(define-public faster-lmm-d-dev ; incomplete, just creates build environment
+  (let ((commit "68e22043ce0ca348cbc4f3bdd015e036ba9ac5f2"))
+    (package
+     (name "faster-lmm-d-dev")
+     (version (string-append "0.0.1-" (string-take commit 7)))
+     (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url "https://github.com/genetics-statistics/faster_lmm_d.git")
+                    (commit commit)))
+              (file-name (string-append name "-" version "-checkout"))
+              (sha256
+               (base32
+                "0awcsrmpq1zbcy145l5ssmsxzfq5dq9yr0901hk977lmjf99gxng"))))
+     (build-system trivial-build-system)
+     (propagated-inputs
+      `(("openblas" ,openblas)
+        ("gsl" ,gsl)
+        ; ("lapack" ,lapack)
+        ("dub" ,dub)
+        ("gcc" ,gcc-7)
+        ("gdb" ,gdb)
+        ; ("glibc" ,glibc)
+        ("binutils" ,binutils) ; for ld linker
+        ("gfortran:lib" ,gfortran "lib")
+        ; ("make" ,make)
+        ("ldc" ,ldc)
+        ("shunit2" ,shunit2)
+        ("linux-libre-headers" ,linux-libre-headers)
+        ("openblas" ,openblas-git)
+        ))
+     (inputs
+     `(
+        ("which" ,which)
+        ))
+     (arguments
+      `(#:modules ((guix build utils))
+        #:builder
+        (begin
+          (use-modules (guix build utils))
+          (let ((target (string-append (assoc-ref %outputs "out")
+                                       "/share")))
+            (write target)
+            (mkdir-p target)
+            ; (copy-recursively (assoc-ref %build-inputs "source") target)
+            #t))))
+     (home-page "https://github.com/pjotrp")
+     (synopsis "Build system for faster-lmm-d")
+     (description
+      ".")
+     (license license:gpl3))))
