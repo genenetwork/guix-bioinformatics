@@ -28,7 +28,7 @@
   #:use-module (gnu packages graphviz)
   #:use-module (gnu packages java)
   #:use-module (gnu packages linux)
-  ; #:use-module (gnu packages ldc)
+  #:use-module (gnu packages dlang)
   #:use-module (gnu packages machine-learning)
   #:use-module (gnu packages maths)
   #:use-module (gnu packages ncurses)

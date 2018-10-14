@@ -29,7 +29,7 @@
   #:use-module (gnu packages check)
   #:use-module (gnu packages compression)
   #:use-module (gnu packages gdb)
-  #:use-module ((gnu packages ldc) #:prefix ldcmain:)
+  #:use-module ((gnu packages dlang) #:prefix ldcmain:)
   #:use-module (gnu packages libedit)
   #:use-module (gnu packages llvm)
   #:use-module (gnu packages python)

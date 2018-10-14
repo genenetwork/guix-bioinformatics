@@ -354,6 +354,9 @@ interaction networks.")
                 "0lrgipi0z6559jqh82yx8n4xgnxkhzj46v96dl77hahdp58jzg3k"))
               ))
     (build-system gnu-build-system)
+    (arguments
+     `( #:tests? #f  
+     ))
     (home-page "https://www.gnu.org/software/gsl/")
     (synopsis "Numerical library for C and C++")
     (description

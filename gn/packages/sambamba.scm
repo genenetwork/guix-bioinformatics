@@ -14,7 +14,7 @@
   #:use-module (gnu packages perl)
   #:use-module (gnu packages python)
   #:use-module (gnu packages ruby)
-  #:use-module (gnu packages ldc)
+  #:use-module (gnu packages dlang)
   #:use-module (gn packages shell)
   #:use-module (srfi srfi-1))
 
