@@ -63,12 +63,10 @@
 
 
 (define-public openblas-git
-  (let ((commit "893bd14e924fa72a4ed345a75d64c637f1b1c550"))
-  ; (let ((commit "36aea5ce2d5565e006a027a23e805cd9ff0e2eee"))
+  (let ((commit "2263d3906c23bd7341ebe714ef7c44fc84b0d1d0"))
     (package
     (name "openblas-git")
-    (version (string-append "0.2.20-git-" (string-take commit 7)))
-    ; (version (string-append "0.3.1-git-" (string-take commit 7)))
+    (version (string-append "0.3.3-git-" (string-take commit 7)))
     (source (origin
              (method git-fetch)
              (uri (git-reference
@@ -77,8 +75,7 @@
              (file-name (string-append name "-" version "-checkout"))
              (sha256
               (base32
-               "0qv03c2yq46p9sajc3a3f56ijfifyv6f4n51a81wc2hihy4ilcap"))))
-               ; "1rva61y4lwi6zkja5349r59fxichdhqaqk608kklw5bwk04fjh86"))))
+               "1x2axq36szcz1gc77vcf3ypm0g1r3jwj03vq6rr94h098rcdv4s9"))))
     (build-system gnu-build-system)
     (arguments
 
@@ -144,10 +141,10 @@
 
 
 (define-public gemma-gn2 ; guix candidate - generic openblas version
-  (let ((commit "c760aa09c2aa91ca6270b5f898c27e9aed376a73"))
+  (let ((commit "6b1e007ea9ead6123e9d7f078f3e59054047521d"))
   (package
     (name "gemma-gn2")
-    (version (string-append "0.97-" (string-take commit 7)))
+    (version (string-append "0.98-" (string-take commit 7)))
     (source (origin
              (method git-fetch)
              (uri (git-reference
@@ -156,13 +153,13 @@
              (file-name (string-append name "-" version "-checkout"))
              (sha256
               (base32
-               "0s61w8av70kqvkb00znrqnr59axygh9gnlxar8rfyasr5g6xvl8w"))))
+               "0gg4rrxcjbhfqfdaljnn86yffaa0n2d2j67j2gv47wvgrnn8fvwz"))))
     (inputs `(
-              ("gfortran:lib" ,gfortran "lib")
+              ; ("gfortran:lib" ,gfortran "lib")
               ("gsl" ,gsl)
               ("eigen" ,eigen)
               ("shunit2" ,shunit2)
-              ("lapack" ,lapack)
+              ; ("lapack" ,lapack)
               ("openblas" ,openblas)
               ("zlib" ,zlib)
               ))
@@ -178,7 +175,6 @@
         (string-append "EIGEN_INCLUDE_PATH="
                        (assoc-ref %build-inputs "eigen")
                        "/include/eigen3/")
-                       "WITH_LAPACK=1"
         )
        #:phases
         ; "/include/eigen3/"
@@ -196,10 +192,10 @@
        #:parallel-tests? #f))
     (home-page "http://www.xzlab.org/software.html")
     (synopsis "Tool for genome-wide efficient mixed model association")
-    (description "GEMMA is the software implementing the Genome-wide
-Efficient Mixed Model Association algorithm for a standard linear
-mixed model and some of its close relatives for genome-wide
-association studies (GWAS).")
+    (description "Genome-wide Efficient Mixed Model Association (GEMMA)
+provides a standard linear mixed model resolver with application in
+genome-wide association studies (GWAS).")
+
     (license license:gpl3))))
 
 (define-public gemma-gn2-git ; openblas optimized
@@ -207,7 +203,7 @@ association studies (GWAS).")
    (inherit gemma-gn2)
    (name "gemma-gn2-git")
    (inputs `(
-             ("gfortran:lib" ,gfortran "lib")
+             ; ("gfortran:lib" ,gfortran "lib")
              ("gsl" ,gsl)
              ("eigen" ,eigen)
              ("shunit2" ,shunit2)
@@ -233,7 +229,7 @@ association studies (GWAS).")
                   (lambda* (#:key outputs #:allow-other-keys)
                            (let ((out (assoc-ref outputs "out")))
                              (install-file "bin/gemma" (string-append out "/bin"))))))
-       ; #:tests? #f
+       #:tests? #f
        #:parallel-tests? #f))
    ))
 
