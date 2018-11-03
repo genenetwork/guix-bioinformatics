@@ -169,7 +169,9 @@ interface to the Amazon Web Services (AWS) API.")
        ("python-sqlalchemy" ,python-sqlalchemy)
        ("python-flask-sqlalchemy" ,python-flask-sqlalchemy)
        ("python-flask-mail" ,python-flask-mail)
-       ("python-flask-wtf" ,python-flask-wtf)))
+       ("python-flask-wtf" ,python-flask-wtf)
+       ("sqlite" ,sqlite)
+       ))
     (arguments
      `(#:modules ((guix build utils))
        #:builder
