@@ -26,6 +26,7 @@
   #:use-module (gnu packages python)
   #:use-module (gnu packages python-web)
   #:use-module (gnu packages pkg-config)
+  #:use-module (gnu packages rdf)
   #:use-module (gnu packages readline)
   #:use-module (gnu packages statistics)
   #:use-module (gnu packages tex)
@@ -131,6 +132,92 @@ functions.")
   (license license:expat))
 )
 
+(define-public python-bagit; guix candidate
+(package
+  (name "python-bagit")
+  (version "1.7.0")
+  (source
+    (origin
+      (method url-fetch)
+      (uri "https://files.pythonhosted.org/packages/ee/11/7a7fa81c0d43fb4d449d418eba57fc6c77959754c5c2259a215152810555/bagit-1.7.0.tar.gz")
+      (sha256
+        (base32
+          "1m6y04qmig0b5hzb35lnaw3d2yfydb7alyr1579yblvgs3da6j7j"))))
+  (build-system python-build-system)
+  (inputs
+      `(("python-setuptools-scm" ,python-setuptools-scm)
+      ("python-coverage" ,python-coverage)
+      ("python-mock" ,python-mock)
+      ))
+  (arguments `(#:tests? #f)) ;; No tests.
+  (home-page "https://pypi.python.org/pypi/bagit")
+  (synopsis
+    "Python bagit.")
+  (description
+    "Python bagit.")
+  (license license:gpl2))
+)
+
+(define-public python-prov ; guix candidate
+(package
+  (name "python-prov")
+  (version "1.5.3")
+  (source
+    (origin
+      (method url-fetch)
+      (uri (pypi-uri "prov" version))
+      (sha256
+        (base32
+          "1a9h406laclxalmdny37m0yyw7y17n359akclbahimdggq853jd0"))))
+  (build-system python-build-system)
+  (home-page "https://github.com/trungdong/prov")
+  (synopsis
+    "A library for W3C Provenance Data Model supporting PROV-JSON, PROV-XML and PROV-O (RDF)")
+  (description
+    "A library for W3C Provenance Data Model supporting PROV-JSON, PROV-XML and PROV-O (RDF)")
+  (license license:expat)))
+
+(define-public python-typing-extensions; guix candidate
+(package
+  (name "python-typing-extensions")
+  (version "3.6.6")
+  (source
+    (origin
+      (method url-fetch)
+      (uri "https://files.pythonhosted.org/packages/fc/e6/3d2f306b12f01bde2861d67458d32c673e206d6fcc255537bf452db8f80c/typing_extensions-3.6.6.tar.gz")
+      (sha256
+        (base32
+          "07vhddjnd3mhdijyc3s0mwi9jgfjp3rr056nxqiavydbvkrvgrsi"))))
+  (build-system python-build-system)
+  (home-page "https://pypi.python.org/pypi/typing_extensions")
+  (synopsis
+    "Python typing_extensions.")
+  (description
+    "Python typing_extensions.")
+  (license license:gpl2))
+)
+
+(define-public python-subprocess32 ; guix candidate
+(package
+  (name "python-subprocess32")
+  (version "0.2.9")
+  (source
+    (origin
+      (method url-fetch)
+      (uri "https://files.pythonhosted.org/packages/be/2b/beeba583e9877e64db10b52a96915afc0feabf7144dcbf2a0d0ea68bf73d/subprocess32-3.5.3.tar.gz")
+      (sha256
+        (base32
+          "1hr5fan8i719hmlmz73hf8rhq74014w07d8ryg7krvvf6692kj3b"))))
+  (build-system python-build-system)
+  (arguments `(#:tests? #f)) ;; No tests.
+  (home-page "https://pypi.python.org/pypi/subprocess32")
+  (synopsis
+    "Python subprocess32.")
+  (description
+    "Python subprocess32.")
+  (license license:gpl2))
+)
+
 (define-public python-inotify ; guix candidate
 (package
   (name "python-inotify")
@@ -218,22 +305,20 @@ functions.")
 (define-public python-rdflib-jsonld ; guix ready
   (package
     (name "python-rdflib-jsonld")
-    (version "0.3")
+    (version "0.4.0")
     (source
       (origin
         (method url-fetch)
-        (uri (string-append
-               "https://pypi.python.org/packages/source/r/rdflib-jsonld/rdflib-jsonld-"
-               version
-               ".tar.gz"))
+        (uri (pypi-uri "rdflib-jsonld" version))
         (sha256
           (base32
-            "121a876k49xl85jvikyh4hzvm34456ikw66cra5dfyr15br1qjll"))))
+            "0bdw2pbjmpy1l4p6slsjn54bqy6crk5hk4san84xxirgd9w78iql"))))
     (build-system python-build-system)
     (inputs
       `(("python-setuptools" ,python-setuptools)))
     (propagated-inputs
-     `(("python-rdflib-4.2" ,python-rdflib-4.2)
+     `(("python-rdflib" ,python-rdflib)
+       ("python-isodate" ,python-isodate)
        ("python-pyparsing" ,python-pyparsing)
        ("python-html5lib" ,python-html5lib)
        ("python-nose" ,python-nose)
@@ -249,50 +334,6 @@ functions.")
 (define-public python2-rdflib-jsonld
   (package-with-python2 python-rdflib-jsonld))
 
-
-(define-public python-rdflib-4.2
-  (package
-    (name "python-rdflib-4.2")
-    (version "4.2.0")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (string-append
-              "https://pypi.python.org/packages/source/r/rdflib/rdflib-"
-              version
-              ".tar.gz"))
-        (patches
-          ;; The patch has no effect under Python 3.
-          (list (search-patch "python2-rdflib-drop-sparqlwrapper.patch")))
-        (sha256
-          (base32
-            "1h3f8yl9frjz8rsykjdjk83qsrcvld3qa7pkzh69s91h97ydl83l"))))
-    (build-system python-build-system)
-    (inputs
-      `(("python-html5lib" ,python-html5lib)
-        ("python-isodate" ,python-isodate)
-        ("python-pyparsing" ,python-pyparsing)
-        ("python-setuptools" ,python-setuptools)))
-    (arguments `(#:tests? #f)) ;; No tests.
-    (home-page "https://github.com/RDFLib/rdflib")
-    (synopsis
-      "Python RDF library")
-    (description
-      "RDFLib is a Python library for working with RDF, a simple yet
-powerful language for representing information.")
-    (license (license:non-copyleft "file://LICENSE"
-                           "See LICENSE in the distribution."))))
-
-(define-public python2-rdflib-4.2
-  (let ((base (package-with-python2 python-rdflib-4.2)))
-    (package
-      (inherit base)
-      (inputs
-        (append (package-inputs base)
-                `(("python-nose" ,python-nose))))
-      (arguments
-        `(#:python ,python-2
-          #:tests? #f))))) ; 3 tests fail, also outside Guix
 
 (define-public python-rserve
   (package
@@ -326,20 +367,62 @@ powerful language for representing information.")
 (define-public python2-rserve
   (package-with-python2 python-rserve))
 
+(define-public python-setuptools
+  (package
+    (name "python-setuptools")
+    (version "40.6.2")
+    (source
+     (origin
+      (method url-fetch)
+      (uri "https://files.pythonhosted.org/packages/37/1b/b25507861991beeade31473868463dad0e58b1978c209de27384ae541b0b/setuptools-40.6.3.zip"
+             )
+      (sha256
+       (base32
+        "1y085dnk574sxw9aymdng9gijvrsbw86hsv9hqnhv7y4d6nlsirv"))
+      (modules '((guix build utils)))
+      (snippet
+       '(begin
+          ;; Remove included binaries which are used to build self-extracting
+          ;; installers for Windows.
+          ;; TODO: Find some way to build them ourself so we can include them.
+          (for-each delete-file (find-files "setuptools" "^(cli|gui).*\\.exe$"))
+          #t))))
+    (build-system python-build-system)
+    ;; FIXME: Tests require pytest, which itself relies on setuptools.
+    ;; One could bootstrap with an internal untested setuptools.
+    (arguments
+     `(#:tests? #f))
+    (home-page "https://pypi.python.org/pypi/setuptools")
+    (synopsis
+     "Library designed to facilitate packaging Python projects")
+    (description
+     "Setuptools is a fully-featured, stable library designed to facilitate
+packaging Python projects, where packaging includes:
+Python package and module definitions,
+distribution package metadata,
+test hooks,
+project installation,
+platform-specific details,
+Python 3 support.")
+    ;; TODO: setuptools now bundles the following libraries:
+    ;; packaging, pyparsing, six and appdirs. How to unbundle?
+    (license (list license:psfl        ; setuptools itself
+                   license:expat       ; six, appdirs, pyparsing
+                   license:asl2.0      ; packaging is dual ASL2/BSD-2
+                   license:bsd-2))))
+
+
 (define-public python-avro ; guix ready - used by CWL
 (package
   (name "python-avro")
-  (version "1.7.7")
+  (version "1.8.2")
   (source
     (origin
       (method url-fetch)
-      (uri (string-append
-             "https://pypi.python.org/packages/source/a/avro/avro-"
-             version
-             ".tar.gz"))
+        (uri (pypi-uri "avro" version))
       (sha256
         (base32
-          "0n21lfclah7bmqnnqfqmpsrimz0s86qkxyn972jynq234n1lyynf"))))
+          "0nabn1hzj1880qsp7fkg7923c0xdqk4i35s15asmy2xp604f97lg"))))
   (build-system python-build-system)
   (inputs
     `(("python-setuptools" ,python-setuptools)))

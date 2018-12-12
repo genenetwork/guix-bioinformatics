@@ -3,6 +3,7 @@
 (define-module (gn packages cwl)
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (gnu packages)
+  #:use-module (gnu packages check)
   #:use-module (gnu packages python)
   #:use-module (gnu packages python-web)
   #:use-module (gnu packages rdf)
@@ -19,7 +20,7 @@
 (define-public python-cwltool ; guix: needs work
   (package
     (name "python-cwltool")
-    (version "1.0.20150916041152")
+    (version "1.0.20181012180214")
     (source
       (origin
         (method url-fetch)
@@ -29,17 +30,23 @@
                ".tar.gz"))
         (sha256
           (base32
-            "1kqxc6nvq4nr8qdv39ycdi6fhzaipgjpmbghsz94ij6jhf5r3dq2"))))
+            "0pk0jlac2vl6vfihdq07agzz9dasw84yjz5ladcbwnmzzl022cg7"))))
     (build-system python-build-system)
     (inputs
-     `(("python-setuptools" ,python-setuptools)
+     `(("python-bagit" ,python-bagit)
+       ("python-setuptools" ,python-setuptools)
+       ("python-pytest-cov" ,python-pytest-cov)
+       ("python-pytest-runner" ,python-pytest-runner)
+       ("python-typing-extensions" ,python-typing-extensions)
+       ("python-prov" ,python-prov)
        ("python-pyparsing" ,python-pyparsing)
+       ("python-subprocess32" ,python-subprocess32)
        ))
     (propagated-inputs
      `(("python-schema-salad" ,python-schema-salad)
        ("python-html5lib" ,python-html5lib)
        ))
-    (arguments `(#:tests? #f)) ;; CWL includes no tests.
+    ; (arguments `(#:tests? #f)) ;; CWL includes no tests.
     (home-page
       "https://github.com/common-workflow-language/common-workflow-language")
     (synopsis
@@ -54,17 +61,14 @@
 (define-public python-schema-salad
   (package
     (name "python-schema-salad")
-    (version "1.0.2")
+    (version "3.0.20181129082112")
     (source
       (origin
         (method url-fetch)
-        (uri (string-append
-               "https://pypi.python.org/packages/source/s/schema-salad/schema-salad-"
-               version
-               ".tar.gz"))
+        (uri (pypi-uri "schema-salad" version))
         (sha256
           (base32
-            "09axiiirq73s1cs21n8mkdslaca2gxc2mlayyl6yiaq98cfgfh37"))))
+            "1xg70v82q053vz1sg8sc99alnkrm2kk05w6698vgmngl1767sk97"))))
     (build-system python-build-system)
     (arguments `(#:tests? #f)) ;; CWL includes no tests.
     (inputs
@@ -73,7 +77,7 @@
        ("python-rdflib-jsonld" ,python-rdflib-jsonld)
        ("python-mistune" ,python-mistune)))
     (propagated-inputs
-     `(("python-rdflib-4.2" ,python-rdflib-4.2)
+     `(("python-rdflib" ,python-rdflib)
        ("python-avro" ,python-avro)
        ("python-pyyaml" ,python-pyyaml)
        ("python-requests" ,python-requests)
