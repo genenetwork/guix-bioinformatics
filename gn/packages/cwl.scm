@@ -37,13 +37,14 @@
        ("python-setuptools" ,python-setuptools)
        ("python-pytest-cov" ,python-pytest-cov)
        ("python-pytest-runner" ,python-pytest-runner)
+       ("python-rdflib" ,python-rdflib)
        ("python-typing-extensions" ,python-typing-extensions)
-       ("python-prov" ,python-prov)
        ("python-pyparsing" ,python-pyparsing)
        ("python-subprocess32" ,python-subprocess32)
        ))
     (propagated-inputs
      `(("python-schema-salad" ,python-schema-salad)
+       ("python-prov" ,python-prov)
        ("python-html5lib" ,python-html5lib)
        ))
     ; (arguments `(#:tests? #f)) ;; CWL includes no tests.

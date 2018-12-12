@@ -11,6 +11,7 @@
   #:use-module (gnu packages ghostscript)
   #:use-module (gnu packages glib)
   #:use-module (gnu packages gnupg)
+  #:use-module (gnu packages graphviz)
   #:use-module (gnu packages gtk)
   #:use-module (gnu packages icu4c)
   #:use-module (gnu packages image)
@@ -170,6 +171,14 @@ functions.")
         (base32
           "1a9h406laclxalmdny37m0yyw7y17n359akclbahimdggq853jd0"))))
   (build-system python-build-system)
+  (inputs
+       `(("python-rdflib" ,python-rdflib)
+       ("python-lxml" ,python-lxml)
+       ("python-networkx" ,python-networkx)
+       ("python-dateutil" ,python-dateutil)
+       ("python-pydot" ,python-pydot)
+       ("graphviz" ,graphviz) ; for testing
+       ))
   (home-page "https://github.com/trungdong/prov")
   (synopsis
     "A library for W3C Provenance Data Model supporting PROV-JSON, PROV-XML and PROV-O (RDF)")
