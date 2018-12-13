@@ -7,6 +7,7 @@
   #:use-module (gnu packages python)
   #:use-module (gnu packages python-web)
   #:use-module (gnu packages rdf)
+  #:use-module (gnu packages serialization)
   #:use-module (gn packages python)
   #:use-module (guix download)
   #:use-module (guix packages)
@@ -17,9 +18,9 @@
   ; #:use-module (guix build-system trivial)
   #:use-module (srfi srfi-1))
 
-(define-public python-cwltool ; guix: needs work
+(define-public cwltool ; guix: needs work
   (package
-    (name "python-cwltool")
+    (name "cwltool")
     (version "1.0.20181012180214")
     (source
       (origin
@@ -36,18 +37,30 @@
      `(("python-bagit" ,python-bagit)
        ("python-setuptools" ,python-setuptools)
        ("python-pytest-cov" ,python-pytest-cov)
+       ("python-prov" ,python-prov)
        ("python-pytest-runner" ,python-pytest-runner)
        ("python-rdflib" ,python-rdflib)
        ("python-typing-extensions" ,python-typing-extensions)
        ("python-pyparsing" ,python-pyparsing)
        ("python-subprocess32" ,python-subprocess32)
+       ("python-ruamel.yaml" ,python-ruamel.yaml)
+       ("python-cachecontrol" ,python-cachecontrol)
+       ("python-mypy-extensions" ,python-mypy-extensions)
        ))
     (propagated-inputs
      `(("python-schema-salad" ,python-schema-salad)
-       ("python-prov" ,python-prov)
        ("python-html5lib" ,python-html5lib)
        ))
     ; (arguments `(#:tests? #f)) ;; CWL includes no tests.
+    (arguments
+     `(;#:phases
+       ; (modify-phases %standard-phases
+       ;   (replace 'check
+       ;     (lambda* (#:key inputs outputs #:allow-other-keys)
+       ;       (invoke "python" "-m" "pytest")
+       ;       )))
+       #:tests? #f))   ; Disable for now
+
     (home-page
       "https://github.com/common-workflow-language/common-workflow-language")
     (synopsis
@@ -55,9 +68,6 @@
     (description
       "Common workflow language reference implementation")
     (license license:asl2.0)))
-
-(define-public python2-cwltool
-  (package-with-python2 python-cwltool))
 
 (define-public python-schema-salad
   (package

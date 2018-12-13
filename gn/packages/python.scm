@@ -146,7 +146,7 @@ functions.")
           "1m6y04qmig0b5hzb35lnaw3d2yfydb7alyr1579yblvgs3da6j7j"))))
   (build-system python-build-system)
   (inputs
-      `(("python-setuptools-scm" ,python-setuptools-scm)
+     `(("python-setuptools-scm" ,python-setuptools-scm)
       ("python-coverage" ,python-coverage)
       ("python-mock" ,python-mock)
       ))
@@ -711,3 +711,55 @@ the older versions.")
     (description "This is a python library for generating html from classes.")
     (home-page "https://github.com/srittau/python-htmlgen")
     (license license:expat)))
+
+(define-public python-version
+(let ((commit "e5aadc720bb74c535f29e5a2de5cd9697efe8d7c"))
+(package
+  (name "python-version")
+  (version "0.1.2")
+  (source
+    (origin
+      (method git-fetch)
+      (uri (git-reference
+      ; (url "https://github.com/genenetwork/pylmm.git")
+        (url "https://github.com/keleshev/version.git") ; version not in pypi
+        (commit commit)))
+      (file-name (string-append name "-" commit))
+      (sha256
+        (base32
+          "1rc8kf72v180qlygkh1y0jwv2fxqpx7n97bqfhbwgnn31iwai9g3"))))
+  (build-system python-build-system)
+  (build-system python-build-system)
+  (propagated-inputs
+    `(
+    ("python-more-itertools" ,python-more-itertools)
+    ("python-pytest" ,python-pytest)))
+  (home-page "http://github.com/halst/version")
+  (synopsis "Implementation of semantic version")
+  (description
+    "Implementation of semantic version")
+  (license license:expat)
+)))
+
+(define-public python-mypy-extensions
+(package
+  (name "python-mypy-extensions")
+  (version "0.4.1")
+  (source
+    (origin
+      (method url-fetch)
+      (uri (pypi-uri "mypy_extensions" version))
+      (sha256
+        (base32
+          "04h8brrbbx151dfa2cvvlnxgmb5wa00mhd2z7nd20s8kyibfkq1p"))))
+  (build-system python-build-system)
+  (propagated-inputs
+    `(("python-version" ,python-version)
+      ("python-typing" ,python-typing)))
+  (home-page "http://www.mypy-lang.org/")
+  (synopsis
+    "Experimental type system extensions for programs checked with the mypy typechecker.")
+  (description
+    "Experimental type system extensions for programs checked with the mypy typechecker.")
+  (license #f))
+)
