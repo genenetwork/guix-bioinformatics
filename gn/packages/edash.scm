@@ -287,6 +287,37 @@ necessary.")
      "jinja2 template renderer for aiohttp.web (http server for asyncio)")
     (license license:asl2.0)))
 
+(define-public python-openapi-spec-validator
+  (package
+    (name "python-openapi-spec-validator")
+    (version "0.2.4")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (pypi-uri "openapi-spec-validator" version))
+       (sha256
+        (base32
+         "0khzsk1dqjfj2j8z8iqn4l47j133b0yavzrj268hxwy4qjp4ls0l"))))
+    (build-system python-build-system)
+    (propagated-inputs
+     `(("python-six" ,python-six)
+       ("python-tox" ,python-tox)
+       ("python-mock" ,python-mock)
+       ("python-pyyaml" ,python-pyyaml)
+       ("python-pytest-cov" ,python-pytest-cov)
+       ("python-jsonschema" ,python-jsonschema)
+       ("python-pytest-pep8" ,python-pytest-pep8)
+       ("python-pytest-cache" ,python-pytest-cache)
+       ("python-pytest-flakes" ,python-pytest-flakes)))
+    (home-page
+     "https://github.com/p1c2u/openapi-spec-validator")
+    (synopsis "OpenAPI Spec validator")
+    (description "OpenAPI Spec Validator is a Python library that
+validates OpenAPI Specs against the OpenAPI 2.0 (aka Swagger) and
+OpenAPI 3.0.0 specification.  The validator aims to check for full compliance
+with the Specification.")
+    (license license:asl2.0)))
+
 (define-public edash
   (let ((md5 "93e745e9c"))
     (package
