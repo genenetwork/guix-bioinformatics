@@ -395,6 +395,53 @@ with the Specification.")
      "swagger_ui_bundle - swagger-ui files in a pip package")
     (license license:asl2.0)))
 
+(define-public python-connexion
+  (package
+  (name "python-connexion")
+  (version "2.1.0")
+  (source
+    (origin
+      (method url-fetch)
+      (uri (pypi-uri "connexion" version))
+      (sha256
+        (base32
+          "08xkjlvj8gb6sz4p4wjab6dag2sdvlfpaz4053k9nf7zj766j0bg"))))
+  (build-system python-build-system)
+  (propagated-inputs
+    `(;; ("python-six" ,python-six)
+      ;; ("python-mock" ,python-mock)
+      ("python-ujson" ,python-ujson)
+      ("python-flask" ,python-flask)
+      ;; ("python-tests" ,python-tests)
+      ;; ("python-pyyaml" ,python-pyyaml)
+      ;; ("python-pytest" ,python-pytest)
+      ;; ("python-typing" ,python-typing)
+      ;; ("python-pathlib" ,python-pathlib)
+      ("python-aiohttp" ,python-aiohttp)
+      ("python-requests" ,python-requests)
+      ;; ("python-pyflakes" ,python-pyflakes)
+      ("python-flake8" ,python-flake8)
+      ("python-decorator" ,python-decorator)
+      ("python-inflection" ,python-inflection)
+      ;; ("python-jsonschema" ,python-jsonschema)
+      ;; ("python-pytest-cov" ,python-pytest-cov)
+      ("python-clickclick" ,python-clickclick)
+      ("python-testfixtures" ,python-testfixtures)
+      ;; ("python-python-version" ,python-python-version)
+      ("python-pytest-aiohttp" ,python-pytest-aiohttp)
+      ("python-aiohttp-jinja2" ,python-aiohttp-jinja2)
+      ("python-swagger-ui-bundle" ,python-swagger-ui-bundle)
+      ("python-openapi-spec-validator" ,python-openapi-spec-validator)
+      ))
+  (arguments `(#:tests? #f))
+  (home-page
+    "https://github.com/zalando/connexion")
+  (synopsis
+    "Connexion - API first applications with OpenAPI/Swagger and Flask")
+  (description
+    "Connexion - API first applications with OpenAPI/Swagger and Flask")
+  (license license:asl2.0)))
+
 (define-public edash
   (let ((md5 "93e745e9c"))
     (package
