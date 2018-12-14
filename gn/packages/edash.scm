@@ -221,6 +221,27 @@ command line interfaces in a composable way with as little code as
 necessary.")
     (license license:asl2.0)))
 
+(define-public python-testfixtures
+  (package
+    (name "python-testfixtures")
+    (version "6.3.0")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (pypi-uri "testfixtures" version))
+       (sha256
+        (base32
+         "1x16xkw483nb1ngv74s7lgaj514pb1ldklal7kb7iwqbxcgnrh2k"))))
+    (build-system python-build-system)
+    (arguments `(#:tests? #f))
+    (home-page
+     "https://github.com/Simplistix/testfixtures")
+    (synopsis
+     "Collection of helpers and mock objects for unit tests and doc tests")
+    (description
+     "A collection of helpers and mock objects for unit tests and doc tests.")
+    (license license:expat)))
+
 (define-public edash
   (let ((md5 "93e745e9c"))
     (package
