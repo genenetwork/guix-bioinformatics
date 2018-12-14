@@ -191,6 +191,36 @@ interface to the Amazon Web Services (AWS) API.")
     (description "UNKNOWN")
     (license #f)))
 
+(define-public python-clickclick
+  (package
+    (name "python-clickclick")
+    (version "1.2.2")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (pypi-uri "clickclick" version))
+       (sha256
+        (base32
+         "08vd1whzr1gz3cfb9iqs200rgj1x9srlwaa6sjmwz41rkjm0m2aa"))))
+    (build-system python-build-system)
+    (propagated-inputs
+     `(("python-six" ,python-six)
+       ("python-click" ,python-click)
+       ("python-pyyaml" ,python-pyyaml)
+       ("python-pytest" ,python-pytest)
+       ("python-flake8" ,python-flake8)
+       ("python-pytest-cov" ,python-pytest-cov)))
+    (arguments
+     `(#:tests? #f))
+    (home-page
+     "https://github.com/zalando/python-clickclick")
+    (synopsis "Click utility functions")
+    (description "Utility functions (Python 3 only) for the wonderful
+Click library.  Click is a Python package for creating beautiful
+command line interfaces in a composable way with as little code as
+necessary.")
+    (license license:asl2.0)))
+
 (define-public edash
   (let ((md5 "93e745e9c"))
     (package
