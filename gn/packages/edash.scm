@@ -153,6 +153,25 @@ interface to the Amazon Web Services (AWS) API.")
     "Provides a simple utility for checking the python version.")
    (license license:expat)))
 
+(define-public python-ujson
+  (package
+    (name "python-ujson")
+    (version "1.35")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (pypi-uri "ujson" version))
+       (sha256
+        (base32
+         "11jz5wi7mbgqcsz52iqhpyykiaasila4lq8cmc2d54bfa3jp6q7n"))))
+    (build-system python-build-system)
+    (home-page "http://www.esn.me")
+    (synopsis
+     "Ultra fast JSON encoder and decoder for Python")
+    (description
+     "Ultra fast JSON encoder and decoder for Python")
+    (license license:bsd-3)))
+
 (define-public edash
   (let ((md5 "93e745e9c"))
     (package
