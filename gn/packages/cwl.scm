@@ -6,8 +6,11 @@
   #:use-module (gnu packages check)
   #:use-module (gnu packages python)
   #:use-module (gnu packages python-web)
+  #:use-module (gnu packages node)
   #:use-module (gnu packages rdf)
   #:use-module (gnu packages serialization)
+  #:use-module (gnu packages time)
+  #:use-module (gnu packages version-control)
   #:use-module (gn packages python)
   #:use-module (guix download)
   #:use-module (guix packages)
@@ -33,23 +36,33 @@
           (base32
             "0pk0jlac2vl6vfihdq07agzz9dasw84yjz5ladcbwnmzzl022cg7"))))
     (build-system python-build-system)
-    (inputs
-     `(("python-bagit" ,python-bagit)
+    (propagated-inputs ; a lot of these are used for testing
+     `(("git" ,git)
+       ("node" ,node)
+       ("python-bagit" ,python-bagit)
+       ("python-arcp" ,python-arcp)
        ("python-setuptools" ,python-setuptools)
+       ("python-dateutil" ,python-dateutil)
        ("python-pytest-cov" ,python-pytest-cov)
        ("python-prov" ,python-prov)
        ("python-pytest-runner" ,python-pytest-runner)
        ("python-rdflib" ,python-rdflib)
-       ("python-typing-extensions" ,python-typing-extensions)
        ("python-pyparsing" ,python-pyparsing)
+       ("python-pytest-mock" ,python-pytest-mock)
+       ("python-mock" ,python-mock)
        ("python-subprocess32" ,python-subprocess32)
        ("python-ruamel.yaml" ,python-ruamel.yaml)
        ("python-cachecontrol" ,python-cachecontrol)
+       ("python-lxml" ,python-lxml)
        ("python-mypy-extensions" ,python-mypy-extensions)
-       ))
-    (propagated-inputs
-     `(("python-schema-salad" ,python-schema-salad)
+       ("python-mistune" ,python-mistune)
+       ("python-networkx" ,python-networkx)
+       ("python-schema-salad" ,python-schema-salad)
        ("python-html5lib" ,python-html5lib)
+       ("python-rdflib-jsonld" ,python-rdflib-jsonld)
+       ("python-typing-extensions" ,python-typing-extensions)
+       ("python-scandir" ,python-scandir)
+       ("python-psutil" ,python-psutil)
        ))
     ; (arguments `(#:tests? #f)) ;; CWL includes no tests.
     (arguments
@@ -102,5 +115,5 @@
       "Schema Annotations for Linked Avro Data (SALAD)")
     (license license:asl2.0)))
 
-(define-public python2-schema-salad
-  (package-with-python2 python-schema-salad))
+; (define-public python2-schema-salad
+;  (package-with-python2 python-schema-salad))

@@ -763,3 +763,24 @@ the older versions.")
     "Experimental type system extensions for programs checked with the mypy typechecker.")
   (license #f))
 )
+
+
+(define-public python-arcp
+(package
+  (name "python-arcp")
+  (version "0.2.0")
+  (source
+    (origin
+      (method url-fetch)
+      (uri (pypi-uri "arcp" version))
+      (sha256
+        (base32
+          "0h8sn0mlb6vb8wqqnqc4pxdklrkyx3p72afdhm7b9kyalrqzd7dd"))))
+  (build-system python-build-system)
+  (home-page "http://arcp.readthedocs.io/")
+  (synopsis
+    "arcp (Archive and Package) URI parser and generator")
+  (description
+    "arcp (Archive and Package) URI parser and generator")
+  (license license:asl2.0))
+)
