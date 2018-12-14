@@ -285,6 +285,38 @@ necessary.")
      "py.test plugin to abort hanging tests")
     (license license:expat)))
 
+(define-public python-aiohttp-3.4.4
+  (package
+    (name "python-aiohttp")
+    (version "3.4.4")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (pypi-uri "aiohttp" version))
+       (sha256
+        (base32
+         "1ykm6kdjkrg556j0zd7dx2l1rsrbh0d9g27ivr6dmaahz9pyrbsi"))))
+    (build-system python-build-system)
+    (propagated-inputs
+     `(("gunicorn" ,gunicorn)
+       ("python-yarl" ,python-yarl)
+       ("python-attrs" ,python-attrs)
+       ("python-chardet" ,python-chardet)
+       ("python-idna-ssl" ,python-idna-ssl)
+       ("python-multidict" ,python-multidict)
+       ("python-pytest-runner" ,python-pytest-runner)
+       ("python-async-timeout" ,python-async-timeout)
+       ("python-python-version" ,python-python-version)
+       ("python-pytest-timeout" ,python-pytest-timeout)
+       ("python-async-generator" ,python-async-generator)
+       ("python-async-timeout" ,python-async-timeout-3.0.1)))
+    (arguments `(#:tests? #f))
+    (home-page "https://github.com/aio-libs/aiohttp")
+    (synopsis "Async http client/server framework (asyncio)")
+    (description
+     "Async http client/server framework (asyncio)")
+    (license license:asl2.0)))
+
 (define-public python-pytest-aiohttp
   (package
     (name "python-pytest-aiohttp")
@@ -298,9 +330,10 @@ necessary.")
          "0kx4mbs9bflycd8x9af0idcjhdgnzri3nw1qb0vpfyb3751qaaf9"))))
     (build-system python-build-system)
     (propagated-inputs
-     `(("python-aiohttp" ,python-aiohttp)
-       ("python-pytest" ,python-pytest)
+     `(("python-pytest" ,python-pytest)
+       ("python-aiohttp" ,python-aiohttp-3.4.4)
        ("python-pytest-timeout" ,python-pytest-timeout)))
+    (arguments `(#:tests? #f))
     (home-page
      "https://github.com/aio-libs/pytest-aiohttp/")
     (synopsis "pytest plugin for aiohttp support")
