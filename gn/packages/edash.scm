@@ -172,6 +172,25 @@ interface to the Amazon Web Services (AWS) API.")
      "Ultra fast JSON encoder and decoder for Python")
     (license license:bsd-3)))
 
+(define-public python-tests
+  (package
+    (name "python-tests")
+    (version "0.007")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (pypi-uri "tests" version ".zip"))
+       (sha256
+        (base32
+         "09nfrysnqivqhs7znync8k87v16anvnb02j9ikmr3i6hdqxjcd31"))))
+    (build-system python-build-system)
+    (inputs
+     `(("unzip" ,unzip)))
+    (home-page "http://www.propython.com/")
+    (synopsis "UNKNOWN")
+    (description "UNKNOWN")
+    (license #f)))
+
 (define-public edash
   (let ((md5 "93e745e9c"))
     (package
