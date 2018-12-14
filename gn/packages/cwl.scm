@@ -22,19 +22,25 @@
   #:use-module (srfi srfi-1))
 
 (define-public cwltool ; guix: needs work
+  (let ((commit "e12d36b6efbc5d4a6ff7b4fbfd7387bff8f72727"))
   (package
     (name "cwltool")
     (version "1.0.20181012180214")
     (source
       (origin
-        (method url-fetch)
-        (uri (string-append
-               "https://pypi.python.org/packages/source/c/cwltool/cwltool-"
-               version
-               ".tar.gz"))
+        ; (method url-fetch)
+        ; (uri (string-append
+        ;        "https://pypi.python.org/packages/source/c/cwltool/cwltool-"
+        ;        version
+        ;       ".tar.gz"))
+         (method git-fetch)
+         (uri (git-reference
+               (url "https://github.com/genenetwork/cwltool.git")
+               (commit commit)))
+         (file-name (git-file-name name version))
         (sha256
           (base32
-            "0pk0jlac2vl6vfihdq07agzz9dasw84yjz5ladcbwnmzzl022cg7"))))
+            "1zhba1hfizrw3bxfmhpjds92pj79hyyv5k7sglw24z52kg1in67p"))))
     (build-system python-build-system)
     (propagated-inputs ; a lot of these are used for testing
      `(("git" ,git)
@@ -80,7 +86,7 @@
       "Common workflow language reference implementation")
     (description
       "Common workflow language reference implementation")
-    (license license:asl2.0)))
+    (license license:asl2.0))))
 
 (define-public python-schema-salad
   (package
