@@ -263,6 +263,30 @@ necessary.")
     (description "pytest plugin for aiohttp support")
     (license license:asl2.0)))
 
+(define-public python-aiohttp-jinja2
+  (package
+    (name "python-aiohttp-jinja2")
+    (version "1.1.0")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (pypi-uri "aiohttp-jinja2" version))
+       (sha256
+        (base32
+         "031djiddn2yg50mkw60x1ql1qwqxnmghk46902nq48cnbxcvdydf"))))
+    (build-system python-build-system)
+    (propagated-inputs
+     `(("python-jinja2" ,python-jinja2)
+       ("python-aiohttp" ,python-aiohttp)))
+    (arguments `(#:tests? #f))
+    (home-page
+     "https://github.com/aio-libs/aiohttp_jinja2/")
+    (synopsis
+     "jinja2 template renderer for aiohttp.web (http server for asyncio)")
+    (description
+     "jinja2 template renderer for aiohttp.web (http server for asyncio)")
+    (license license:asl2.0)))
+
 (define-public edash
   (let ((md5 "93e745e9c"))
     (package
