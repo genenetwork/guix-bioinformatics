@@ -208,10 +208,10 @@ interface to the Amazon Web Services (AWS) API.")
        ("python-click" ,python-click)
        ("python-pyyaml" ,python-pyyaml)
        ("python-pytest" ,python-pytest)
+       ("python-pyflakes" ,python-pyflakes)
        ("python-flake8" ,python-flake8)
        ("python-pytest-cov" ,python-pytest-cov)))
-    (arguments
-     `(#:tests? #f))
+    (arguments `(#:tests? #f))
     (home-page
      "https://github.com/zalando/python-clickclick")
     (synopsis "Click utility functions")
@@ -285,38 +285,6 @@ necessary.")
      "py.test plugin to abort hanging tests")
     (license license:expat)))
 
-(define-public python-aiohttp-3.4.4
-  (package
-    (name "python-aiohttp")
-    (version "3.4.4")
-    (source
-     (origin
-       (method url-fetch)
-       (uri (pypi-uri "aiohttp" version))
-       (sha256
-        (base32
-         "1ykm6kdjkrg556j0zd7dx2l1rsrbh0d9g27ivr6dmaahz9pyrbsi"))))
-    (build-system python-build-system)
-    (propagated-inputs
-     `(("gunicorn" ,gunicorn)
-       ("python-yarl" ,python-yarl)
-       ("python-attrs" ,python-attrs)
-       ("python-chardet" ,python-chardet)
-       ("python-idna-ssl" ,python-idna-ssl)
-       ("python-multidict" ,python-multidict)
-       ("python-pytest-runner" ,python-pytest-runner)
-       ("python-async-timeout" ,python-async-timeout)
-       ("python-python-version" ,python-python-version)
-       ("python-pytest-timeout" ,python-pytest-timeout)
-       ("python-async-generator" ,python-async-generator)
-       ("python-async-timeout" ,python-async-timeout-3.0.1)))
-    (arguments `(#:tests? #f))
-    (home-page "https://github.com/aio-libs/aiohttp")
-    (synopsis "Async http client/server framework (asyncio)")
-    (description
-     "Async http client/server framework (asyncio)")
-    (license license:asl2.0)))
-
 (define-public python-pytest-aiohttp
   (package
     (name "python-pytest-aiohttp")
@@ -331,9 +299,8 @@ necessary.")
     (build-system python-build-system)
     (propagated-inputs
      `(("python-pytest" ,python-pytest)
-       ("python-aiohttp" ,python-aiohttp-3.4.4)
+       ("python-aiohttp" ,python-aiohttp)
        ("python-pytest-timeout" ,python-pytest-timeout)))
-    (arguments `(#:tests? #f))
     (home-page
      "https://github.com/aio-libs/pytest-aiohttp/")
     (synopsis "pytest plugin for aiohttp support")
@@ -385,7 +352,9 @@ necessary.")
        ("python-jsonschema" ,python-jsonschema)
        ("python-pytest-pep8" ,python-pytest-pep8)
        ("python-pytest-cache" ,python-pytest-cache)
-       ("python-pytest-flakes" ,python-pytest-flakes)))
+;;       ("python-pytest-flakes" ,python-pytest-flakes)
+       ))
+    (arguments `(#:tests? #f))
     (home-page
      "https://github.com/p1c2u/openapi-spec-validator")
     (synopsis "OpenAPI Spec validator")
@@ -410,11 +379,14 @@ with the Specification.")
     (propagated-inputs
      `(("python-tox" ,python-tox)
        ("python-jinja2" ,python-jinja2)
+       ("python-pyflakes" ,python-pyflakes)
        ("python-flake8" ,python-flake8)
        ("python-pytest-cov" ,python-pytest-cov)
        ("python-pytest-pep8" ,python-pytest-pep8)
        ("python-pytest-cache" ,python-pytest-cache)
-       ("python-pytest-flakes" ,python-pytest-flakes)))
+;;       ("python-pytest-flakes" ,python-pytest-flakes)
+       ))
+    (arguments `(#:tests? #f))
     (home-page
      "https://github.com/dtkav/swagger_ui_bundle")
     (synopsis
