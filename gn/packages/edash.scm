@@ -133,6 +133,26 @@ interface to the Amazon Web Services (AWS) API.")
    (description "Flask extension for sending email")
    (license license:bsd-3)))
 
+(define-public python-python-version
+  (package
+   (name "python-python-version")
+   (version "0.0.2")
+   (source
+    (origin
+     (method url-fetch)
+     (uri (pypi-uri "python_version" version))
+     (sha256
+      (base32
+       "0rzy0jzh1w7rx7swgjb5qv7b7dhblbsyhs7l3ii19mpjqxbxw5jw"))))
+   (build-system python-build-system)
+   (home-page
+    "https://gitlab.com/halfak/python_version")
+   (synopsis
+    "Provides a simple utility for checking the python version.")
+   (description
+    "Provides a simple utility for checking the python version.")
+   (license license:expat)))
+
 (define-public edash
   (let ((md5 "93e745e9c"))
     (package
