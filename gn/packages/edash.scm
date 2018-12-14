@@ -242,6 +242,26 @@ necessary.")
      "A collection of helpers and mock objects for unit tests and doc tests.")
     (license license:expat)))
 
+(define-public python-async-timeout-3.0.1
+  (package
+    (name "python-async-timeout")
+    (version "3.0.1")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (pypi-uri "async-timeout" version))
+       (sha256
+        (base32
+         "0pscbyr840m7fyfc3r8zv9kgkwdcn9f78p7zsrczciwd09m82g0c"))))
+    (build-system python-build-system)
+    (home-page
+     "https://github.com/aio-libs/async_timeout/")
+    (synopsis
+     "Timeout context manager for asyncio programs")
+    (description
+     "Timeout context manager for asyncio programs")
+    (license license:asl2.0)))
+
 (define-public python-pytest-aiohttp
   (package
     (name "python-pytest-aiohttp")
