@@ -318,6 +318,34 @@ OpenAPI 3.0.0 specification.  The validator aims to check for full compliance
 with the Specification.")
     (license license:asl2.0)))
 
+(define-public python-swagger-ui-bundle
+  (package
+    (name "python-swagger-ui-bundle")
+    (version "0.0.2")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (pypi-uri "swagger_ui_bundle" version))
+       (sha256
+        (base32
+         "0kk6y8p1fhmnjnxfafdw6dm1xc5wj8101y5h7hcy3rb2bxc1i94q"))))
+    (build-system python-build-system)
+    (propagated-inputs
+     `(("python-tox" ,python-tox)
+       ("python-jinja2" ,python-jinja2)
+       ("python-flake8" ,python-flake8)
+       ("python-pytest-cov" ,python-pytest-cov)
+       ("python-pytest-pep8" ,python-pytest-pep8)
+       ("python-pytest-cache" ,python-pytest-cache)
+       ("python-pytest-flakes" ,python-pytest-flakes)))
+    (home-page
+     "https://github.com/dtkav/swagger_ui_bundle")
+    (synopsis
+     "swagger_ui_bundle - swagger-ui files in a pip package")
+    (description
+     "swagger_ui_bundle - swagger-ui files in a pip package")
+    (license license:asl2.0)))
+
 (define-public edash
   (let ((md5 "93e745e9c"))
     (package
