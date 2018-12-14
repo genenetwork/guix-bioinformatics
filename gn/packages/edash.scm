@@ -262,6 +262,29 @@ necessary.")
      "Timeout context manager for asyncio programs")
     (license license:asl2.0)))
 
+(define-public python-pytest-timeout
+  (package
+    (name "python-pytest-timeout")
+    (version "1.3.3")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (pypi-uri "pytest-timeout" version))
+       (sha256
+        (base32
+         "1cczcjhw4xx5sjkhxlhc5c1bkr7x6fcyx12wrnvwfckshdvblc2a"))))
+    (build-system python-build-system)
+    (propagated-inputs
+     `(("python-pytest" ,python-pytest)))
+    (arguments `(#:tests? #f))
+    (home-page
+     "http://bitbucket.org/pytest-dev/pytest-timeout/")
+    (synopsis
+     "py.test plugin to abort hanging tests")
+    (description
+     "py.test plugin to abort hanging tests")
+    (license license:expat)))
+
 (define-public python-pytest-aiohttp
   (package
     (name "python-pytest-aiohttp")
@@ -276,7 +299,8 @@ necessary.")
     (build-system python-build-system)
     (propagated-inputs
      `(("python-aiohttp" ,python-aiohttp)
-       ("python-pytest" ,python-pytest)))
+       ("python-pytest" ,python-pytest)
+       ("python-pytest-timeout" ,python-pytest-timeout)))
     (home-page
      "https://github.com/aio-libs/pytest-aiohttp/")
     (synopsis "pytest plugin for aiohttp support")
