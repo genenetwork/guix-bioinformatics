@@ -242,6 +242,27 @@ necessary.")
      "A collection of helpers and mock objects for unit tests and doc tests.")
     (license license:expat)))
 
+(define-public python-pytest-aiohttp
+  (package
+    (name "python-pytest-aiohttp")
+    (version "0.3.0")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (pypi-uri "pytest-aiohttp" version))
+       (sha256
+        (base32
+         "0kx4mbs9bflycd8x9af0idcjhdgnzri3nw1qb0vpfyb3751qaaf9"))))
+    (build-system python-build-system)
+    (propagated-inputs
+     `(("python-aiohttp" ,python-aiohttp)
+       ("python-pytest" ,python-pytest)))
+    (home-page
+     "https://github.com/aio-libs/pytest-aiohttp/")
+    (synopsis "pytest plugin for aiohttp support")
+    (description "pytest plugin for aiohttp support")
+    (license license:asl2.0)))
+
 (define-public edash
   (let ((md5 "93e745e9c"))
     (package
