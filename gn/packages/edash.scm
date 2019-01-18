@@ -485,6 +485,7 @@ with the Specification.")
        ;; ("python-ipython" ,python-ipython)
        ("python-swagger-ui-bundle" ,python-swagger-ui-bundle)
        ("python-connexion" ,python-connexion)
+       ("python-schedule" ,python-schedule)
        ))
     (arguments
      `(#:modules ((guix build utils))
