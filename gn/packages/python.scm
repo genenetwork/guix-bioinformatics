@@ -37,6 +37,7 @@
   #:use-module (gnu packages web)
   #:use-module (gnu packages xml)
   #:use-module (gnu packages xorg)
+  #:use-module (gnu packages python-xyz)
   #:use-module (guix packages)
   #:use-module (guix download)
   #:use-module (guix git-download)
