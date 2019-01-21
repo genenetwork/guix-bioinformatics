@@ -8,6 +8,7 @@
   #:use-module (gnu packages base)
   #:use-module (gnu packages python)
   #:use-module (gnu packages python-web)
+  #:use-module (gnu packages python-xyz)
   #:use-module (gnu packages python-crypto)
   #:use-module (gnu packages compression)
   #:use-module (gnu packages time)
@@ -442,6 +443,30 @@ with the Specification.")
   (description
     "Connexion - API first applications with OpenAPI/Swagger and Flask")
   (license license:asl2.0)))
+
+(define-public python-flask-cors
+  (package
+    (name "python-flask-cors")
+    (version "3.0.7")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (pypi-uri "Flask-Cors" version))
+       (sha256
+        (base32
+         "1v6gq4vjgyxi8q8lxawpdfhq01adb4bznnabp08ks5nzbwibz43y"))))
+    (build-system python-build-system)
+    (inputs
+     `(("python-flask" ,python-flask)
+       ("python-six" ,python-six)
+       ("python-nose" ,python-nose)))
+    (home-page
+     "https://github.com/corydolphin/flask-cors")
+    (synopsis
+     "A Flask extension adding a decorator for CORS support")
+    (description
+     "A Flask extension adding a decorator for CORS support")
+    (license license:expat)))
 
 (define-public edash
   (let ((md5 "93e745e9c"))
