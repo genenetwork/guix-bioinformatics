@@ -15,6 +15,7 @@
   #:use-module (gnu packages databases)
   #:use-module (gnu packages check)
   #:use-module (gn packages web)
+  #:use-module (gnu packages sqlite)
   #:use-module (gn packages python))
 
 (define-public python-s3transfer-0.1.13
