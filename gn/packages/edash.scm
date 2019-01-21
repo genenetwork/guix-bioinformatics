@@ -511,7 +511,7 @@ with the Specification.")
        ("python-swagger-ui-bundle" ,python-swagger-ui-bundle)
        ("python-connexion" ,python-connexion)
        ("python-schedule" ,python-schedule)
-       ))
+       ("python-flask-cors" ,python-flask-cors)))
     (arguments
      `(#:modules ((guix build utils))
        #:builder
