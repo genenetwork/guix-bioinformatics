@@ -5,14 +5,17 @@
   #:use-module (guix build-system trivial)
   #:use-module (guix build-system python)
   #:use-module (gnu packages web)
+  #:use-module (gnu packages base)
   #:use-module (gnu packages python)
   #:use-module (gnu packages python-web)
+  #:use-module (gnu packages python-xyz)
   #:use-module (gnu packages python-crypto)
   #:use-module (gnu packages compression)
   #:use-module (gnu packages time)
   #:use-module (gnu packages databases)
   #:use-module (gnu packages check)
   #:use-module (gn packages web)
+  #:use-module (gnu packages sqlite)
   #:use-module (gn packages python))
 
 (define-public python-s3transfer-0.1.13
@@ -442,6 +445,30 @@ with the Specification.")
     "Connexion - API first applications with OpenAPI/Swagger and Flask")
   (license license:asl2.0)))
 
+(define-public python-flask-cors
+  (package
+    (name "python-flask-cors")
+    (version "3.0.7")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (pypi-uri "Flask-Cors" version))
+       (sha256
+        (base32
+         "1v6gq4vjgyxi8q8lxawpdfhq01adb4bznnabp08ks5nzbwibz43y"))))
+    (build-system python-build-system)
+    (inputs
+     `(("python-flask" ,python-flask)
+       ("python-six" ,python-six)
+       ("python-nose" ,python-nose)))
+    (home-page
+     "https://github.com/corydolphin/flask-cors")
+    (synopsis
+     "A Flask extension adding a decorator for CORS support")
+    (description
+     "A Flask extension adding a decorator for CORS support")
+    (license license:expat)))
+
 (define-public edash
   (let ((md5 "93e745e9c"))
     (package
@@ -460,6 +487,7 @@ with the Specification.")
     ;;(inputs `(("sassc" ,sassc)))
     (propagated-inputs
      `(("python" ,python)
+       ("glibc-locales" ,glibc-locales)
        ("gunicorn" ,gunicorn)
        ("python-wrapper" ,python-wrapper)
        ("python-elasticsearch" ,python-elasticsearch)
@@ -467,7 +495,7 @@ with the Specification.")
        ("python-jinja2" ,python-jinja2)
        ("python-markdown" ,python-markdown)
        ("python-misaka" ,python-misaka)
-       ("python-pygit2" ,python-pygit2)
+       ;; ("python-pygit2" ,python-pygit2)
        ("web-bootstrap" ,web-bootstrap)
        ;;("sassc" ,sassc)
        ("python-boto3" ,python-boto3)
@@ -480,8 +508,11 @@ with the Specification.")
        ("python-flask-mail" ,python-flask-mail)
        ("python-flask-wtf" ,python-flask-wtf)
        ("sqlite" ,sqlite)
-       ("python-ipython" ,python-ipython)
-       ))
+       ;; ("python-ipython" ,python-ipython)
+       ("python-swagger-ui-bundle" ,python-swagger-ui-bundle)
+       ("python-connexion" ,python-connexion)
+       ("python-schedule" ,python-schedule)
+       ("python-flask-cors" ,python-flask-cors)))
     (arguments
      `(#:modules ((guix build utils))
        #:builder

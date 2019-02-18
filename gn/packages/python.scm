@@ -37,6 +37,7 @@
   #:use-module (gnu packages web)
   #:use-module (gnu packages xml)
   #:use-module (gnu packages xorg)
+  #:use-module (gnu packages python-xyz)
   #:use-module (guix packages)
   #:use-module (guix download)
   #:use-module (guix git-download)
@@ -379,7 +380,7 @@ functions.")
 (define-public python-setuptools
   (package
     (name "python-setuptools")
-    (version "40.6.2")
+    (version "40.6.0")
     (source
      (origin
       (method url-fetch)
@@ -753,9 +754,8 @@ the older versions.")
         (base32
           "04h8brrbbx151dfa2cvvlnxgmb5wa00mhd2z7nd20s8kyibfkq1p"))))
   (build-system python-build-system)
-  (propagated-inputs
-    `(("python-version" ,python-version)
-      ("python-typing" ,python-typing)))
+  (inputs
+    `(("python-version" ,python-version)))
   (home-page "http://www.mypy-lang.org/")
   (synopsis
     "Experimental type system extensions for programs checked with the mypy typechecker.")
