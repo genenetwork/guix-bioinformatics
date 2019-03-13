@@ -262,10 +262,8 @@ location of a putative QTL.")
               ("python2-parallel" ,python2-parallel)
               ("python2-parameterized" ,python2-parameterized)
               ("python2-passlib" ,python2-passlib)
-              ;; ("python2-piddle-gn" ,python2-piddle-gn)
               ("python2-redis" ,python2-redis)
               ("python2-requests" ,python2-requests)
-              ; ("python2-pil1" ,python2-pil1) ; should move to pillow some day
               ("python2-requests" ,python2-requests)
               ("python2-rpy2" ,python2-rpy2)
               ("python2-scipy" ,python2-scipy)
@@ -501,15 +499,8 @@ written in C")
 	;; Without Python3 support
 	;; ("python-qtlreaper" ,python-qtlreaper) ;; Run as an external program
 	;; ("pylmm-gn2" ,pylmm-gn2) ;; To be run as an external python2 program
-	;; ("python2-pil1" ,python2-pil1) ; should move to pillow some day. Run as external python2 program
 	;; ("python2-numarray" ,python2-numarray) ;; Update gn2 code and drop this (IMPORTANT)
-	;; ("python2-piddle-gn" ,python2-piddle-gn) ;; Run as external python2 program
 	;; ("python2-htmlgen-gn" ,python2-htmlgen-gn) ;; pjotrp and zsloan to give directions
-
-
-	;; Removed packages
-	;; ("python2-mechanize" ,python2-mechanize)
-	;; ("python2-parallel" ,python2-parallel)
 	))
      (build-system python-build-system)
      (arguments
