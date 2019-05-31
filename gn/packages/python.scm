@@ -695,7 +695,7 @@ the older versions.")
 (define-public python-htmlgen
   (package
     (name "python-htmlgen")
-    (version "1.0.0")
+    (version "1.2.2")
     (source
      (origin
        (method url-fetch)
@@ -704,14 +704,19 @@ the older versions.")
 	     version ".tar.gz"))
        (sha256
 	(base32
-	 "1rwgqxhmc93l60wf4ay7ph619710kvyp73s22i0snjpm5i0bhc46"))))
+	 "0w3pcvm68jfdhnsxwwwifwhqqj9kqg3195b52hqd23qza480xilx"))))
     (build-system python-build-system)
+    (propagated-inputs
+     `(("python-typing" ,python-typing)))
     (arguments
      `(#:tests? #f))
     (synopsis "Python HTML 5 Generator")
     (description "This is a python library for generating html from classes.")
     (home-page "https://github.com/srittau/python-htmlgen")
     (license license:expat)))
+
+(define-public python2-htmlgen
+  (package-with-python2 python-htmlgen))
 
 (define-public python-version
 (let ((commit "e5aadc720bb74c535f29e5a2de5cd9697efe8d7c"))
