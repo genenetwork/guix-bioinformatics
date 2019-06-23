@@ -780,7 +780,6 @@ the older versions.")
         (base32
           "1rc8kf72v180qlygkh1y0jwv2fxqpx7n97bqfhbwgnn31iwai9g3"))))
   (build-system python-build-system)
-  (build-system python-build-system)
   (propagated-inputs
     `(
     ("python-more-itertools" ,python-more-itertools)
