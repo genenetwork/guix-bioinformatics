@@ -147,3 +147,24 @@ read read ssl ssl tcl tcl tk tk ,(version-major+minor (package-version tcl)) ,(v
     (synopsis "Stand-alone Assertions for Python")
     (description "Stand-alone Assertions for Python")
     (license license:expat)))
+
+(define-public python24-pyx
+  (package
+    (name "python24-pyx")
+    (version "0.12.1")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "pyx" version))
+        (sha256
+         (base32
+          "13kyhqx19rw7dlv2xapdb68j8l9laq6nrpgkyd6549qwidmb4dz8"))))
+    (build-system python-build-system)
+    (arguments
+     `(#:python ,python-2.4))
+    (native-inputs
+     `(("python24-setuptools" ,python24-setuptools)))
+    (home-page "http://pyx.sourceforge.net/")
+    (synopsis "Python package for the generation of PostScript, PDF, and SVG files")
+    (description "Python package for the generation of PostScript, PDF, and SVG files")
+    (license license:gpl2+)))
