@@ -293,3 +293,20 @@ formats, and provides powerful image processing and graphics capabilities.")
 primitives such as lines and ellipses, rather than manipulation of individual
 pixels.")
     (license license:gpl2+)))
+
+;; Apparently this is the library which mimics python-2.6+'s json library
+(define-public python24-simplejson
+  (let ((base (package-with-python24 python-simplejson)))
+    (package
+      (inherit base)
+      (version "2.0.9") ; last version to officially support python2.4
+      (source
+        (origin
+          (method url-fetch)
+          (uri (pypi-uri "simplejson" version))
+          (sha256
+           (base32
+            "1vlkxibal9ljabybawnqr3jh6f6g21c5pbrzl65z9vwbfxhg9kdb"))))
+      (native-inputs
+       `(("python24-setuptools" ,python24-setuptools)
+         ,@(package-native-inputs base))))))
