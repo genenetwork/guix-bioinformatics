@@ -3,7 +3,11 @@
   #:use-module (guix utils)
   #:use-module (guix packages)
   #:use-module (guix download)
+  #:use-module (guix git-download)
+  #:use-module (guix build-system python)
   #:use-module (gnu packages python)
+  #:use-module (gnu packages python-xyz)
+  #:use-module (gnu packages tcl)
   #:use-module (srfi srfi-1))
 
 ;; TODO: Check against 'guix lint -c cve python2.4' list:
@@ -65,3 +69,19 @@ read read ssl ssl tcl tcl tk tk ,(version-major+minor (package-version tcl)) ,(v
               (variable "PYTHONPATH")
               (files '("lib/python2.4/site-packages")))))
     (properties '((cpe-name . "python")))))
+
+(define (default-python2.4)
+    "Return the default Python-2.4 package."
+      ;; Lazily resolve the binding.
+        (let ((python (resolve-interface '(gn packages python24))))
+              (module-ref python 'python-2.4)))
+
+(define package-with-python24
+  ((@@ (guix build-system python) package-with-explicit-python) (delay (default-python2.4))
+                                                                "python-" "python24-"
+                                                                #:variant-property 'python24-variant))
+
+(define (strip-python24-variant p)
+  (package
+    (inherit p)
+    (properties (alist-delete 'python24-variant (package-properties p)))))
