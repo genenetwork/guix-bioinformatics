@@ -86,6 +86,31 @@ read read ssl ssl tcl tcl tk tk ,(version-major+minor (package-version tcl)) ,(v
     (inherit p)
     (properties (alist-delete 'python24-variant (package-properties p)))))
 
+(define-public python24-htmlgen
+  (package
+    (name "python24-htmlgen")
+    (version "0.9")
+    ;(version "0.99")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "htmlgen" version))
+        (sha256
+         (base32
+          "14xzjgwdqgs1vs5mq7mg3w48snvgb77yywv64mg8k6qhapmnafdw"))))
+          ;"1kbn6jcbf2mpb9f8hm5gcsipy7habqrq4794lpdbzm5mqxlclmnl"))))
+    (build-system python-build-system)
+    (arguments
+     `(#:python ,python-2.4))
+    (native-inputs
+     `(("python24-setuptools" ,python24-setuptools)))
+    (propagated-inputs
+     `(("python24-asserts" ,python24-asserts)))
+    (home-page "https://github.com/srittau/python-htmlgen")
+    (synopsis "Python HTML 5 Generator")
+    (description "Python-htmlgen is a library to generate HTML from classes.")
+    (license license:expat)))
+
 (define-public python24-setuptools
   (package
     (inherit python-setuptools)
