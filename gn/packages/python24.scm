@@ -6,6 +6,9 @@
   #:use-module (guix git-download)
   #:use-module (guix build-system python)
   #:use-module (gnu packages compression)
+  #:use-module (gnu packages fontutils)
+  #:use-module (gnu packages ghostscript)
+  #:use-module (gnu packages image)
   #:use-module (gnu packages python)
   #:use-module (gnu packages python-xyz)
   #:use-module (gnu packages tcl)
@@ -195,3 +198,71 @@ spreadsheets.  It's a port of John McNamara's Perl @code{Spreadsheet::WriteExcel
 module version 1.01 to Python.  It allows writing of Excel compatible
 spreadsheets without the need for COM objects.")
     (license license:lgpl2.1+)))
+
+;; TKINTER and LITTLECMS are not found
+(define-public python24-pil
+  (package
+    (name "python24-pil")
+    (version "1.1.7")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (string-append "http://effbot.org/downloads/Imaging-"
+                            version ".tar.gz"))
+        (sha256
+         (base32
+          "04aj80jhfbmxqzvmq40zfi4z3cw6vi01m3wkk6diz3lc971cfnw9"))
+        (modules '((guix build utils)))
+        (snippet
+          ;; Adapt to newer freetype. As the package is unmaintained upstream,
+          ;; there is no use in creating a patch and reporting it.
+          '(substitute* "_imagingft.c"
+                        (("freetype/")
+                         "freetype2/freetype/")))))
+    (build-system python-build-system)
+    (arguments
+     `(#:python ,python-2.4
+       #:phases
+       (modify-phases %standard-phases
+         (add-after 'unpack 'link-libraries
+           (lambda* (#:key inputs #:allow-other-keys)
+             (let ((freetype (assoc-ref inputs "freetype"))
+                   (jpeg (assoc-ref inputs "libjpeg"))
+                   (lcms (assoc-ref inputs "lcms"))
+                   (tcl (assoc-ref inputs "tcl"))
+                   (tiff (assoc-ref inputs "libtiff"))
+                   (zlib (assoc-ref inputs "zlib")))
+               (substitute* "setup.py"
+                 (("FREETYPE_ROOT .*")
+                  (string-append "FREETYPE_ROOT = libinclude(\"" freetype "\")\n"))
+                 (("JPEG_ROOT .*")
+                  (string-append "JPEG_ROOT = libinclude(\"" jpeg "\")\n"))
+                 (("LCMS_ROOT .*")
+                  (string-append "LCMS_ROOT = libinclude(\"" lcms "\")\n"))
+                 (("^TCL_ROOT .*")
+                  (string-append "TCL_ROOT = libinclude(\"" tcl "\")\n"))
+                 (("TIFF_ROOT .*")
+                  (string-append "TIFF_ROOT = libinclude(\"" tiff "\")\n"))
+                 (("ZLIB_ROOT .*")
+                  (string-append "ZLIB_ROOT = libinclude(\"" zlib "\")\n")))
+               (substitute* '("setup.py"
+                              "_imagingcms.c")
+                 (("lcms.h") "lcms2.h")))
+             #t)))))
+    (native-inputs
+     `(("python24-setuptools" ,python24-setuptools)))
+    (inputs
+     `(("freetype" ,freetype)
+       ("lcms" ,lcms)
+       ("libjpeg" ,libjpeg)
+       ("libtiff" ,libtiff)
+       ("tcl" ,tcl)
+       ("zlib" ,zlib)))
+    (home-page "http://www.pythonware.com/products/pil/")
+    (synopsis "Python Imaging Library")
+    (description "The @dfn{Python Imaging Library} (PIL) adds image processing
+capabilities to your Python interpreter.  This library supports many file
+formats, and provides powerful image processing and graphics capabilities.")
+    (license (license:x11-style
+               "file://README"
+               "See 'README' in the distribution."))))
