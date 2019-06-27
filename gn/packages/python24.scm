@@ -126,3 +126,24 @@ read read ssl ssl tcl tcl tk tk ,(version-major+minor (package-version tcl)) ,(v
     (arguments
      `(#:python ,python-2.4
        #:tests? #f)))) ; skip the tests
+
+(define-public python24-asserts
+  (package
+    (name "python24-asserts")
+    (version "0.6")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "asserts" version))
+        (sha256
+         (base32
+          "05ffy111giwv6sqx97vzzsvcra0gxzx2ilv16gyw135v583frxbn"))))
+    (build-system python-build-system)
+    (arguments
+     `(#:python ,python-2.4))
+    (native-inputs
+     `(("python24-setuptools" ,python24-setuptools)))
+    (home-page "https://github.com/srittau/python-asserts")
+    (synopsis "Stand-alone Assertions for Python")
+    (description "Stand-alone Assertions for Python")
+    (license license:expat)))
