@@ -85,3 +85,19 @@ read read ssl ssl tcl tcl tk tk ,(version-major+minor (package-version tcl)) ,(v
   (package
     (inherit p)
     (properties (alist-delete 'python24-variant (package-properties p)))))
+
+(define-public python24-setuptools
+  (package
+    (inherit python-setuptools)
+    (name "python24-setuptools")
+    (version "1.4.2")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "setuptools" version))
+        (sha256
+         (base32
+          "1gfvalhvzcskwj85r3lh9sx190f8k807vz5zln8agaw31ak8cf96"))))
+    (arguments
+     `(#:python ,python-2.4
+       #:tests? #f)))) ; skip the tests
