@@ -266,3 +266,30 @@ formats, and provides powerful image processing and graphics capabilities.")
     (license (license:x11-style
                "file://README"
                "See 'README' in the distribution."))))
+
+(define-public python24-piddle
+  (package
+    (name "python24-piddle")
+    (version "1.0.15")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (string-append "mirror://sourceforge/piddle/piddle/"
+                            version "/piddle-" version ".zip"))
+        (sha256
+         (base32
+          "0jaxfsrcgqb5cf2wznxnpdws5khlrdixmg85lrhq2zl9cy6dfdya"))))
+    (build-system python-build-system)
+    (arguments
+     `(#:python ,python-2.4))
+    (native-inputs
+     `(("python24-setuptools" ,python24-setuptools)
+       ("unzip" ,unzip)))
+    (propagated-inputs
+     `(("python24-pil" ,python24-pil)))
+    (home-page "http://www.strout.net/info/coding/python/piddle/")
+    (synopsis "Plug-In Drawing, Does Little Else")
+    (description "PIDDLE is designed for vector graphics -- i.e., drawing of
+primitives such as lines and ellipses, rather than manipulation of individual
+pixels.")
+    (license license:gpl2+)))
