@@ -369,3 +369,28 @@ capacity to operate directly on arrays in files, and improved type promotions.
 Numarray provides support for manipulating arrays consisting of numbers,
 strings, records, or objects using the same basic infrastructure and syntax.")
     (license license:bsd-3)))
+
+(define-public python24-pp
+  (package
+    (name "python24-pp")
+    (version "1.6.1")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (string-append
+             "http://www.parallelpython.com/downloads/pp/pp-" version ".zip"))
+        (sha256
+         (base32
+          "0qkxcyclz3vgwpl6xvsrg76q59dj0wwy8qx15567bafv659ypyb1"))))
+    (build-system python-build-system)
+    (arguments
+     `(#:python ,python-2.4))
+    (native-inputs
+     `(("python24-setuptools" ,python24-setuptools)
+       ("unzip" ,unzip)))
+    (home-page "http://www.parallelpython.com")
+    (synopsis "Parallel and distributed programming for Python")
+    (description "PP is a python module which provides mechanism for parallel
+execution of python code on SMP (systems with multiple processors or cores) and
+clusters (computers connected via network).")
+    (license license:bsd-3)))
