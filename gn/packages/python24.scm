@@ -9,6 +9,7 @@
   #:use-module (gnu packages fontutils)
   #:use-module (gnu packages ghostscript)
   #:use-module (gnu packages image)
+  #:use-module (gnu packages maths)
   #:use-module (gnu packages python)
   #:use-module (gnu packages python-xyz)
   #:use-module (gnu packages tcl)
@@ -310,3 +311,61 @@ pixels.")
       (native-inputs
        `(("python24-setuptools" ,python24-setuptools)
          ,@(package-native-inputs base))))))
+
+(define-public python24-numarray
+  (package
+    (name "python24-numarray")
+    (version "1.5.2")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append
+             "mirror://sourceforge/numpy/Old Numarray/" version
+             "/numarray-" version ".tar.gz"))
+       (sha256
+        (base32
+         "0x1i4j7yni7k4p9kjxs1lgln1psdmyrz65wp2yr35yn292iw2vbg"))))
+    (build-system python-build-system)
+    (arguments
+     `(#:python ,python-2.4
+       #:phases
+       (modify-phases %standard-phases
+         (replace 'build
+           (lambda _
+             (invoke "python" "setup.py" "config" "build"
+                     "--gencode" "--use_lapack")))
+         (add-after 'unpack 'find-lapack-and-openblas
+           (lambda* (#:key inputs #:allow-other-keys)
+             (let ((lapack (assoc-ref inputs "lapack"))
+                   (blas   (assoc-ref inputs "openblas")))
+               (substitute* "cfg_packages.py"
+                 (("lapack_libs = .*'m']")
+                  "lapack_libs = ['lapack', 'openblas', 'm']\n")
+                 (("lapack_dirs = .*")
+                  (string-append "lapack_dirs = ['"
+                                 lapack "/lib', '" blas "/lib']\n"))
+                 (("lapack_include_dirs = .*")
+                  (string-append "lapack_include_dirs = ['"
+                                 lapack "/include', '" blas "/include']\n")))
+               #t)))
+         (replace 'install
+                  (lambda* (#:key outputs #:allow-other-keys)
+                    (let ((out (assoc-ref outputs "out")))
+                      (invoke "python" "setup.py" "config"
+                              "install" "--use_lapack"
+                              (string-append "--prefix=" out))))))
+       #:tests? #f))   ; no test target
+    (native-inputs
+     `(("python24-setuptools" ,python24-setuptools)))
+    (inputs
+     `(("lapack" ,lapack)
+       ("openblas" ,openblas)))
+    (home-page "http://www.numpy.org/")
+    (synopsis "Array processing of numbers, strings, records and objects")
+    (description "Numarray is an array processing package designed to
+efficiently manipulate large multi-dimensional arrays.  Numarray is modelled
+after Numeric and features c-code generated from python template scripts, the
+capacity to operate directly on arrays in files, and improved type promotions.
+Numarray provides support for manipulating arrays consisting of numbers,
+strings, records, or objects using the same basic infrastructure and syntax.")
+    (license license:bsd-3)))
