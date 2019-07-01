@@ -1,0 +1,39 @@
+https://hg.savannah.gnu.org/hgweb/octave/raw-rev/7ffd2a0791ef
+
+# HG changeset patch
+# User John W. Eaton <jwe@octave.org>
+# Date 1325958274 18000
+# Node ID 7ffd2a0791ef389474bb52228e9b046a3721ab3f
+# Parent  906eecd4bf43b0146c50019ee41acac2dc83c935
+fix name lookup problem with static nested class
+
+* oct-inttypes.h (octave_int_arith_base<T,false>::mul):
+Tag truncate_int with octave_int_base<T>::.
+(octave_int_arith_base<T,true>::mul): Likewise.
+
+diff --git a/liboctave/oct-inttypes.h b/liboctave/oct-inttypes.h
+--- a/liboctave/oct-inttypes.h
++++ b/liboctave/oct-inttypes.h
+@@ -366,8 +366,8 @@
+     {
+       // Promotion type for multiplication (if exists).
+       typedef typename query_integer_type<2*sizeof (T), false>::type mptype;
+-      return truncate_int (static_cast<mptype> (x)
+-                           * static_cast<mptype> (y));
++      return octave_int_base<T>::truncate_int (static_cast<mptype> (x)
++                                               * static_cast<mptype> (y));
+     }
+ 
+   // Division with rounding to nearest. Note that / and % are probably
+@@ -621,8 +621,8 @@
+     {
+       // Promotion type for multiplication (if exists).
+       typedef typename query_integer_type<2*sizeof (T), true>::type mptype;
+-      return truncate_int (static_cast<mptype> (x)
+-                           * static_cast<mptype> (y));
++      return octave_int_base<T>::truncate_int (static_cast<mptype> (x)
++                                               * static_cast<mptype> (y));
+     }
+ 
+   // Division.
+
