@@ -3,7 +3,6 @@
   #:use-module (guix packages)
   #:use-module (guix download)
   #:use-module (guix utils)
-  #:use-module (gnu packages base)
   #:use-module (gnu packages gperf)
   #:use-module (gnu packages maths)
   #:use-module (gnu packages texinfo)
@@ -39,6 +38,8 @@
                               "src/DLD-FUNCTIONS/convhulln.cc")
                  (("qhull/qhull.h") "libqhull/libqhull.h")
                  (("qhull/qhull_a.h") "libqhull/qhull_a.h"))
+               (copy-file (assoc-ref %build-inputs "fseeko.c")
+                          "libgnu/fseeko.c")
                #t))
            (replace 'configure-makeinfo
              (lambda* (#:key inputs #:allow-other-keys)
@@ -48,7 +49,13 @@
                     "\"" (assoc-ref inputs "texinfo") "/bin/makeinfo\"")))
                #t))))))
     (native-inputs
-     `(("glibc-2.27" ,glibc-2.27) ; works around fseeko.c problem in gnulib
+     `(("fseeko.c" ,(origin
+                      (method url-fetch)
+                      (uri "https://git.savannah.gnu.org/gitweb/?p=gnulib.git;a=blob_plain;f=lib/fseeko.c;hb=d40db5e23197dcd105fa3c0dc6633b51af3c08d9")
+                      (file-name "gnulib-fseeko.c-0.0.0-1-d40db5e23")
+                      (sha256
+                       (base32
+                        "1ifa5200pskgdzd6qi4nicwyjjkc415bs403mjrrzv8cdrf6hp3k"))))
        ,@(fold alist-delete (package-native-inputs octave-cli)
                '("lzip"))))
     (inputs
