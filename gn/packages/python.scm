@@ -134,6 +134,53 @@ functions.")
   (license license:expat))
 )
 
+(define-public python-plotly-3.2.1
+  (package
+    (inherit python-plotly)
+    (name "python-plotly")
+    (version "3.2.1")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "plotly" version))
+        (sha256
+         (base32
+          "1ay1plgsckfi7fddl99kvbcx5nifh48ahvszkqvb4d7r008m8sxk"))))
+    (build-system python-build-system)
+    (propagated-inputs
+     `(("python-decorator" ,python-decorator)
+       ("python-nbformat" ,python-nbformat)
+       ("python-pytz" ,python-pytz)
+       ("python-requests" ,python-requests)
+       ("python-retrying" ,python-retrying)
+       ("python-six" ,python-six)))))
+
+(define-public python-retrying
+  (package
+    (name "python-retrying")
+    (version "1.3.3")
+    (source
+      (origin
+        ;; pypi release doesn't have test library
+        (method git-fetch)
+        (uri (git-reference
+               (url "https://github.com/rholder/retrying")
+               (commit (string-append "v" version))))
+        (file-name (git-file-name name version))
+        (sha256
+         (base32
+          "1kqipkbdaw5s1xg0gi29awm03vp1x8dz24pjidgxagvkvrjpzhi7"))))
+    (build-system python-build-system)
+    (propagated-inputs
+     `(("python-six" ,python-six)))
+    (home-page "https://github.com/rholder/retrying")
+    (synopsis "General-purpose retrying library")
+    (description "Retrying is a general-purpose retrying library, written in
+Python, to simplify the task of adding retry behavior to just about anything.
+The simplest use case is retrying a flaky function whenever an Exception occurs
+until a value is returned.")
+    (license license:asl2.0)))
+
 (define-public python-bagit; guix candidate
 (package
   (name "python-bagit")
