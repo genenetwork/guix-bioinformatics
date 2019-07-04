@@ -54,6 +54,7 @@
   #:use-module (gn packages javascript)
   #:use-module (gn packages phewas)
   #:use-module (gn packages python)
+  #:use-module (gn packages python24)
   #:use-module (gn packages statistics)
   #:use-module (srfi srfi-1))
 
@@ -154,6 +155,41 @@
     (arguments
      `(#:python ,python-2
        #:tests? #f))   ; no 'setup.py test' really!
+    (home-page "http://qtlreaper.sourceforge.net/")
+    (synopsis "Scan expression data for QTLs")
+    (description
+     "Batch-oriented version of WebQTL. It requires, as input,
+expression data from members of a set of recombinant inbred lines and
+genotype information for the same lines.  It searches for an
+association between each expression trait and all genotypes and
+evaluates that association by a permutation test.  For the permutation
+test, it performs only as many permutations as are necessary to define
+the empirical P-value to a reasonable precision. It also performs
+bootstrap resampling to estimate the confidence region for the
+location of a putative QTL.")
+    (license license:gpl2+))))
+
+(define-public python24-qtlreaper
+  (let ((commit "dd9c7fb2a9d5fa40b4054e1bcb7c57905d98d5f8"))
+  (package
+    (name "python24-qtlreaper")
+    (version (string-append "1.1-gn2-" (string-take commit 7) ))
+    (source (origin
+             (method git-fetch)
+             (uri (git-reference
+                   ;; (url "https://github.com/genenetwork/genenetwork2.git")
+                   (url "https://github.com/pjotrp/QTLreaper.git")
+                   (commit commit)))
+             (file-name (string-append name "-" (string-take commit 7)))
+             (sha256
+              (base32
+               "1ldcvyk8y8w6f4ci04hzx85sknd5a3h424p5bfi4fz32sm2p7fja"))))
+    (build-system python-build-system)
+    (arguments
+     `(#:python ,python-2.4
+       #:tests? #f))   ; no 'setup.py test' really!
+    (native-inputs
+     `(("python24-setuptools" ,python24-setuptools)))
     (home-page "http://qtlreaper.sourceforge.net/")
     (synopsis "Scan expression data for QTLs")
     (description
