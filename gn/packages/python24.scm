@@ -188,10 +188,11 @@ read read ssl ssl tcl tcl tk tk ,(version-major+minor (package-version tcl)) ,(v
           "1kfsi6la9y53rwayszgayfmkjfknpp650v69a0hwd1fcfk1df735"))))
     (build-system python-build-system)
     (arguments
-     `(#:python ,python-2.4))
+     `(#:python ,python-2.4
+       #:use-setuptools? #f
+       #:tests? #f)) ; no tests
     (native-inputs
-     `(("python24-setuptools" ,python24-setuptools)
-       ("unzip" ,unzip)))
+     `(("unzip" ,unzip)))
     (home-page "https://sourceforge.net/projects/pyxlwriter/")
     (synopsis "Python library for generating Excel compatible spreadsheets")
     (description "PyXLWriter is a Python library for generating Excel compatible
@@ -223,6 +224,8 @@ spreadsheets without the need for COM objects.")
     (build-system python-build-system)
     (arguments
      `(#:python ,python-2.4
+       #:use-setuptools? #f
+       #:tests? #f ; no tests
        #:phases
        (modify-phases %standard-phases
          (add-after 'unpack 'link-libraries
@@ -250,8 +253,6 @@ spreadsheets without the need for COM objects.")
                               "_imagingcms.c")
                  (("lcms.h") "lcms2.h")))
              #t)))))
-    (native-inputs
-     `(("python24-setuptools" ,python24-setuptools)))
     (inputs
      `(("freetype" ,freetype)
        ("lcms" ,lcms)
@@ -282,10 +283,11 @@ formats, and provides powerful image processing and graphics capabilities.")
           "0jaxfsrcgqb5cf2wznxnpdws5khlrdixmg85lrhq2zl9cy6dfdya"))))
     (build-system python-build-system)
     (arguments
-     `(#:python ,python-2.4))
+     `(#:python ,python-2.4
+       #:use-setuptools? #f
+       #:tests? #f)) ; tests are interactive
     (native-inputs
-     `(("python24-setuptools" ,python24-setuptools)
-       ("unzip" ,unzip)))
+     `(("unzip" ,unzip)))
     (propagated-inputs
      `(("python24-pil" ,python24-pil)))
     (home-page "http://www.strout.net/info/coding/python/piddle/")
@@ -328,6 +330,7 @@ pixels.")
     (build-system python-build-system)
     (arguments
      `(#:python ,python-2.4
+       #:use-setuptools? #f
        #:phases
        (modify-phases %standard-phases
          (replace 'build
@@ -355,8 +358,6 @@ pixels.")
                               "install" "--use_lapack"
                               (string-append "--prefix=" out))))))
        #:tests? #f))   ; no test target
-    (native-inputs
-     `(("python24-setuptools" ,python24-setuptools)))
     (inputs
      `(("lapack" ,lapack)
        ("openblas" ,openblas)))
@@ -384,10 +385,11 @@ strings, records, or objects using the same basic infrastructure and syntax.")
           "0qkxcyclz3vgwpl6xvsrg76q59dj0wwy8qx15567bafv659ypyb1"))))
     (build-system python-build-system)
     (arguments
-     `(#:python ,python-2.4))
+     `(#:python ,python-2.4
+       #:use-setuptools? #f
+       #:tests? #f)) ; no tests
     (native-inputs
-     `(("python24-setuptools" ,python24-setuptools)
-       ("unzip" ,unzip)))
+     `(("unzip" ,unzip)))
     (home-page "http://www.parallelpython.com")
     (synopsis "Parallel and distributed programming for Python")
     (description "PP is a python module which provides mechanism for parallel
@@ -533,12 +535,13 @@ clusters (computers connected via network).")
     (build-system python-build-system)
     (arguments
      `(#:python ,python-2.4
+       #:use-setuptools? #f
+       #:tests? #f
        #:phases
        (modify-phases %standard-phases
          (add-after 'unpack 'change-directory
            (lambda _
              (chdir "thirdparty/pp-1.5.7") #t)))))
-    (native-inputs `(("python24-setuptools" ,python24-setuptools)))
     (home-page "")
     (synopsis "")
     (description "")
@@ -552,6 +555,7 @@ clusters (computers connected via network).")
     (build-system python-build-system)
     (arguments
      `(#:python ,python-2.4
+       #:use-setuptools? #f
        #:phases
        (modify-phases %standard-phases
          (replace 'build
@@ -584,8 +588,6 @@ clusters (computers connected via network).")
                               "install" "--use_lapack"
                               (string-append "--prefix=" out))))))
        #:tests? #f))   ; no test target
-    (native-inputs
-     `(("python24-setuptools" ,python24-setuptools)))
     (inputs
      `(("lapack" ,lapack)
        ("openblas" ,openblas)))
