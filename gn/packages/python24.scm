@@ -394,3 +394,202 @@ strings, records, or objects using the same basic infrastructure and syntax.")
 execution of python code on SMP (systems with multiple processors or cores) and
 clusters (computers connected via network).")
     (license license:bsd-3)))
+
+(define GN1-thirdparty-sources
+  (origin
+    (method url-fetch/tarbomb)
+    ;; ipfs get QmTPwYT2pehdxdG1TiHEzVzLgbeuhJ4utXShuz3twA84AB
+    (uri "file:///gnu/store/p33a2sh3x2nhiiphdw9nly80njg6p8fi-thirdparty.tgz")
+    (file-name "GN1-thirdparty")
+    (sha256
+     (base32
+      "0nnp6g412hjfrcn3k2yrfb14sxv06k0149whc7qmv678nyj5zhfa"))))
+
+(define-public python24-json-GN1
+  (package
+    (name "python24-json-GN1")
+    (version "GN1")
+    (source GN1-thirdparty-sources)
+    (build-system python-build-system)
+    (arguments
+     `(#:python ,python-2.4
+       #:phases
+       (modify-phases %standard-phases
+         (delete 'build)
+         (delete 'check)
+         (replace 'install
+           (lambda* (#:key outputs #:allow-other-keys)
+             (let* ((out     (assoc-ref outputs "out"))
+                    (sitedir (string-append out "/lib/python2.4/site-packages/json/")))
+               (mkdir-p sitedir)
+               (copy-recursively "thirdparty/json" sitedir)
+               #t))))))
+    (home-page "")
+    (synopsis "")
+    (description "")
+    (license license:lgpl2.1+)))
+
+(define-public python24-svg-GN1
+  (package
+    (name "python24-svg-GN1")
+    (version "1.0")
+    (source GN1-thirdparty-sources)
+    (build-system python-build-system)
+    (arguments
+     `(#:python ,python-2.4
+       #:phases
+       (modify-phases %standard-phases
+         (delete 'build)
+         (delete 'check)
+         (replace 'install
+           (lambda* (#:key outputs #:allow-other-keys)
+             (let* ((out     (assoc-ref outputs "out"))
+                    (sitedir (string-append out "/lib/python2.4/site-packages/svg/")))
+               (mkdir-p sitedir)
+               (copy-recursively "thirdparty/svg" sitedir)
+               #t))))))
+    (home-page "")
+    (synopsis "")
+    (description "")
+    (license license:bsd-4)))
+
+(define-public python24-htmlgen-GN1
+  (package
+    (name "python24-htmlgen-GN1")
+    (version "2.5")
+    (source GN1-thirdparty-sources)
+    (build-system python-build-system)
+    (arguments
+     `(#:python ,python-2.4
+       #:phases
+       (modify-phases %standard-phases
+         (delete 'build)
+         (delete 'check)
+         (replace 'install
+           (lambda* (#:key outputs #:allow-other-keys)
+             (let* ((out     (assoc-ref outputs "out"))
+                    (sitedir (string-append out "/lib/python2.4/site-packages/htmlgen/")))
+               (mkdir-p sitedir)
+               (copy-recursively "thirdparty/htmlgen" sitedir)
+               #t))))))
+    (home-page "")
+    (synopsis "")
+    (description "")
+    (license license:bsd-2))) ; I'm not actually sure, checked HTMLgen.py
+
+(define-public python24-pyx-GN1
+  (package
+    (name "python24-pyx-GN1")
+    (version "0.8")
+    (source GN1-thirdparty-sources)
+    (build-system python-build-system)
+    (arguments
+     `(#:python ,python-2.4
+       #:phases
+       (modify-phases %standard-phases
+         (delete 'build)
+         (delete 'check)
+         (replace 'install
+           (lambda* (#:key outputs #:allow-other-keys)
+             (let* ((out     (assoc-ref outputs "out"))
+                    (sitedir (string-append out "/lib/python2.4/site-packages/pyx/")))
+               (mkdir-p sitedir)
+               (copy-recursively "thirdparty/pyx" sitedir)
+               #t))))))
+    (home-page "")
+    (synopsis "")
+    (description "")
+    (license license:gpl2+)))
+
+(define-public python24-pyxlwriter-GN1
+  (package
+    (name "python24-pyxlwriter-GN1")
+    (version "0.4a3")
+    (source GN1-thirdparty-sources)
+    (build-system python-build-system)
+    (arguments
+     `(#:python ,python-2.4
+       #:phases
+       (modify-phases %standard-phases
+         (delete 'build)
+         (delete 'check)
+         (replace 'install
+           (lambda* (#:key outputs #:allow-other-keys)
+             (let* ((out     (assoc-ref outputs "out"))
+                    (sitedir (string-append out "/lib/python2.4/site-packages/pyXLWriter/")))
+               (mkdir-p sitedir)
+               (copy-recursively "thirdparty/pyXLWriter" sitedir)
+               #t))))))
+    (home-page "")
+    (synopsis "")
+    (description "")
+    (license license:lgpl2.1+)))
+
+(define-public python24-pp-GN1
+  (package
+    (name "python24-pp-GN1")
+    (version "1.5.7")
+    (source GN1-thirdparty-sources)
+    (build-system python-build-system)
+    (arguments
+     `(#:python ,python-2.4
+       #:phases
+       (modify-phases %standard-phases
+         (add-after 'unpack 'change-directory
+           (lambda _
+             (chdir "thirdparty/pp-1.5.7") #t)))))
+    (native-inputs `(("python24-setuptools" ,python24-setuptools)))
+    (home-page "")
+    (synopsis "")
+    (description "")
+    (license license:bsd-3)))
+
+(define-public python24-numarray-GN1
+  (package
+    (name "python24-numarray-GN1")
+    (version "1.5.2")
+    (source GN1-thirdparty-sources)
+    (build-system python-build-system)
+    (arguments
+     `(#:python ,python-2.4
+       #:phases
+       (modify-phases %standard-phases
+         (replace 'build
+           (lambda _
+             (invoke "python" "setup.py" "config" "build"
+                     "--gencode" "--use_lapack")))
+         (add-after 'unpack 'find-lapack-and-openblas
+           (lambda* (#:key inputs #:allow-other-keys)
+             (let ((lapack (assoc-ref inputs "lapack"))
+                   (blas   (assoc-ref inputs "openblas")))
+               (substitute* "cfg_packages.py"
+                 (("lapack_libs = .*'m']")
+                  "lapack_libs = ['lapack', 'openblas', 'm']\n")
+                 (("lapack_dirs = .*")
+                  (string-append "lapack_dirs = ['"
+                                 lapack "/lib', '" blas "/lib']\n"))
+                 (("lapack_include_dirs = .*")
+                  (string-append "lapack_include_dirs = ['"
+                                 lapack "/include', '" blas "/include']\n")))
+               #t)))
+         (add-after 'unpack 'change-directory
+           (lambda _
+             (chdir "thirdparty/numarray-1.5.2")
+             (for-each make-file-writable (find-files "."))
+             #t))
+         (replace 'install
+                  (lambda* (#:key outputs #:allow-other-keys)
+                    (let ((out (assoc-ref outputs "out")))
+                      (invoke "python" "setup.py" "config"
+                              "install" "--use_lapack"
+                              (string-append "--prefix=" out))))))
+       #:tests? #f))   ; no test target
+    (native-inputs
+     `(("python24-setuptools" ,python24-setuptools)))
+    (inputs
+     `(("lapack" ,lapack)
+       ("openblas" ,openblas)))
+    (home-page "")
+    (synopsis "")
+    (description "")
+    (license license:bsd-3)))
