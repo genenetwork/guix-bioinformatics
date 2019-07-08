@@ -115,6 +115,9 @@
              (lambda _
                (substitute* "UFconfig/Makefile"
                  (("Lib/") ""))
+               ;; octave-3.4.3 expects it to be built with -fPIC
+               (substitute* "UFconfig/UFconfig.mk"
+                 (("-O3") "-O3 -fPIC"))
                #t))
            (add-before 'install 'prepare-directories
              (lambda* (#:key outputs #:allow-other-keys)
