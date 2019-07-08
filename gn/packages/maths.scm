@@ -97,19 +97,13 @@
      (substitute-keyword-arguments (package-arguments suitesparse)
        ((#:phases phases)
         `(modify-phases ,phases
-           (add-after 'unpack 'build-without-metis
-             (lambda _
-               (substitute* "UFconfig/UFconfig.mk"
-                 (("CHOLMOD_CONFIG = ")
-                  "CHOLMOD_CONFIG = -DNPARTITION")
-                 (("SPQR_CONFIG = ")
-                  "SPQR_CONFIG = -DNPARTITION")
-                 (("METIS = ../../metis-4.0/libmetis.a")
-                  "METIS =")
-                 (("METIS_PATH = .*")
-                  "METIS_PATH = \n"))
-               (substitute* "Makefile"
-                 (("\\( .*CHOLMOD .*") "\n"))
+           (add-after 'unpack 'unpack-metis
+             (lambda* (#:key inputs #:allow-other-keys)
+               (let ((metis (assoc-ref inputs "metis-source")))
+                 (invoke "tar" "xvf" metis)
+                 ;; backported from 4.0.3
+                 (substitute* (find-files "metis-4.0")
+                              (("log2") "ilog2")))
                #t))
            (add-after 'unpack 'fix-source
              (lambda _
@@ -125,6 +119,14 @@
                  (mkdir-p (string-append out "/lib"))
                  (mkdir-p (string-append out "/include")))
                #t))))))
+    (native-inputs
+     `(("metis-source" ,(origin
+                          (method url-fetch)
+                          (uri "http://glaros.dtc.umn.edu/gkhome/fetch/sw/metis/OLD/metis-4.0.1.tar.gz")
+                          (sha256
+                           (base32
+                            "0lnkdfdrmmyy67h356bgdc06acvmcr26av9kdvqlws12znrr5iv0"))))
+       ,@(package-native-inputs suitesparse)))
     (inputs
      `(,@(fold alist-delete (package-inputs suitesparse)
                '("metis"))))))
