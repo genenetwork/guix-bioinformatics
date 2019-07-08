@@ -79,3 +79,49 @@
       (sha256
        (base32
         "1cddqsdcfwavdklg7hsfifppsry81dx3c17wzk6r22mjjpwcihmb"))))))
+
+(define-public suitesparse-3.5.0
+  (package
+    (inherit suitesparse)
+    (version "3.5.0")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append
+             "http://faculty.cse.tamu.edu/davis/SuiteSparse/SuiteSparse-"
+             version ".tar.gz"))
+       (sha256
+        (base32
+         "0npn7c1j5qag5m2r0cmh3bwc42c1jk8k2yg2cfyxlcrp0h7wn4rc"))))
+    (arguments
+     (substitute-keyword-arguments (package-arguments suitesparse)
+       ((#:phases phases)
+        `(modify-phases ,phases
+           (add-after 'unpack 'build-without-metis
+             (lambda _
+               (substitute* "UFconfig/UFconfig.mk"
+                 (("CHOLMOD_CONFIG = ")
+                  "CHOLMOD_CONFIG = -DNPARTITION")
+                 (("SPQR_CONFIG = ")
+                  "SPQR_CONFIG = -DNPARTITION")
+                 (("METIS = ../../metis-4.0/libmetis.a")
+                  "METIS =")
+                 (("METIS_PATH = .*")
+                  "METIS_PATH = \n"))
+               (substitute* "Makefile"
+                 (("\\( .*CHOLMOD .*") "\n"))
+               #t))
+           (add-after 'unpack 'fix-source
+             (lambda _
+               (substitute* "UFconfig/Makefile"
+                 (("Lib/") ""))
+               #t))
+           (add-before 'install 'prepare-directories
+             (lambda* (#:key outputs #:allow-other-keys)
+               (let ((out (assoc-ref outputs "out")))
+                 (mkdir-p (string-append out "/lib"))
+                 (mkdir-p (string-append out "/include")))
+               #t))))))
+    (inputs
+     `(,@(fold alist-delete (package-inputs suitesparse)
+               '("metis"))))))
