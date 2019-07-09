@@ -2,6 +2,8 @@
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (gnu packages)
   #:use-module (gnu packages compression)
+  #:use-module (gnu packages python)
+  #:use-module (gnu packages web)
   #:use-module (guix packages)
   #:use-module (guix download)
   #:use-module (guix git-download)
@@ -126,3 +128,54 @@ extensive prebuilt components, and powerful plugins built on jQuery.")
     (synopsis "Bootstrap minimal")
     (description "Bootstrap native does not use jquery.")
     (license license:expat))))
+
+(define-public mod-python
+  (let ((commit "902bb8700e2c45ffd96b78e2f1146a3c101be7f5")
+        (revision "1"))
+    (package
+      (name "mod-python")
+      (version (git-version "3.5.0" revision commit))
+      (source
+        (origin
+          (method git-fetch)
+          (uri (git-reference
+                 (url "https://github.com/grisha/mod_python.git")
+                 (commit commit)))
+          (file-name (git-file-name name version))
+          (sha256
+           (base32
+            "0lqlpldw11dml24n05305xzpbjlkay497djjczvgsj5v8djkxcq0"))))
+      (build-system gnu-build-system)
+      (arguments
+       '(#:tests? #f ; tests require a running apache server
+         #:phases
+         (modify-phases %standard-phases
+           (add-after 'unpack 'patch-source
+             (lambda* (#:key outputs #:allow-other-keys)
+               (let ((out    (assoc-ref outputs "out")))
+                 (substitute* "Makefile.in"
+                   ;; Don't use httpd's prefix
+                   (("LIBEXECDIR=.*") (string-append "LIBEXECDIR=" out "/modules\n")))
+                 (substitute* "scripts/Makefile.in"
+                   (("BINDIR=.*") (string-append "BINDIR=" out "/bin")))
+                 (substitute* "dist/setup.py.in"
+                   ;; we want out modules dir, not httpd's
+                   ;; If we want SYSCONFDIR to be the same as httpd's :
+                   ;; (("@SYSCONFDIR@") (string-append (assoc-ref %build-inputs "httpd") "/etc/httpd"))
+                   (("@LIBEXECDIR@") (string-append out "/modules")))
+                 (substitute* "dist/Makefile.in"
+                   (("\\$\\(DESTDIR\\)") "/")
+                   (("--root") (string-append "--prefix=" out " --root"))))
+               #t)))))
+      (inputs
+       `(("httpd" ,httpd)
+         ("python" ,python-2))) ; does not seem to build with python3.7+
+      (native-inputs `(("flex" ,(@ (gnu packages flex) flex))))
+      (home-page "http://modpython.org/")
+      (synopsis "Apache/Python Integration")
+      (description "Mod_python is an Apache module that embeds the Python
+interpreter within the server.  With mod_python you can write web-based
+applications in Python that will run many times faster than traditional CGI and
+will have access to advanced features such as ability to retain database
+connections and other data between hits and access to Apache internals.")
+      (license license:asl2.0))))
