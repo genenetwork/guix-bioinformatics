@@ -212,31 +212,13 @@ spreadsheets without the need for COM objects.")
 
 (define-public python24-piddle
   (package
+    (inherit python2-piddle-1.0.15)
     (name "python24-piddle")
-    (version "1.0.15")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (string-append "mirror://sourceforge/piddle/piddle/"
-                            version "/piddle-" version ".zip"))
-        (sha256
-         (base32
-          "0jaxfsrcgqb5cf2wznxnpdws5khlrdixmg85lrhq2zl9cy6dfdya"))))
-    (build-system python-build-system)
     (arguments
-     `(#:python ,python-2.4
-       #:use-setuptools? #f
-       #:tests? #f)) ; tests are interactive
-    (native-inputs
-     `(("unzip" ,unzip)))
+     (substitute-keyword-arguments (package-arguments python2-piddle-1.0.15)
+       ((#:python _) python-2.4)))
     (propagated-inputs
-     `(("python24-pil" ,python24-pil)))
-    (home-page "http://www.strout.net/info/coding/python/piddle/")
-    (synopsis "Plug-In Drawing, Does Little Else")
-    (description "PIDDLE is designed for vector graphics -- i.e., drawing of
-primitives such as lines and ellipses, rather than manipulation of individual
-pixels.")
-    (license license:gpl2+)))
+     `(("python24-pil" ,python24-pil)))))
 
 ;; Apparently this is the library which mimics python-2.6+'s json library
 (define-public python24-simplejson

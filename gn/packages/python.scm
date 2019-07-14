@@ -675,6 +675,34 @@ version ".tgz"))
     (description #f)
     (license #f)))
 
+(define-public python2-piddle-1.0.15
+  (package
+    (name "python2-piddle")
+    (version "1.0.15")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (string-append "mirror://sourceforge/piddle/piddle/"
+                            version "/piddle-" version ".zip"))
+        (sha256
+         (base32
+          "0jaxfsrcgqb5cf2wznxnpdws5khlrdixmg85lrhq2zl9cy6dfdya"))))
+    (build-system python-build-system)
+    (arguments
+     `(#:python ,python-2
+       #:use-setuptools? #f
+       #:tests? #f)) ; tests are interactive
+    (native-inputs
+     `(("unzip" ,unzip)))
+    (propagated-inputs
+     `(("python2-pil" ,python2-pil1)))
+    (home-page "http://www.strout.net/info/coding/python/piddle/")
+    (synopsis "Plug-In Drawing, Does Little Else")
+    (description "PIDDLE is designed for vector graphics -- i.e., drawing of
+primitives such as lines and ellipses, rather than manipulation of individual
+pixels.")
+    (license license:gpl2+)))
+
 (define-public python2-parallel ; guix fix number of things
   (package
     (name "python2-parallel")
