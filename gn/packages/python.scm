@@ -30,6 +30,7 @@
   #:use-module (gnu packages rdf)
   #:use-module (gnu packages readline)
   #:use-module (gnu packages statistics)
+  #:use-module (gnu packages tcl)
   #:use-module (gnu packages tex)
   #:use-module (gnu packages texinfo)
   #:use-module (gnu packages time)
@@ -580,59 +581,68 @@ project)")
 (define-public python2-pil1 ; guix obsolete
   (package
     (name "python2-pil1")
-    (version "1.1.6")
+    (version "1.1.7")
     (source (origin
              (method url-fetch)
-             (uri (string-append
-                   "http://files.genenetwork.org/software/contrib/Imaging-"
-                   version "-gn.tar.gz"))
+             (uri (string-append "http://effbot.org/downloads/Imaging-"
+                                 version ".tar.gz"))
              (sha256
               (base32
-               "0jhinbcq2k899c76m1jc5a3z39k6ajghiavpzi6991hbg6xhxdzg"))
+               "04aj80jhfbmxqzvmq40zfi4z3cw6vi01m3wkk6diz3lc971cfnw9"))
     (modules '((guix build utils)))
     (snippet
-     ;; Adapt to newer freetype. As the package is unmaintained upstream,
-     ;; there is no use in creating a patch and reporting it.
-     '(substitute* "_imagingft.c"
-                   (("freetype/")
-                    "freetype2/freetype/")))))
+     ;; Adapt to newer freetype and lcms.  As the package is unmaintained
+     ;; upstream, there is no use in creating a patch and reporting it.
+     '(begin (substitute* "_imagingft.c"
+               (("freetype/")
+                "freetype2/freetype/"))
+             (substitute* '("setup.py"
+                            "_imagingcms.c")
+               (("lcms.h") "lcms2.h"))))))
     (build-system python-build-system)
     (inputs
-      `(("freetype" ,freetype)
-        ("libjpeg" ,libjpeg)
-        ("libtiff" ,libtiff)
-        ("python2-setuptools" ,python2-setuptools)
-        ("zlib" ,zlib)))
+     `(("freetype" ,freetype)
+       ("lcms" ,lcms) ; not fully supported
+       ("libjpeg" ,libjpeg)
+       ("libtiff" ,libtiff)
+       ("tcl" ,tcl)
+       ("zlib" ,zlib)))
     (arguments
      ;; Only the fork python-pillow works with Python 3.
      `(#:python ,python-2
        #:tests? #f ; no check target
+       #:use-setuptools? #f
        #:phases
-         (alist-cons-before
-          'build 'configure
-          ;; According to README and setup.py, manual configuration is
-          ;; the preferred way of "searching" for inputs.
-          ;; lcms is not found, TCL_ROOT refers to the unavailable tkinter.
-          (lambda* (#:key inputs #:allow-other-keys)
-            (let ((jpeg (assoc-ref inputs "libjpeg"))
-                  (zlib (assoc-ref inputs "zlib"))
-                  (tiff (assoc-ref inputs "libtiff"))
-                  (freetype (assoc-ref inputs "freetype")))
-              (substitute* "setup.py"
-                (("JPEG_ROOT = None")
-                 (string-append "JPEG_ROOT = libinclude(\"" jpeg "\")"))
-                (("ZLIB_ROOT = None")
-                 (string-append "ZLIB_ROOT = libinclude(\"" zlib "\")"))
-                (("TIFF_ROOT = None")
-                 (string-append "TIFF_ROOT = libinclude(\"" tiff "\")"))
-                (("FREETYPE_ROOT = None")
-                 (string-append "FREETYPE_ROOT = libinclude(\""
-                                freetype "\")")))))
-          %standard-phases)))
+       (modify-phases %standard-phases
+         (add-after 'unpack 'link-libraries
+           (lambda* (#:key inputs #:allow-other-keys)
+             (let ((freetype (assoc-ref inputs "freetype"))
+                   (jpeg (assoc-ref inputs "libjpeg"))
+                   (lcms (assoc-ref inputs "lcms"))
+                   (tcl (assoc-ref inputs "tcl"))
+                   (tiff (assoc-ref inputs "libtiff"))
+                   (zlib (assoc-ref inputs "zlib")))
+               (substitute* "setup.py"
+                 (("FREETYPE_ROOT .*")
+                  (string-append "FREETYPE_ROOT = libinclude(\"" freetype "\")\n"))
+                 (("JPEG_ROOT .*")
+                  (string-append "JPEG_ROOT = libinclude(\"" jpeg "\")\n"))
+                 (("LCMS_ROOT .*")
+                  (string-append "LCMS_ROOT = libinclude(\"" lcms "\")\n"))
+                 (("^TCL_ROOT .*")
+                  (string-append "TCL_ROOT = libinclude(\"" tcl "\")\n"))
+                 (("TIFF_ROOT .*")
+                  (string-append "TIFF_ROOT = libinclude(\"" tiff "\")\n"))
+                 (("ZLIB_ROOT .*")
+                  (string-append "ZLIB_ROOT = libinclude(\"" zlib "\")\n"))))
+             #t)))))
     (home-page "http://www.pythonware.com/products/pil/")
     (synopsis "Python Imaging Library")
-    (description "The Python Imaging Library (PIL) adds image processing
-capabilities to the Python interpreter.")
+    (description "The @dfn{Python Imaging Library} (PIL) adds image processing
+capabilities to your Python interpreter.  This library supports many file
+formats, and provides powerful image processing and graphics capabilities.
+
+NOTE: This package is superseded by python-pillow")
     (license (license:x11-style
                "file://README"
                "See 'README' in the distribution."))))
