@@ -873,3 +873,138 @@ the older versions.")
     "arcp (Archive and Package) URI parser and generator")
   (license license:asl2.0))
 )
+
+(define-public python2-pp
+  (package
+    (name "python2-pp")
+    (version "1.6.1")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (string-append
+             "http://www.parallelpython.com/downloads/pp/pp-" version ".zip"))
+        (sha256
+         (base32
+          "0qkxcyclz3vgwpl6xvsrg76q59dj0wwy8qx15567bafv659ypyb1"))))
+    (build-system python-build-system)
+    (arguments
+     `(#:python ,python-2
+       #:use-setuptools? #f
+       #:tests? #f)) ; no tests
+    (native-inputs
+     `(("unzip" ,unzip)))
+    (home-page "http://www.parallelpython.com")
+    (synopsis "Parallel and distributed programming for Python")
+    (description "PP is a python module which provides mechanism for parallel
+execution of python code on SMP (systems with multiple processors or cores) and
+clusters (computers connected via network).")
+    (license license:bsd-3)))
+
+(define GN1-thirdparty-sources
+  (origin
+    (method url-fetch/tarbomb)
+    ;; ipfs get QmTPwYT2pehdxdG1TiHEzVzLgbeuhJ4utXShuz3twA84AB
+    (uri "file:///gnu/store/p33a2sh3x2nhiiphdw9nly80njg6p8fi-thirdparty.tgz")
+    (file-name "GN1-thirdparty")
+    (sha256
+     (base32
+      "0nnp6g412hjfrcn3k2yrfb14sxv06k0149whc7qmv678nyj5zhfa"))))
+
+(define-public python2-json-GN1
+  (package
+    (name "python2-json-GN1")
+    (version "GN1")
+    (source GN1-thirdparty-sources)
+    (build-system python-build-system)
+    (arguments
+     `(#:python ,python-2
+       #:phases
+       (modify-phases %standard-phases
+         (delete 'build)
+         (delete 'check)
+         (replace 'install
+           (lambda* (#:key outputs #:allow-other-keys)
+             (let* ((out     (assoc-ref outputs "out"))
+                    (sitedir (string-append out "/lib/python2.7/site-packages/json/")))
+               (mkdir-p sitedir)
+               (copy-recursively "thirdparty/json" sitedir)
+               #t))))))
+    (home-page "")
+    (synopsis "")
+    (description "")
+    (license license:lgpl2.1+)))
+
+(define-public python2-pyx-GN1
+  (package
+    (name "python2-pyx-GN1")
+    (version "0.8")
+    (source GN1-thirdparty-sources)
+    (build-system python-build-system)
+    (arguments
+     `(#:python ,python-2
+       #:phases
+       (modify-phases %standard-phases
+         (delete 'build)
+         (delete 'check)
+         (replace 'install
+           (lambda* (#:key outputs #:allow-other-keys)
+             (let* ((out     (assoc-ref outputs "out"))
+                    (sitedir (string-append out "/lib/python2.7/site-packages/pyx/")))
+               (mkdir-p sitedir)
+               (copy-recursively "thirdparty/pyx" sitedir)
+               #t))))))
+    (home-page "")
+    (synopsis "")
+    (description "")
+    (license license:gpl2+)))
+
+(define-public python2-pyxlwriter
+  (package
+    (name "python2-pyxlwriter")
+    (version "0.4a3")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (string-append "mirror://sourceforge/pyxlwriter/pyxlwriter/"
+                            version "/pyXLWriter-" version ".zip"))
+        (sha256
+         (base32
+          "1kfsi6la9y53rwayszgayfmkjfknpp650v69a0hwd1fcfk1df735"))))
+    (build-system python-build-system)
+    (arguments
+     `(#:python ,python-2
+       #:use-setuptools? #f
+       #:tests? #f)) ; no tests
+    (native-inputs
+     `(("unzip" ,unzip)))
+    (home-page "https://sourceforge.net/projects/pyxlwriter/")
+    (synopsis "Python library for generating Excel compatible spreadsheets")
+    (description "PyXLWriter is a Python library for generating Excel compatible
+spreadsheets.  It's a port of John McNamara's Perl @code{Spreadsheet::WriteExcel}
+module version 1.01 to Python.  It allows writing of Excel compatible
+spreadsheets without the need for COM objects.")
+    (license license:lgpl2.1+)))
+
+(define-public python2-svg-GN1
+  (package
+    (name "python2-svg-GN1")
+    (version "1.0")
+    (source GN1-thirdparty-sources)
+    (build-system python-build-system)
+    (arguments
+     `(#:python ,python-2
+       #:phases
+       (modify-phases %standard-phases
+         (delete 'build)
+         (delete 'check)
+         (replace 'install
+           (lambda* (#:key outputs #:allow-other-keys)
+             (let* ((out     (assoc-ref outputs "out"))
+                    (sitedir (string-append out "/lib/python2.7/site-packages/svg/")))
+               (mkdir-p sitedir)
+               (copy-recursively "thirdparty/svg" sitedir)
+               #t))))))
+    (home-page "")
+    (synopsis "")
+    (description "")
+    (license license:bsd-4)))
