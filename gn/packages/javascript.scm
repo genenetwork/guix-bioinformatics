@@ -139,42 +139,36 @@ for panning and zooming in Cytoscape.js by giving less savvy users a more
 traditional UI -- similar to controls on map webapps.")
     (license license:expat)))
 
-;; https://github.com/cytoscape/cytoscape.js-qtip/archive/2.7.1.tar.gz
+;; Author recommends using cytoscape-popper with tippy.js since qtip2 is no longer maintained
 (define-public javascript-cytoscape-qtip
   (package
-   ;; (inherit javascript-cytoscape)
-   (name "javascript-cytoscape-qtip")
-   (version "2.7.1") ; ancient version
-   (source
-    (origin
-     (method url-fetch)
-     (uri (string-append "https://github.com/cytoscape/cytoscape.js-qtip/archive/" version ".tar.gz"))
-     (file-name (string-append name "-" version ".tar.gz"))
-     (sha256
-      (base32 "0f2qhxi9qx5r3rcmxqgdqnwd9apnjlb4s4hckwhaqgsp6rf8lzlb"))))
-   (inputs `(("javascript-cytoscape" ,javascript-cytoscape)))
-   (build-system trivial-build-system)
-   (native-inputs `(("gzip" ,gzip)
-                    ("tar" ,tar)
-                    ("source" ,source)))
-   (arguments
-    `(#:modules ((guix build utils))
-      #:builder
-      (begin
-        (use-modules (guix build utils))
-        (let* ((out (assoc-ref %outputs "out"))
-               (tarcmd (string-append (assoc-ref %build-inputs "tar") "/bin/tar"))
-               (targetdir (string-append out "/share/genenetwork2/javascript/cytoscape-qtip"))
-               (source (assoc-ref %build-inputs "source")))
-          (setenv "PATH" (string-append
-                          (assoc-ref %build-inputs "tar") "/bin" ":"
-                          (assoc-ref %build-inputs "gzip") "/bin"))
-          (invoke "tar" "xvf" (assoc-ref %build-inputs "source") "--strip-components=1")
-          (mkdir-p targetdir)
-          (install-file "cytoscape-qtip.js" targetdir)
-          ))))
+    (name "javascript-cytoscape-qtip")
+    (version "2.7.1") ; May 4, 2017
+    (source
+      (origin
+        (method git-fetch)
+        (uri (git-reference
+               (url "https://github.com/cytoscape/cytoscape.js-qtip")
+               (commit version)))
+        (file-name (git-file-name name version))
+        (sha256
+         (base32 "1rdwdkx9j1lqzks8gi8ilkcbryswdx653569av4i74pv4j93v6zx"))))
+    (build-system trivial-build-system)
+    (arguments
+     `(#:modules ((guix build utils))
+       #:builder
+       (begin
+         (use-modules (guix build utils))
+         (let* ((out (assoc-ref %outputs "out"))
+                (targetdir (string-append out "/share/genenetwork2/javascript/cytoscape-qtip"))
+                (source (assoc-ref %build-inputs "source")))
+           (install-file (string-append source "/cytoscape-qtip.js") targetdir)))))
+    (native-inputs `(("source" ,source)))
+    (propagated-inputs ; TODO: Add qtip
+     `(("javascript-cytoscape" ,javascript-cytoscape)
+       ("jquery" ,web-jquery)))
     (home-page "https://github.com/cytoscape/cytoscape.js")
-    (synopsis "Cytoscape.js")
+    (synopsis "Cytoscape.js extension that wraps the QTip jQuery library")
     (description "Cytoscape.")
     (license license:expat)))
 
