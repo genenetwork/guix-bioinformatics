@@ -14,40 +14,38 @@
 ;; see color-make package for great example - also install-file and invoke
 
 (define-public javascript-twitter-post-fetcher
-  (let ((commit "27440ffebd4c1ba7abc9aec92a581155715f2e4e"))
+  (let ((commit "8f9e667e917b3c581b100bf2ccc7157aadc5ff43") ; April 30, 2019
+        (revision "1"))
     (package
-     (name "javascript-twitter-post-fetcher")
-     (version (string-append "17.0.3" "-" (string-take commit 7)))
-     (source (origin
-              (method git-fetch)
-              (uri (git-reference
-                    (url "https://github.com/jasonmayes/Twitter-Post-Fetcher.git")
-                    (commit commit)))
-              (file-name (string-append name "-" commit))
-              (sha256
-               (base32
-                "159z8izf510086d8sa79k4mml6sw1gycb1r1r9ri1kyw2k9knmqa"))))
-     (build-system trivial-build-system)
-     (native-inputs `(("source" ,source)))
-     (arguments
-      `(#:modules ((guix build utils))
-        #:builder
-        (let* ((out (assoc-ref %outputs "out"))
-               (name "Twitter-Post-Fetcher")
-               (targetdir (string-append out "/share/genenetwork2/javascript/" name))
-               )
-          (begin
-            (use-modules (guix build utils))
-            (let ((source (assoc-ref %build-inputs "source"))
-                  )
-              (and
-                                        ; (mkdir-p targetdir)
-               (copy-recursively source targetdir)
-               ))))))
-     (home-page "http://jasonmayes.com/projects/twitterApi/")
-     (synopsis "Twitter post fetching")
-     (description "Twitter post fetching.")
-     (license license:expat))))
+      (name "javascript-twitter-post-fetcher")
+      (version (git-version "18.0.2" revision commit)) ; April 3, 2018
+      (source (origin
+                (method git-fetch)
+                (uri (git-reference
+                       (url "https://github.com/jasonmayes/Twitter-Post-Fetcher.git")
+                       (commit commit)))
+                (file-name (git-file-name name version))
+                (sha256
+                 (base32
+                  "0n935qmmd9gijkklrps8qimplbskcrijds3076zfd28afxrr96wp"))))
+      (build-system trivial-build-system)
+      (arguments
+       `(#:modules ((guix build utils))
+         #:builder
+         (let* ((out (assoc-ref %outputs "out"))
+                (targetdir (string-append out "/share/genenetwork2/javascript/" ,name))
+                (source (assoc-ref %build-inputs "source")))
+           (begin
+             (use-modules (guix build utils))
+             (copy-recursively source targetdir)
+             (install-file (string-append source "/License.txt")
+                           (string-append out "/share/doc/" ,name "-" ,version))))))
+      (native-inputs `(("source" ,source)))
+      (home-page "http://jasonmayes.com/projects/twitterApi/")
+      (synopsis "Twitter post fetching")
+      (description "Allows you to get your tweets displaying on your website
+using JavaScript, without using new Twitter 1.1 API.")
+      (license license:expat))))
 
 (define-public javascript-cytoscape
   (package
