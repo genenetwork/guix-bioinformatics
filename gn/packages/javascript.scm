@@ -50,38 +50,39 @@ using JavaScript, without using new Twitter 1.1 API.")
 (define-public javascript-cytoscape
   (package
     (name "javascript-cytoscape")
-    (version "2.7.8") ; ancient version
+    (version "3.8.1") ; July 9, 2019
     (source
      (origin
-       (method url-fetch)
-       (uri (string-append "https://github.com/cytoscape/cytoscape.js/archive/v" version ".tar.gz"))
-       (file-name (string-append name "-" version ".tar.gz"))
+       (method git-fetch)
+       (uri (git-reference
+              (url "https://github.com/cytoscape/cytoscape.js")
+              (commit (string-append "v" version))))
+       (file-name (git-file-name name version))
        (sha256
-        (base32 "08ks2nd7ccmdmahn151i180pvhn4vdzgpw99g4g4f2baz9pkz4w3"))))
+        (base32
+         "1dnwvmghwq21g9ag5cj49l0wnyfc54kbsrj0byii5wbwljjg9826"))))
     (build-system trivial-build-system)
-    (native-inputs `(("gzip" ,gzip)
-                     ("tar" ,tar)
-                     ("source" ,source)))
     (arguments
      `(#:modules ((guix build utils))
        #:builder
        (begin
          (use-modules (guix build utils))
          (let* ((out (assoc-ref %outputs "out"))
-                (tarcmd (string-append (assoc-ref %build-inputs "tar") "/bin/tar"))
                 (targetdir (string-append out "/share/genenetwork2/javascript/cytoscape"))
-                (source (assoc-ref %build-inputs "source")))
-           (setenv "PATH" (string-append
-                           (assoc-ref %build-inputs "tar") "/bin" ":"
-                           (assoc-ref %build-inputs "gzip") "/bin"))
-           (invoke "tar" "xvf" (assoc-ref %build-inputs "source") "--strip-components=1")
-           (mkdir-p targetdir)
-           (copy-recursively "dist" targetdir)
-           ))))
+                (source (assoc-ref %build-inputs "source"))
+                (dist (string-append source "/dist")))
+           (copy-recursively dist targetdir)))))
+    (native-inputs `(("source" ,source)))
+    (home-page "https://js.cytoscape.org/")
+    (synopsis "Graph theory (network) library for visualisation and analysis")
+    (description "Cytoscape.js is a fully featured graph theory library.  Do you
+need to model and/or visualise relational data, like biological data or social
+networks? If so, Cytoscape.js is just what you need.
 
-    (home-page "https://github.com/cytoscape/cytoscape.js")
-    (synopsis "Cytoscape.js")
-    (description "Cytoscape.")
+Cytoscape.js contains a graph theory model and an optional renderer to display
+interactive graphs.  This library was designed to make it as easy as possible
+for programmers and scientists to use graph theory in their apps, whether it's
+for server-side analysis in a Node.js app or for a rich user interface.")
     (license license:expat)))
 
 (define-public javascript-cytoscape-panzoom
