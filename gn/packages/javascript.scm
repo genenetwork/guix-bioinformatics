@@ -2,6 +2,7 @@
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (gnu packages base)
   #:use-module (gnu packages compression)
+  #:use-module (gn packages web)
   #:use-module (gnu packages)
   #:use-module (guix packages)
   #:use-module (guix download)
@@ -103,41 +104,39 @@ for server-side analysis in a Node.js app or for a rich user interface.")
 
 (define-public javascript-cytoscape-panzoom
   (package
-   ;; (inherit javascript-cytoscape)
-   (name "javascript-cytoscape-panzoom")
-   (version "2.5.2") ; ancient version
-   (source
-    (origin
-     (method url-fetch)
-     (uri (string-append "https://github.com/cytoscape/cytoscape.js-panzoom/archive/" version ".tar.gz"))
-     (file-name (string-append name "-" version ".tar.gz"))
-     (sha256
-      (base32 "154xzi693gbv89y221gkpi03k84lccmr55v5z43mn1i1s1fdhm2b"))))
-   (inputs `(("javascript-cytoscape" ,javascript-cytoscape)))
-   (build-system trivial-build-system)
-   (native-inputs `(("gzip" ,gzip)
-                    ("tar" ,tar)
-                    ("source" ,source)))
-   (arguments
-    `(#:modules ((guix build utils))
-      #:builder
-      (begin
-        (use-modules (guix build utils))
-        (let* ((out (assoc-ref %outputs "out"))
-               (tarcmd (string-append (assoc-ref %build-inputs "tar") "/bin/tar"))
-               (targetdir (string-append out "/share/genenetwork2/javascript/cytoscape-panzoom"))
-               (source (assoc-ref %build-inputs "source")))
-          (setenv "PATH" (string-append
-                          (assoc-ref %build-inputs "tar") "/bin" ":"
-                          (assoc-ref %build-inputs "gzip") "/bin"))
-          (invoke "tar" "xvf" (assoc-ref %build-inputs "source") "--strip-components=1")
-          (mkdir-p targetdir)
-          (install-file "cytoscape-panzoom.js" targetdir)
-          (install-file "cytoscape.js-panzoom.css" targetdir)
-          ))))
-    (home-page "https://github.com/cytoscape/cytoscape.js")
-    (synopsis "Cytoscape.js")
-    (description "Cytoscape.")
+    (name "javascript-cytoscape-panzoom")
+    (version "2.5.3") ; August 21, 2018
+    (source
+      (origin
+        (method git-fetch)
+        (uri (git-reference
+               (url "https://github.com/cytoscape/cytoscape.js-panzoom")
+               (commit version)))
+        (file-name (git-file-name name version))
+        (sha256
+         (base32 "1lzcsip6q44h14g5l4jciv5sfc7ilvg1yrd14lcji8mnq6akx16n"))))
+    (build-system trivial-build-system)
+    (arguments
+     `(#:modules ((guix build utils))
+       #:builder
+       (begin
+         (use-modules (guix build utils))
+         (let* ((out (assoc-ref %outputs "out"))
+                (targetdir (string-append out "/share/genenetwork2/javascript/cytoscape-panzoom"))
+                (source (assoc-ref %build-inputs "source")))
+           (install-file (string-append source "/cytoscape-panzoom.js") targetdir)
+           (install-file (string-append source "/cytoscape.js-panzoom.css") targetdir)))))
+    (native-inputs `(("source" ,source)))
+    ;; TODO: Add font-awsome?
+    (propagated-inputs
+     `(("javascript-cytoscape" ,javascript-cytoscape)
+       ("jquery" ,web-jquery)))
+    (home-page "https://github.com/cytoscape/cytoscape.js-panzoom/")
+    (synopsis "Panzoom extension for Cytoscape.js")
+    (description "This extension creates a widget that lets the user pan and
+zoom about a Cytoscape.js graph.  This complements the built-in gesture support
+for panning and zooming in Cytoscape.js by giving less savvy users a more
+traditional UI -- similar to controls on map webapps.")
     (license license:expat)))
 
 ;; https://github.com/cytoscape/cytoscape.js-qtip/archive/2.7.1.tar.gz
