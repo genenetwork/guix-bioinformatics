@@ -85,6 +85,22 @@ for programmers and scientists to use graph theory in their apps, whether it's
 for server-side analysis in a Node.js app or for a rich user interface.")
     (license license:expat)))
 
+(define-public javascript-cytoscape-2
+  (package
+    (inherit javascript-cytoscape)
+    (name "javascript-cytoscape")
+    (version "2.7.29")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+              (url "https://github.com/cytoscape/cytoscape.js")
+              (commit (string-append "v" version))))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32
+         "00y0h6kdkw2x6lyf9c16fxmg8iagfl77dz8nqb337v3ljifkb4z8"))))))
+
 (define-public javascript-cytoscape-panzoom
   (package
    ;; (inherit javascript-cytoscape)
