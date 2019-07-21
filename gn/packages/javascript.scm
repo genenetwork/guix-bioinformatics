@@ -166,6 +166,40 @@ traditional UI -- similar to controls on map webapps.")
     (description "Cytoscape.")
     (license license:expat)))
 
+(define-public javascript-cytoscape-popper
+  (package
+    (name "javascript-cytoscape-popper")
+    (version "1.0.4") ; Feb 13, 2019
+    (source
+      (origin
+        (method git-fetch)
+        (uri (git-reference
+               (url "https://github.com/cytoscape/cytoscape.js-popper")
+               (commit (string-append "v" version))))
+        (file-name (git-file-name name version))
+        (sha256
+         (base32 "0nb59cimzp6zprk0czrfkc6id70ia2gg8drgmd55nf3yspn4b5rj"))))
+    (build-system trivial-build-system)
+    (arguments
+     `(#:modules ((guix build utils))
+       #:builder
+       (begin
+         (use-modules (guix build utils))
+         (let* ((out (assoc-ref %outputs "out"))
+                (targetdir (string-append out "/share/genenetwork2/javascript/cytoscape-popper"))
+                (source (assoc-ref %build-inputs "source")))
+           (install-file (string-append source "/cytoscape-popper.js") targetdir)))))
+    (native-inputs `(("source" ,source)))
+    (propagated-inputs `(("javascript-cytoscape" ,javascript-cytoscape)))
+    (home-page "https://github.com/cytoscape/cytoscape.js-popper")
+    (synopsis "Cytoscape.js extension for integrating Popper.js")
+    (description "Popper.js allows you to dynamically align a div, e.g. a
+tooltip, to another element in the page.  This extension allows you to use
+Popper.js on Cytoscape elements.  This allows you to create DOM elements
+positioned on or around Cytoscape elements.  It is useful for tooltips and
+overlays, for example.")
+    (license license:expat)))
+
 (define-public javascript-qtip2
   (package
     (name "javascript-qtip2")
