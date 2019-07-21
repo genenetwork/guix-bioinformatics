@@ -1,11 +1,9 @@
 (define-module (gn packages web)
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (gnu packages)
-  #:use-module (gnu packages compression)
   #:use-module (gnu packages python)
   #:use-module (gnu packages web)
   #:use-module (guix packages)
-  #:use-module (guix download)
   #:use-module (guix git-download)
   #:use-module (guix utils)
   #:use-module (guix build-system gnu)
@@ -49,43 +47,38 @@ jQuery has changed the way that millions of people write JavaScript.")
     (license license:expat)))
 
 (define-public web-bootstrap
-  (let ((commit "betabeta"))
   (package
     (name "web-bootstrap")
-    (version (string-append "4.0.0" "-" (string-take commit 7)))
+    (version "4.0.0-beta") ; August 11, 2017
     (source
-     (origin
-       (method url-fetch)
-       (uri "https://github.com/twbs/bootstrap/releases/download/v4.0.0-beta/bootstrap-4.0.0-beta-dist.zip")
-       (file-name (string-append name "-" version))
-       (sha256
-        (base32 "0jzi76gm3vyxld5lz1723al8a8skcn9r1ch51sdgzxx32f273bc9"))))
+      (origin
+        (method git-fetch)
+        (uri (git-reference
+               (url "https://github.com/twbs/bootstrap.git")
+               (commit (string-append "v" version))))
+        (file-name (git-file-name name version))
+        (sha256
+         (base32 "1wv03g4f8rskfhajv6r2nil6f9w4840l9pvrhgad1m1vhvv27cv0"))))
     (build-system trivial-build-system)
-    (native-inputs `(("unzip" ,unzip)
-                     ("source" ,source)))
     (arguments
      `(#:modules ((guix build utils))
        #:builder
          (let* ((out (assoc-ref %outputs "out"))
                 (name "bootstrap")
                 (targetdir (string-append out "/share/web/" name))
-                )
+                (source (assoc-ref %build-inputs "source"))
+                (dist (string-append source "/dist")))
            (begin
              (use-modules (guix build utils))
-             (let ((source (assoc-ref %build-inputs "source"))
-                   (unzip (string-append (assoc-ref %build-inputs "unzip") "/bin/unzip"))
-                   )
-               (and
-                (mkdir-p targetdir)
-                (zero? (system* unzip source "-d" targetdir))
-                ))))))
-    (home-page "http://getbootstrap.com/")
+             (copy-recursively dist targetdir)))))
+    (native-inputs `(("source" ,source)))
+    (home-page "https://getbootstrap.com/")
     (synopsis "Bootstrap web framework")
     (description "Bootstrap is an open source toolkit for developing
-with HTML, CSS, and JS. Quickly prototype your ideas or build your
+with HTML, CSS, and JS.  Quickly prototype your ideas or build your
 entire app with our Sass variables and mixins, responsive grid system,
 extensive prebuilt components, and powerful plugins built on jQuery.")
-    (license license:expat))))
+    (license license:expat)))
 
 (define-public web-bootstrap-native
   (let ((commit "2e48d7ee29d4063e3bd2024ff83ddc50a550c4dd"))
