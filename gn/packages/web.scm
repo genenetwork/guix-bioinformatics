@@ -16,44 +16,37 @@
 
 (define-public web-jquery
   (package
-   (name "web-jquery")
-   (version "3.2.1")
-   (source
-    (origin
-     (method url-fetch)
-     (uri (string-append "https://github.com/jquery/jquery/archive/" version ".zip"))
-     (file-name (string-append name "-" version))
-     (sha256
-      (base32 "0a8sq7a52bh3a4slf03yfclwsv4iadlzmha4v6kqfby5sd66si18"))))
-   (build-system trivial-build-system)
-   (native-inputs `(("source" ,source)
-                    ("unzip" ,unzip)))
-   (arguments
-    `(#:modules ((guix build utils))
-      #:builder
-      (let* ((out (assoc-ref %outputs "out"))
-             (name "jquery")
-             (targetdir (string-append out "/share/web/" name))
-             )
-        (begin
-          (use-modules (guix build utils))
-          (let ((source (assoc-ref %build-inputs "source"))
-                   (unzip (string-append (assoc-ref %build-inputs "unzip") "/bin/unzip"))
-                )
-            (and
-             (mkdir-p "source")
-             (chdir "source")
-             (zero? (system* unzip source))
-             (mkdir-p targetdir)
-             (copy-recursively "jquery-3.2.1/dist" targetdir)
-
-             ; (copy-recursively source targetdir)
-             ; (file-copy (string-append out "/dist/jquery.slim.min.j") source)
-             ))))))
-   (home-page "http://jquery.com/")
-   (synopsis "JQuery web framework")
-   (description "jQuery.")
-   (license license:expat)))
+    (name "web-jquery")
+    (version "3.2.1") ; March 20, 2017
+    (source
+      (origin
+        (method git-fetch)
+        (uri (git-reference
+               (url "https://github.com/jquery/jquery.git")
+               (commit version)))
+        (file-name (git-file-name name version))
+        (sha256
+         (base32 "1x2lxwsm7c6hbg7z7s1fwg9dywmrnlcrbrx3vjksjbvvs6infhqm"))))
+    (build-system trivial-build-system)
+    (arguments
+      `(#:modules ((guix build utils))
+        #:builder
+        (let* ((out (assoc-ref %outputs "out"))
+               (targetdir (string-append out "/share/web/jquery"))
+               (source (assoc-ref %build-inputs "source"))
+               (dist (string-append source "/dist")))
+          (begin
+            (use-modules (guix build utils))
+            (copy-recursively dist targetdir)))))
+    (native-inputs `(("source" ,source)))
+    (home-page "https://jquery.com/")
+    (synopsis "JQuery web framework")
+    (description "jQuery is a fast, small, and feature-rich JavaScript library.
+It makes things like HTML document traversal and manipulation, event handling,
+animation, and Ajax much simpler with an easy-to-use API that works across a
+multitude of browsers.  With a combination of versatility and extensibility,
+jQuery has changed the way that millions of people write JavaScript.")
+    (license license:expat)))
 
 (define-public web-bootstrap
   (let ((commit "betabeta"))
