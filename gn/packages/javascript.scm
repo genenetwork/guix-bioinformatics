@@ -166,6 +166,37 @@ traditional UI -- similar to controls on map webapps.")
     (description "Cytoscape.")
     (license license:expat)))
 
+(define-public javascript-qtip2
+  (package
+    (name "javascript-qtip2")
+    (version "3.0.3") ; May 11, 2016
+    (source
+      (origin
+        (method git-fetch)
+        (uri (git-reference
+               (url "https://github.com/qTip2/qTip2.git")
+               (commit (string-append "v" version))))
+        (file-name (git-file-name name version))
+        (sha256
+         (base32 "06lmmy6mqbfdgbbyjm0v2bl1ifdv03rh6vqnsmmkn1s56kd2qr62"))))
+    (build-system trivial-build-system)
+    (arguments
+     `(#:modules ((guix build utils))
+       #:builder
+       (begin
+         (use-modules (guix build utils))
+         (let* ((out (assoc-ref %outputs "out"))
+                (targetdir (string-append out "/share/genenetwork2/javascript/qtip2"))
+                (source (assoc-ref %build-inputs "source"))
+                (dist (string-append source "/dist")))
+           (copy-recursively dist targetdir)))))
+    (native-inputs `(("source" ,source)))
+    (home-page "http://qtip2.com/")
+    (synopsis "Pretty powerful tooltips")
+    (description "The second generation of the advanced qTip plugin for the
+ever popular jQuery framework.")
+    (license license:expat)))
+
 (define-public javascript-datatables
   (package
     (name "javascript-datatables")
