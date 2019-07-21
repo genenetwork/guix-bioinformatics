@@ -49,7 +49,7 @@ jQuery has changed the way that millions of people write JavaScript.")
 (define-public web-bootstrap
   (package
     (name "web-bootstrap")
-    (version "4.0.0-beta") ; August 11, 2017
+    (version "4.3.1") ; Feb. 13, 2019
     (source
       (origin
         (method git-fetch)
@@ -58,7 +58,7 @@ jQuery has changed the way that millions of people write JavaScript.")
                (commit (string-append "v" version))))
         (file-name (git-file-name name version))
         (sha256
-         (base32 "1wv03g4f8rskfhajv6r2nil6f9w4840l9pvrhgad1m1vhvv27cv0"))))
+         (base32 "18g76r53sa2ahcriy7jk5wvxd3s8qc4as87xwqvfkxibdn5ifrxs"))))
     (build-system trivial-build-system)
     (arguments
      `(#:modules ((guix build utils))
