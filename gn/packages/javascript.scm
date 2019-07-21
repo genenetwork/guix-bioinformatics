@@ -1,14 +1,8 @@
 (define-module (gn packages javascript)
   #:use-module ((guix licenses) #:prefix license:)
-  #:use-module (gnu packages base)
-  #:use-module (gnu packages compression)
   #:use-module (gn packages web)
-  #:use-module (gnu packages)
   #:use-module (guix packages)
-  #:use-module (guix download)
   #:use-module (guix git-download)
-  #:use-module (guix utils)
-  #:use-module (guix build-system gnu)
   #:use-module (guix build-system trivial)
   #:use-module (srfi srfi-1))
 
@@ -172,40 +166,35 @@ traditional UI -- similar to controls on map webapps.")
     (description "Cytoscape.")
     (license license:expat)))
 
-;; https://github.com/DataTables/DataTables/archive/1.10.12.tar.gz
 (define-public javascript-datatables
   (package
-   (name "javascript-datatables")
-   (version "1.10.12") ; ancient version
-   (source
-    (origin
-     (method url-fetch)
-     (uri (string-append "https://github.com/DataTables/DataTables/archive/" version ".tar.gz"))
-     (file-name (string-append name "-" version ".tar.gz"))
-     (sha256
-      (base32 "0blzsd2zqmvnqi6pl1xq0dr457kjrdaaa86d2cmdakls0j2mj92s"))))
-   (inputs `(("javascript-cytoscape" ,javascript-cytoscape)))
-   (build-system trivial-build-system)
-   (native-inputs `(("gzip" ,gzip)
-                    ("tar" ,tar)
-                    ("source" ,source)))
-   (arguments
-    `(#:modules ((guix build utils))
-      #:builder
-      (begin
-        (use-modules (guix build utils))
-        (let* ((out (assoc-ref %outputs "out"))
-               (tarcmd (string-append (assoc-ref %build-inputs "tar") "/bin/tar"))
-               (targetdir (string-append out "/share/genenetwork2/javascript/DataTables"))
-               (source (assoc-ref %build-inputs "source")))
-          (setenv "PATH" (string-append
-                          (assoc-ref %build-inputs "tar") "/bin" ":"
-                          (assoc-ref %build-inputs "gzip") "/bin"))
-          (invoke "tar" "xvf" (assoc-ref %build-inputs "source") "--strip-components=1")
-          (mkdir-p targetdir)
-           (copy-recursively "media" targetdir)
-          ))))
-    (home-page "https://github.com/DataTables/")
-    (synopsis "Datatables")
-    (description "Datatables.")
+    (name "javascript-datatables")
+    (version "1.10.19") ; June 22, 2018
+    (source
+      (origin
+        (method git-fetch)
+        (uri (git-reference
+               (url "https://github.com/DataTables/DataTables.git")
+               (commit version)))
+        (file-name (git-file-name name version))
+        (sha256
+         (base32 "0p85xzcvfjdrs4nwj7lhnlw2dmyky0hkwy8bzjw2fdabmsrdpwyg"))))
+    (build-system trivial-build-system)
+    (arguments
+     `(#:modules ((guix build utils))
+       #:builder
+       (begin
+         (use-modules (guix build utils))
+         (let* ((out (assoc-ref %outputs "out"))
+                (targetdir (string-append out "/share/genenetwork2/javascript/DataTables"))
+                (source (assoc-ref %build-inputs "source"))
+                (media (string-append source "/media")))
+           (copy-recursively media targetdir)))))
+    (native-inputs `(("source" ,source)))
+    (propagated-inputs `(("javascript-cytoscape" ,javascript-cytoscape)))
+    (home-page "https://www.datatables.net/")
+    (synopsis "Tables plug-in for jQuery")
+    (description "DataTables is a table enhancing plug-in for the jQuery
+Javascript library, adding sorting, paging and filtering abilities to plain HTML
+tables with minimal effort.")
     (license license:expat)))
