@@ -17,7 +17,7 @@
 (define-public web-jquery
   (package
     (name "web-jquery")
-    (version "3.2.1") ; March 20, 2017
+    (version "3.4.1") ; May 1, 2019
     (source
       (origin
         (method git-fetch)
@@ -26,7 +26,7 @@
                (commit version)))
         (file-name (git-file-name name version))
         (sha256
-         (base32 "1x2lxwsm7c6hbg7z7s1fwg9dywmrnlcrbrx3vjksjbvvs6infhqm"))))
+         (base32 "03pasw49xshwvcaa0iailv43jlyhkwhf19fnwmwlhyn4701kpx1d"))))
     (build-system trivial-build-system)
     (arguments
       `(#:modules ((guix build utils))
