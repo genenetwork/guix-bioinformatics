@@ -470,3 +470,40 @@ visualization components and a data-driven approach to DOM manipulation.")
 transitions, allowing you to set multiple attributes, styles or properties
 simultaneously with more concise syntax.")
     (license license:bsd-3)))
+
+(define-public javascript-canvas-toblob
+  (let ((commit "f1a01896135ab378aa5c0118eadd81da55e698d8") ; May 26, 2016
+        (revision "1"))
+    (package
+      (name "javascript-canvas-toblob")
+      (version (git-version "0.0.0" revision commit))
+      (source
+        (origin
+          (method git-fetch)
+          (uri (git-reference
+                 (url "https://github.com/eligrey/canvas-toBlob.js")
+                 (commit commit)))
+          (file-name (git-file-name name version))
+          (sha256
+           (base32 "1ly7qnavf9h26sgynccf00hf2ybdwyn0kvnl7i3milz3big02qdm"))))
+      (build-system trivial-build-system)
+      (arguments
+       `(#:modules ((guix build utils))
+         #:builder
+         (begin
+           (use-modules (guix build utils))
+           (let* ((out (assoc-ref %outputs "out"))
+                  (name "canvas-toblob")
+                  (targetdir (string-append out "/share/genenetwork/javascript/" name))
+                  (source (assoc-ref %build-inputs "source")))
+             (install-file (string-append source "/canvas-toBlob.js") targetdir)
+             (install-file (string-append source "/LICENSE.md")
+                           (string-append out "/share/doc/" ,name "-" ,version))))))
+      (native-inputs
+       `(("source" ,source)))
+      (home-page "https://github.com/eligrey/canvas-toBlob.js/")
+      (synopsis "canvas.toBlob() implementation")
+      (description "canvas-toBlob.js implements the standard HTML5
+@code{canvas.toBlob()} and @code{canvas.toBlobHD()} methods in browsers that do
+not natively support it.")
+      (license license:expat))))
