@@ -507,3 +507,35 @@ simultaneously with more concise syntax.")
 @code{canvas.toBlob()} and @code{canvas.toBlobHD()} methods in browsers that do
 not natively support it.")
       (license license:expat))))
+
+(define-public javascript-filesaver
+  (package
+    (name "javascript-filesaver")
+    (version "2.0.2") ; May 14, 2019
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+              (url "https://github.com/eligrey/FileSaver.js")
+              (commit (string-append "v" version))))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32
+         "0ij3vmv8n2ia9kbyih3g479rj68xrsiq7l9s29vv1bdmmk41lpf3"))))
+    (build-system trivial-build-system)
+    (arguments
+     `(#:modules ((guix build utils))
+       #:builder
+       (begin
+         (use-modules (guix build utils))
+         (let* ((out (assoc-ref %outputs "out"))
+                (targetdir (string-append out "/share/genenetwork2/javascript/filesaver"))
+                (source (assoc-ref %build-inputs "source"))
+                (dist (string-append source "/dist")))
+           (copy-recursively dist targetdir)))))
+    (native-inputs `(("source" ,source)))
+    (home-page "https://github.com/eligrey/FileSaver.js")
+    (synopsis "HTML5 saveAs() FileSaver implementation")
+    (description "FileSaver.js is the solution to saving files on the
+client-side, and is perfect for web apps that generates files on the client.")
+    (license license:expat)))
