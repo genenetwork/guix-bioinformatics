@@ -406,3 +406,30 @@ emphasis on web standards gives you the full capabilities of modern browsers
 without tying yourself to a proprietary framework, combining powerful
 visualization components and a data-driven approach to DOM manipulation.")
     (license license:bsd-3)))
+
+(define-public javascript-d3js-4
+  (package
+    (inherit javascript-d3js)
+    (version "4.13.0")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (string-append "https://github.com/d3/d3/releases/download/v"
+                            version "/d3.zip"))
+        (sha256
+         (base32 "06yqgyvkpvh0lg7rsh4hjzq72fylkd8ziqcf7yhgy510x0mqla19"))))
+    (arguments
+     `(#:modules ((guix build utils))
+       #:builder
+       (begin
+         (use-modules (guix build utils))
+         (let* ((out (assoc-ref %outputs "out"))
+                (name "d3js")
+                (unzip (string-append (assoc-ref %build-inputs "unzip")
+                                      "/bin/unzip"))
+                (targetdir (string-append out "/share/genenetwork/javascript/" name))
+                (source (assoc-ref %build-inputs "source")))
+           (invoke unzip source)
+           (install-file "d3.js" targetdir)
+           (install-file "d3.min.js" targetdir)
+           (install-file "LICENSE" (string-append out "/share/doc/d3js-" ,version))))))))
