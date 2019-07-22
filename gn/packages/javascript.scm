@@ -1,7 +1,9 @@
 (define-module (gn packages javascript)
   #:use-module ((guix licenses) #:prefix license:)
+  #:use-module (gnu packages compression)
   #:use-module (gn packages web)
   #:use-module (guix packages)
+  #:use-module (guix download)
   #:use-module (guix git-download)
   #:use-module (guix build-system trivial)
   #:use-module (srfi srfi-1))
@@ -365,3 +367,42 @@ are great for:
 @item Creating composite functions
 @end enumerate")
     (license license:expat)))
+
+(define-public javascript-d3js
+  (package
+    (name "javascript-d3js")
+    (version "5.9.7")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (string-append "https://github.com/d3/d3/releases/download/v"
+                            version "/d3.zip"))
+        (sha256
+         (base32 "0vg1cfgg7p897bg0nhaprgr77kgvi8k38h5w6sl54nxvibvynkhc"))))
+    (build-system trivial-build-system)
+    (arguments
+     `(#:modules ((guix build utils))
+       #:builder
+       (begin
+         (use-modules (guix build utils))
+         (let* ((out (assoc-ref %outputs "out"))
+                (name "d3js")
+                (unzip (string-append (assoc-ref %build-inputs "unzip")
+                                      "/bin/unzip"))
+                (targetdir (string-append out "/share/genenetwork/javascript/" name))
+                (source (assoc-ref %build-inputs "source")))
+           (invoke unzip source)
+           (install-file "d3.js" targetdir)
+           (install-file "d3.min.js" targetdir)
+           (install-file "LICENSE" (string-append out "/share/doc/d3js-" ,version))))))
+    (native-inputs
+     `(("source" ,source)
+       ("unzip" ,unzip)))
+    (home-page "https://d3js.org/")
+    (synopsis "JavaScript library for visualizing data")
+    (description "D3.js is a JavaScript library for manipulating documents based
+on data.  D3 helps you bring data to life using HTML, SVG, and CSS.  D3's
+emphasis on web standards gives you the full capabilities of modern browsers
+without tying yourself to a proprietary framework, combining powerful
+visualization components and a data-driven approach to DOM manipulation.")
+    (license license:bsd-3)))
