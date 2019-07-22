@@ -1,9 +1,11 @@
 (define-module (gn packages web)
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (gnu packages)
+  #:use-module (gnu packages compression)
   #:use-module (gnu packages python)
   #:use-module (gnu packages web)
   #:use-module (guix packages)
+  #:use-module (guix download)
   #:use-module (guix git-download)
   #:use-module (guix utils)
   #:use-module (guix build-system gnu)
@@ -161,3 +163,41 @@ applications in Python that will run many times faster than traditional CGI and
 will have access to advanced features such as ability to retain database
 connections and other data between hits and access to Apache internals.")
       (license license:asl2.0))))
+
+(define-public web-font-awesome
+  (package
+    (name "web-font-awesome")
+    (version "4.7.0")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (string-append "https://fontawesome.com/v" version
+                            "/assets/font-awesome-" version ".zip"))
+        (sha256
+         (base32 "0jgn26cr5xhqyxfwqmki0564cid4i4l38cwsddcslr3qkzpmhx2j"))))
+    (build-system trivial-build-system)
+    (arguments
+       `(#:modules ((guix build utils))
+         #:builder
+         (begin
+           (use-modules (guix build utils))
+           (let* ((out (assoc-ref %outputs "out"))
+                  (name "font-awesome")
+                  (unzip (string-append (assoc-ref %build-inputs "unzip")
+                                        "/bin/unzip"))
+                  (targetdir (string-append out "/share/web/" name))
+                  (source (assoc-ref %build-inputs "source")))
+             (invoke unzip source)
+             (copy-recursively (string-append "font-awesome-" ,version)
+                               targetdir)))))
+    (native-inputs
+     `(("source" ,source)
+       ("unzip" ,unzip)))
+    (home-page "https://fontawesome.com/")
+    (synopsis "iconic font designed for use with Twitter Bootstrap")
+    (description "This font contains about 249 various icon glyphs.  Glyphs are
+designed as scalable vector graphics hence display very well at any screen size.
+This font was basically designed to be used with the Twitter bootstrap library
+but can be used in other places also.")
+    (license (list license:cc-by4.0
+                   license:silofl1.1))))
