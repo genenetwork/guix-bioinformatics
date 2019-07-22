@@ -133,6 +133,37 @@ for panning and zooming in Cytoscape.js by giving less savvy users a more
 traditional UI -- similar to controls on map webapps.")
     (license license:expat)))
 
+(define-public javascript-dagre
+  (package
+    (name "javascript-dagre")
+    (version "0.8.4") ; Dec. 9, 2018
+    (source
+      (origin
+        (method git-fetch)
+        (uri (git-reference
+               (url "https://github.com/dagrejs/dagre.git")
+               (commit (string-append "v" version))))
+        (file-name (git-file-name name version))
+        (sha256
+         (base32 "1svlvd66bnskicqb7kizx57s97z9lkxssh1g5sgymw7ddfdbhy5l"))))
+    (build-system trivial-build-system)
+    (arguments
+     `(#:modules ((guix build utils))
+       #:builder
+       (begin
+         (use-modules (guix build utils))
+         (let* ((out (assoc-ref %outputs "out"))
+                (targetdir (string-append out "/share/genenetwork2/javascript/dagre"))
+                (source (assoc-ref %build-inputs "source"))
+                (dist (string-append source "/dist")))
+           (copy-recursively dist targetdir)))))
+    (native-inputs `(("source" ,source)))
+    (home-page "https://github.com/dagrejs/dagre")
+    (synopsis "Directed graph layout for JavaScript")
+    (description "Dagre is a JavaScript library that makes it easy to lay out
+directed graphs on the client-side.")
+    (license license:expat)))
+
 ;; Author recommends using cytoscape-popper with tippy.js since qtip2 is no longer maintained
 (define-public javascript-cytoscape-qtip
   (package
