@@ -328,3 +328,40 @@ ever popular jQuery framework.")
 Javascript library, adding sorting, paging and filtering abilities to plain HTML
 tables with minimal effort.")
     (license license:expat)))
+
+(define-public javascript-lodash
+  (package
+    (name "javascript-lodash")
+    (version "4.17.15") ; July 17, 2019
+    (source
+      (origin
+        (method git-fetch)
+        (uri (git-reference
+               (url "https://github.com/lodash/lodash")
+               (commit version)))
+        (file-name (git-file-name name version))
+        (sha256
+         (base32 "1hp04cg3b59j3dpnvzixd5p6wpv34mj2pnq8wp60csv3p2s0qk4y"))))
+    (build-system trivial-build-system)
+    (arguments
+     `(#:modules ((guix build utils))
+       #:builder
+       (begin
+         (use-modules (guix build utils))
+         (let* ((out (assoc-ref %outputs "out"))
+                (targetdir (string-append out "/share/genenetwork2/javascript/lodash"))
+                (source (assoc-ref %build-inputs "source"))
+                (dist (string-append source "/dist")))
+           (copy-recursively dist targetdir)))))
+    (native-inputs `(("source" ,source)))
+    (home-page "https://lodash.com")
+    (synopsis "JavaScript utility library delivering modularity, performance & extras")
+    (description "Lodash makes JavaScript easier by taking the hassle out of
+working with arrays, numbers, objects, strings, etc. Lodash's modular methods
+are great for:
+@enumerate
+@item Iterating arrays, objects, & strings
+@item Manipulating & testing values
+@item Creating composite functions
+@end enumerate")
+    (license license:expat)))
