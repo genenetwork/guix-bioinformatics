@@ -433,3 +433,40 @@ visualization components and a data-driven approach to DOM manipulation.")
            (install-file "d3.js" targetdir)
            (install-file "d3.min.js" targetdir)
            (install-file "LICENSE" (string-append out "/share/doc/d3js-" ,version))))))))
+
+(define-public javascript-d3js-multi
+  (package
+    (name "javascript-d3js-multi")
+    (version "1.0.1") ; Feb, 21, 2017
+    (source
+      (origin
+        (method url-fetch)
+        (uri (string-append "https://github.com/d3/d3-selection-multi/releases"
+                            "/download/v" version "/d3-selection-multi.zip"))
+        (sha256
+         (base32 "0k89n15ggpzsvf7qflmsagkrrhigk6nksdyks0ccx3453gizbb4q"))))
+    (build-system trivial-build-system)
+    (arguments
+     `(#:modules ((guix build utils))
+       #:builder
+       (begin
+         (use-modules (guix build utils))
+         (let* ((out (assoc-ref %outputs "out"))
+                (name "d3js-multi")
+                (unzip (string-append (assoc-ref %build-inputs "unzip")
+                                      "/bin/unzip"))
+                (targetdir (string-append out "/share/genenetwork/javascript/" name))
+                (source (assoc-ref %build-inputs "source")))
+           (invoke unzip source)
+           (install-file "d3-selection-multi.js" targetdir)
+           (install-file "d3-selection-multi.min.js" targetdir)
+           (install-file "LICENSE" (string-append out "/share/doc/" ,name "-" ,version))))))
+    (native-inputs
+     `(("source" ,source)
+       ("unzip" ,unzip)))
+    (home-page "https://d3js.org/")
+    (synopsis "Multi-value syntax for d3-selection and d3-transition")
+    (description "This module adds multi-value syntax to selections and
+transitions, allowing you to set multiple attributes, styles or properties
+simultaneously with more concise syntax.")
+    (license license:bsd-3)))
