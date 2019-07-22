@@ -164,6 +164,40 @@ traditional UI -- similar to controls on map webapps.")
 directed graphs on the client-side.")
     (license license:expat)))
 
+(define-public javascript-cytoscape-dagre
+  (package
+    (name "javascript-cytoscape-dagre")
+    (version "2.2.2") ; Sept. 26, 2018
+    (source
+      (origin
+        (method git-fetch)
+        (uri (git-reference
+               (url "https://github.com/cytoscape/cytoscape.js-dagre")
+               (commit (string-append "v" version))))
+        (file-name (git-file-name name version))
+        (sha256
+         (base32 "0z0sh5q5cd0iirdyhlln83vmsvwn1sbh4zdmdh8k5hld075g4q64"))))
+    (build-system trivial-build-system)
+    (arguments
+     `(#:modules ((guix build utils))
+       #:builder
+       (begin
+         (use-modules (guix build utils))
+         (let* ((out (assoc-ref %outputs "out"))
+                (targetdir (string-append out "/share/genenetwork2/javascript/cytoscape-dagre"))
+                (source (assoc-ref %build-inputs "source")))
+           (install-file (string-append source "/cytoscape-dagre.js") targetdir)))))
+    (native-inputs `(("source" ,source)))
+    (propagated-inputs
+     `(("javascript-cytoscape" ,javascript-cytoscape)
+       ("javascript-dagre" ,javascript-dagre)))
+    (home-page "https://github.com/cytoscape/cytoscape.js-dagre")
+    (synopsis "Dagre layout for DAGs and trees for Cytoscape.js")
+    (description "The dagre layout organises the graph using a @dfn{directed
+acyclic graph} (DAG) system, written by Chris Pettitt.  It is especially
+suitable for DAGs and trees.")
+    (license license:expat)))
+
 ;; Author recommends using cytoscape-popper with tippy.js since qtip2 is no longer maintained
 (define-public javascript-cytoscape-qtip
   (package
