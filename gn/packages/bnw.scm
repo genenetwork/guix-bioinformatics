@@ -13,7 +13,7 @@
         (revision "1"))
     (package
       (name "bnw")
-      (version (git-version "1.22" revision commit))
+      (version (git-version "1.22" revision commit)) ; June 28, 2019
       (source (origin
                (method git-fetch)
                (uri (git-reference
@@ -27,29 +27,27 @@
       (arguments
        `(#:modules ((guix build utils))
          #:builder
-         (let* ((out      (assoc-ref %outputs "out"))
-                (source   (assoc-ref %build-inputs "source"))
-                (bash     (assoc-ref %build-inputs "bash"))
-                (graphviz (assoc-ref %build-inputs "graphviz"))
-                (octave   (assoc-ref %build-inputs "octave"))
-                (python   (assoc-ref %build-inputs "python")))
            (begin
              (use-modules (guix build utils))
-             (copy-recursively source out)
-             (for-each (lambda (file)
-               (patch-shebang file
-                              (list
-                                (string-append bash "/bin")
-                                (string-append octave "/bin")
-                                (string-append python "/bin")
-                                )))
-               (find-files out ".*"))
-             ;(with-directory-excursion out
-             ;  (substitute* '("home.php"
-             ;                 (find-files "sourcecodes" ".php")
-             ;                 (find-files "sourcecodes/run_scripts" ".*"))
-             ;    (("/usr/bin/dot") (string-append graphviz "/bin/dot"))))
-             ))))
+             (let* ((out      (assoc-ref %outputs "out"))
+                    (source   (assoc-ref %build-inputs "source"))
+                    (bash     (assoc-ref %build-inputs "bash"))
+                    (graphviz (assoc-ref %build-inputs "graphviz"))
+                    (octave   (assoc-ref %build-inputs "octave"))
+                    (python   (assoc-ref %build-inputs "python")))
+               (copy-recursively source out)
+               (for-each (lambda (file)
+                 (patch-shebang file
+                   (list (string-append bash "/bin")
+                         (string-append octave "/bin")
+                         (string-append python "/bin"))))
+                 (find-files out ".*"))
+               (with-directory-excursion out
+                 (substitute*
+                   (append '("home.php")
+                           (find-files "sourcecodes" ".php")
+                           (find-files "sourcecodes/run_scripts" ".*"))
+                   (("/usr/bin/dot") (string-append graphviz "/bin/dot"))))))))
       (native-inputs `(("source" ,source)))
       (inputs
        `(("bash" ,bash-minimal)
