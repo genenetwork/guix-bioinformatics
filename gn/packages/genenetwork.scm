@@ -7,6 +7,7 @@
   #:use-module (guix download)
   #:use-module (guix git-download)
   #:use-module (guix build-system gnu)
+  #:use-module (guix build-system cargo)
   #:use-module (guix build-system cmake)
   #:use-module (guix build-system perl)
   #:use-module (guix build-system python)
@@ -21,6 +22,8 @@
   #:use-module (gnu packages compression)
   #:use-module (gnu packages check)
   #:use-module (gnu packages cran)
+  #:use-module (gn packages crates-io)
+  #:use-module (gnu packages crates-io)
   #:use-module (gnu packages databases)
   #:use-module (gnu packages cpio)
   #:use-module (gn packages elixir)
@@ -243,6 +246,55 @@ the empirical P-value to a reasonable precision. It also performs
 bootstrap resampling to estimate the confidence region for the
 location of a putative QTL.")
     (license license:gpl2+))))
+
+(define-public rust-qtlreaper
+  (let ((commit "eacf6ff1c3d1cd16084a70a7a425bd77080c15de")
+        (revision "1"))
+    (package
+      (name "rust-qtlreaper")
+      (version (git-version "0.1.3" revision commit))
+      (source
+        (origin
+          (method git-fetch)
+          (uri (git-reference
+                 (url "https://github.com/chfi/rust-qtlreaper.git")
+                 (commit commit)))
+          (file-name (git-file-name name version))
+          (sha256
+           (base32
+            "0gr2z54i11zz94ra4w06fhfnwnmmhl5xyc8qhlk0v2qq18yfi7ji"))))
+      (build-system cargo-build-system)
+      (arguments
+       `(#:cargo-inputs
+         (("rust-rand" ,rust-rand-0.6)
+          ("rust-structopt" ,rust-structopt)
+          ("rust-rayon" ,rust-rayon-1.0)
+          ("rust-serde" ,rust-serde)
+          ("rust-serde-json" ,rust-serde-json))
+         #:phases
+         (modify-phases %standard-phases
+           (add-after 'configure 'regenerate-cargo-lock
+             (lambda _
+               (delete-file "Cargo.lock")
+               (invoke "cargo" "generate-lockfile")))
+           (add-after 'patch-generated-file-shebangs 'patch-cargo-checksums
+             (lambda _
+               (use-modules (guix build cargo-utils))
+                 (for-each
+                   (lambda (filename)
+                     (use-modules (guix build cargo-utils))
+                     (delete-file filename)
+                     (let* ((dir (dirname filename)))
+                       (display (string-append
+                                  "patch-cargo-checksums: generate-checksums for "
+                                  dir "\n"))
+                       (generate-checksums dir)))
+                   (find-files "guix-vendor" ".cargo-checksum.json"))
+                 #t)))))
+      (home-page "https://github.com/chfi/rust-qtlreaper")
+      (synopsis "Reimplementation of genenetwork/QTLReaper in Rust")
+      (description "Reimplementation of genenetwork/QTLReaper in Rust")
+      (license #f))))
 
 (define-public genenetwork2
   (let ((commit "1538ffd33af19e6ac922b4ee85fe701408968dfd"))
