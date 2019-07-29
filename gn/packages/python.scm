@@ -491,30 +491,25 @@ Python 3 support.")
   (package-with-python2 python-avro))
 
 (define-public python-shellescape ; guix ready
-(package
-  (name "python-shellescape")
-  (version "3.4.1")
-  (source
-    (origin
-      (method url-fetch)
-      (uri (string-append
-             "https://pypi.python.org/packages/source/s/shellescape/shellescape-"
-             version
-             ".tar.gz"))
-      (sha256
-        (base32
+  (package
+    (name "python-shellescape")
+    (version "3.4.1")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "shellescape" version))
+        (sha256
+         (base32
           "0n5ky1b2vw2y0d4xl3qybyp2rk0gq5frjs8nr8ak6mgj2fyb4676"))))
-  (build-system python-build-system)
-  (inputs
-    `(("python-setuptools" ,python-setuptools)))
-  (home-page
-    "https://github.com/chrissimpkins/shellescape")
-  (synopsis
-    "Shell escape a string to safely use it as a token in a shell command (backport of Python shlex.quote for Python versions 2.x & < 3.3)")
-  (description
-    "Shell escape a string to safely use it as a token in a shell command (backport of Python shlex.quote for Python versions 2.x & < 3.3)")
-  (license expat))
-)
+    (build-system python-build-system)
+    (native-inputs
+     `(("python-setuptools" ,python-setuptools)))
+    (home-page "https://github.com/chrissimpkins/shellescape")
+    (synopsis
+      "Shell escape a string to safely use it as a token in a shell command (backport of Python shlex.quote for Python versions 2.x & < 3.3)")
+    (description
+      "Shell escape a string to safely use it as a token in a shell command (backport of Python shlex.quote for Python versions 2.x & < 3.3)")
+    (license license:expat)))
 
 (define-public python2-shellescape
   (package-with-python2 python-shellescape))
