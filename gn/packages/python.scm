@@ -183,30 +183,27 @@ until a value is returned.")
     (license license:asl2.0)))
 
 (define-public python-bagit; guix candidate
-(package
-  (name "python-bagit")
-  (version "1.7.0")
-  (source
-    (origin
-      (method url-fetch)
-      (uri "https://files.pythonhosted.org/packages/ee/11/7a7fa81c0d43fb4d449d418eba57fc6c77959754c5c2259a215152810555/bagit-1.7.0.tar.gz")
-      (sha256
-        (base32
+  (package
+    (name "python-bagit")
+    (version "1.7.0")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "bagit" version))
+        (sha256
+         (base32
           "1m6y04qmig0b5hzb35lnaw3d2yfydb7alyr1579yblvgs3da6j7j"))))
-  (build-system python-build-system)
-  (inputs
+    (build-system python-build-system)
+    (inputs
      `(("python-setuptools-scm" ,python-setuptools-scm)
-      ("python-coverage" ,python-coverage)
-      ("python-mock" ,python-mock)
-      ))
-  (arguments `(#:tests? #f)) ;; No tests.
-  (home-page "https://pypi.python.org/pypi/bagit")
-  (synopsis
-    "Python bagit.")
-  (description
-    "Python bagit.")
-  (license license:gpl2))
-)
+       ("python-coverage" ,python-coverage)
+       ("python-mock" ,python-mock)))
+    (arguments `(#:tests? #f)) ;; No tests.
+    (home-page "https://pypi.python.org/pypi/bagit")
+    (synopsis "Create and validate BagIt packages")
+    (description
+      "Create and validate BagIt packages")
+    (license license:gpl2)))
 
 (define-public python-prov ; guix candidate
 (package
