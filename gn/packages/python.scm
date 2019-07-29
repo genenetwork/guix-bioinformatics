@@ -233,23 +233,22 @@ until a value is returned.")
   (license license:expat)))
 
 (define-public python-typing-extensions; guix candidate
-(package
-  (name "python-typing-extensions")
-  (version "3.6.6")
-  (source
-    (origin
-      (method url-fetch)
-      (uri "https://files.pythonhosted.org/packages/fc/e6/3d2f306b12f01bde2861d67458d32c673e206d6fcc255537bf452db8f80c/typing_extensions-3.6.6.tar.gz")
-      (sha256
-        (base32
+  (package
+    (name "python-typing-extensions")
+    (version "3.6.6")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "typing_extensions" version))
+        (sha256
+         (base32
           "07vhddjnd3mhdijyc3s0mwi9jgfjp3rr056nxqiavydbvkrvgrsi"))))
-  (build-system python-build-system)
-  (home-page "https://pypi.python.org/pypi/typing_extensions")
-  (synopsis
-    "Python typing_extensions.")
-  (description
-    "Python typing_extensions.")
-  (license license:gpl2))
+    (build-system python-build-system)
+    (home-page "https://pypi.python.org/pypi/typing_extensions")
+    (synopsis "Python typing_extensions.")
+    (description
+     "Python typing_extensions.")
+    (license license:gpl2))
 )
 
 (define-public python-subprocess32 ; guix candidate
