@@ -252,24 +252,24 @@ until a value is returned.")
 )
 
 (define-public python-subprocess32 ; guix candidate
-(package
-  (name "python-subprocess32")
-  (version "0.2.9")
-  (source
-    (origin
-      (method url-fetch)
-      (uri "https://files.pythonhosted.org/packages/be/2b/beeba583e9877e64db10b52a96915afc0feabf7144dcbf2a0d0ea68bf73d/subprocess32-3.5.3.tar.gz")
-      (sha256
-        (base32
+  (package
+    (name "python-subprocess32")
+    (version "3.5.3")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "subprocess32" version))
+        (sha256
+         (base32
           "1hr5fan8i719hmlmz73hf8rhq74014w07d8ryg7krvvf6692kj3b"))))
-  (build-system python-build-system)
-  (arguments `(#:tests? #f)) ;; No tests.
-  (home-page "https://pypi.python.org/pypi/subprocess32")
-  (synopsis
-    "Python subprocess32.")
-  (description
-    "Python subprocess32.")
-  (license license:gpl2))
+    (build-system python-build-system)
+    (arguments `(#:tests? #f)) ;; No tests.
+    (home-page "https://pypi.python.org/pypi/subprocess32")
+    (synopsis
+      "Python subprocess32.")
+    (description
+      "Python subprocess32.")
+    (license license:gpl2))
 )
 
 (define-public python-inotify ; guix candidate
