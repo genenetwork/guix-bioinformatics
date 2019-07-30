@@ -297,13 +297,12 @@ support.")
             "0pld582piq2d55z0j96zcs8izw3ml46f8h9y7sdyxg093yfvxl2h"))))
     (build-system cargo-build-system)
     (arguments
-      `(#:cargo-inputs
-        (("rust-proc-macro2" ,rust-proc-macro2)
-         ("rust-quote" ,rust-quote)
-         ("rust-syn" ,rust-syn))))
+     `(#:cargo-inputs
+       (("rust-proc-macro2" ,rust-proc-macro2)
+        ("rust-quote" ,rust-quote)
+        ("rust-syn" ,rust-syn))))
     (home-page "https://github.com/dtolnay/automod")
-    (synopsis
-      "Pull in every source file in a directory as a module.")
+    (synopsis "Pull in every source file in a directory as a module.")
     (description
       "Pull in every source file in a directory as a module.")
     (license (list license:asl2.0
@@ -3137,9 +3136,8 @@ primitives to an @code{io::Write}.")
     (build-system cargo-build-system)
     (arguments
       `(#:cargo-inputs
-        (("rust-libc" ,rust-libc))
-        #:cargo-development-inputs
-        (("rust-cc" ,rust-cc)
+        (("rust-libc" ,rust-libc)
+         ("rust-cc" ,rust-cc)
          ("rust-fs-extra" ,rust-fs-extra))))
     (inputs
      `(("jemalloc" ,(@ (gnu packages jemalloc) jemalloc))
@@ -3166,15 +3164,13 @@ primitives to an @code{io::Write}.")
             "0sabfa5118b7l4ars5n36s2fjyfn59w4d6mjs6rrmsa5zky67bj3"))))
     (build-system cargo-build-system)
     (arguments
-      `(#:cargo-inputs
-        (("rust-jemalloc-sys" ,rust-jemalloc-sys)
-         ("rust-libc" ,rust-libc))
-        #:cargo-development-inputs
-        (("rust-paste" ,rust-paste))))
-    (home-page
-      "https://github.com/gnzlbg/jemallocator")
-    (synopsis
-      "A Rust allocator backed by jemalloc")
+     `(#:cargo-inputs
+       (("rust-jemalloc-sys" ,rust-jemalloc-sys)
+        ("rust-libc" ,rust-libc))
+       #:cargo-development-inputs
+       (("rust-paste" ,rust-paste))))
+    (home-page "https://github.com/gnzlbg/jemallocator")
+    (synopsis "A Rust allocator backed by jemalloc")
     (description
       "This package provides a Rust allocator backed by jemalloc")
     (license (list license:asl2.0
@@ -3402,6 +3398,34 @@ friction with idiomatic Rust structs to ease interopability.")
       "Native bindings to the libssh2 library")
     (description
       "Native bindings to the libssh2 library")
+    (license (list license:asl2.0
+                   license:expat))))
+
+;; TODO: Unbundle zlib
+(define-public rust-libz-sys
+  (package
+    (name "rust-libz-sys")
+    (version "1.0.25")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (crate-uri "libz-sys" version))
+        (file-name (string-append name "-" version ".tar.gz"))
+        (sha256
+         (base32
+          "1gjycyl2283525abks98bhxa4r259m617xfm5z52p3p3c8ry9d9f"))))
+    (build-system cargo-build-system)
+    (arguments
+     `(#:cargo-inputs
+       (("rust-libc" ,rust-libc))
+       #:cargo-development-inputs
+       (("rust-cc" ,rust-cc)
+        ("rust-pkg-config" ,rust-pkg-config)
+        ("rust-vcpkg" ,rust-vcpkg))))
+    (home-page "https://github.com/alexcrichton/libz-sys")
+    (synopsis "Bindings to the system libz library (also known as zlib).")
+    (description
+      "Bindings to the system libz library (also known as zlib).")
     (license (list license:asl2.0
                    license:expat))))
 
@@ -7842,6 +7866,32 @@ whitespace from a string.")
     (license (list license:asl2.0
                    license:expat))))
 
+(define-public rust-vcpkg
+  (package
+    (name "rust-vcpkg")
+    (version "0.2.7")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (crate-uri "vcpkg" version))
+        (file-name
+          (string-append name "-" version ".tar.gz"))
+        (sha256
+          (base32
+            "15dzk1b96q946v9aisbd1bbhi33n93wvgziwh1shmscn1xflbp9k"))))
+    (build-system cargo-build-system)
+    (arguments
+      `(#:cargo-development-inputs
+        (("rust-lazy-static" ,rust-lazy-static)
+         ("rust-tempdir" ,rust-tempdir))))
+    (home-page "https://github.com/mcgoo/vcpkg-rs")
+    (synopsis
+      "A library to find native dependencies in a vcpkg tree at build time in order to be used in Cargo build scripts.")
+    (description
+      "A library to find native dependencies in a vcpkg tree at build time in order to be used in Cargo build scripts.")
+    (license (list license:asl2.0
+                   license:expat))))
+
 (define-public rust-vec-map
   (package
     (name "rust-vec-map")
@@ -8257,6 +8307,33 @@ i686-pc-windows-gnu target.  Please don't use this crate directly, depend on
 x86_64-pc-windows-gnu target.  Please don't use this crate directly, depend on
 @code{winapi} instead.")
     (license (list license:asl2.0
+                   license:expat))))
+
+(define-public rust-wincolor
+  (package
+    (name "rust-wincolor")
+    (version "1.0.1")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (crate-uri "wincolor" version))
+        (file-name
+          (string-append name "-" version ".tar.gz"))
+        (sha256
+          (base32
+            "1fp9sxq63kw3vjjcjrl3f7px082pplzxcr3qza2n2pa6mq0xj7jn"))))
+    (build-system cargo-build-system)
+    (arguments
+      `(#:cargo-inputs
+        (("rust-winapi" ,rust-winapi)
+         ("rust-winapi-util" ,rust-winapi-util))))
+    (home-page
+      "https://github.com/BurntSushi/termcolor/tree/master/wincolor")
+    (synopsis
+      "A simple Windows specific API for controlling text color in a Windows console.")
+    (description
+      "This package provides a simple Windows specific API for controlling text color in a Windows console.")
+    (license (list license:unlicense
                    license:expat))))
 
 (define-public rust-yaml-rust
