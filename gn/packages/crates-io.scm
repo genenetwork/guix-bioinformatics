@@ -1354,7 +1354,7 @@ depending on a large number of #[cfg] parameters.  Structured like an
         (("rust-crossbeam-epoch" ,rust-crossbeam-epoch)
          ("rust-crossbeam-utils" ,rust-crossbeam-utils))
         #:cargo-development-inputs
-        (("rust-rand" ,rust-rand))))
+        (("rust-rand" ,rust-rand-0.6))))
     (home-page
       "https://github.com/crossbeam-rs/crossbeam/tree/master/crossbeam-deque")
     (synopsis "Concurrent work-stealing deque")
@@ -1427,7 +1427,7 @@ depending on a large number of #[cfg] parameters.  Structured like an
          ("rust-memoffset" ,rust-memoffset-0.2)
          ("rust-scopeguard" ,rust-scopeguard-0.3))
         #:cargo-development-inputs
-        (("rust-rand" ,rust-rand))))
+        (("rust-rand" ,rust-rand-0.6))))
     (home-page
       "https://github.com/crossbeam-rs/crossbeam/tree/master/crossbeam-epoch")
     (synopsis "Epoch-based garbage collection")
@@ -1478,7 +1478,7 @@ depending on a large number of #[cfg] parameters.  Structured like an
       `(#:cargo-inputs
         (("rust-crossbeam-utils" ,rust-crossbeam-utils))
         #:cargo-development-inputs
-        (("rust-rand" ,rust-rand))))
+        (("rust-rand" ,rust-rand-0.6))))
     (home-page
       "https://github.com/crossbeam-rs/crossbeam/tree/master/crossbeam-utils")
     (synopsis "Concurrent queues")
@@ -1505,7 +1505,7 @@ depending on a large number of #[cfg] parameters.  Structured like an
         (("rust-cfg-if" ,rust-cfg-if)
          ("rust-lazy-static" ,rust-lazy-static))
         #:cargo-development-inputs
-        (("rust-rand" ,rust-rand))))
+        (("rust-rand" ,rust-rand-0.6))))
     (home-page
       "https://github.com/crossbeam-rs/crossbeam/tree/master/crossbeam-utils")
     (synopsis "Utilities for concurrent programming")
@@ -1663,6 +1663,58 @@ depending on a large number of #[cfg] parameters.  Structured like an
     (description
       "This package provides a Rust text diffing and assertion library.")
     (license license:expat)))
+
+(define-public rust-dirs
+  (package
+    (name "rust-dirs")
+    (version "2.0.2")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (crate-uri "dirs" version))
+        (file-name
+          (string-append name "-" version ".tar.gz"))
+        (sha256
+          (base32
+            "1qymhyq7w7wlf1dirq6gsnabdyzg6yi2yyxkx6c4ldlkbjdaibhk"))))
+    (build-system cargo-build-system)
+    (arguments
+      `(#:cargo-inputs
+        (("rust-cfg-if" ,rust-cfg-if)
+         ("rust-dirs-sys" ,rust-dirs-sys))))
+    (home-page "https://github.com/soc/dirs-rs")
+    (synopsis
+      "A tiny low-level library that provides platform-specific standard locations of directories for config, cache and other data on Linux, Windows, macOS and Redox by leveraging the mechanisms defined by the XDG base/user directory specifications on Linux, the Known Folder API on Windows, and the Standard Directory guidelines on macOS.")
+    (description
+      "This package provides a tiny low-level library that provides platform-specific standard locations of directories for config, cache and other data on Linux, Windows, macOS and Redox by leveraging the mechanisms defined by the XDG base/user directory specifications on Linux, the Known Folder API on Windows, and the Standard Directory guidelines on macOS.")
+    (license #f)))
+
+(define-public rust-dirs-sys
+  (package
+    (name "rust-dirs-sys")
+    (version "0.3.4")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (crate-uri "dirs-sys" version))
+        (file-name
+          (string-append name "-" version ".tar.gz"))
+        (sha256
+          (base32
+            "0yyykdcmbc476z1v9m4z5jb8y91dw6kgzpkiqi2ig07xx0yv585g"))))
+    (build-system cargo-build-system)
+    (arguments
+      `(#:cargo-inputs
+        (("rust-cfg-if" ,rust-cfg-if)
+         ("rust-libc" ,rust-libc)
+         ("rust-redox-users" ,rust-redox-users)
+         ("rust-winapi" ,rust-winapi))))
+    (home-page "https://github.com/soc/dirs-sys-rs")
+    (synopsis
+      "System-level helper functions for the dirs and directories crates.")
+    (description
+      "System-level helper functions for the dirs and directories crates.")
+    (license #f)))
 
 (define-public rust-discard ; guix upstreamable
   (package
@@ -2822,7 +2874,7 @@ hexadecimal representation.")
         (("rust-quick-error" ,rust-quick-error))
         #:cargo-development-inputs
         (("rust-chrono" ,rust-chrono)
-         ("rust-rand" ,rust-rand)
+         ("rust-rand" ,rust-rand-0.4)
          ("rust-time" ,rust-time))))
     (home-page
       "https://github.com/tailhook/humantime")
@@ -3385,11 +3437,11 @@ friction with idiomatic Rust structs to ease interopability.")
       `(#:cargo-inputs
         (("rust-libc" ,rust-libc)
          ("rust-libz-sys" ,rust-libz-sys)
-         ("rust-openssl-sys" ,rust-openssl-sys))
+         ("rust-openssl-sys" ,rust-openssl-sys)
+         ("rust-vcpkg" ,rust-vcpkg))
         #:cargo-development-inputs
         (("rust-cc" ,rust-cc)
-         ("rust-pkg-config" ,rust-pkg-config)
-         ("rust-vcpkg" ,rust-vcpkg))))
+         ("rust-pkg-config" ,rust-pkg-config))))
     ;(inputs
     ; `(("libssh2" ,(@ (gnu packages ssh) libssh2))))
     (home-page
@@ -3903,7 +3955,7 @@ implementation (which is unstable / requires nightly).")
             "0clvrm34rrqc8p6gq5ps5fcgws3kgq5knh7nlqxf2ayarwks9abb"))))
     (build-system cargo-build-system)
     (arguments
-      `(#:cargo-development-inputs
+      `(#:cargo-inputs
         (("rust-autocfg" ,rust-autocfg))))
     (home-page
       "https://github.com/rust-num/num-traits")
@@ -4336,14 +4388,12 @@ the @code{take_while} predicate returned false after dropping the @code{by_ref}.
             "0kaprdz3jis9bjfwhri1zncbsvack5m3gx2g5flspdy7wxnyljgj"))))
     (build-system cargo-build-system)
     (arguments
-      `(#:cargo-inputs
-        (("rust-maplit" ,rust-maplit)
-         ("rust-pest" ,rust-pest))
-        #:cargo-development-inputs
-        (("rust-sha-1" ,rust-sha-1))))
+     `(#:cargo-inputs
+       (("rust-maplit" ,rust-maplit)
+        ("rust-pest" ,rust-pest)
+        ("rust-sha-1" ,rust-sha-1))))
     (home-page "https://pest-parser.github.io/")
-    (synopsis
-      "pest meta language parser and validator")
+    (synopsis "pest meta language parser and validator")
     (description
       "pest meta language parser and validator")
     (license (list license:asl2.0
@@ -5242,7 +5292,7 @@ to write.")
         (("rust-doc-comment" ,rust-doc-comment)
          ("rust-docopt" ,rust-docopt)
          ("rust-lazy-static" ,rust-lazy-static)
-         ("rust-rand" ,rust-rand)
+         ("rust-rand" ,rust-rand-0.6)
          ("rust-rand-xorshift" ,rust-rand-xorshift)
          ("rust-serde" ,rust-serde)
          ("rust-serde-derive" ,rust-serde-derive))))
@@ -5373,6 +5423,34 @@ to write.")
     (description "This package provides a Rust library to access raw Redox
 system calls.")
     (license license:expat)))
+
+(define-public rust-redox-users
+  (package
+    (name "rust-redox-users")
+    (version "0.3.0")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (crate-uri "redox_users" version))
+        (file-name
+          (string-append name "-" version ".tar.gz"))
+        (sha256
+          (base32
+            "0a1q5jv76vj1mwmqf2mmhknmkpw5wndx91gjfgg7vs8p79621r9z"))))
+    (build-system cargo-build-system)
+    (arguments
+      `(#:cargo-inputs
+        (("rust-argon2rs" ,rust-argon2rs)
+         ("rust-failure" ,rust-failure)
+         ("rust-rand-os" ,rust-rand-os)
+         ("rust-redox-syscall" ,rust-redox-syscall))))
+    (home-page
+      "https://gitlab.redox-os.org/redox-os/users")
+    (synopsis
+      "A Rust library to access Redox users and groups functionality")
+    (description
+      "This package provides a Rust library to access Redox users and groups functionality")
+    (license #f)))
 
 (define-public rust-ref-cast
   (package
@@ -5586,7 +5664,7 @@ system calls.")
     (build-system cargo-build-system)
     (arguments
       `(#:cargo-development-inputs
-        (("rust-rand" ,rust-rand))))
+        (("rust-rand" ,rust-rand-0.3))))
     (home-page
       "https://github.com/rust-lang/rustc-serialize")
     (synopsis
@@ -5802,11 +5880,11 @@ with one of the implemented strategies.")
     (build-system cargo-build-system)
     (arguments
       `(#:cargo-inputs
-        (("rust-scroll-derive" ,rust-scroll-derive))
+        (("rust-scroll-derive" ,rust-scroll-derive)
+         ("rust-rustc-version" ,rust-rustc-version))
         #:cargo-development-inputs
         (("rust-byteorder" ,rust-byteorder)
-         ("rust-rayon" ,rust-rayon)
-         ("rust-rustc-version" ,rust-rustc-version))))
+         ("rust-rayon" ,rust-rayon))))
     (home-page "https://github.com/m4b/scroll")
     (synopsis
       "A suite of powerful, extensible, generic, endian-aware Read/Write traits for byte buffers")
@@ -5981,21 +6059,6 @@ function with proven statistical guarantees.")
       "This package provides a generic serialization/deserialization framework")
     (license (list license:asl2.0
                    license:expat))))
-
-(define-public rust-serde-1.0.91
-  (package
-    (inherit rust-serde)
-    (name "rust-serde")
-    (version "1.0.91")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (crate-uri "serde" version))
-        (file-name
-          (string-append name "-" version ".tar.gz"))
-        (sha256
-          (base32
-            "1za3x9mxv3x9539vq9casan61zfcvxc3ini3pjj25kj5zab9nbm7"))))))
 
 (define-public rust-serde-big-array
   (package
@@ -6439,9 +6502,8 @@ initializers are available.")
       `(#:cargo-inputs
         (("rust-cfg-if" ,rust-cfg-if)
          ("rust-libc" ,rust-libc)
-         ("rust-winapi" ,rust-winapi))
-        #:cargo-development-inputs
-        (("rust-cc" ,rust-cc))))
+         ("rust-winapi" ,rust-winapi)
+         ("rust-cc" ,rust-cc))))
     (home-page
       "https://github.com/alexcrichton/stacker")
     (synopsis
@@ -7848,7 +7910,7 @@ whitespace from a string.")
       `(#:cargo-inputs
         (("rust-byteorder" ,rust-byteorder)
          ("rust-md5" ,rust-md5)
-         ("rust-rand" ,rust-rand)
+         ("rust-rand" ,rust-rand-0.6)
          ("rust-serde" ,rust-serde)
          ("rust-sha1" ,rust-sha1)
          ("rust-slog" ,rust-slog)
