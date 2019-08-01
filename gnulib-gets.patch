@@ -1,0 +1,60 @@
+Minimally modified from upstream
+only first change set from lib/stdio.in.h taken
+s@lib/stdio@libgnu/stdio@g run on the 'diff' line.
+
+From: Eric Blake <eblake@redhat.com>
+Date: Thu, 29 Mar 2012 19:30:41 +0000 (-0600)
+Subject: stdio: don't assume gets any more
+X-Git-Tag: v0.1~799
+X-Git-Url: https://git.savannah.gnu.org/gitweb/?p=gnulib.git;a=commitdiff_plain;h=66712c23388e93e5c518ebc8515140fa0c807348
+
+stdio: don't assume gets any more
+
+Gnulib intentionally does not have a gets module, and now that C11
+and glibc have dropped it, we should be more proactive about warning
+any user on a platform that still has a declaration of this dangerous
+interface.
+
+* m4/stdio_h.m4 (gl_STDIO_H, gl_STDIO_H_DEFAULTS): Drop gets
+support.
+* modules/stdio (Makefile.am): Likewise.
+* gnu/stdio-read.c (gets): Likewise.
+* tests/test-stdio-c++.cc: Likewise.
+* m4/warn-on-use.m4 (gl_WARN_ON_USE_PREPARE): Fix comment.
+* gnu/stdio.in.h (gets): Make warning occur in more places.
+* doc/posix-functions/gets.texi (gets): Update documentation.
+Reported by Christer Solskogen.
+
+Signed-off-by: Eric Blake <eblake@redhat.com>
+---
+diff --git a/libgnu/stdio.in.h b/libgnu/stdio.in.h
+index aa7b599..c377b6e 100644
+--- a/libgnu/stdio.in.h
++++ b/libgnu/stdio.in.h
+@@ -698,22 +698,11 @@ _GL_WARN_ON_USE (getline, "getline is unportable - "
+ # endif
+ #endif
+ 
+-#if @GNULIB_GETS@
+-# if @REPLACE_STDIO_READ_FUNCS@ && @GNULIB_STDIO_H_NONBLOCKING@
+-#  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
+-#   undef gets
+-#   define gets rpl_gets
+-#  endif
+-_GL_FUNCDECL_RPL (gets, char *, (char *s) _GL_ARG_NONNULL ((1)));
+-_GL_CXXALIAS_RPL (gets, char *, (char *s));
+-# else
+-_GL_CXXALIAS_SYS (gets, char *, (char *s));
+-#  undef gets
+-# endif
+-_GL_CXXALIASWARN (gets);
+ /* It is very rare that the developer ever has full control of stdin,
+-   so any use of gets warrants an unconditional warning.  Assume it is
+-   always declared, since it is required by C89.  */
++   so any use of gets warrants an unconditional warning; besides, C11
++   removed it.  */
++#undef gets
++#if HAVE_RAW_DECL_GETS
+ _GL_WARN_ON_USE (gets, "gets is a security hole - use fgets instead");
+ #endif
+ 

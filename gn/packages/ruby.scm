@@ -240,7 +240,7 @@ for an example.")
         (base32
          "1f861x62kmggy60krv229s5jl7afq9nblwcfih3kp9bm5c5jn16y"))))
     (build-system ruby-build-system)
-    (arguments '(#:gem-flags '("--trace")))
+    (arguments '(#:tests? #f)) ; one test fails
     (inputs
      `(("ruby" ,ruby)))
     (propagated-inputs
@@ -254,8 +254,6 @@ for an example.")
        ("ruby-nokogiri" ,ruby-nokogiri)
        ("ruby-ntlm-http" ,ruby-ntlm-http)
        ("ruby-webrobots" ,ruby-webrobots)))
-    (arguments
-     `(#:tests? #f)) ;; one test fails
     (synopsis
      "The Mechanize library is used for automating interaction with websites.
 Mechanize automatically stores and sends cookies, follows redirects,

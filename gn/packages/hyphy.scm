@@ -1,5 +1,6 @@
 ;;; GNU Guix --- Functional package management for GNU
 ;;; Copyright © 2016 Dennis Mungai <dmngaie@gmail.com>
+;;; Copyright © 2019 Efraim Flashner <efraim@flashner.co.il>
 ;;;
 ;;; This file is part of GNU Guix.
 ;;;
@@ -19,28 +20,11 @@
 (define-module (gn packages hyphy)
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (guix download)
-  #:use-module (guix build-system gnu)
   #:use-module (guix build-system cmake)
   #:use-module (guix packages)
   #:use-module (gnu packages algebra)
-  #:use-module (gnu packages autotools)
-  #:use-module (gnu packages curl)
-  #:use-module (gnu packages gawk)
-  #:use-module (gnu packages cmake)
-  #:use-module (gnu packages boost)
-  #:use-module (gnu packages glib)
-  #:use-module (gnu packages image)
-  #:use-module (gnu packages video)
-  #:use-module (gnu packages textutils)
-  #:use-module (gnu packages gl)
-  #:use-module (gnu packages pkg-config)
-  #:use-module (gnu packages maths)
-  #:use-module (gnu packages web)
-  #:use-module (gnu packages databases)
-  #:use-module (gnu packages python)
-  #:use-module (gnu packages xorg)
-  #:use-module (gnu packages version-control)  
-  #:use-module (gnu packages linux))
+  #:use-module (gnu packages mpi)
+  #:use-module (gnu packages python))
 
 (define-public hyphy ; guix: check
   (package
@@ -48,7 +32,7 @@
     (version "2.2.6")
     (source (origin
               (method url-fetch)
-              (uri (string-append "https://github.com/veg/hyphy/archive/" version 
+              (uri (string-append "https://github.com/veg/hyphy/archive/" version
                                   ".tar.gz"))
               (file-name (string-append name "-" version ".tar.gz"))
               (sha256
@@ -56,16 +40,15 @@
                 "00i3609nywb1xfq50p3kvfbvahql241ciq23jrf67z0yp4y5l5a9"))))
     (inputs
      `(("python" ,python-2)
+       ("openmpi" ,openmpi)
        ("fftw-openmpi" ,fftw-openmpi)))
     (build-system cmake-build-system)
     (arguments
-     '(#:phases (modify-phases %standard-phases
-                 (add-after 'unpack `bootstrap 
-                  (lambda _
-                   (zero? (system* "make" "MPI"))))))) 
-    (arguments 
-     `(#:configure-flags '("-DCMAKE_BUILD_TYPE=Release")
-       #:tests? #f))     
+     '(#:make-flags '("MPI")
+       #:configure-flags (list "-DCMAKE_BUILD_TYPE=Release"
+                               (string-append "-DINSTALL_PREFIX="
+                                              (assoc-ref %outputs "out")))
+       #:tests? #f))
     (synopsis "hyphy: an open-source software package for the analysis
 of genetic sequences using techniques in phylogenetics, molecular
 evolution, and machine learning.")
@@ -79,6 +62,3 @@ interface (MPI)) and it can be compiled as a shared library and called
 from other programming environments such as Python and R. ")
     (home-page "http://hyphy.org")
     (license license:expat)))
-
-
-

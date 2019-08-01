@@ -5,7 +5,21 @@ http://genenetwork.org/.  See
 [Guix Notes](https://github.com/pjotrp/guix-notes/blob/master/HACKING.org)
 for installing and hacking GNU Guix.
 
-Simply set the GUIX_PACKAGE_PATH to point to the root of this directory
+To easily use the packages from this repo, simply add it to your `channels` list:
+
+    (cons*
+      (channel
+        (name 'gn-bioinformatics)
+        (url "https://gitlab.com/genenetwork/guix-bioinformatics")
+        (branch "master"))
+      %default-channels)
+
+and run `guix pull` like normal to update your software. This is the recommended
+way to use the software from this repository and the code snippets in this
+README assume you have done so.
+
+If you want to make changes to the packages in this repo then simply set
+the GUIX_PACKAGE_PATH to point to the root of this directory
 before running Guix. E.g.
 
     git clone https://github.com/genenetwork/guix-bioinformatics.git
@@ -23,8 +37,7 @@ into the GNU Guix repository when tested and stable.
 
 Install slurm with
 
-    git clone https://github.com/genenetwork/guix-bioinformatics.git
-    export GUIX_PACKAGE_PATH=$PWD/guix-bioinformatics/
+    guix pull
     guix package -i slurm-llnl
 
     ~/.guix-profile/sbin/slurmd -C -D
@@ -34,8 +47,7 @@ Install slurm with
 
 Install the module environment with
 
-    git clone https://github.com/genenetwork/guix-bioinformatics.git
-    export GUIX_PACKAGE_PATH=$PWD/guix-bioinformatics/
+    guix pull
     guix package -i environment-modules
 
     modulecmd --version
@@ -46,16 +58,14 @@ Install the module environment with
 
 Install python2-numarray package with
 
-    git clone https://github.com/genenetwork/guix-bioinformatics.git
-    export GUIX_PACKAGE_PATH=$PWD/guix-bioinformatics/
+    guix pull
     guix package -i python2-numarray
 
 ## Common Workflow Language (CWL)
 
 Install the common workflow language tool cwltool with
 
-    git clone https://github.com/genenetwork/guix-bioinformatics.git
-    export GUIX_PACKAGE_PATH=$PWD/guix-bioinformatics/
+    guix pull
     guix package -i python2-cwltool
 
     cwtool --version

@@ -30,6 +30,7 @@
   #:use-module (gnu packages rdf)
   #:use-module (gnu packages readline)
   #:use-module (gnu packages statistics)
+  #:use-module (gnu packages tcl)
   #:use-module (gnu packages tex)
   #:use-module (gnu packages texinfo)
   #:use-module (gnu packages time)
@@ -134,31 +135,75 @@ functions.")
   (license license:expat))
 )
 
+(define-public python-plotly-3.2.1
+  (package
+    (inherit python-plotly)
+    (name "python-plotly")
+    (version "3.2.1")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "plotly" version))
+        (sha256
+         (base32
+          "1ay1plgsckfi7fddl99kvbcx5nifh48ahvszkqvb4d7r008m8sxk"))))
+    (build-system python-build-system)
+    (propagated-inputs
+     `(("python-decorator" ,python-decorator)
+       ("python-nbformat" ,python-nbformat)
+       ("python-pytz" ,python-pytz)
+       ("python-requests" ,python-requests)
+       ("python-retrying" ,python-retrying)
+       ("python-six" ,python-six)))))
+
+(define-public python-retrying
+  (package
+    (name "python-retrying")
+    (version "1.3.3")
+    (source
+      (origin
+        ;; pypi release doesn't have test library
+        (method git-fetch)
+        (uri (git-reference
+               (url "https://github.com/rholder/retrying")
+               (commit (string-append "v" version))))
+        (file-name (git-file-name name version))
+        (sha256
+         (base32
+          "1kqipkbdaw5s1xg0gi29awm03vp1x8dz24pjidgxagvkvrjpzhi7"))))
+    (build-system python-build-system)
+    (propagated-inputs
+     `(("python-six" ,python-six)))
+    (home-page "https://github.com/rholder/retrying")
+    (synopsis "General-purpose retrying library")
+    (description "Retrying is a general-purpose retrying library, written in
+Python, to simplify the task of adding retry behavior to just about anything.
+The simplest use case is retrying a flaky function whenever an Exception occurs
+until a value is returned.")
+    (license license:asl2.0)))
+
 (define-public python-bagit; guix candidate
-(package
-  (name "python-bagit")
-  (version "1.7.0")
-  (source
-    (origin
-      (method url-fetch)
-      (uri "https://files.pythonhosted.org/packages/ee/11/7a7fa81c0d43fb4d449d418eba57fc6c77959754c5c2259a215152810555/bagit-1.7.0.tar.gz")
-      (sha256
-        (base32
+  (package
+    (name "python-bagit")
+    (version "1.7.0")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "bagit" version))
+        (sha256
+         (base32
           "1m6y04qmig0b5hzb35lnaw3d2yfydb7alyr1579yblvgs3da6j7j"))))
-  (build-system python-build-system)
-  (inputs
+    (build-system python-build-system)
+    (inputs
      `(("python-setuptools-scm" ,python-setuptools-scm)
-      ("python-coverage" ,python-coverage)
-      ("python-mock" ,python-mock)
-      ))
-  (arguments `(#:tests? #f)) ;; No tests.
-  (home-page "https://pypi.python.org/pypi/bagit")
-  (synopsis
-    "Python bagit.")
-  (description
-    "Python bagit.")
-  (license license:gpl2))
-)
+       ("python-coverage" ,python-coverage)
+       ("python-mock" ,python-mock)))
+    (arguments `(#:tests? #f)) ;; No tests.
+    (home-page "https://pypi.python.org/pypi/bagit")
+    (synopsis "Create and validate BagIt packages")
+    (description
+      "Create and validate BagIt packages")
+    (license license:gpl2)))
 
 (define-public python-prov ; guix candidate
 (package
@@ -188,44 +233,43 @@ functions.")
   (license license:expat)))
 
 (define-public python-typing-extensions; guix candidate
-(package
-  (name "python-typing-extensions")
-  (version "3.6.6")
-  (source
-    (origin
-      (method url-fetch)
-      (uri "https://files.pythonhosted.org/packages/fc/e6/3d2f306b12f01bde2861d67458d32c673e206d6fcc255537bf452db8f80c/typing_extensions-3.6.6.tar.gz")
-      (sha256
-        (base32
+  (package
+    (name "python-typing-extensions")
+    (version "3.6.6")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "typing_extensions" version))
+        (sha256
+         (base32
           "07vhddjnd3mhdijyc3s0mwi9jgfjp3rr056nxqiavydbvkrvgrsi"))))
-  (build-system python-build-system)
-  (home-page "https://pypi.python.org/pypi/typing_extensions")
-  (synopsis
-    "Python typing_extensions.")
-  (description
-    "Python typing_extensions.")
-  (license license:gpl2))
+    (build-system python-build-system)
+    (home-page "https://pypi.python.org/pypi/typing_extensions")
+    (synopsis "Python typing_extensions.")
+    (description
+     "Python typing_extensions.")
+    (license license:gpl2))
 )
 
 (define-public python-subprocess32 ; guix candidate
-(package
-  (name "python-subprocess32")
-  (version "0.2.9")
-  (source
-    (origin
-      (method url-fetch)
-      (uri "https://files.pythonhosted.org/packages/be/2b/beeba583e9877e64db10b52a96915afc0feabf7144dcbf2a0d0ea68bf73d/subprocess32-3.5.3.tar.gz")
-      (sha256
-        (base32
+  (package
+    (name "python-subprocess32")
+    (version "3.5.3")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "subprocess32" version))
+        (sha256
+         (base32
           "1hr5fan8i719hmlmz73hf8rhq74014w07d8ryg7krvvf6692kj3b"))))
-  (build-system python-build-system)
-  (arguments `(#:tests? #f)) ;; No tests.
-  (home-page "https://pypi.python.org/pypi/subprocess32")
-  (synopsis
-    "Python subprocess32.")
-  (description
-    "Python subprocess32.")
-  (license license:gpl2))
+    (build-system python-build-system)
+    (arguments `(#:tests? #f)) ;; No tests.
+    (home-page "https://pypi.python.org/pypi/subprocess32")
+    (synopsis
+      "Python subprocess32.")
+    (description
+      "Python subprocess32.")
+    (license license:gpl2))
 )
 
 (define-public python-inotify ; guix candidate
@@ -447,30 +491,25 @@ Python 3 support.")
   (package-with-python2 python-avro))
 
 (define-public python-shellescape ; guix ready
-(package
-  (name "python-shellescape")
-  (version "3.4.1")
-  (source
-    (origin
-      (method url-fetch)
-      (uri (string-append
-             "https://pypi.python.org/packages/source/s/shellescape/shellescape-"
-             version
-             ".tar.gz"))
-      (sha256
-        (base32
+  (package
+    (name "python-shellescape")
+    (version "3.4.1")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "shellescape" version))
+        (sha256
+         (base32
           "0n5ky1b2vw2y0d4xl3qybyp2rk0gq5frjs8nr8ak6mgj2fyb4676"))))
-  (build-system python-build-system)
-  (inputs
-    `(("python-setuptools" ,python-setuptools)))
-  (home-page
-    "https://github.com/chrissimpkins/shellescape")
-  (synopsis
-    "Shell escape a string to safely use it as a token in a shell command (backport of Python shlex.quote for Python versions 2.x & < 3.3)")
-  (description
-    "Shell escape a string to safely use it as a token in a shell command (backport of Python shlex.quote for Python versions 2.x & < 3.3)")
-  (license expat))
-)
+    (build-system python-build-system)
+    (native-inputs
+     `(("python-setuptools" ,python-setuptools)))
+    (home-page "https://github.com/chrissimpkins/shellescape")
+    (synopsis
+      "Shell escape a string to safely use it as a token in a shell command (backport of Python shlex.quote for Python versions 2.x & < 3.3)")
+    (description
+      "Shell escape a string to safely use it as a token in a shell command (backport of Python shlex.quote for Python versions 2.x & < 3.3)")
+    (license license:expat)))
 
 (define-public python2-shellescape
   (package-with-python2 python-shellescape))
@@ -533,59 +572,68 @@ project)")
 (define-public python2-pil1 ; guix obsolete
   (package
     (name "python2-pil1")
-    (version "1.1.6")
+    (version "1.1.7")
     (source (origin
              (method url-fetch)
-             (uri (string-append
-                   "http://files.genenetwork.org/software/contrib/Imaging-"
-                   version "-gn.tar.gz"))
+             (uri (string-append "http://effbot.org/downloads/Imaging-"
+                                 version ".tar.gz"))
              (sha256
               (base32
-               "0jhinbcq2k899c76m1jc5a3z39k6ajghiavpzi6991hbg6xhxdzg"))
+               "04aj80jhfbmxqzvmq40zfi4z3cw6vi01m3wkk6diz3lc971cfnw9"))
     (modules '((guix build utils)))
     (snippet
-     ;; Adapt to newer freetype. As the package is unmaintained upstream,
-     ;; there is no use in creating a patch and reporting it.
-     '(substitute* "_imagingft.c"
-                   (("freetype/")
-                    "freetype2/freetype/")))))
+     ;; Adapt to newer freetype and lcms.  As the package is unmaintained
+     ;; upstream, there is no use in creating a patch and reporting it.
+     '(begin (substitute* "_imagingft.c"
+               (("freetype/")
+                "freetype2/freetype/"))
+             (substitute* '("setup.py"
+                            "_imagingcms.c")
+               (("lcms.h") "lcms2.h"))))))
     (build-system python-build-system)
     (inputs
-      `(("freetype" ,freetype)
-        ("libjpeg" ,libjpeg)
-        ("libtiff" ,libtiff)
-        ("python2-setuptools" ,python2-setuptools)
-        ("zlib" ,zlib)))
+     `(("freetype" ,freetype)
+       ("lcms" ,lcms) ; not fully supported
+       ("libjpeg" ,libjpeg)
+       ("libtiff" ,libtiff)
+       ("tcl" ,tcl)
+       ("zlib" ,zlib)))
     (arguments
      ;; Only the fork python-pillow works with Python 3.
      `(#:python ,python-2
        #:tests? #f ; no check target
+       #:use-setuptools? #f
        #:phases
-         (alist-cons-before
-          'build 'configure
-          ;; According to README and setup.py, manual configuration is
-          ;; the preferred way of "searching" for inputs.
-          ;; lcms is not found, TCL_ROOT refers to the unavailable tkinter.
-          (lambda* (#:key inputs #:allow-other-keys)
-            (let ((jpeg (assoc-ref inputs "libjpeg"))
-                  (zlib (assoc-ref inputs "zlib"))
-                  (tiff (assoc-ref inputs "libtiff"))
-                  (freetype (assoc-ref inputs "freetype")))
-              (substitute* "setup.py"
-                (("JPEG_ROOT = None")
-                 (string-append "JPEG_ROOT = libinclude(\"" jpeg "\")"))
-                (("ZLIB_ROOT = None")
-                 (string-append "ZLIB_ROOT = libinclude(\"" zlib "\")"))
-                (("TIFF_ROOT = None")
-                 (string-append "TIFF_ROOT = libinclude(\"" tiff "\")"))
-                (("FREETYPE_ROOT = None")
-                 (string-append "FREETYPE_ROOT = libinclude(\""
-                                freetype "\")")))))
-          %standard-phases)))
+       (modify-phases %standard-phases
+         (add-after 'unpack 'link-libraries
+           (lambda* (#:key inputs #:allow-other-keys)
+             (let ((freetype (assoc-ref inputs "freetype"))
+                   (jpeg (assoc-ref inputs "libjpeg"))
+                   (lcms (assoc-ref inputs "lcms"))
+                   (tcl (assoc-ref inputs "tcl"))
+                   (tiff (assoc-ref inputs "libtiff"))
+                   (zlib (assoc-ref inputs "zlib")))
+               (substitute* "setup.py"
+                 (("FREETYPE_ROOT .*")
+                  (string-append "FREETYPE_ROOT = libinclude(\"" freetype "\")\n"))
+                 (("JPEG_ROOT .*")
+                  (string-append "JPEG_ROOT = libinclude(\"" jpeg "\")\n"))
+                 (("LCMS_ROOT .*")
+                  (string-append "LCMS_ROOT = libinclude(\"" lcms "\")\n"))
+                 (("^TCL_ROOT .*")
+                  (string-append "TCL_ROOT = libinclude(\"" tcl "\")\n"))
+                 (("TIFF_ROOT .*")
+                  (string-append "TIFF_ROOT = libinclude(\"" tiff "\")\n"))
+                 (("ZLIB_ROOT .*")
+                  (string-append "ZLIB_ROOT = libinclude(\"" zlib "\")\n"))))
+             #t)))))
     (home-page "http://www.pythonware.com/products/pil/")
     (synopsis "Python Imaging Library")
-    (description "The Python Imaging Library (PIL) adds image processing
-capabilities to the Python interpreter.")
+    (description "The @dfn{Python Imaging Library} (PIL) adds image processing
+capabilities to your Python interpreter.  This library supports many file
+formats, and provides powerful image processing and graphics capabilities.
+
+NOTE: This package is superseded by python-pillow")
     (license (license:x11-style
                "file://README"
                "See 'README' in the distribution."))))
@@ -617,6 +665,34 @@ version ".tgz"))
     (synopsis "Canvas drawing library for python2 (old!)")
     (description #f)
     (license #f)))
+
+(define-public python2-piddle-1.0.15
+  (package
+    (name "python2-piddle")
+    (version "1.0.15")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (string-append "mirror://sourceforge/piddle/piddle/"
+                            version "/piddle-" version ".zip"))
+        (sha256
+         (base32
+          "0jaxfsrcgqb5cf2wznxnpdws5khlrdixmg85lrhq2zl9cy6dfdya"))))
+    (build-system python-build-system)
+    (arguments
+     `(#:python ,python-2
+       #:use-setuptools? #f
+       #:tests? #f)) ; tests are interactive
+    (native-inputs
+     `(("unzip" ,unzip)))
+    (propagated-inputs
+     `(("python2-pil" ,python2-pil1)))
+    (home-page "http://www.strout.net/info/coding/python/piddle/")
+    (synopsis "Plug-In Drawing, Does Little Else")
+    (description "PIDDLE is designed for vector graphics -- i.e., drawing of
+primitives such as lines and ellipses, rather than manipulation of individual
+pixels.")
+    (license license:gpl2+)))
 
 (define-public python2-parallel ; guix fix number of things
   (package
@@ -695,7 +771,7 @@ the older versions.")
 (define-public python-htmlgen
   (package
     (name "python-htmlgen")
-    (version "1.0.0")
+    (version "1.2.2")
     (source
      (origin
        (method url-fetch)
@@ -704,14 +780,19 @@ the older versions.")
 	     version ".tar.gz"))
        (sha256
 	(base32
-	 "1rwgqxhmc93l60wf4ay7ph619710kvyp73s22i0snjpm5i0bhc46"))))
+	 "0w3pcvm68jfdhnsxwwwifwhqqj9kqg3195b52hqd23qza480xilx"))))
     (build-system python-build-system)
+    (propagated-inputs
+     `(("python-typing" ,python-typing)))
     (arguments
      `(#:tests? #f))
     (synopsis "Python HTML 5 Generator")
     (description "This is a python library for generating html from classes.")
     (home-page "https://github.com/srittau/python-htmlgen")
     (license license:expat)))
+
+(define-public python2-htmlgen
+  (package-with-python2 python-htmlgen))
 
 (define-public python-version
 (let ((commit "e5aadc720bb74c535f29e5a2de5cd9697efe8d7c"))
@@ -729,7 +810,6 @@ the older versions.")
       (sha256
         (base32
           "1rc8kf72v180qlygkh1y0jwv2fxqpx7n97bqfhbwgnn31iwai9g3"))))
-  (build-system python-build-system)
   (build-system python-build-system)
   (propagated-inputs
     `(
@@ -784,3 +864,138 @@ the older versions.")
     "arcp (Archive and Package) URI parser and generator")
   (license license:asl2.0))
 )
+
+(define-public python2-pp
+  (package
+    (name "python2-pp")
+    (version "1.6.1")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (string-append
+             "http://www.parallelpython.com/downloads/pp/pp-" version ".zip"))
+        (sha256
+         (base32
+          "0qkxcyclz3vgwpl6xvsrg76q59dj0wwy8qx15567bafv659ypyb1"))))
+    (build-system python-build-system)
+    (arguments
+     `(#:python ,python-2
+       #:use-setuptools? #f
+       #:tests? #f)) ; no tests
+    (native-inputs
+     `(("unzip" ,unzip)))
+    (home-page "http://www.parallelpython.com")
+    (synopsis "Parallel and distributed programming for Python")
+    (description "PP is a python module which provides mechanism for parallel
+execution of python code on SMP (systems with multiple processors or cores) and
+clusters (computers connected via network).")
+    (license license:bsd-3)))
+
+(define GN1-thirdparty-sources
+  (origin
+    (method url-fetch/tarbomb)
+    ;; ipfs get QmTPwYT2pehdxdG1TiHEzVzLgbeuhJ4utXShuz3twA84AB
+    (uri "file:///gnu/store/p33a2sh3x2nhiiphdw9nly80njg6p8fi-thirdparty.tgz")
+    (file-name "GN1-thirdparty")
+    (sha256
+     (base32
+      "0nnp6g412hjfrcn3k2yrfb14sxv06k0149whc7qmv678nyj5zhfa"))))
+
+(define-public python2-json-GN1
+  (package
+    (name "python2-json-GN1")
+    (version "GN1")
+    (source GN1-thirdparty-sources)
+    (build-system python-build-system)
+    (arguments
+     `(#:python ,python-2
+       #:phases
+       (modify-phases %standard-phases
+         (delete 'build)
+         (delete 'check)
+         (replace 'install
+           (lambda* (#:key outputs #:allow-other-keys)
+             (let* ((out     (assoc-ref outputs "out"))
+                    (sitedir (string-append out "/lib/python2.7/site-packages/json/")))
+               (mkdir-p sitedir)
+               (copy-recursively "thirdparty/json" sitedir)
+               #t))))))
+    (home-page "")
+    (synopsis "")
+    (description "")
+    (license license:lgpl2.1+)))
+
+(define-public python2-pyx-GN1
+  (package
+    (name "python2-pyx-GN1")
+    (version "0.8")
+    (source GN1-thirdparty-sources)
+    (build-system python-build-system)
+    (arguments
+     `(#:python ,python-2
+       #:phases
+       (modify-phases %standard-phases
+         (delete 'build)
+         (delete 'check)
+         (replace 'install
+           (lambda* (#:key outputs #:allow-other-keys)
+             (let* ((out     (assoc-ref outputs "out"))
+                    (sitedir (string-append out "/lib/python2.7/site-packages/pyx/")))
+               (mkdir-p sitedir)
+               (copy-recursively "thirdparty/pyx" sitedir)
+               #t))))))
+    (home-page "")
+    (synopsis "")
+    (description "")
+    (license license:gpl2+)))
+
+(define-public python2-pyxlwriter
+  (package
+    (name "python2-pyxlwriter")
+    (version "0.4a3")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (string-append "mirror://sourceforge/pyxlwriter/pyxlwriter/"
+                            version "/pyXLWriter-" version ".zip"))
+        (sha256
+         (base32
+          "1kfsi6la9y53rwayszgayfmkjfknpp650v69a0hwd1fcfk1df735"))))
+    (build-system python-build-system)
+    (arguments
+     `(#:python ,python-2
+       #:use-setuptools? #f
+       #:tests? #f)) ; no tests
+    (native-inputs
+     `(("unzip" ,unzip)))
+    (home-page "https://sourceforge.net/projects/pyxlwriter/")
+    (synopsis "Python library for generating Excel compatible spreadsheets")
+    (description "PyXLWriter is a Python library for generating Excel compatible
+spreadsheets.  It's a port of John McNamara's Perl @code{Spreadsheet::WriteExcel}
+module version 1.01 to Python.  It allows writing of Excel compatible
+spreadsheets without the need for COM objects.")
+    (license license:lgpl2.1+)))
+
+(define-public python2-svg-GN1
+  (package
+    (name "python2-svg-GN1")
+    (version "1.0")
+    (source GN1-thirdparty-sources)
+    (build-system python-build-system)
+    (arguments
+     `(#:python ,python-2
+       #:phases
+       (modify-phases %standard-phases
+         (delete 'build)
+         (delete 'check)
+         (replace 'install
+           (lambda* (#:key outputs #:allow-other-keys)
+             (let* ((out     (assoc-ref outputs "out"))
+                    (sitedir (string-append out "/lib/python2.7/site-packages/svg/")))
+               (mkdir-p sitedir)
+               (copy-recursively "thirdparty/svg" sitedir)
+               #t))))))
+    (home-page "")
+    (synopsis "")
+    (description "")
+    (license license:bsd-4)))
