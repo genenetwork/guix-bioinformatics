@@ -270,27 +270,7 @@ location of a putative QTL.")
           ("rust-structopt" ,rust-structopt)
           ("rust-rayon" ,rust-rayon-1.0)
           ("rust-serde" ,rust-serde)
-          ("rust-serde-json" ,rust-serde-json))
-         #:phases
-         (modify-phases %standard-phases
-           (add-after 'configure 'regenerate-cargo-lock
-             (lambda _
-               (delete-file "Cargo.lock")
-               (invoke "cargo" "generate-lockfile")))
-           (add-after 'patch-generated-file-shebangs 'patch-cargo-checksums
-             (lambda _
-               (use-modules (guix build cargo-utils))
-                 (for-each
-                   (lambda (filename)
-                     (use-modules (guix build cargo-utils))
-                     (delete-file filename)
-                     (let* ((dir (dirname filename)))
-                       (display (string-append
-                                  "patch-cargo-checksums: generate-checksums for "
-                                  dir "\n"))
-                       (generate-checksums dir)))
-                   (find-files "guix-vendor" ".cargo-checksum.json"))
-                 #t)))))
+          ("rust-serde-json" ,rust-serde-json))))
       (home-page "https://github.com/chfi/rust-qtlreaper")
       (synopsis "Reimplementation of genenetwork/QTLReaper in Rust")
       (description "Reimplementation of genenetwork/QTLReaper in Rust")
