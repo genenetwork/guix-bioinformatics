@@ -2,12 +2,12 @@
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (guix packages)
   #:use-module (guix git-download)
-  #:use-module (guix build-system trivial)
-  #:use-module (gnu packages bash)
+  #:use-module (guix build-system gnu)
   #:use-module (gn packages graphviz)
   #:use-module (gn packages javascript)
   #:use-module (gn packages maths)
   #:use-module (gnu packages python)
+  #:use-module (gnu packages statistics)
   #:use-module (gn packages web))
 
 (define-public bnw
@@ -25,44 +25,45 @@
                (sha256
                 (base32
                  "10qwykp2zcyxih6a52icvy30ps69qk4v3jgirmdpw1l15zi4p2wq"))))
-      (build-system trivial-build-system)
+      (build-system gnu-build-system)
       (arguments
-       `(#:modules ((guix build utils))
-         #:builder
-           (begin
-             (use-modules (guix build utils))
-             (let* ((out      (assoc-ref %outputs "out"))
-                    (source   (assoc-ref %build-inputs "source"))
-                    (bash     (assoc-ref %build-inputs "bash"))
-                    (graphviz (assoc-ref %build-inputs "graphviz"))
-                    (octave   (assoc-ref %build-inputs "octave"))
-                    (python   (assoc-ref %build-inputs "python"))
-                    (jquery (assoc-ref %build-inputs "jquery"))
-                    (awesome (assoc-ref %build-inputs "awesome"))
-                    (cyto (assoc-ref %build-inputs "cytoscape"))
-                    (cyto2 (assoc-ref %build-inputs "cytoscape-2"))
-                    (cs-dagre (assoc-ref %build-inputs "cyto-dagre"))
-                    (d3js (assoc-ref %build-inputs "d3js"))
-                    (d3js-multi (assoc-ref %build-inputs "d3js-multi"))
-                    (dagre (assoc-ref %build-inputs "dagre"))
-                    (lodash (assoc-ref %build-inputs "lodash"))
-                    (canvas-toblob (assoc-ref %build-inputs "canvas-toblob"))
-                    (filesaver (assoc-ref %build-inputs "filesaver"))
-                    (panzoom (assoc-ref %build-inputs "panzoom"))
-                    (js-path "/share/genenetwork2/javascript/"))
-               (copy-recursively source out)
-               (for-each (lambda (file)
-                 (patch-shebang file
-                   (list (string-append bash "/bin")
-                         (string-append octave "/bin")
-                         (string-append python "/bin"))))
-                 (find-files out ".*"))
-               (with-directory-excursion out
+       `(#:tests? #f ; no test suite
+         #:phases
+         (modify-phases %standard-phases
+           (delete 'configure)
+           (add-after 'patch-source-shebangs 'patch--more-shebangs
+             (lambda* (#:key inputs #:allow-other-keys)
+               (let* ((bash     (assoc-ref inputs "bash"))
+                      (graphviz (assoc-ref inputs "graphviz"))
+                      (octave   (assoc-ref inputs "octave"))
+                      (python   (assoc-ref inputs "python"))
+                      (rmath    (assoc-ref inputs "rmath"))
+                      (jquery (assoc-ref inputs "jquery"))
+                      (awesome (assoc-ref inputs "awesome"))
+                      (cyto (assoc-ref inputs "cytoscape"))
+                      (cyto2 (assoc-ref inputs "cytoscape-2"))
+                      (cs-dagre (assoc-ref inputs "cyto-dagre"))
+                      (d3js (assoc-ref inputs "d3js"))
+                      (d3js-multi (assoc-ref inputs "d3js-multi"))
+                      (dagre (assoc-ref inputs "dagre"))
+                      (lodash (assoc-ref inputs "lodash"))
+                      (canvas-toblob (assoc-ref inputs "canvas-toblob"))
+                      (filesaver (assoc-ref inputs "filesaver"))
+                      (panzoom (assoc-ref inputs "panzoom"))
+                      (js-path "/share/genenetwork2/javascript/"))
+                 (for-each (lambda (file)
+                   (patch-shebang file
+                     (list (string-append bash "/bin")
+                           (string-append octave "/bin")
+                           (string-append python "/bin"))))
+                   (find-files "." ".*"))
                  (substitute*
                    (append '("home.php")
                            (find-files "sourcecodes" ".php")
                            (find-files "sourcecodes/run_scripts" ".*"))
                    (("/usr/bin/dot") (string-append graphviz "/bin/dot")))
+                 (substitute* "sourcecodes/build.sh"
+                   (("./localscore/libRmath.so") (string-append rmath "/lib/libRmath.so")))
                  (substitute* "sourcecodes/layout_cyto.php"
                    (("https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.7.1/cytoscape.min.js")
                     (string-append cyto js-path "cytoscape/cytoscape.min.js"))
@@ -91,13 +92,26 @@
                    (("https://cdn.rawgit.com/eligrey/canvas-toBlob.js/f1a01896135ab378aa5c0118eadd81da55e698d8/canvas-toBlob.js")
                     (string-append canvas-toblob js-path "canvas-toBlob/canvas-toBlob.js"))
                    (("https://cdn.rawgit.com/eligrey/FileSaver.js/e9d941381475b5df8b7d7691013401e171014e89/FileSaver.min.js")
-                    (string-append filesaver js-path "filesaver/filesaver.js"))))))))
-      (native-inputs `(("source" ,source)))
+                    (string-append filesaver js-path "filesaver/filesaver.js"))))
+               #t))
+           (replace 'install
+             (lambda* (#:key outputs #:allow-other-keys)
+               (let ((out (assoc-ref outputs "out")))
+                 (delete-file "sourcecodes/localscore/libRmath.so")
+                 (copy-recursively "." out))
+               #t))
+           (replace 'build
+             (lambda _
+               (with-directory-excursion "sourcecodes"
+                 (substitute* "build.sh"
+                   (("./localscore") "localscore"))
+                 (chmod "k-best/src/buildk_poster.sh" #o755)
+                 (invoke "sh" "build.sh")))))))
       (inputs
-       `(("bash" ,bash-minimal)
-         ("graphviz" ,graphviz-2.26)
+       `(("graphviz" ,graphviz-2.26)
          ("octave" ,octave-3.4.3)
          ("python" ,python-2)
+         ("rmath" ,rmath-standalone) ; Should this be r-minimal? Which version?
          ("jquery" ,web-jquery)
          ("awesome" ,web-font-awesome)
          ("cytoscape" ,javascript-cytoscape)
