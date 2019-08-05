@@ -53,9 +53,7 @@
   #:use-module (gnu packages xorg)
   #:use-module (gnu packages version-control)
   #:use-module (gnu packages linux)
-  #:use-module (gnu packages opencl)
-  #:use-module (gn packages ocl-headers)
-  #:use-module (gn packages ocl-icd))
+  #:use-module (gnu packages opencl))
 
 (define-public arrayfire
 (package
@@ -120,48 +118,6 @@
                    license:gpl2+
                    license:gpl3
                    license:gpl3+))))
-
-(define-public glfw
-  (package
-    (name "glfw")
-    (version "3.1.2")
-    (source (origin
-             (method url-fetch)
-             (uri (string-append "https://github.com/glfw/glfw/archive/"
-                                 version ".tar.gz"))
-             (sha256
-              (base32
-               "08pixv8hd5xsccf7l8cqcijjqaq4k4da8qbp77wggal2fq445ika"))))
-    (build-system cmake-build-system)
-    (arguments `(#:configure-flags '("-DBUILD_SHARED_LIBS=ON")
-                 #:tests? #f))
-    (native-inputs `(("autoconf" ,autoconf)
-        ("automake" ,automake)
-        ("cmake" ,cmake)
-        ("git" ,git)
-        ("libtool" ,libtool)
-        ("libpthread-stubs" ,libpthread-stubs)
-        ("pkg-config" ,pkg-config)))
-    (inputs `(("curl" ,curl)
-       ("dbus" ,dbus)
-       ("enca" ,enca)
-       ("eudev" ,eudev)
-       ("glew" ,glew)
-       ("libcap" ,libcap)
-       ("libjpeg" ,libjpeg)
-       ("libltdl" ,libltdl)
-       ("libtiff" ,libtiff)
-       ("mesa-utils" ,mesa-utils)
-       ("randrproto" ,randrproto)
-       ("libxrandr" ,libxrandr)
-       ("xineramaproto" ,xineramaproto)
-       ("libxinerama" ,libxinerama)
-       ("libxcursor" ,libxcursor)
-       ("python" ,python-2)))
-    (home-page "http://www.glfw.org/")
-    (synopsis "glfw is an Open Source, multi-platform library for creating windows with OpenGL contexts and receiving input and events.")
-    (description "glfw is an Open Source, multi-platform library for creating windows with OpenGL contexts and receiving input and events.")
-    (license (list license:gpl2))))
 
 (define-public clBLAS
   (package
