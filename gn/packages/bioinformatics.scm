@@ -1050,3 +1050,18 @@ reads.")
     ;; Free for non-commercial use by academic, government, and
     ;; non-profit/not-for-profit institutions
     (license license:non-copyleft)))
+
+(define-public edirect-11
+  (package
+    (inherit edirect)
+    (name "edirect")
+    (version "11.8.20190730")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (string-append "ftp://ftp.ncbi.nlm.nih.gov/entrez/entrezdirect"
+                            "/versions/" version
+                            "/edirect-" version ".tar.gz"))
+        (sha256
+         (base32
+          "037sn5qmari98z5pmmrf9zx3il017nfp67p5hvq1pqzxhv6i29l3"))))))
