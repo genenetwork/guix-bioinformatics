@@ -292,53 +292,6 @@ a history.")
     "https://github.com/pjotrp/bioruby-logger-plugin")
   (license #f)))
 
-(define-public bio-table ; guix maybe ready
-(package
-  (name "bio-table")
-  (version "1.0.0")
-  (source
-    (origin
-      (method url-fetch)
-      (uri (rubygems-uri "bio-table" version))
-      (sha256
-        (base32
-          "1jlpls734kd41rffn2y2747nr14k5rwgaj2g3k48i9xgsfcmrn6r"))))
-  (build-system ruby-build-system)
-  (propagated-inputs
-    `(("ruby-bio-logger" ,ruby-bio-logger)))
-  (arguments
-   `(#:tests? #f)) ;; no bundler
-  (synopsis
-    "Functions and tools for tranforming and changing tab delimited and comma separated table files - useful for Excel sheets and SQL/RDF output")
-  (description
-    "Functions and tools for tranforming and changing tab delimited and comma separated table files - useful for Excel sheets and SQL/RDF output")
-  (home-page
-    "http://github.com/pjotrp/bioruby-table")
-  (license license:expat)))
-
-
-(define-public bio-vcf ; guix maybe ready
-(package
-  (name "bio-vcf")
-  (version "0.9.2")
-  (source
-    (origin
-      (method url-fetch)
-      (uri (rubygems-uri "bio-vcf" version))
-      (sha256
-        (base32
-          "1007bn0w8l11q867lxsyqnk0vgvv12skvk9gyglv7g44knr5vh4j"))))
-  (build-system ruby-build-system)
-  (arguments
-   `(#:tests? #f)) ;; no bundler/cucumber
-  (synopsis
-    "Smart lazy multi-threaded parser for VCF format with useful filtering and output rewriting (JSON, RDF etc.)")
-  (description
-    "Smart lazy multi-threaded parser for VCF format with useful filtering and output rewriting (JSON, RDF etc.)")
-  (home-page
-    "http://github.com/pjotrp/bioruby-vcf")
-  (license license:expat)))
-
 (define-public ruby-faraday
 (package
   (name "ruby-faraday")
