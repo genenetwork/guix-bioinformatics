@@ -969,7 +969,7 @@ manipulations on VCF files.")
             ;; The second run actually compiles the program.  Now Makefile.local
             ;; is available, and we should treat an exiting make with an error as
             ;; a true error.
-            (zero? (system* "make"))))
+            (invoke "make")))
         (replace 'install
           (lambda* (#:key outputs #:allow-other-keys)
             (let ((bin (string-append (assoc-ref outputs "out") "/bin")))
@@ -980,13 +980,11 @@ manipulations on VCF files.")
         ;; There are multiple test targets, so in order to run all
         ;; tests, we must run the separate make targets.
         (replace 'check
-          (lambda* (#:key inputs #:allow-other-keys)
-            (and
-             (zero? (system* "make" "acceptance-tests"))
-             (zero? (system* "make" "coverage-tests"))
-             (zero? (system* "make" "cppcheck"))
-             (zero? (system* "make" "functional-tests"))
-             (zero? (system* "make" "regression-tests"))))))))
+          (lambda _
+            (for-each (lambda (target)
+                        (invoke "make" target))
+                      '("acceptance-tests" "coverage-tests" "cppcheck"
+                        "functional-tests" "regression-tests")))))))
    (home-page "https://github.com/genome/pindel")
    (synopsis "Structural variants detector for next-gen sequencing data")
    (description "Pindel can detect breakpoints of large deletions, medium sized
