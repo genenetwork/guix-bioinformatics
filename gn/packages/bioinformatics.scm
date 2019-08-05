@@ -88,18 +88,16 @@
          (delete 'configure)
          (delete 'build) ; We can use Guix's BEDtools instead.
          (replace 'install
-           (lambda _
-             (let* ((out (assoc-ref %outputs "out"))
+           (lambda* (#:key outputs #:allow-other-keys)
+             (let* ((out (assoc-ref outputs "out"))
                     (bin (string-append out "/bin"))
                     (doc (string-append out "/share/doc/contra")))
-               (mkdir-p bin)
-               (mkdir-p doc)
-               (and
-                (zero? (system* "cp" "--recursive" "scripts" bin))
-                (zero? (system* "cp" "contra.py" bin))
-                (zero? (system* "cp" "baseline.py" bin))
-                ;; There's only a pre-built PDF available.
-                (zero? (system* "cp" "CONTRA_User_Guide.2.0.pdf" doc)))))))))
+               (copy-recursively "scripts" (string-append bin "/scripts"))
+               (install-file "contra.py" bin)
+               (install-file "baseline.py" bin)
+               ;; There's only a pre-built PDF available.
+               (install-file "CONTRA_User_Guide.2.0.pdf" doc))
+             #t)))))
     (home-page "http://contra-cnv.sourceforge.net/")
     (synopsis "Tool for copy number variation (CNV) detection for targeted
 resequencing data")
