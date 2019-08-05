@@ -939,12 +939,13 @@ manipulations on VCF files.")
    (name "pindel")
    (version "0.2.5b8")
    (source (origin
-     (method url-fetch)
-     (uri (string-append "https://github.com/genome/pindel/archive/v"
-                         version ".tar.gz"))
-     (file-name (string-append name "-" version ".tar.gz"))
+     (method git-fetch)
+     (uri (git-reference
+            (url "https://github.com/genome/pindel.git")
+            (commit (string-append "v" version))))
+     (file-name (git-file-name name version))
      (sha256
-      (base32 "06bsf0psxwf7h5p3j97xkh9k5qrwhxh6xn942y1j1m2inyhgs8bz"))))
+      (base32 "16a32fbgv1n58nfcxa1nyphrdrad80sgpinfa9p028n6plwycpww"))))
    (build-system gnu-build-system)
    (inputs
     `(("samtools" ,samtools)
