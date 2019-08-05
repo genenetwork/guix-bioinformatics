@@ -73,7 +73,11 @@
             (version-major+minor version) "/CONTRA.v" version ".tar.gz"))
       (sha256
        (base32
-        "0agpcm2xh5f0i9n9sx1kvln6mzdksddmh11bvzj6bh76yw5pnw91"))))
+        "0agpcm2xh5f0i9n9sx1kvln6mzdksddmh11bvzj6bh76yw5pnw91"))
+      (modules '((guix build utils)))
+      (snippet
+       '(begin
+          (delete-file "BEDTools.v2.11.2.tar.gz") #t))))
     (build-system gnu-build-system)
     (propagated-inputs
      `(("python" ,python-2)
