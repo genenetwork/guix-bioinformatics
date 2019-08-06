@@ -1,0 +1,33 @@
+https://sources.debian.org/data/main/a/arrayfire/3.3.2+dfsg1-4/debian/patches/Use-compute-library-from-Boost-1.61.patch
+
+From: Ghislain Antony Vaillant <ghisvail@gmail.com>
+Date: Fri, 12 Aug 2016 08:35:19 +0100
+Subject: Use compute library from Boost 1.61.
+
+---
+ src/backend/opencl/CMakeLists.txt | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
+
+diff --git a/src/backend/opencl/CMakeLists.txt b/src/backend/opencl/CMakeLists.txt
+index ded53bf..d7e3628 100644
+--- a/src/backend/opencl/CMakeLists.txt
++++ b/src/backend/opencl/CMakeLists.txt
+@@ -84,11 +84,13 @@ ADD_DEFINITIONS( -DBOOST_ALL_NO_LIB )
+ SET(Boost_USE_STATIC_LIBS OFF)
+ FIND_PACKAGE(Boost 1.48 REQUIRED)
+ 
+-OPTION(USE_SYSTEM_BOOST_COMPUTE "Use system BoostCompute" OFF)
+-IF(USE_SYSTEM_BOOST_COMPUTE)
+-    FIND_PACKAGE(BoostCompute REQUIRED)
+-ELSE()
+-    INCLUDE("${CMAKE_MODULE_PATH}/build_boost_compute.cmake")
++IF(Boost_VERSION VERSION_LESS "1.61")
++    OPTION(USE_SYSTEM_BOOST_COMPUTE "Use system BoostCompute" OFF)
++    IF(USE_SYSTEM_BOOST_COMPUTE)
++        FIND_PACKAGE(BoostCompute REQUIRED)
++    ELSE()
++        INCLUDE("${CMAKE_MODULE_PATH}/build_boost_compute.cmake")
++    ENDIF()
+ ENDIF()
+ 
+ SET( cl_kernel_headers
