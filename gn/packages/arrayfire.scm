@@ -171,7 +171,7 @@ user from the task of writing, optimizing and maintaining kernel code themselves
 (define-public clFFT
   (package
     (name "clFFT")
-    (version "2.10.1")
+    (version "2.12.2")
     (source (origin
              (method git-fetch)
              (uri (git-reference
@@ -180,7 +180,7 @@ user from the task of writing, optimizing and maintaining kernel code themselves
              (file-name (git-file-name name version))
              (sha256
               (base32
-               "1ksmcsqf25bmaq9rr2z1m936mxgh9cx6can2l7nna4mzlj0aghrs"))))
+               "134vb6214hn00qy84m4djg4hqs6hw19gkp8d0wlq8gb9m3mfx7na"))))
     (build-system cmake-build-system)
     (arguments
      `(#:configure-flags '("../source/src"
