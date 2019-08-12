@@ -25,7 +25,8 @@
   #:use-module (gnu packages)
   #:use-module (gnu packages perl)
   #:use-module (gnu packages pkg-config)
-  #:use-module (gnu packages python))
+  #:use-module (gnu packages python)
+  #:use-module (gnu packages python-xyz))
 
 (define-public mongodb ; guix fix tests and maybe non-free
   (package
