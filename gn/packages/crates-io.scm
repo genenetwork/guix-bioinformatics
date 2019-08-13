@@ -545,7 +545,17 @@
         #:cargo-development-inputs
         (("rust-clap" ,rust-clap)
          ("rust-diff" ,rust-diff)
-         ("rust-shlex" ,rust-shlex))))
+         ("rust-shlex" ,rust-shlex))
+        #:phases
+        (modify-phases %standard-phases
+          (add-after 'unpack 'set-environmental-variable
+            (lambda* (#:key inputs #:allow-other-keys)
+              (let ((clang (assoc-ref inputs "libclang")))
+                (setenv "LIBCLANG_PATH"
+                        (string-append clang "/lib")))
+              #t)))))
+    (inputs
+     `(("libclang" ,(@ (gnu packages llvm) clang))))
     (home-page
       "https://rust-lang.github.io/rust-bindgen/")
     (synopsis
@@ -772,7 +782,17 @@
       `(#:cargo-inputs
         (("rust-nom" ,rust-nom))
         #:cargo-development-inputs
-        (("rust-clang-sys" ,rust-clang-sys))))
+        (("rust-clang-sys" ,rust-clang-sys))
+        #:phases
+        (modify-phases %standard-phases
+          (add-after 'unpack 'set-environmental-variable
+            (lambda* (#:key inputs #:allow-other-keys)
+              (let ((clang (assoc-ref inputs "libclang")))
+                (setenv "LIBCLANG_PATH"
+                        (string-append clang "/lib")))
+              #t)))))
+    (inputs
+     `(("libclang" ,(@ (gnu packages llvm) clang))))
     (home-page
       "https://github.com/jethrogb/rust-cexpr")
     (synopsis "A C expression parser and evaluator")
@@ -2382,9 +2402,18 @@ pseudorandom number generator")
          ("rust-serde-derive" ,rust-serde-derive)
          ("rust-tempdir" ,rust-tempdir)
          ("rust-thread-id" ,rust-thread-id)
-         ("rust-time" ,rust-time))))
-    ;(inputs
-    ; `(("libgit" ,(@ (gnu packages version-control) libgit2))))
+         ("rust-time" ,rust-time))
+       #:phases
+       (modify-phases %standard-phases
+         (add-after 'unpack 'find-openssl
+           (lambda* (#:key inputs #:allow-other-keys)
+             (let ((openssl (assoc-ref inputs "openssl")))
+               (setenv "OPENSSL_DIR" openssl))
+             (setenv "LIBGIT2_SYS_USE_PKG_CONFIG" "1")
+             #t)))))
+    (inputs
+     `(("libgit" ,(@ (gnu packages version-control) libgit2))
+       ("openssl" ,(@ (gnu packages tls) openssl))))
     (home-page
       "https://github.com/rust-lang/git2-rs")
     (synopsis
@@ -2906,6 +2935,44 @@ pseudorandom number generator")
     (license (list license:asl2.0
                    license:expat))))
 
+(define-public rust-jemalloc-ctl
+  (package
+    (name "rust-jemalloc-ctl")
+    (version "0.3.3")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (crate-uri "jemalloc-ctl" version))
+        (file-name
+          (string-append name "-" version ".tar.gz"))
+        (sha256
+          (base32
+            "1dx4mik2ww5ic4qqv5zx9dxq6pbkclxnxa9bscg4z4njkpzsa0n5"))))
+    (build-system cargo-build-system)
+    (arguments
+     `(#:cargo-inputs
+       (("rust-jemalloc-sys" ,rust-jemalloc-sys)
+        ("rust-libc" ,rust-libc)
+        ("rust-paste" ,rust-paste))
+       #:cargo-development-inputs
+       (("rust-jemallocator" ,rust-jemallocator))
+       #:phases
+       (modify-phases %standard-phases
+         (add-after 'unpack 'override-jemalloc
+           (lambda* (#:key inputs #:allow-other-keys)
+             (let ((jemalloc (assoc-ref inputs "jemalloc")))
+               (setenv "JEMALLOC_OVERRIDE"
+                       (string-append jemalloc "/lib/libjemalloc_pic.a")))
+             #t)))))
+    (inputs
+     `(("jemalloc" ,(@ (gnu packages jemalloc) jemalloc))))
+    (home-page "https://github.com/gnzlbg/jemallocator")
+    (synopsis
+      "A safe wrapper over jemalloc's control and introspection APIs")
+    (description
+      "This package provides a safe wrapper over jemalloc's control and introspection APIs")
+    (license #f)))
+
 (define-public rust-jemalloc-sys
   (package
     (name "rust-jemalloc-sys")
@@ -2914,22 +2981,34 @@ pseudorandom number generator")
       (origin
         (method url-fetch)
         (uri (crate-uri "jemalloc-sys" version))
-        (file-name
-          (string-append name "-" version ".tar.gz"))
+        (file-name (string-append name "-" version ".tar.gz"))
         (sha256
-          (base32
-            "0ify9vlql01qhfxlj7d4p9jvcp90mj2h69nkbq7slccvbhzryfqd"))))
+         (base32
+          "0ify9vlql01qhfxlj7d4p9jvcp90mj2h69nkbq7slccvbhzryfqd"))
+        ;(modules '((guix build utils)))
+        ;(snippet
+        ; '(begin
+        ;    ;; unbundle jemalloc source
+        ;    (delete-file-recursively "jemalloc") #t))
+        ))
     (build-system cargo-build-system)
     (arguments
-      `(#:cargo-inputs
-        (("rust-libc" ,rust-libc)
-         ("rust-cc" ,rust-cc)
-         ("rust-fs-extra" ,rust-fs-extra))))
+     `(#:cargo-inputs
+       (("rust-libc" ,rust-libc)
+        ("rust-cc" ,rust-cc)
+        ("rust-fs-extra" ,rust-fs-extra))
+       #:phases
+       (modify-phases %standard-phases
+         (add-after 'unpack 'override-jemalloc
+           (lambda* (#:key inputs #:allow-other-keys)
+             (let ((jemalloc (assoc-ref inputs "jemalloc")))
+               (delete-file-recursively "jemalloc")
+               (setenv "JEMALLOC_OVERRIDE"
+                       (string-append jemalloc "/lib/libjemalloc_pic.a")))
+             #t)))))
     (inputs
-     `(("jemalloc" ,(@ (gnu packages jemalloc) jemalloc))
-       ("rust-cc" ,rust-cc)))
-    (home-page
-      "https://github.com/gnzlbg/jemallocator")
+     `(("jemalloc" ,(@ (gnu packages jemalloc) jemalloc))))
+    (home-page "https://github.com/gnzlbg/jemallocator")
     (synopsis "Rust FFI bindings to jemalloc")
     (description "Rust FFI bindings to jemalloc")
     (license (list license:asl2.0
@@ -2954,7 +3033,17 @@ pseudorandom number generator")
        (("rust-jemalloc-sys" ,rust-jemalloc-sys)
         ("rust-libc" ,rust-libc))
        #:cargo-development-inputs
-       (("rust-paste" ,rust-paste))))
+       (("rust-paste" ,rust-paste))
+       #:phases
+       (modify-phases %standard-phases
+         (add-after 'unpack 'override-jemalloc
+           (lambda* (#:key inputs #:allow-other-keys)
+             (let ((jemalloc (assoc-ref inputs "jemalloc")))
+               (setenv "JEMALLOC_OVERRIDE"
+                       (string-append jemalloc "/lib/libjemalloc_pic.a")))
+             #t)))))
+    (inputs
+     `(("jemalloc" ,(@ (gnu packages jemalloc) jemalloc))))
     (home-page "https://github.com/gnzlbg/jemallocator")
     (synopsis "A Rust allocator backed by jemalloc")
     (description
@@ -3084,8 +3173,14 @@ pseudorandom number generator")
         (file-name
           (string-append name "-" version ".tar.gz"))
         (sha256
-          (base32
-            "0y2mibmx7wy91s2kmb2gfb29mrqlqaxpy5wcwr8s1lwws7b9w5sc"))))
+         (base32
+          "0y2mibmx7wy91s2kmb2gfb29mrqlqaxpy5wcwr8s1lwws7b9w5sc"))
+        ;(modules '((guix build utils)))
+        ;(snippet
+        ; '(begin
+        ;    ;; unbundle jemalloc source
+        ;    (delete-file-recursively "libgit2") #t))
+        ))
     (build-system cargo-build-system)
     (arguments
       `(#:cargo-inputs
@@ -3095,9 +3190,22 @@ pseudorandom number generator")
          ("rust-openssl-sys" ,rust-openssl-sys))
         #:cargo-development-inputs
         (("rust-cc" ,rust-cc)
-         ("rust-pkg-config" ,rust-pkg-config))))
-    ;(inputs
-    ; `(("libgit" ,(@ (gnu packages version-control) libgit2))))
+         ("rust-pkg-config" ,rust-pkg-config))
+       #:phases
+       (modify-phases %standard-phases
+         (add-after 'unpack 'find-openssl
+           (lambda* (#:key inputs #:allow-other-keys)
+             (let ((openssl (assoc-ref inputs "openssl")))
+               (setenv "OPENSSL_DIR" openssl))
+             (delete-file-recursively "libgit2")
+             (setenv "LIBGIT2_SYS_USE_PKG_CONFIG" "1")
+             (setenv "LIBSSH2_SYS_USE_PKG_CONFIG" "1")
+             #t)))))
+    (inputs
+     `(("libgit" ,(@ (gnu packages version-control) libgit2))
+       ("openssl" ,(@ (gnu packages tls) openssl))
+       ("pkg-config" ,(@ (gnu packages pkg-config) pkg-config))
+       ("zlib" ,(@ (gnu packages compression) zlib))))
     (home-page
       "https://github.com/rust-lang/git2-rs")
     (synopsis
@@ -3144,8 +3252,14 @@ pseudorandom number generator")
         (file-name
           (string-append name "-" version ".tar.gz"))
         (sha256
-          (base32
-            "17dz3xxy5bc73sr52maa6wdqmw1a0ymznrgfzlxid2rng101yshj"))))
+         (base32
+          "17dz3xxy5bc73sr52maa6wdqmw1a0ymznrgfzlxid2rng101yshj"))
+        ;(modules '((guix build utils)))
+        ;(snippet
+        ; '(begin
+        ;    ;; unbundle jemalloc source
+        ;    (delete-file-recursively "libssh2") #t))
+        ))
     (build-system cargo-build-system)
     (arguments
       `(#:cargo-inputs
@@ -3155,9 +3269,21 @@ pseudorandom number generator")
          ("rust-vcpkg" ,rust-vcpkg))
         #:cargo-development-inputs
         (("rust-cc" ,rust-cc)
-         ("rust-pkg-config" ,rust-pkg-config))))
-    ;(inputs
-    ; `(("libssh2" ,(@ (gnu packages ssh) libssh2))))
+         ("rust-pkg-config" ,rust-pkg-config))
+       #:phases
+       (modify-phases %standard-phases
+         (add-after 'unpack 'find-openssl
+           (lambda* (#:key inputs #:allow-other-keys)
+             (let ((openssl (assoc-ref inputs "openssl")))
+               (setenv "OPENSSL_DIR" openssl))
+             (delete-file-recursively "libssh2")
+             (setenv "LIBSSH2_SYS_USE_PKG_CONFIG" "1")
+             #t)))))
+    (inputs
+     `(("libssh2" ,(@ (gnu packages ssh) libssh2))
+       ("openssl" ,(@ (gnu packages tls) openssl))
+       ("pkg-config" ,(@ (gnu packages pkg-config) pkg-config))
+       ("zlib" ,(@ (gnu packages compression) zlib))))
     (home-page
       "https://github.com/alexcrichton/ssh2-rs")
     (synopsis
@@ -3167,7 +3293,6 @@ pseudorandom number generator")
     (license (list license:asl2.0
                    license:expat))))
 
-;; TODO: Unbundle zlib
 (define-public rust-libz-sys
   (package
     (name "rust-libz-sys")
@@ -3179,7 +3304,13 @@ pseudorandom number generator")
         (file-name (string-append name "-" version ".tar.gz"))
         (sha256
          (base32
-          "1gjycyl2283525abks98bhxa4r259m617xfm5z52p3p3c8ry9d9f"))))
+          "1gjycyl2283525abks98bhxa4r259m617xfm5z52p3p3c8ry9d9f"))
+        ;(modules '((guix build utils)))
+        ;(snippet
+        ; '(begin
+        ;    ;; unbundle jemalloc source
+        ;    (delete-file-recursively "src/zlib") #t))
+        ))
     (build-system cargo-build-system)
     (arguments
      `(#:cargo-inputs
@@ -3187,7 +3318,16 @@ pseudorandom number generator")
        #:cargo-development-inputs
        (("rust-cc" ,rust-cc)
         ("rust-pkg-config" ,rust-pkg-config)
-        ("rust-vcpkg" ,rust-vcpkg))))
+        ("rust-vcpkg" ,rust-vcpkg))
+       #:phases
+       (modify-phases %standard-phases
+         (add-after 'unpack 'delete-vendored-zlib
+           (lambda _
+             (delete-file-recursively "src/zlib")
+             #t)))))
+    (inputs
+     `(("pkg-config" ,(@ (gnu packages pkg-config) pkg-config))
+       ("zlib" ,(@ (gnu packages compression) zlib))))
     (home-page "https://github.com/alexcrichton/libz-sys")
     (synopsis "Bindings to the system libz library (also known as zlib).")
     (description
@@ -3646,7 +3786,16 @@ implementation (which is unstable / requires nightly).")
          ("rust-openssl-sys" ,rust-openssl-sys))
         #:cargo-development-inputs
         (("rust-hex" ,rust-hex)
-         ("rust-tempdir" ,rust-tempdir))))
+         ("rust-tempdir" ,rust-tempdir))
+       #:phases
+       (modify-phases %standard-phases
+         (add-after 'unpack 'find-openssl
+           (lambda* (#:key inputs #:allow-other-keys)
+             (let ((openssl (assoc-ref inputs "openssl")))
+               (setenv "OPENSSL_DIR" openssl))
+             #t)))))
+    (inputs
+     `(("openssl" ,(@ (gnu packages tls) openssl))))
     (home-page
       "https://github.com/sfackler/rust-openssl")
     (synopsis "OpenSSL bindings")
@@ -3693,14 +3842,25 @@ implementation (which is unstable / requires nightly).")
             "1f05kxx8mai9ac16x1lk0404bymghbbj7vcbqrfwqfr52w131fmm"))))
     (build-system cargo-build-system)
     (arguments
-      `(#:cargo-inputs
-        (("rust-libc" ,rust-libc))
-        #:cargo-development-inputs
-        (("rust-autocfg" ,rust-autocfg)
-         ("rust-cc" ,rust-cc)
-         ("rust-openssl-src" ,rust-openssl-src)
-         ("rust-pkg-config" ,rust-pkg-config)
-         ("rust-vcpkg" ,rust-vcpkg))))
+     `(#:cargo-inputs
+       (("rust-autocfg" ,rust-autocfg)
+        ("rust-libc" ,rust-libc))
+       #:cargo-development-inputs
+       (("rust-autocfg" ,rust-autocfg)
+        ("rust-cc" ,rust-cc)
+        ("rust-openssl-src" ,rust-openssl-src)
+        ("rust-pkg-config" ,rust-pkg-config)
+        ("rust-vcpkg" ,rust-vcpkg))
+       #:phases
+       (modify-phases %standard-phases
+         (add-after 'unpack 'find-openssl
+           (lambda* (#:key inputs #:allow-other-keys)
+             (let ((openssl (assoc-ref inputs "openssl")))
+               (setenv "OPENSSL_DIR" openssl))
+             #t)))))
+    (inputs
+     `(("openssl" ,(@ (gnu packages tls) openssl))
+       ("pkg-config" ,(@ (gnu packages pkg-config) pkg-config))))
     (home-page
       "https://github.com/sfackler/rust-openssl")
     (synopsis "FFI bindings to OpenSSL")
