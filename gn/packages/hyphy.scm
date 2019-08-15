@@ -19,36 +19,43 @@
 
 (define-module (gn packages hyphy)
   #:use-module ((guix licenses) #:prefix license:)
-  #:use-module (guix download)
+  #:use-module (guix git-download)
   #:use-module (guix build-system cmake)
   #:use-module (guix packages)
   #:use-module (gnu packages algebra)
+  #:use-module (gnu packages curl)
   #:use-module (gnu packages mpi)
-  #:use-module (gnu packages python))
+  #:use-module (gnu packages python)
+  #:use-module (gnu packages tls))
 
+;; TODO: Unbundle sqlite, gtest
 (define-public hyphy ; guix: check
   (package
     (name "hyphy")
-    (version "2.2.6")
+    (version "2.5.0")
     (source (origin
-              (method url-fetch)
-              (uri (string-append "https://github.com/veg/hyphy/archive/" version
-                                  ".tar.gz"))
-              (file-name (string-append name "-" version ".tar.gz"))
+              (method git-fetch)
+              (uri (git-reference
+                     (url "https://github.com/veg/hyphy.git")
+                     (commit version)))
+              (file-name (git-file-name name version))
               (sha256
                (base32
-                "00i3609nywb1xfq50p3kvfbvahql241ciq23jrf67z0yp4y5l5a9"))))
+                "1fvmwg2rxkz3abhhldiir69vmyc4i85vdvy64bizgxd0g2k2bikm"))))
     (inputs
-     `(("python" ,python-2)
+     `(("curl" ,curl)
+       ("fftw-openmpi" ,fftw-openmpi)
        ("openmpi" ,openmpi)
-       ("fftw-openmpi" ,fftw-openmpi)))
+       ("openssl" ,openssl)
+       ("python" ,python-2)))
     (build-system cmake-build-system)
     (arguments
-     '(#:make-flags '("MPI")
+     '(#:make-flags '("MPI") ; Add "GTEST" for tests, currently fails to compile.
        #:configure-flags (list "-DCMAKE_BUILD_TYPE=Release"
                                (string-append "-DINSTALL_PREFIX="
                                               (assoc-ref %outputs "out")))
-       #:tests? #f))
+       #:tests? #f
+       #:test-target "HYPHYGTEST"))
     (synopsis "hyphy: an open-source software package for the analysis
 of genetic sequences using techniques in phylogenetics, molecular
 evolution, and machine learning.")
