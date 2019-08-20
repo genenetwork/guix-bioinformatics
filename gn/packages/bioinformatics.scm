@@ -921,17 +921,84 @@ reads.")
     ;; non-profit/not-for-profit institutions
     (license license:non-copyleft)))
 
-(define-public edirect-11
+(define-public edirect-gn
   (package
     (inherit edirect)
-    (name "edirect")
-    (version "11.8.20190730")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (string-append "ftp://ftp.ncbi.nlm.nih.gov/entrez/entrezdirect"
-                            "/versions/" version
-                            "/edirect-" version ".tar.gz"))
-        (sha256
-         (base32
-          "037sn5qmari98z5pmmrf9zx3il017nfp67p5hvq1pqzxhv6i29l3"))))))
+    (name "edirect-gn")
+    (arguments
+      (substitute-keyword-arguments (package-arguments edirect)
+        ((#:phases phases)
+         `(modify-phases ,phases
+         ;   (replace 'build
+         ;     (lambda* (#:key inputs #:allow-other-keys)
+         ;       (let ((go (string-append (assoc-ref inputs "go") "/bin/go")))
+         ;         (invoke go "build" "xtract.go"))))
+            (add-after 'unpack 'patch-programs
+              (lambda* (#:key inputs #:allow-other-keys)
+                (let ((gzip (assoc-ref inputs "gzip")))
+                  (substitute* '("index-bioc"
+                                 "pm-index"
+                                 "pm-invert"
+                                 "pm-stash"
+                                 "rchive.go"
+                                 "run-ncbi-converter")
+                    (("gunzip") (string-append gzip "/bin/gunzip")))
+                  (substitute* "efetch"
+                    (("exec perl") "exec"))
+                  (substitute* '("xtract" "rchive")
+                    ;; or add current directory to PATH
+                    ((".*PATH.*") "")))
+                #t))
+            (replace 'install
+              (lambda* (#:key inputs outputs #:allow-other-keys)
+                (let ((bin (string-append (assoc-ref outputs "out") "/bin"))
+                      (xtract.linux (assoc-ref inputs "xtract.Linux"))
+                      (rchive.linux (assoc-ref inputs "rchive.Linux")))
+                  (for-each
+                    (lambda (file)
+                      (install-file file bin))
+                    '("edirect.pl" "archive-pubmed" "pm-prepare" "download-pubmed"
+                      "pm-stash" "pm-refresh" "fetch-pubmed" "xtract" "has-asp"
+                      "asp-ls" "asp-cp" "ftp-ls" "ftp-cp" "rchive" "efetch"))
+                  (copy-file xtract.linux (string-append bin "/xtract.Linux"))
+                  (copy-file rchive.linux (string-append bin "/rchive.Linux"))
+                  (chmod (string-append bin "/xtract.Linux") #o555)
+                  (chmod (string-append bin "/rchive.Linux") #o555))
+                #t))
+            (replace 'wrap-program
+              (lambda* (#:key outputs #:allow-other-keys)
+                ;; Make sure 'edirect.pl' finds all perl inputs at runtime.
+                (let ((out (assoc-ref outputs "out"))
+                      (path (getenv "PERL5LIB")))
+                  (for-each
+                    (lambda (file)
+                      (wrap-program (string-append out "/bin/" file)
+                                    `("PERL5LIB" ":" prefix (,path))))
+                    '("edirect.pl" "asp-ls" "ftp-cp" "ftp-ls")))
+                #t))))))
+    (inputs
+     `(("gzip" ,gzip)
+       ,@(package-inputs edirect)))
+    (native-inputs
+     `(
+       ;("go" ,go)
+       ("xtract.Linux"
+        ,(origin
+           (method url-fetch)
+           (uri (string-append "ftp://ftp.ncbi.nlm.nih.gov/entrez/entrezdirect/"
+                               "versions/" (package-version edirect) "/xtract.Linux"))
+           (file-name (string-append "xtract.Linux-" (package-version edirect)))
+           (sha256
+            (base32
+             "0fx6arpn38spnwszmvkkpa3498qrrlglg2l9jw91icgqbyjjq9wq"))))
+       ("rchive.Linux"
+        ,(origin
+           (method url-fetch)
+           (uri (string-append "ftp://ftp.ncbi.nlm.nih.gov/entrez/entrezdirect/"
+                               "versions/" (package-version edirect) "/rchive.Linux"))
+           (file-name (string-append "rchive.Linux-" (package-version edirect)))
+           (sha256
+            (base32
+             "134y0zprplqlplc6qmcjb97411bxkwghmq3z0qjgh0dgdbzjq1w3"))))))
+    ;; Due to the precompiled binaries we download:
+    (supported-systems "x86_64-linux")))
