@@ -943,7 +943,7 @@ reads.")
                                  "rchive.go"
                                  "run-ncbi-converter")
                     (("gunzip") (string-append gzip "/bin/gunzip")))
-                  (substitute* "efetch"
+                  (substitute* (find-files "." "^e")
                     (("exec perl") "exec"))
                   (substitute* '("xtract" "rchive")
                     ;; or add current directory to PATH
@@ -957,9 +957,10 @@ reads.")
                   (for-each
                     (lambda (file)
                       (install-file file bin))
-                    '("edirect.pl" "archive-pubmed" "pm-prepare" "download-pubmed"
-                      "pm-stash" "pm-refresh" "fetch-pubmed" "xtract" "has-asp"
-                      "asp-ls" "asp-cp" "ftp-ls" "ftp-cp" "rchive" "efetch"))
+                    '("archive-pubmed" "asp-cp" "asp-ls" "download-pubmed"
+                      "edirect.pl" "efetch" "epost" "fetch-pubmed" "ftp-cp"
+                      "ftp-ls" "has-asp" "pm-prepare" "pm-refresh" "pm-stash"
+                      "rchive" "xtract"))
                   (copy-file xtract.linux (string-append bin "/xtract.Linux"))
                   (copy-file rchive.linux (string-append bin "/rchive.Linux"))
                   (chmod (string-append bin "/xtract.Linux") #o555)
