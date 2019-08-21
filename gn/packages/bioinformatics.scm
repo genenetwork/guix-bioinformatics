@@ -1001,5 +1001,12 @@ reads.")
            (sha256
             (base32
              "134y0zprplqlplc6qmcjb97411bxkwghmq3z0qjgh0dgdbzjq1w3"))))))
+    (native-search-paths
+     ;; Ideally this should be set for LWP somewhere.
+     (list (search-path-specification
+            (variable "PERL_LWP_SSL_CA_FILE")
+            (file-type 'regular)
+            (separator #f)
+            (files '("/etc/ssl/certs/ca-certificates.crt")))))
     ;; Due to the precompiled binaries we download:
     (supported-systems "x86_64-linux")))
