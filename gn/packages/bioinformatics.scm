@@ -1009,4 +1009,4 @@ reads.")
             (separator #f)
             (files '("/etc/ssl/certs/ca-certificates.crt")))))
     ;; Due to the precompiled binaries we download:
-    (supported-systems "x86_64-linux")))
+    (supported-systems '("x86_64-linux"))))
