@@ -50,7 +50,7 @@
 (define-public rust-afl
   (package
     (name "rust-afl")
-    (version "0.4.3")
+    (version "0.4.4")
     (source
       (origin
         (method url-fetch)
@@ -58,7 +58,7 @@
         (file-name (string-append name "-" version ".tar.gz"))
         (sha256
          (base32
-          "0g2chc18ji7qxi0d03n2ai140qdcww958v5si6rcjnnhmri1vyfb"))))
+          "14k6hnwzqn7rrs0hs87vcfqj4334k9wff38d15378frlxpviaard"))))
     (build-system cargo-build-system)
     (arguments
      `(#:cargo-inputs
@@ -79,7 +79,7 @@
 (define-public rust-aho-corasick
   (package
     (name "rust-aho-corasick")
-    (version "0.7.4")
+    (version "0.7.6")
     (source
       (origin
         (method url-fetch)
@@ -87,7 +87,7 @@
         (file-name (string-append name "-" version ".tar.gz"))
         (sha256
          (base32
-          "10p2yl9fz7a4zwc4kj4zpk0wcz64n4m5l0ng6zsa6zkxrcfamdrn"))))
+          "0b8dh20fhdc59dhhnfi89n2bi80a8zbagzd5c122hf1vv2amxysq"))))
     (build-system cargo-build-system)
     (arguments
      `(#:cargo-inputs
@@ -95,7 +95,7 @@
        #:cargo-development-inputs
        (("rust-doc-comment" ,rust-doc-comment))))
     (home-page "https://github.com/BurntSushi/aho-corasick")
-    (synopsis "Fast multiple substring searching.")
+    (synopsis "Fast multiple substring searching")
     (description
       "Fast multiple substring searching.")
     (license (list license:unlicense
@@ -355,7 +355,7 @@
 (define-public rust-backtrace
   (package
     (name "rust-backtrace")
-    (version "0.3.33")
+    (version "0.3.35")
     (source
       (origin
         (method url-fetch)
@@ -364,7 +364,7 @@
           (string-append name "-" version ".tar.gz"))
         (sha256
           (base32
-            "1iiinw3c494lz8xb823ccl9zwifka9zsg44734wsd3xgr6dngyw8"))))
+            "0mfwbb6832rh1za304w8x37bvs9fjbybpmmz0iksqfzsaf108w8k"))))
     (build-system cargo-build-system)
     (arguments
       `(#:cargo-inputs
@@ -420,7 +420,7 @@
         #:cargo-development-inputs
         (("rust-cc" ,rust-cc))))
     (home-page
-      "https://github.com/alexcrichton/backtrace-rs")
+      "https://github.com/rust-lang/backtrace-rs")
     (synopsis
       "Bindings to the libbacktrace gcc library")
     (description
@@ -473,7 +473,7 @@
         (("rust-criterion" ,rust-criterion)
          ("rust-rand" ,rust-rand))))
     (home-page
-      "https://github.com/alicemaz/rust-base64")
+      "https://github.com/marshallpierce/rust-base64")
     (synopsis
       "encodes and decodes base64 as bytes or utf8")
     (description
@@ -503,7 +503,7 @@
         #:cargo-development-inputs
         (("rust-serde-bytes" ,rust-serde-bytes)
          ("rust-serde-derive" ,rust-serde-derive))))
-    (home-page "https://github.com/TyOverby/bincode")
+    (home-page "https://github.com/servo/bincode")
     (synopsis
       "A binary serialization / deserialization strategy that uses Serde for transforming structs into bytes and vice versa!")
     (description
@@ -513,7 +513,7 @@
 (define-public rust-bindgen
   (package
     (name "rust-bindgen")
-    (version "0.50.0")
+    (version "0.51.0")
     (source
       (origin
         (method url-fetch)
@@ -522,7 +522,7 @@
           (string-append name "-" version ".tar.gz"))
         (sha256
           (base32
-            "1k4n1d002vrfn1mlpww3ib7f275yn4rpxfwkqpr9bym27zg17ab5"))))
+            "1l4sifn771v83q8wafyvmsrphjni8i8wvgdlddd09v35f3fhq9qq"))))
     (build-system cargo-build-system)
     (arguments
       `(#:cargo-inputs
@@ -639,7 +639,7 @@
          ("rust-quickcheck" ,rust-quickcheck))))
     (home-page "https://github.com/fitzgen/bumpalo")
     (synopsis
-      "A fast bump allocation arena for Rust.")
+      "Fast bump allocation arena for Rust")
     (description
       "This package provides a fast bump allocation arena for Rust.")
     (license (list license:asl2.0
@@ -695,7 +695,7 @@
          ("rust-serde" ,rust-serde))
         #:cargo-development-inputs
         (("rust-serde-test" ,rust-serde-test))))
-    (home-page "https://github.com/carllerche/bytes")
+    (home-page "https://github.com/tokio-rs/bytes")
     (synopsis
       "Types and traits for working with bytes")
     (description
@@ -723,7 +723,7 @@
          ("rust-ppv-lite86" ,rust-ppv-lite86)
          ("rust-stream-cipher" ,rust-stream-cipher))
         #:cargo-development-inputs
-        (("rust-hex-literal" ,rust-hex-literal))))
+        (("rust-hex-literal" ,rust-hex-literal-0.1))))
     (home-page
       "https://github.com/cryptocorrosion/cryptocorrosion")
     (synopsis "The ChaCha family of stream ciphers")
@@ -856,7 +856,7 @@
          ("rust-serde" ,rust-serde)
          ("rust-serde-derive" ,rust-serde-derive))))
     (home-page
-      "http://github.com/sagiegurari/ci_info")
+      "https://github.com/sagiegurari/ci_info")
     (synopsis
       "Provides current CI environment information.")
     (description
@@ -983,7 +983,7 @@
       `(#:cargo-development-inputs
         (("rust-term" ,rust-term))))
     (home-page
-      "https://github.com/rust-lang-nursery/rust-clippy")
+      "https://github.com/rust-lang/rust-clippy")
     (synopsis
       "A bunch of helpful lints to avoid common pitfalls in Rust.")
     (description
@@ -1151,7 +1151,7 @@
         (("rust-wasm-bindgen-test"
           ,rust-wasm-bindgen-test))))
     (home-page
-      "https://github.com/rust-lang-nursery/stdsimd")
+      "https://github.com/rust-lang/stdarch")
     (synopsis
       "`core::arch` - Rust's core library architecture-specific intrinsics.")
     (description
@@ -1778,7 +1778,7 @@
       `(#:cargo-inputs
         (("rust-indexmap" ,rust-indexmap))))
     (home-page
-      "http://github.com/sagiegurari/envmnt")
+      "https://github.com/sagiegurari/envmnt")
     (synopsis
       "Environment variables utility functions.")
     (description
@@ -2078,7 +2078,7 @@ pseudorandom number generator")
          ("rust-futures-sink-preview"
           ,rust-futures-sink-preview))))
     (home-page
-      "https://rust-lang-nursery.github.io/futures-rs")
+      "https://rust-lang-nursery.github.io/futures-rs/")
     (synopsis
       "Channels for asynchronous communication using futures-rs.")
     (description
@@ -2130,7 +2130,7 @@ pseudorandom number generator")
           ,rust-futures-util-preview)
          ("rust-num-cpus" ,rust-num-cpus))))
     (home-page
-      "https://rust-lang-nursery.github.io/futures-rs")
+      "https://rust-lang-nursery.github.io/futures-rs/")
     (synopsis
       "Executors for asynchronous tasks based on the futures-rs library.")
     (description
@@ -2151,7 +2151,7 @@ pseudorandom number generator")
          (base32
           "0fhvwhdb8ywjjbfng0ra1r8yyc9yzpyxg9sv3spb3f7w0lk40bh8"))))
     (build-system cargo-build-system)
-    (home-page "https://rust-lang-nursery.github.io/futures-rs")
+    (home-page "https://rust-lang-nursery.github.io/futures-rs/")
     (synopsis "Async read and write traits for the futures library")
     (description "This crate provides the @code{AsyncRead} and
 @code{AsyncWrite} traits for the @code{futures-rs} library.")
@@ -2181,7 +2181,7 @@ pseudorandom number generator")
          ("rust-quote" ,rust-quote)
          ("rust-syn" ,rust-syn))))
     (home-page
-      "https://rust-lang-nursery.github.io/futures-rs")
+      "https://rust-lang-nursery.github.io/futures-rs/")
     (synopsis
       "The `select!` macro for waiting on multiple different `Future`s at once and handling the first one to complete.")
     (description
@@ -2208,7 +2208,7 @@ pseudorandom number generator")
         (("rust-futures-core-preview"
           ,rust-futures-core-preview))))
     (home-page
-      "https://rust-lang-nursery.github.io/futures-rs")
+      "https://rust-lang-nursery.github.io/futures-rs/")
     (synopsis
       "The asynchronous `Sink` trait for the futures-rs library.")
     (description
@@ -2252,7 +2252,7 @@ pseudorandom number generator")
          ("rust-slab" ,rust-slab)
          ("rust-tokio-io" ,rust-tokio-io))))
     (home-page
-      "https://rust-lang-nursery.github.io/futures-rs")
+      "https://rust-lang-nursery.github.io/futures-rs/")
     (synopsis
       "Common utilities and extension traits for the futures-rs library.")
     (description
@@ -2310,7 +2310,7 @@ pseudorandom number generator")
         (("rust-bincode" ,rust-bincode)
          ("rust-serde-json" ,rust-serde-json))))
     (home-page
-      "https://github.com/fizyk20/generic-array.git")
+      "https://github.com/fizyk20/generic-array")
     (synopsis
       "Generic types implementing functionality of arrays")
     (description
@@ -2337,7 +2337,7 @@ pseudorandom number generator")
         #:cargo-development-inputs
         (("rust-log" ,rust-log))))
     (home-page
-      "https://github.com/rust-lang/getopts")
+      "https://github.com/rust-lang-nursery/getopts")
     (synopsis "getopts-like option parsing.")
     (description "getopts-like option parsing.")
     (license (list license:asl2.0
@@ -2485,7 +2485,7 @@ pseudorandom number generator")
     (arguments
       `(#:cargo-development-inputs
         (("rust-tempdir" ,rust-tempdir))))
-    (home-page "https://github.com/rust-lang/glob")
+    (home-page "https://github.com/rust-lang-nursery/glob")
     (synopsis
       "Support for matching file paths against Unix shell style patterns.")
     (description
@@ -2613,6 +2613,24 @@ pseudorandom number generator")
     (license (list license:asl2.0
                    license:expat))))
 
+(define-public rust-hex-literal-0.1
+  (package
+    (inherit rust-hex-literal)
+    (name "rust-hex-literal")
+    (version "0.1.4")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (crate-uri "hex-literal" version))
+        (file-name (string-append name "-" version ".tar.gz"))
+        (sha256
+         (base32
+          "0ffnn5g9q5xhdmzj2ic5hk9y18kyqflbmqcssqcya9gixs5r5hnx"))))
+    (arguments
+     `(#:cargo-inputs
+       (("rust-hex-literal-impl" ,rust-hex-literal-impl-0.1)
+        ("rust-proc-macro-hack" ,rust-proc-macro-hack))))))
+
 (define-public rust-hex-literal-impl
   (package
     (name "rust-hex-literal-impl")
@@ -2637,6 +2655,23 @@ pseudorandom number generator")
       "Internal implementation of the hex-literal crate")
     (license (list license:asl2.0
                    license:expat))))
+
+(define-public rust-hex-literal-impl-0.1
+  (package
+    (inherit rust-hex-literal-impl)
+    (name "rust-hex-literal-impl")
+    (version "0.1.2")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (crate-uri "hex-literal-impl" version))
+        (file-name (string-append name "-" version ".tar.gz"))
+        (sha256
+         (base32
+          "1nnxqhyn9l998ma04ip79bmpqv1as6003s03g26ynhrr471p022j"))))
+    (arguments
+     `(#:cargo-inputs
+       (("rust-proc-macro-hack" ,rust-proc-macro-hack-0.4))))))
 
 (define-public rust-humantime
   (package
@@ -4290,6 +4325,28 @@ invocations.")
       "Procedural functionlike!() macros using only Macros 1.1")
     (license (list license:asl2.0
                    license:expat))))
+
+(define-public rust-proc-macro-hack-0.4
+  (package
+    (inherit rust-proc-macro-hack)
+    (name "rust-proc-macro-hack")
+    (version "0.4.2")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (crate-uri "proc-macro-hack" version))
+        (file-name
+          (string-append name "-" version ".tar.gz"))
+        (sha256
+          (base32
+            "0fxn3qfhw76c518dfal2qqjwj5dbf0a1f7z0r5c4wd0igygg4fs6"))))
+    (build-system cargo-build-system)
+    (arguments
+      `(#:cargo-inputs
+        (("rust-proc-macro-hack-impl" ,rust-proc-macro-hack-impl))
+        #:cargo-development-inputs
+        (("rust-demo-hack" ,rust-demo-hack)
+         ("rust-demo-hack-impl" ,rust-demo-hack-impl))))))
 
 (define-public rust-pulldown-cmark
   (package
@@ -7693,6 +7750,29 @@ winapi.")
     (description
       "This package provides a simple Windows specific API for controlling text color in a Windows console.")
     (license (list license:unlicense
+                   license:expat))))
+
+(define-public rust-xdg
+  (package
+    (name "rust-xdg")
+    (version "2.2.0")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (crate-uri "xdg" version))
+        (file-name
+          (string-append name "-" version ".tar.gz"))
+        (sha256
+          (base32
+            "0mws8a0fr3cqk5nh7aq9lmkmhzghvasqy4mhw6nnza06l4d6i2fh"))))
+    (build-system cargo-build-system)
+    (home-page
+      "https://github.com/whitequark/rust-xdg")
+    (synopsis
+      "A library for storing and retrieving files according to XDG Base Directory specification")
+    (description
+      "This package provides a library for storing and retrieving files according to XDG Base Directory specification")
+    (license (list license:asl2.0
                    license:expat))))
 
 (define-public rust-yaml-rust
