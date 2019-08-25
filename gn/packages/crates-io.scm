@@ -3171,32 +3171,6 @@ pseudorandom number generator")
     (license (list license:asl2.0
                    license:expat))))
 
-(define-public rust-libc
-  (package
-    (name "rust-libc")
-    (version "0.2.60")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (crate-uri "libc" version))
-        (file-name
-          (string-append name "-" version ".tar.gz"))
-        (sha256
-         (base32
-          "1sxmlcyb39v8awlq5ndaiiq2vja3mc4vf97nxz3qjy007xiq0knl"))))
-    (build-system cargo-build-system)
-    (arguments
-     `(#:cargo-inputs
-       (("rust-rustc-std-workspace-core"
-         ,rust-rustc-std-workspace-core))))
-    (home-page "https://github.com/rust-lang/libc")
-    (synopsis
-     "Raw FFI bindings to platform libraries like libc.")
-    (description
-     "Raw FFI bindings to platform libraries like libc.")
-    (license (list license:asl2.0
-                   license:expat))))
-
 (define-public rust-libgit2-sys
   (package
     (name "rust-libgit2-sys")
@@ -3716,32 +3690,6 @@ implementation (which is unstable / requires nightly).")
     (license (list license:asl2.0
                    license:expat))))
 
-(define-public rust-num-integer
-  (package
-    (name "rust-num-integer")
-    (version "0.1.41")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (crate-uri "num-integer" version))
-        (file-name
-          (string-append name "-" version ".tar.gz"))
-        (sha256
-          (base32
-            "02dwjjpfbi16c71fq689s4sw3ih52cvfzr5z5gs6qpr5z0g58pmq"))))
-    (build-system cargo-build-system)
-    (arguments
-      `(#:cargo-inputs
-        (("rust-num-traits" ,rust-num-traits))
-        #:cargo-development-inputs
-        (("rust-autocfg" ,rust-autocfg))))
-    (home-page
-      "https://github.com/rust-num/num-integer")
-    (synopsis "Integer traits and functions")
-    (description "Integer traits and functions")
-    (license (list license:asl2.0
-                   license:expat))))
-
 (define-public rust-num-iter
   (package
     (name "rust-num-iter")
@@ -3768,32 +3716,6 @@ implementation (which is unstable / requires nightly).")
       "External iterators for generic mathematics")
     (description
       "External iterators for generic mathematics")
-    (license (list license:asl2.0
-                   license:expat))))
-
-(define-public rust-num-traits
-  (package
-    (name "rust-num-traits")
-    (version "0.2.8")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (crate-uri "num-traits" version))
-        (file-name
-          (string-append name "-" version ".tar.gz"))
-        (sha256
-          (base32
-            "0clvrm34rrqc8p6gq5ps5fcgws3kgq5knh7nlqxf2ayarwks9abb"))))
-    (build-system cargo-build-system)
-    (arguments
-      `(#:cargo-inputs
-        (("rust-autocfg" ,rust-autocfg))))
-    (home-page
-      "https://github.com/rust-num/num-traits")
-    (synopsis
-      "Numeric traits for generic mathematics")
-    (description
-      "Numeric traits for generic mathematics")
     (license (list license:asl2.0
                    license:expat))))
 
