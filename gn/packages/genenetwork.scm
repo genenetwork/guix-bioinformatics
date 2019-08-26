@@ -248,11 +248,11 @@ location of a putative QTL.")
     (license license:gpl2+))))
 
 (define-public rust-qtlreaper
-  (let ((commit "eacf6ff1c3d1cd16084a70a7a425bd77080c15de")
+  (let ((commit "2e7fed6d45b0b602d80fa2a55835f96ef1cba9e3")
         (revision "1"))
     (package
       (name "rust-qtlreaper")
-      (version (git-version "0.1.3" revision commit))
+      (version "0.1.4")
       (source
         (origin
           (method git-fetch)
@@ -262,7 +262,7 @@ location of a putative QTL.")
           (file-name (git-file-name name version))
           (sha256
            (base32
-            "0gr2z54i11zz94ra4w06fhfnwnmmhl5xyc8qhlk0v2qq18yfi7ji"))))
+            "0h70aalsplmc6xn1w7ha102n3bsi3gqkbnbrjvjm2za37c07gv0g"))))
       (build-system cargo-build-system)
       (arguments
        `(#:cargo-inputs
@@ -270,7 +270,8 @@ location of a putative QTL.")
           ("rust-structopt" ,rust-structopt)
           ("rust-rayon" ,rust-rayon-1.0)
           ("rust-serde" ,rust-serde)
-          ("rust-serde-json" ,rust-serde-json))))
+          ("rust-serde-json" ,rust-serde-json)
+          ("rust-ndarray" ,rust-ndarray))))
       (home-page "https://github.com/chfi/rust-qtlreaper")
       (synopsis "Reimplementation of genenetwork/QTLReaper in Rust")
       (description "Reimplementation of genenetwork/QTLReaper in Rust")
