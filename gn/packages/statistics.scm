@@ -318,7 +318,7 @@ for use in genome-wide association studies (GWAS).")
 (define-public r-ctl ; guix: ready
  (package
   (name "r-ctl")
-  (version "1.0.0-0")
+  (version "1.0.0-2")
   (source
    (origin
     (method url-fetch)
@@ -326,7 +326,7 @@ for use in genome-wide association studies (GWAS).")
                         version ".tar.gz"))
     (sha256
      (base32
-      "12hrrql9wz43s1d3sfyzlqzx7ajrl3hvf96776ik6icbm8by8h6j"))))
+      "1gpb43zn411l476dby2g38qkcvh2fsdcvbkr9jb274l1154km1xm"))))
   (build-system r-build-system)
   (inputs `(
             ("r-qtl" ,r-qtl)
