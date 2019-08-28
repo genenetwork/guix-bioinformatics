@@ -224,8 +224,7 @@ location of a putative QTL.")
                "1ldcvyk8y8w6f4ci04hzx85sknd5a3h424p5bfi4fz32sm2p7fja"))))
     (build-system python-build-system)
     (arguments
-     `(
-       #:phases
+     `(#:phases
        (modify-phases %standard-phases
          (add-after
           'unpack 'fix-tests
@@ -292,62 +291,62 @@ location of a putative QTL.")
              (sha256
               (base32
                "0ji929xgzypyhchcfy9xa1sz04w322ibs2khc8s3qiddxjqdglrz"))))
-    (propagated-inputs `(  ;; propagated for development purposes
-              ("python" ,python-2) ;; probably superfluous
-              ("coreutils" ,coreutils)
-              ("git" ,git)
-              ("vim" ,vim)
-              ("which" ,which)
-              ("grep" ,grep)
-              ("r" ,r)
-              ("r-ctl" ,r-ctl)
-              ("r-phewas" ,r-phewas)
-              ("r-qtl" ,r-qtl)
-              ("r-wgcna" ,r-wgcna)
-              ("redis" ,redis)
-              ("mysql" ,mysql)
-              ("gemma" ,gemma-gn2-git)
-              ("gemma-wrapper" ,gemma-wrapper)
-              ("genenetwork2-files-small" ,genenetwork2-files-small)
-              ("plink-ng-gn" ,plink-ng-gn)
-              ("pylmm-gn2" ,pylmm-gn2)
-              ("nginx" ,nginx)
-              ("python2-flask" ,python2-flask)
-              ("gunicorn" ,gunicorn)
-	      ("python2-pillow" ,python2-pillow)
-              ("python2-cssselect" ,python2-cssselect)
-              ("python2-elasticsearch" ,python2-elasticsearch)
-              ("python2-htmlgen" ,python2-htmlgen)
-              ("python2-jinja2" ,python2-jinja2)
-              ("python2-sqlalchemy" ,python2-sqlalchemy)
-              ("python2-flask-sqlalchemy" ,python2-flask-sqlalchemy)
-              ("python2-setuptools" ,python2-setuptools)
-              ("python2-scipy" ,python2-scipy)
-              ("python2-lxml" ,python2-lxml)
-              ("python2-mechanize" ,python2-mechanize)
-              ("python2-mysqlclient" ,python2-mysqlclient)
-              ("python2-numarray" ,python2-numarray)
-              ("python2-numpy" ,python2-numpy)
-              ("python2-pandas" ,python2-pandas)
-              ("python2-parallel" ,python2-parallel)
-              ("python2-parameterized" ,python2-parameterized)
-              ("python2-passlib" ,python2-passlib)
-              ("python2-redis" ,python2-redis)
-              ("python2-requests" ,python2-requests)
-              ("python2-requests" ,python2-requests)
-              ("python2-rpy2" ,python2-rpy2)
-              ("python2-scipy" ,python2-scipy)
-              ("python2-simplejson" ,python2-simplejson)
-              ("python2-pyyaml" ,python2-pyyaml)
-              ("python2-unittest2" ,python2-unittest2)
-              ("python2-xlsxwriter" ,python2-xlsxwriter)
-              ("python2-qtlreaper" ,python2-qtlreaper)
-	            ("javascript-twitter-post-fetcher" ,javascript-twitter-post-fetcher)
-	            ("javascript-cytoscape" ,javascript-cytoscape)
-	            ("javascript-panzoom" ,javascript-cytoscape-panzoom)
-	            ("javascript-qtip" ,javascript-cytoscape-qtip)
-
-              ))
+    (propagated-inputs
+     `(;; propagated for development purposes
+       ("python" ,python-2) ;; probably superfluous
+       ("coreutils" ,coreutils)
+       ("git" ,git)
+       ("vim" ,vim)
+       ("which" ,which)
+       ("grep" ,grep)
+       ("r" ,r)
+       ("r-ctl" ,r-ctl)
+       ("r-phewas" ,r-phewas)
+       ("r-qtl" ,r-qtl)
+       ("r-wgcna" ,r-wgcna)
+       ("redis" ,redis)
+       ("mysql" ,mysql)
+       ("gemma" ,gemma-gn2-git)
+       ("gemma-wrapper" ,gemma-wrapper)
+       ("genenetwork2-files-small" ,genenetwork2-files-small)
+       ("plink-ng-gn" ,plink-ng-gn)
+       ("pylmm-gn2" ,pylmm-gn2)
+       ("nginx" ,nginx)
+       ("python2-flask" ,python2-flask)
+       ("gunicorn" ,gunicorn)
+       ("python2-pillow" ,python2-pillow)
+       ("python2-cssselect" ,python2-cssselect)
+       ("python2-elasticsearch" ,python2-elasticsearch)
+       ("python2-htmlgen" ,python2-htmlgen)
+       ("python2-jinja2" ,python2-jinja2)
+       ("python2-sqlalchemy" ,python2-sqlalchemy)
+       ("python2-flask-sqlalchemy" ,python2-flask-sqlalchemy)
+       ("python2-setuptools" ,python2-setuptools)
+       ("python2-scipy" ,python2-scipy)
+       ("python2-lxml" ,python2-lxml)
+       ("python2-mechanize" ,python2-mechanize)
+       ("python2-mysqlclient" ,python2-mysqlclient)
+       ("python2-numarray" ,python2-numarray)
+       ("python2-numpy" ,python2-numpy)
+       ("python2-pandas" ,python2-pandas)
+       ("python2-parallel" ,python2-parallel)
+       ("python2-parameterized" ,python2-parameterized)
+       ("python2-passlib" ,python2-passlib)
+       ("python2-redis" ,python2-redis)
+       ("python2-requests" ,python2-requests)
+       ("python2-requests" ,python2-requests)
+       ("python2-rpy2" ,python2-rpy2)
+       ("python2-scipy" ,python2-scipy)
+       ("python2-simplejson" ,python2-simplejson)
+       ("python2-pyyaml" ,python2-pyyaml)
+       ("python2-unittest2" ,python2-unittest2)
+       ("python2-xlsxwriter" ,python2-xlsxwriter)
+       ("python2-qtlreaper" ,python2-qtlreaper)
+       ("javascript-twitter-post-fetcher" ,javascript-twitter-post-fetcher)
+       ("javascript-cytoscape" ,javascript-cytoscape)
+       ("javascript-panzoom" ,javascript-cytoscape-panzoom)
+       ("javascript-qtip" ,javascript-cytoscape-qtip)
+       ))
     (build-system python-build-system)
     (arguments
      `(#:python ,python-2
@@ -355,37 +354,38 @@ location of a putative QTL.")
          (modify-phases %standard-phases
            (delete 'reset-gzip-timestamps)
            (add-after 'unpack 'fix-paths-scripts
-             (lambda* _
+             (lambda _
                (substitute* "bin/genenetwork2"
-                            (("/usr/bin/env") (which "env"))
-                            (("python ") (string-append (which "python2") " "))
-                            (("readlink") (which "readlink"))
-                            (("dirname") (which "dirname"))
-                            (("basename") (which "basename"))
-                            (("cat") (which "cat"))
-                            (("echo") (which "echo"))
-                            (("redis-server") (which "redis-server"))
-                            (("git") (which "git"))
-                            (("grep") (which "grep"))
-                            (("rm") (which "rm"))
-                            (("which") (which "which")) ; three wiches in a row!
-                            )#t))
+                 (("/usr/bin/env") (which "env"))
+                 (("python ") (string-append (which "python2") " "))
+                 (("readlink") (which "readlink"))
+                 (("dirname") (which "dirname"))
+                 (("basename") (which "basename"))
+                 (("cat") (which "cat"))
+                 (("echo") (which "echo"))
+                 (("redis-server") (which "redis-server"))
+                 (("git") (which "git"))
+                 (("grep") (which "grep"))
+                 (("rm") (which "rm"))
+                 (("which") (which "which")) ; three wiches in a row!
+                 )
+               #t))
            (add-before 'install 'fix-paths
              (lambda* (#:key inputs #:allow-other-keys)
-                      (let* (
-                             (datafiles (string-append (assoc-ref inputs "genenetwork2-files-small") "/share/genenetwork2" ))
-                             (pylmmcmd (string-append (assoc-ref inputs "pylmm-gn2") "/bin/pylmm_redis"))
-                             (plink2cmd (string-append (assoc-ref inputs "plink-ng-gn") "/bin/plink2"))
-                             (gemmacmd (string-append (assoc-ref inputs "gemma") "/bin/gemma"))
-                             )
+               (let* (
+                      (datafiles (string-append (assoc-ref inputs "genenetwork2-files-small") "/share/genenetwork2"))
+                      (pylmmcmd (string-append (assoc-ref inputs "pylmm-gn2") "/bin/pylmm_redis"))
+                      (plink2cmd (string-append (assoc-ref inputs "plink-ng-gn") "/bin/plink2"))
+                      (gemmacmd (string-append (assoc-ref inputs "gemma") "/bin/gemma"))
+                      )
 
-               (substitute* '("etc/default_settings.py")
-                            (("^GENENETWORK_FILES +=.*") (string-append "GENENETWORK_FILES = \"" datafiles "\"\n" ))
-                            (("^PYLMM_COMMAND =.*") (string-append "PYLMM_COMMAND = \"" pylmmcmd "\"\n" ))
-                            (("^PLINK_COMMAND =.*") (string-append "PLINK_COMMAND = \"" plink2cmd "\"\n" ))
-                            (("^GEMMA_COMMAND =.*") (string-append "GEMMA_COMMAND = \"" gemmacmd "\"\n" ))
-                            )
-               ))))
+                 (substitute* '("etc/default_settings.py")
+                   (("^GENENETWORK_FILES +=.*") (string-append "GENENETWORK_FILES = \"" datafiles "\"\n" ))
+                   (("^PYLMM_COMMAND =.*") (string-append "PYLMM_COMMAND = \"" pylmmcmd "\"\n" ))
+                   (("^PLINK_COMMAND =.*") (string-append "PLINK_COMMAND = \"" plink2cmd "\"\n" ))
+                   (("^GEMMA_COMMAND =.*") (string-append "GEMMA_COMMAND = \"" gemmacmd "\"\n" ))
+                   )
+                 ))))
        #:tests? #f))   ; no 'setup.py test'
     (home-page "http://genenetwork.org/")
     (synopsis "Full genenetwork services")
@@ -418,20 +418,17 @@ location of a putative QTL.")
        (let* ((out (assoc-ref %outputs "out"))
               (name "gn2_data_s")
               (tarfn (string-append name ".tar"))
-              (targetdir (string-append out "/share/genenetwork2/"))
-              )
+              (targetdir (string-append out "/share/genenetwork2/")))
            (begin
              (use-modules (guix build utils))
              (let ((source (assoc-ref %build-inputs "source"))
                    (lz4unpack (string-append (assoc-ref %build-inputs "lz4") "/bin/lz4"))
-                   (tar (string-append (assoc-ref %build-inputs "tar") "/bin/tar"))
-                   )
+                   (tar (string-append (assoc-ref %build-inputs "tar") "/bin/tar")))
                (and
-                    (zero? (system* lz4unpack source "-d" tarfn))
-                    (zero? (system* tar "xf" tarfn))
-                    (mkdir-p targetdir)
-                    (copy-recursively name targetdir)
-                    ))))))
+                 (zero? (system* lz4unpack source "-d" tarfn))
+                 (zero? (system* tar "xf" tarfn))
+                 (mkdir-p targetdir)
+                 (copy-recursively name targetdir)))))))
     (home-page "http://genenetwork.org/")
     (synopsis "Small file archive to run on genenetwork")
     (description "Genenetwork genotype and mapping files.")
@@ -458,8 +455,7 @@ location of a putative QTL.")
        #:builder (begin
                    (use-modules (guix build utils))
                    (let ((source (assoc-ref %build-inputs "source"))
-                         (unzip (string-append (assoc-ref %build-inputs "unzip") "/bin/unzip"))
-                         )
+                         (unzip (string-append (assoc-ref %build-inputs "unzip") "/bin/unzip")))
                    (and (mkdir "db")
                         (zero? (system* unzip source "-d" "db"))
                         (chdir "db"))))))
@@ -475,15 +471,16 @@ location of a putative QTL.")
     (package
      (name "python-reaper")
      (version (string-append "0.0.1-"
-			     (string-take commit 7)))
+                             (string-take commit 7)))
      (source (origin
-	       (method git-fetch)
-	       (uri (git-reference
-		     (url "https://github.com/fredmanglis/reaper.git")
-		     (commit commit)))
-	       (sha256
-		(base32
-		 "1rq2qn0vrqd8k676yy8drm0zxzkj065ywhxjl0j1n2r25zifay7r"))))
+               (method git-fetch)
+               (uri (git-reference
+                      (url "https://github.com/fredmanglis/reaper.git")
+                      (commit commit)))
+               (file-name (git-file-name name version))
+               (sha256
+                (base32
+                 "1rq2qn0vrqd8k676yy8drm0zxzkj065ywhxjl0j1n2r25zifay7r"))))
      (build-system python-build-system)
      (arguments
       `(#:tests? #f))
@@ -495,133 +492,132 @@ written in C")
 
 (define-public genenetwork3
   (let (;; (commit "1538ffd33af19e6ac922b4ee85fe701408968dfd")
-	(commit "5bff4f49dffb4ac982d36cd0d39e0a9ec6bc66e9"))
+        (commit "5bff4f49dffb4ac982d36cd0d39e0a9ec6bc66e9"))
     (package
      (name "genenetwork3")
      (version (string-append "2.10rc5-" (string-take commit 7) ))
      (source (origin
-	      (method git-fetch)
-	      (uri (git-reference
-		    (url "https://github.com/fredmanglis/genenetwork2.git")
-		    ;; (url "https://pjotrp@gitlab.com/genenetwork/gn2_diet.git")
-		    ;; (url "https://github.com/genenetwork/genenetwork2_diet.git")
-		    (commit commit)))
-	      (file-name (string-append name "-" version))
-	      (sha256
-	       (base32
-		"0klgjra2qisfzs8mk0s8vzdr190l4n56xcm66dk0asqs7zswi8di"
-		;; "0ji929xgzypyhchcfy9xa1sz04w322ibs2khc8s3qiddxjqdglrz"
-		))))
+        (method git-fetch)
+        (uri (git-reference
+               (url "https://github.com/fredmanglis/genenetwork2.git")
+               ;; (url "https://pjotrp@gitlab.com/genenetwork/gn2_diet.git")
+               ;; (url "https://github.com/genenetwork/genenetwork2_diet.git")
+               (commit commit)))
+        (file-name (string-append name "-" version))
+        (sha256
+         (base32
+          "0klgjra2qisfzs8mk0s8vzdr190l4n56xcm66dk0asqs7zswi8di"
+          ;; "0ji929xgzypyhchcfy9xa1sz04w322ibs2khc8s3qiddxjqdglrz"
+          ))))
      (propagated-inputs ;; propagated for development purposes
-      `( ;; Agnostic to Python
-	("r" ,r)
-	("git" ,git)
-	("vim" ,vim)
-	("grep" ,grep)
-	("which" ,which)
-	("r-ctl" ,r-ctl)
-	("r-qtl" ,r-qtl)
-	("redis" ,redis)
-	("mysql" ,mysql)
-	("nginx" ,nginx)
-	("r-wgcna" ,r-wgcna)
-	;; ("r-phewas" ,r-phewas)
-	("coreutils" ,coreutils)
-	("gemma" ,gemma-gn2-git)
-	("plink-ng-gn" ,plink-ng-gn)
-	("python-lxml" ,python-lxml) ;; used for the tests
-	("gemma-wrapper" ,gemma-wrapper)
-	("python-unittest" ,python-unittest2) ;; used for the tests
-	("python-parameterized" ,python-parameterized) ;; used for the tests
-	("genenetwork2-files-small" ,genenetwork2-files-small)
-	("javascript-twitter-post-fetcher" ,javascript-twitter-post-fetcher)
-	("javascript-cytoscape" ,javascript-cytoscape)
-	("javascript-panzoom" ,javascript-cytoscape-panzoom)
-	("javascript-qtip" ,javascript-cytoscape-qtip)
+      `(;; Agnostic to Python
+        ("r" ,r)
+        ("git" ,git)
+        ("vim" ,vim)
+        ("grep" ,grep)
+        ("which" ,which)
+        ("r-ctl" ,r-ctl)
+        ("r-qtl" ,r-qtl)
+        ("redis" ,redis)
+        ("mysql" ,mysql)
+        ("nginx" ,nginx)
+        ("r-wgcna" ,r-wgcna)
+        ;; ("r-phewas" ,r-phewas)
+        ("coreutils" ,coreutils)
+        ("gemma" ,gemma-gn2-git)
+        ("plink-ng-gn" ,plink-ng-gn)
+        ("python-lxml" ,python-lxml) ;; used for the tests
+        ("gemma-wrapper" ,gemma-wrapper)
+        ("python-unittest" ,python-unittest2) ;; used for the tests
+        ("python-parameterized" ,python-parameterized) ;; used for the tests
+        ("genenetwork2-files-small" ,genenetwork2-files-small)
+        ("javascript-twitter-post-fetcher" ,javascript-twitter-post-fetcher)
+        ("javascript-cytoscape" ,javascript-cytoscape)
+        ("javascript-panzoom" ,javascript-cytoscape-panzoom)
+        ("javascript-qtip" ,javascript-cytoscape-qtip)
 
-	;; With Python3 support
-	("gunicorn" ,gunicorn)
-	("python-rpy2" ,python-rpy2)
-	("python-flask" ,python-flask)
-	("python-scipy" ,python-scipy)
-	("python-numpy" ,python-numpy)
-	("python-redis" ,python-redis)
-	("python-scipy" ,python-scipy)
-	("python-pillow" ,python-pillow)
-	("python-reaper" ,python-reaper)
-	("python-pyyaml" ,python-pyyaml)
-	("python-jinja2" ,python-jinja2)
-	("python-pandas" ,python-pandas)
-	("python-htmlgen" ,python-htmlgen)
-	("python-passlib" ,python-passlib)
-	("python-wrapper" ,python-wrapper)
-	("python-requests" ,python-requests)
-	("python-cssselect" ,python-cssselect)
-	("python-sqlalchemy" ,python-sqlalchemy)
-	("python-setuptools" ,python-setuptools)
-	("python-simplejson" ,python-simplejson)
-	("python-xlsxwriter" ,python-xlsxwriter)
-	("python-mysqlclient" ,python-mysqlclient)
-	("python-elasticsearch" ,python-elasticsearch)
-	("python-flask-sqlalchemy" ,python-flask-sqlalchemy)
+        ;; With Python3 support
+        ("gunicorn" ,gunicorn)
+        ("python-rpy2" ,python-rpy2)
+        ("python-flask" ,python-flask)
+        ("python-scipy" ,python-scipy)
+        ("python-numpy" ,python-numpy)
+        ("python-redis" ,python-redis)
+        ("python-scipy" ,python-scipy)
+        ("python-pillow" ,python-pillow)
+        ("python-reaper" ,python-reaper)
+        ("python-pyyaml" ,python-pyyaml)
+        ("python-jinja2" ,python-jinja2)
+        ("python-pandas" ,python-pandas)
+        ("python-htmlgen" ,python-htmlgen)
+        ("python-passlib" ,python-passlib)
+        ("python-wrapper" ,python-wrapper)
+        ("python-requests" ,python-requests)
+        ("python-cssselect" ,python-cssselect)
+        ("python-sqlalchemy" ,python-sqlalchemy)
+        ("python-setuptools" ,python-setuptools)
+        ("python-simplejson" ,python-simplejson)
+        ("python-xlsxwriter" ,python-xlsxwriter)
+        ("python-mysqlclient" ,python-mysqlclient)
+        ("python-elasticsearch" ,python-elasticsearch)
+        ("python-flask-sqlalchemy" ,python-flask-sqlalchemy)
 
-
-	;; Without Python3 support
-	;; ("python-qtlreaper" ,python-qtlreaper) ;; Run as an external program
-	;; ("pylmm-gn2" ,pylmm-gn2) ;; To be run as an external python2 program
-	;; ("python2-numarray" ,python2-numarray) ;; Update gn2 code and drop this (IMPORTANT)
-	;; ("python2-htmlgen-gn" ,python2-htmlgen-gn) ;; pjotrp and zsloan to give directions
-	))
+        ;; Without Python3 support
+        ;; ("python-qtlreaper" ,python-qtlreaper) ;; Run as an external program
+        ;; ("pylmm-gn2" ,pylmm-gn2) ;; To be run as an external python2 program
+        ;; ("python2-numarray" ,python2-numarray) ;; Update gn2 code and drop this (IMPORTANT)
+        ;; ("python2-htmlgen-gn" ,python2-htmlgen-gn) ;; pjotrp and zsloan to give directions
+        ))
      (build-system python-build-system)
      (arguments
       `(#:phases
-	(modify-phases
-	 %standard-phases
-	 (delete 'reset-gzip-timestamps)
-	 (add-after
-	  'unpack 'fix-paths-scripts
-	  (lambda* _
-	    (substitute* "bin/genenetwork2"
-			 (("/usr/bin/env") (which "env"))
-			 (("python ") (string-append (which "python") " "))
-			 (("readlink") (which "readlink"))
-			 (("dirname") (which "dirname"))
-			 (("basename") (which "basename"))
-			 (("cat") (which "cat"))
-			 (("echo") (which "echo"))
-			 (("redis-server") (which "redis-server"))
-			 (("git") (which "git"))
-			 (("grep") (which "grep"))
-			 (("rm") (which "rm"))
-			 (("which") (which "which")))
-	    #t))
-	 (add-before
-	  'install 'fix-paths
-	  (lambda* (#:key inputs #:allow-other-keys)
-	    (let* ((datafiles
-		    (string-append
-		     (assoc-ref inputs "genenetwork2-files-small")
-		     "/share/genenetwork2" ))
-		   ;; (pylmmcmd
-		   ;;  (string-append
-		   ;;   (assoc-ref inputs "pylmm-gn2") "/bin/pylmm_redis"))
-		   (plink2cmd
-		    (string-append
-		     (assoc-ref inputs "plink-ng-gn") "/bin/plink2"))
-		   (gemmacmd
-		    (string-append (assoc-ref inputs "gemma") "/bin/gemma")))
+        (modify-phases
+          %standard-phases
+          (delete 'reset-gzip-timestamps)
+          (add-after
+            'unpack 'fix-paths-scripts
+            (lambda _
+              (substitute* "bin/genenetwork2"
+                (("/usr/bin/env") (which "env"))
+                (("python ") (string-append (which "python") " "))
+                (("readlink") (which "readlink"))
+                (("dirname") (which "dirname"))
+                (("basename") (which "basename"))
+                (("cat") (which "cat"))
+                (("echo") (which "echo"))
+                (("redis-server") (which "redis-server"))
+                (("git") (which "git"))
+                (("grep") (which "grep"))
+                (("rm") (which "rm"))
+                (("which") (which "which")))
+              #t))
+          (add-before
+            'install 'fix-paths
+            (lambda* (#:key inputs #:allow-other-keys)
+              (let* ((datafiles
+                       (string-append
+                         (assoc-ref inputs "genenetwork2-files-small")
+                         "/share/genenetwork2" ))
+                     ;; (pylmmcmd
+                     ;;  (string-append
+                     ;;   (assoc-ref inputs "pylmm-gn2") "/bin/pylmm_redis"))
+                     (plink2cmd
+                       (string-append
+                         (assoc-ref inputs "plink-ng-gn") "/bin/plink2"))
+                     (gemmacmd
+                       (string-append (assoc-ref inputs "gemma") "/bin/gemma")))
 
-	      (substitute*
-	       '("etc/default_settings.py")
-	       (("^GENENETWORK_FILES +=.*")
-		(string-append "GENENETWORK_FILES = \"" datafiles "\"\n" ))
-	       (("^PYLMM_COMMAND =.*")
-		(string-append "PYLMM_COMMAND = \"" pylmmcmd "\"\n" ))
-	       (("^PLINK_COMMAND =.*")
-		(string-append "PLINK_COMMAND = \"" plink2cmd "\"\n" ))
-	       (("^GEMMA_COMMAND =.*")
-		(string-append "GEMMA_COMMAND = \"" gemmacmd "\"\n")))))))
-	#:tests? #f))   ; no 'setup.py test'
+                (substitute*
+                  '("etc/default_settings.py")
+                  (("^GENENETWORK_FILES +=.*")
+                   (string-append "GENENETWORK_FILES = \"" datafiles "\"\n" ))
+                  (("^PYLMM_COMMAND =.*")
+                   (string-append "PYLMM_COMMAND = \"" pylmmcmd "\"\n" ))
+                  (("^PLINK_COMMAND =.*")
+                   (string-append "PLINK_COMMAND = \"" plink2cmd "\"\n" ))
+                  (("^GEMMA_COMMAND =.*")
+                   (string-append "GEMMA_COMMAND = \"" gemmacmd "\"\n")))))))
+        #:tests? #f))   ; no 'setup.py test'
      (home-page "http://genenetwork.org/")
      (synopsis "Full genenetwork services")
      (description "Genenetwork installation sumo.")
