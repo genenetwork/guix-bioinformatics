@@ -7,6 +7,7 @@
   #:use-module (guix download)
   #:use-module (guix git-download)
   #:use-module (guix build-system ant)
+  #:use-module (guix build-system cmake)
   #:use-module (guix build-system gnu)
   #:use-module (gnu packages)
   #:use-module (gnu packages bioinformatics)
@@ -487,3 +488,43 @@ reads.")
             (files '("/etc/ssl/certs/ca-certificates.crt")))))
     ;; Due to the precompiled binaries we download:
     (supported-systems '("x86_64-linux"))))
+
+;; TODO: Unbundle zlib, bamtools, tclap
+(define-public sniffles
+  (package
+   (name "sniffles")
+   (version "1.0.11")
+   (source (origin
+     (method git-fetch)
+     (uri (git-reference
+            (url "https://github.com/fritzsedlazeck/Sniffles.git")
+            (commit version)))
+     (file-name (git-file-name name version))
+     (sha256
+      (base32 "0rkwqn1ycckfzrg2wdid4cqahq8q2jmmgi7vvl8qxgpsihqfbq0j"))))
+   (build-system cmake-build-system)
+   (arguments
+    `(#:phases
+      (modify-phases %standard-phases
+        (replace 'install
+          (lambda* (#:key outputs #:allow-other-keys)
+            (let ((out (assoc-ref outputs "out")))
+              (install-file (string-append "../source/bin/sniffles-core-"
+                                           ,version "/sniffles")
+                            (string-append out "/bin")))
+            #t))
+        (replace 'check
+          (lambda _
+            (with-directory-excursion "../source/test_set"
+              (for-each make-file-writable (find-files "."))
+              (invoke (string-append "../bin/sniffles-core-" ,version "/sniffles")
+                      "-m" "reads_region.bam" "-v" "test.vcf")))))))
+   (native-inputs
+    `(("zlib" ,zlib)))
+   (home-page "https://github.com/fritzsedlazeck/Sniffles")
+   (synopsis "Structural variation caller using third generation sequencing")
+   (description
+    "Sniffles is a structural variation caller using third generation sequencing
+(PacBio or Oxford Nanopore).  It detects all types of SVs (10bp+) using evidence
+from split-read alignments, high-mismatch regions, and coverage analysis.")
+   (license license:expat)))
