@@ -388,7 +388,7 @@ password-based key derivation.")
 (define-public rust-automod
   (package
     (name "rust-automod")
-    (version "0.1.1")
+    (version "0.1.2")
     (source
       (origin
         (method url-fetch)
@@ -397,7 +397,7 @@ password-based key derivation.")
           (string-append name "-" version ".tar.gz"))
         (sha256
           (base32
-            "0pld582piq2d55z0j96zcs8izw3ml46f8h9y7sdyxg093yfvxl2h"))))
+            "17am5i7z7jpsrq9bm0wyhf4q9850g2kqvzl3ik900x5gc7brwv2a"))))
     (build-system cargo-build-system)
     (arguments
      `(#:cargo-inputs
@@ -414,7 +414,7 @@ password-based key derivation.")
 (define-public rust-average
   (package
     (name "rust-average")
-    (version "0.10.1")
+    (version "0.10.2")
     (source
       (origin
         (method url-fetch)
@@ -423,7 +423,7 @@ password-based key derivation.")
           (string-append name "-" version ".tar.gz"))
         (sha256
           (base32
-            "077wbjzn2hwdjnglp8pjvirvsjgfgbgnlirwh5g2hk14xqx7f57l"))))
+            "16ib3vlfp3akpflha1m6598x3jfrgrh9qgrf9vvv11rfqirp22dx"))))
     (build-system cargo-build-system)
     (arguments
       `(#:cargo-inputs
@@ -995,7 +995,7 @@ used in argon2rs' bench suite.")
 (define-public rust-cc
   (package
     (name "rust-cc")
-    (version "1.0.38")
+    (version "1.0.41")
     (source
       (origin
         (method url-fetch)
@@ -1004,14 +1004,25 @@ used in argon2rs' bench suite.")
           (string-append name "-" version ".tar.gz"))
         (sha256
           (base32
-            "0imzcz53wg7m3gr6657yrikp7icyc2bpkvssnyd0xvj8imihqh6f"))))
+            "1zxzd559dbbf1iwdzmkj7czapzccs17kqqmsj9ayijpdix5rrbld"))))
     (build-system cargo-build-system)
     (arguments
-     `(#:cargo-inputs
-       (("rust-rayon" ,rust-rayon))
+     `(;#:cargo-inputs
+       ;(("rust-rayon" ,rust-rayon))
        #:cargo-development-inputs
        (("rust-tempdir" ,rust-tempdir))
-       #:tests? #f)) ; tests fail
+       #:phases
+       (modify-phases %standard-phases
+         (add-after 'unpack 'remove-optional-deps
+           (lambda _
+             (substitute* "Cargo.toml.orig"
+               ((".*optional.*") "\n")
+               ((".*features.*") "")
+               ((".*parallel.*") ""))
+             (delete-file "Cargo.toml")
+             (copy-file "Cargo.toml.orig" "Cargo.toml")
+             #t)))
+       #:tests? #f)) ; Tests require cc-test from git repo.
     (home-page
       "https://github.com/alexcrichton/cc-rs")
     (synopsis
@@ -5913,7 +5924,7 @@ stream encoding/decoding.")
 (define-public rust-openssl-src
   (package
     (name "rust-openssl-src")
-    (version "111.4.0+1.1.1c")
+    (version "111.5.0+1.1.1c")
     (source
       (origin
         (method url-fetch)
@@ -5922,7 +5933,7 @@ stream encoding/decoding.")
           (string-append name "-" version ".tar.gz"))
         (sha256
           (base32
-            "10s3hvkfk6bi4ba1ssvj914rjs31vs8plssy4kbvsa0w7idkqfkq"))))
+            "17h4jwa3n1i91h0q8g72c1d9xzm97bnkxn1s7rljyghp94zvzpjb"))))
     (build-system cargo-build-system)
     (arguments
       `(#:cargo-inputs (("rust-cc" ,rust-cc))))
@@ -5938,7 +5949,7 @@ stream encoding/decoding.")
 (define-public rust-openssl-sys
   (package
     (name "rust-openssl-sys")
-    (version "0.9.48")
+    (version "0.9.49")
     (source
       (origin
         (method url-fetch)
@@ -5947,7 +5958,7 @@ stream encoding/decoding.")
           (string-append name "-" version ".tar.gz"))
         (sha256
           (base32
-            "1f05kxx8mai9ac16x1lk0404bymghbbj7vcbqrfwqfr52w131fmm"))))
+            "1168vivyqbzaxl48bvv9r1x714c03f5c1za8pv5x8fyj9gjxkypl"))))
     (build-system cargo-build-system)
     (arguments
      `(#:cargo-inputs
@@ -6056,86 +6067,6 @@ stream encoding/decoding.")
     (description
       "A library for creating references that carry their owner with them.")
     (license license:expat)))
-
-(define-public rust-rand-os
-  (package
-    (name "rust-rand-os")
-    (version "0.2.0")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (crate-uri "rand_os" version))
-        (file-name
-          (string-append name "-" version ".tar.gz"))
-        (sha256
-          (base32
-            "06is69f8rfzs620g5b54k6cgy5yaycrsyqg55flyfrsf8g88733f"))))
-    (build-system cargo-build-system)
-    (arguments
-      `(#:cargo-inputs
-        (("rust-getrandom" ,rust-getrandom)
-         ("rust-rand-core" ,rust-rand-core))))
-    (home-page "https://crates.io/crates/rand_os")
-    (synopsis "OS backed Random Number Generator")
-    (description "OS backed Random Number Generator")
-    (license (list license:asl2.0
-                   license:expat))))
-
-(define-public rust-rand-os-0.1
-  (package
-    (inherit rust-rand-os)
-    (name "rust-rand-os")
-    (version "0.1.3")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (crate-uri "rand_os" version))
-        (file-name (string-append name "-" version ".tar.gz"))
-        (sha256
-         (base32
-          "0wahppm0s64gkr2vmhcgwc0lij37in1lgfxg5rbgqlz0l5vgcxbv"))))
-    (arguments
-     `(#:cargo-inputs
-       (("rust-cloudabi" ,rust-cloudabi)
-        ("rust-fuchsia-cprng" ,rust-fuchsia-cprng)
-        ("rust-getrandom" ,rust-getrandom)
-        ("rust-libc" ,rust-libc)
-        ("rust-log" ,rust-log)
-        ("rust-rand-core" ,rust-rand-core-0.4)
-        ("rust-rdrand" ,rust-rdrand-0.4)
-        ("rust-stdweb" ,rust-stdweb)
-        ("rust-wasm-bindgen" ,rust-wasm-bindgen)
-        ("rust-winapi" ,rust-winapi))))))
-
-(define-public rust-rspec
-  (package
-    (name "rust-rspec")
-    (version "1.0.0-beta.4")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (crate-uri "rspec" version))
-        (file-name
-          (string-append name "-" version ".tar.gz"))
-        (sha256
-          (base32
-            "1abfzwkbxlwahb243k8d3fp6i135lx1aqmbfl79w9zlpng182ndk"))))
-    (build-system cargo-build-system)
-    (arguments
-      `(#:cargo-inputs
-        (("rust-colored" ,rust-colored)
-         ("rust-derive-new" ,rust-derive-new)
-         ("rust-derive-builder" ,rust-derive-builder)
-         ("rust-expectest" ,rust-expectest)
-         ("rust-rayon" ,rust-rayon))
-        #:cargo-development-inputs
-        (("rust-clippy" ,rust-clippy))))
-    (home-page "https://mackwic.github.io/rspec")
-    (synopsis
-      "Write Rspec-like tests with stable rust")
-    (description
-      "Write Rspec-like tests with stable rust")
-    (license license:mpl2.0)))
 
 (define-public rust-packed-simd
   (package
@@ -7083,7 +7014,7 @@ invocations.")
 (define-public rust-rand-core
   (package
     (name "rust-rand-core")
-    (version "0.5.0")
+    (version "0.5.1")
     (source
       (origin
         (method url-fetch)
@@ -7092,13 +7023,12 @@ invocations.")
           (string-append name "-" version ".tar.gz"))
         (sha256
           (base32
-            "1jis94x9ri8xlxki2w2w5k29sjpfwgzkjylg7paganp74hrnhpk1"))))
+            "06bdvx08v3rkz451cm7z59xwwqn1rkfh6v9ay77b14f8dwlybgch"))))
     (build-system cargo-build-system)
     (arguments
       `(#:cargo-inputs
         (("rust-getrandom" ,rust-getrandom)
-         ("rust-serde" ,rust-serde)
-         ("rust-serde-derive" ,rust-serde-derive))))
+         ("rust-serde" ,rust-serde))))
     (home-page "https://crates.io/crates/rand_core")
     (synopsis
       "Core random number generator traits and tools for implementation.")
@@ -7327,6 +7257,56 @@ invocations.")
          ("rust-log" ,rust-log)
          ("rust-rand-core" ,rust-rand-core-0.4)
          ("rust-winapi" ,rust-winapi))))))
+
+(define-public rust-rand-os
+  (package
+    (name "rust-rand-os")
+    (version "0.2.0")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (crate-uri "rand_os" version))
+        (file-name
+          (string-append name "-" version ".tar.gz"))
+        (sha256
+          (base32
+            "06is69f8rfzs620g5b54k6cgy5yaycrsyqg55flyfrsf8g88733f"))))
+    (build-system cargo-build-system)
+    (arguments
+      `(#:cargo-inputs
+        (("rust-getrandom" ,rust-getrandom)
+         ("rust-rand-core" ,rust-rand-core))))
+    (home-page "https://crates.io/crates/rand_os")
+    (synopsis "OS backed Random Number Generator")
+    (description "OS backed Random Number Generator")
+    (license (list license:asl2.0
+                   license:expat))))
+
+(define-public rust-rand-os-0.1
+  (package
+    (inherit rust-rand-os)
+    (name "rust-rand-os")
+    (version "0.1.3")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (crate-uri "rand_os" version))
+        (file-name (string-append name "-" version ".tar.gz"))
+        (sha256
+         (base32
+          "0wahppm0s64gkr2vmhcgwc0lij37in1lgfxg5rbgqlz0l5vgcxbv"))))
+    (arguments
+     `(#:cargo-inputs
+       (("rust-cloudabi" ,rust-cloudabi)
+        ("rust-fuchsia-cprng" ,rust-fuchsia-cprng)
+        ("rust-getrandom" ,rust-getrandom)
+        ("rust-libc" ,rust-libc)
+        ("rust-log" ,rust-log)
+        ("rust-rand-core" ,rust-rand-core-0.4)
+        ("rust-rdrand" ,rust-rdrand-0.4)
+        ("rust-stdweb" ,rust-stdweb)
+        ("rust-wasm-bindgen" ,rust-wasm-bindgen)
+        ("rust-winapi" ,rust-winapi))))))
 
 (define-public rust-rand-pcg
   (package
@@ -7946,6 +7926,36 @@ system calls.")
     (description "Rusty Object Notation")
     (license (list license:asl2.0
                    license:expat))))
+
+(define-public rust-rspec
+  (package
+    (name "rust-rspec")
+    (version "1.0.0-beta.4")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (crate-uri "rspec" version))
+        (file-name
+          (string-append name "-" version ".tar.gz"))
+        (sha256
+          (base32
+            "1abfzwkbxlwahb243k8d3fp6i135lx1aqmbfl79w9zlpng182ndk"))))
+    (build-system cargo-build-system)
+    (arguments
+      `(#:cargo-inputs
+        (("rust-colored" ,rust-colored)
+         ("rust-derive-new" ,rust-derive-new)
+         ("rust-derive-builder" ,rust-derive-builder)
+         ("rust-expectest" ,rust-expectest)
+         ("rust-rayon" ,rust-rayon))
+        #:cargo-development-inputs
+        (("rust-clippy" ,rust-clippy))))
+    (home-page "https://mackwic.github.io/rspec")
+    (synopsis
+      "Write Rspec-like tests with stable rust")
+    (description
+      "Write Rspec-like tests with stable rust")
+    (license license:mpl2.0)))
 
 (define-public rust-rustc-demangle
   (package
