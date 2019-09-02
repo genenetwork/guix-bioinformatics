@@ -1000,11 +1000,10 @@ used in argon2rs' bench suite.")
       (origin
         (method url-fetch)
         (uri (crate-uri "cc" version))
-        (file-name
-          (string-append name "-" version ".tar.gz"))
+        (file-name (string-append name "-" version ".tar.gz"))
         (sha256
-          (base32
-            "1zxzd559dbbf1iwdzmkj7czapzccs17kqqmsj9ayijpdix5rrbld"))))
+         (base32
+          "1zxzd559dbbf1iwdzmkj7czapzccs17kqqmsj9ayijpdix5rrbld"))))
     (build-system cargo-build-system)
     (arguments
      `(;#:cargo-inputs
@@ -1023,15 +1022,12 @@ used in argon2rs' bench suite.")
              (copy-file "Cargo.toml.orig" "Cargo.toml")
              #t)))
        #:tests? #f)) ; Tests require cc-test from git repo.
-    (home-page
-      "https://github.com/alexcrichton/cc-rs")
-    (synopsis
-      "A build-time dependency for Cargo build scripts to assist in invoking the native
-      C compiler to compile native C code into a static archive to be linked into Rust
-      code.")
+    (home-page "https://github.com/alexcrichton/cc-rs")
+    (synopsis "Invoke the native C compiler")
     (description
-      "This package provides a build-time dependency for Cargo build scripts to assist in invoking the native
-      C compiler to compile native C code into a static archive to be linked into Rustcode.")
+     "This package provides a build-time dependency for Cargo build scripts to
+assist in invoking the native C compiler to compile native C code into a static
+archive to be linked into Rustcode.")
     (license (list license:asl2.0
                    license:expat))))
 
@@ -3639,53 +3635,6 @@ archive to be linked into Rustcode.")
       "A Tokio aware, HTTP/2.0 client & server implementation for Rust.")
     (license license:expat)))
 
-(define-public rust-heapsize-0.3
-  (package
-    (inherit rust-heapsize)
-    (name "rust-heapsize")
-    (version "0.3.9")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (crate-uri "heapsize" version))
-        (file-name (string-append name "-" version ".tar.gz"))
-        (sha256
-         (base32
-          "0dmwc37vgsdjzk10443dj4f23439i9gch28jcwzmry3chrwx8v2m"))))
-    (arguments
-     `(#:cargo-inputs (("rust-kernel32-sys" ,rust-kernel32-sys))
-       #:tests? #f)))) ;; No flexible-tests feature flags on this release.
-
-(define-public rust-heapsize-plugin
-  (package
-    (name "rust-heapsize-plugin")
-    (version "0.1.6")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (crate-uri "heapsize_plugin" version))
-        (file-name
-          (string-append name "-" version ".tar.gz"))
-        (sha256
-         (base32
-          "1i72isf699q9jl167g2kg4xd6h3cd05rc79zaph58aqjy0g0m9y9"))))
-    (build-system cargo-build-system)
-    (arguments
-     `(#:cargo-development-inputs (("rust-heapsize" ,rust-heapsize-0.3))
-       #:phases
-       (modify-phases %standard-phases
-         (add-after 'unpack 'fix-Cargo-toml
-           (lambda _
-             (substitute* "Cargo.toml"
-               (("path = \"..\", ") ""))
-             #t)))))
-    (home-page "https://github.com/servo/heapsize")
-    (synopsis
-      "Automatically generating infrastructure for measuring the total runtime size of an object on the heap")
-    (description
-      "Automatically generating infrastructure for measuring the total runtime size of an object on the heap")
-    (license license:mpl2.0)))
-
 (define-public rust-heck
   (package
     (name "rust-heck")
@@ -4629,33 +4578,6 @@ archive to be linked into Rustcode.")
       "Bindings for all JS global objects and functions in all JS environments like Node.js and browsers, built on `#[wasm_bindgen]` using the `wasm-bindgen` crate.")
     (license (list license:asl2.0
                    license:expat))))
-
-(define-public rust-language-tags
-  (package
-    (name "rust-language-tags")
-    (version "0.2.2")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (crate-uri "language-tags" version))
-        (file-name
-          (string-append name "-" version ".tar.gz"))
-        (sha256
-          (base32
-            "16hrjdpa827carq5x4b8zhas24d8kg4s16m6nmmn1kb7cr5qh7d9"))))
-    (build-system cargo-build-system)
-    (arguments
-      `(#:cargo-inputs
-        (("rust-heapsize" ,rust-heapsize))
-        #:cargo-development-inputs
-        (("rust-heapsize-plugin" ,rust-heapsize-plugin))))
-    (home-page
-      "https://github.com/pyfisch/rust-language-tags")
-    (synopsis
-      "Language tags for Rust")
-    (description
-      "Language tags for Rust")
-    (license license:expat)))
 
 (define-public rust-lazycell
   (package
@@ -6042,31 +5964,6 @@ stream encoding/decoding.")
         ("rust-quickcheck" ,rust-quickcheck-0.6)
         ("rust-rand" ,rust-rand-0.4)
         ("rust-serde-test" ,rust-serde-test))))))
-
-(define-public rust-owning-ref
-  (package
-    (name "rust-owning-ref")
-    (version "0.4.0")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (crate-uri "owning_ref" version))
-        (file-name
-          (string-append name "-" version ".tar.gz"))
-        (sha256
-          (base32
-            "04zgwy77lin8qz398s6g44467pd6kjhbrlqifkia5rkr47mbi929"))))
-    (build-system cargo-build-system)
-    (arguments
-      `(#:cargo-inputs
-        (("rust-stable-deref-trait" ,rust-stable-deref-trait))))
-    (home-page
-      "https://github.com/Kimundi/owning-ref-rs")
-    (synopsis
-      "A library for creating references that carry their owner with them.")
-    (description
-      "A library for creating references that carry their owner with them.")
-    (license license:expat)))
 
 (define-public rust-packed-simd
   (package
@@ -7618,28 +7515,6 @@ invocations.")
       `(#:cargo-inputs
         (("rust-rand-core" ,rust-rand-core-0.3))))))
 
-;; This package requires features which are unavailable
-;; on the stable releases of Rust.
-(define-public rust-redox-syscall ; guix upstreamable
-  (package
-    (name "rust-redox-syscall")
-    (version "0.1.56")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (crate-uri "redox_syscall" version))
-        (file-name (string-append name "-" version ".tar.gz"))
-        (sha256
-         (base32
-          "110y7dyfm2vci4x5vk7gr0q551dvp31npl99fnsx2fb17wzwcf94"))))
-    (build-system cargo-build-system)
-    (home-page "https://gitlab.redox-os.org/redox-os/syscall")
-    (synopsis "Rust library to access raw Redox system calls")
-    (description "This package provides a Rust library to access raw Redox
-system calls.")
-    (properties '((hidden? . #t)))
-    (license license:expat)))
-
 (define-public rust-redox-users
   (package
     (name "rust-redox-users")
@@ -8131,34 +8006,6 @@ system calls.")
       "Fast floating point to string conversion")
     (license (list license:asl2.0
                    license:boost1.0))))
-
-(define-public rust-scoped-threadpool
-  (package
-    (name "rust-scoped-threadpool")
-    (version "0.1.9")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (crate-uri "scoped_threadpool" version))
-        (file-name (string-append name "-" version ".tar.gz"))
-        (sha256
-         (base32
-          "1a26d3lk40s9mrf4imhbik7caahmw2jryhhb6vqv6fplbbgzal8x"))))
-    (build-system cargo-build-system)
-    (arguments
-     `(#:cargo-development-inputs
-       (("rust-lazy-static" ,rust-lazy-static))))
-    (home-page "https://github.com/Kimundi/scoped-threadpool-rs")
-    (synopsis "library for scoped and cached threadpools")
-    (description
-     "This crate provides a stable, safe and scoped threadpool.  It can be used
-to execute a number of short-lived jobs in parallel without the need to respawn
-the underlying threads.  Jobs are runnable by borrowing the pool for a given
-scope, during which an arbitrary number of them can be executed. These jobs can
-access data of any lifetime outside of the pools scope, which allows working on
-non-'static references in parallel.")
-    (license (list license:asl2.0
-                   license:expat))))
 
 (define-public rust-scroll
   (package
@@ -9562,34 +9409,6 @@ function with proven statistical guarantees.")
       display in commandline applications.  It is designed to be efficient
       and handle Unicode characters correctly.")
     (license license:expat)))
-
-(define-public rust-thread-id
-  (package
-    (name "rust-thread-id")
-    (version "3.3.0")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (crate-uri "thread-id" version))
-        (file-name
-          (string-append name "-" version ".tar.gz"))
-        (sha256
-          (base32
-            "1h90v19fjz3x9b25ywh68z5yf2zsmm6h5zb4rl302ckbsp4z9yy7"))))
-    (build-system cargo-build-system)
-    (arguments
-      `(#:cargo-inputs
-        (("rust-libc" ,rust-libc)
-         ("rust-redox-syscall" ,rust-redox-syscall)
-         ("rust-winapi" ,rust-winapi))))
-    (home-page
-      "https://github.com/ruuda/thread-id")
-    (synopsis
-      "Get a unique ID for the current thread in Rust.")
-    (description
-      "Get a unique ID for the current thread in Rust.")
-    (license (list license:asl2.0
-                   license:expat))))
 
 (define-public rust-time
   (package
