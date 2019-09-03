@@ -1357,26 +1357,6 @@ compile, issue warnings or otherwise produce compile-time output.")
       "This package provides a terminal and console abstraction for Rust")
     (license license:expat)))
 
-(define-public rust-constant-time-eq
-  (package
-    (name "rust-constant-time-eq")
-    (version "0.1.4")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (crate-uri "constant_time_eq" version))
-        (file-name (string-append name "-" version ".tar.gz"))
-        (sha256
-         (base32
-          "083icpr9xb72rrdxw3p4068dcspn6ai22jy7rhl2a8grfz448nlr"))))
-    (build-system cargo-build-system)
-    (home-page "https://github.com/cesarb/constant_time_eq")
-    (synopsis" Compares two equal-sized byte strings in constant time")
-    (description
-     "This package compares two equal-sized byte strings in constant time.
-It is inspired by the Linux kernel's crypto_memneq.")
-    (license license:cc0)))
-
 (define-public rust-conv
   (package
     (name "rust-conv")
@@ -9099,7 +9079,7 @@ function with proven statistical guarantees.")
       `(#:cargo-inputs
         (("rust-proc-macro2" ,rust-proc-macro2)
          ("rust-quote" ,rust-quote)
-         ("rust-unicode-xid" ,rust-unicode-xid))
+         ("rust-unicode-xid" ,rust-unicode-xid-0.1))
         #:cargo-development-inputs
         (("rust-insta" ,rust-insta)
          ("rust-rayon" ,rust-rayon)
@@ -9132,7 +9112,7 @@ function with proven statistical guarantees.")
         (("rust-proc-macro2" ,rust-proc-macro2)
          ("rust-quote" ,rust-quote)
          ("rust-syn" ,rust-syn)
-         ("rust-unicode-xid" ,rust-unicode-xid))
+         ("rust-unicode-xid" ,rust-unicode-xid-0.1))
         #:cargo-development-inputs
         (("rust-synstructure-test-traits"
           ,rust-synstructure-test-traits))))
@@ -9162,7 +9142,7 @@ function with proven statistical guarantees.")
        (("rust-proc-macro2" ,rust-proc-macro2)
         ("rust-quote" ,rust-quote)
         ("rust-syn" ,rust-syn)
-        ("rust-unicode-xid" ,rust-unicode-xid))
+        ("rust-unicode-xid" ,rust-unicode-xid-0.1))
        #:cargo-development-inputs
        (("rust-synstructure-test-traits"
          ,rust-synstructure-test-traits))))))
