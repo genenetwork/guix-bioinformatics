@@ -9,6 +9,7 @@
   #:use-module (guix build-system ant)
   #:use-module (guix build-system cmake)
   #:use-module (guix build-system gnu)
+  #:use-module (guix build-system python)
   #:use-module (gnu packages)
   #:use-module (gnu packages bioinformatics)
   #:use-module (gnu packages boost)
@@ -18,6 +19,7 @@
   #:use-module (gnu packages maths)
   #:use-module (gnu packages perl)
   #:use-module (gnu packages python)
+  #:use-module (gnu packages python-xyz)
   #:use-module (gnu packages statistics))
 
 (define-public contra
@@ -528,3 +530,82 @@ reads.")
 (PacBio or Oxford Nanopore).  It detects all types of SVs (10bp+) using evidence
 from split-read alignments, high-mismatch regions, and coverage analysis.")
    (license license:expat)))
+
+;; TODO: Unbundle Complete-Striped-Smith-Waterman-Library
+(define-public ngmlr
+  (package
+   (name "ngmlr")
+   (version "0.2.7")
+   (source (origin
+     (method git-fetch)
+     (uri (git-reference
+            (url "https://github.com/philres/ngmlr.git")
+            (commit (string-append "v" version))))
+     (file-name (git-file-name name version))
+     (sha256
+      (base32 "0lmsy8w0kxbyfnrln7lxgmnx3d82sv2b20n2yw5742rvfhq1v31n"))))
+   (build-system cmake-build-system)
+   (arguments
+    `(#:phases
+      (modify-phases %standard-phases
+        (add-after 'patch-source-shebangs 'patch-more-tools
+          (lambda* (#:key inputs #:allow-other-keys)
+            (let ((bed (assoc-ref inputs "bedtools"))
+                  (sam (assoc-ref inputs "samtools")))
+              (substitute* (find-files "test" "\\.sh$")
+                (("bedtools") (string-append bed "/bin/bedtools"))
+                (("samtools") (string-append sam "/bin/samtools")))
+              #t)))
+        (replace 'check
+          (lambda _
+            (with-directory-excursion "../source"
+              (invoke "sh" "test/test_travis.sh")))))))
+   (native-inputs
+    `(("bedtools" ,bedtools)
+      ("samtools" ,samtools)))
+   (inputs
+    `(("zlib" ,zlib)))
+   (home-page "https://github.com/philres/ngmlr")
+   (synopsis "Long-read mapper designed to align PacBio or Oxford Nanopore")
+   (description
+    "NGMLR is a long-read mapper designed to align PacBio or Oxford Nanopore
+(standard and ultra-long) to a reference genome with a focus on reads that span
+structural variations.")
+   (license license:expat)))
+
+(define-public svim
+  (package
+   (name "svim")
+   (version "1.2.0")
+   (source (origin
+     (method git-fetch)
+     (uri (git-reference
+            (url "https://github.com/eldariont/svim.git")
+            (commit (string-append "v" version))))
+     (file-name (git-file-name name version))
+     (sha256
+      (base32 "08j02in9jbq41b67dna1apnc3y30i37v44d1khml1xlx0iga720s"))))
+   (build-system python-build-system)
+   (arguments
+    '(#:phases
+      (modify-phases %standard-phases
+        (replace 'check
+          (lambda _
+            (invoke "python3" "-m" "unittest" "discover" "-s" "src/"))))))
+   (propagated-inputs
+    `(("python-matplotlib" ,python-matplotlib)
+      ("python-numpy" ,python-numpy)
+      ("python-pysam" ,python-pysam)
+      ("python-scipy" ,python-scipy)
+      ("minimap2" ,minimap2)
+      ("ngmlr" ,ngmlr)
+      ("samtools" ,samtools)))
+   (home-page "https://github.com/eldariont/svim")
+   (synopsis "Structural Variant Identification Method using Long Reads")
+   (description
+    "SVIM (pronounced SWIM) is a structural variant caller for long reads.  It
+is able to detect, classify and genotype five different classes of structural
+variants.  Unlike existing methods, SVIM integrates information from across the
+genome to precisely distinguish similar events, such as tandem and interspersed
+duplications and novel element insertions.")
+   (license license:gpl3)))
