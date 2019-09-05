@@ -82,16 +82,7 @@
     (build-system python-build-system)
     (arguments
      `(#:python ,python-2 ; apparently incompatible with Python 3
-       #:tests? #f
-       #:phases
-       (modify-phases %standard-phases
-         (delete 'check)
-         (add-after 'install 'check
-           (lambda* (#:key outputs inputs #:allow-other-keys)
-             ;; It's easier to run tests after install.
-             ;; Make installed package available for running the tests
-             (add-installed-pythonpath inputs outputs)
-             (zero? (system* "python" "-m" "rpy2.tests" "-v")))))))
+       #:tests? #f))
     (propagated-inputs
      `(("python2-six" ,python2-six)
        ("python2-singledispatch" ,python2-singledispatch)
