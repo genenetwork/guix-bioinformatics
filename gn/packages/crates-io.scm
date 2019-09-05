@@ -2529,7 +2529,14 @@ compile, issue warnings or otherwise produce compile-time output.")
         (file-name (string-append name "-" version ".tar.gz"))
         (sha256
          (base32
-          "0f0c4i4c65jh8lci0afl5yg74ac0lbnpxcp81chj114zwg9a9c0m"))))))
+          "0f0c4i4c65jh8lci0afl5yg74ac0lbnpxcp81chj114zwg9a9c0m"))))
+    (arguments
+     `(#:cargo-inputs
+       (("rust-atty" ,rust-atty)
+        ("rust-humantime" ,rust-humantime)
+        ("rust-log" ,rust-log)
+        ("rust-regex" ,rust-regex)
+        ("rust-termcolor" ,rust-termcolor))))))
 
 (define-public rust-env-logger-0.4
   (package
@@ -2754,6 +2761,51 @@ compile, issue warnings or otherwise produce compile-time output.")
       "Automatically apply the suggestions made by rustc")
     (license (list license:asl2.0
                    license:expat))))
+
+(define-public rust-rustversion
+  (package
+    (name "rust-rustversion")
+    (version "0.1.4")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (crate-uri "rustversion" version))
+        (file-name
+          (string-append name "-" version ".tar.gz"))
+        (sha256
+          (base32
+            "1s3ib2paa5gq17x4qsmjmnsw68z7b5d5av1wsiqcrihmqb7kk0dl"))))
+    (build-system cargo-build-system)
+    (arguments
+      `(#:cargo-inputs
+        (("rust-proc-macro2" ,rust-proc-macro2) ; 1.0
+         ("rust-quote" ,rust-quote) ; 1.0
+         ("rust-syn" ,rust-syn)))) ; 1.0
+    (home-page "https://github.com/dtolnay/rustversion")
+    (synopsis
+      "Conditional compilation according to rustc compiler version")
+    (description
+      "Conditional compilation according to rustc compiler version")
+    (license (list license:expat license:asl2.0))))
+
+(define-public rust-rustversion-0.1.3
+  (package
+    (inherit rust-rustversion)
+    (name "rust-rustversion")
+    (version "0.1.3")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (crate-uri "rustversion" version))
+        (file-name (string-append name "-" version ".tar.gz"))
+        (sha256
+         (base32
+          "158mxvmn1kxxskvb3l4sj4abkcs315byli3i52rr831424ljsxbl"))))
+    (arguments
+     `(#:cargo-inputs
+       (("rust-proc-macro2" ,rust-proc-macro2) ; 0.4
+        ("rust-quote" ,rust-quote) ;0.6 
+        ("rust-syn" ,rust-syn)))))) ; 0.15.25
 
 (define-public rust-flame
   (package
@@ -4993,6 +5045,23 @@ archive to be linked into Rustcode.")
      `(#:cargo-inputs
        (("rust-log" ,rust-log))))))
 
+(define-public rust-log-0.3.8
+  (package
+    (inherit rust-log)
+    (name "rust-log")
+    (version "0.3.8")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (crate-uri "log" version))
+        (file-name (string-append name "-" version ".tar.gz"))
+        (sha256
+         (base32
+          "0nsn28syc49vvjhxcfc8261rd1frhjc0r4bn9v3mqvps3ra7f3w8"))))
+    (arguments
+     `(#:cargo-inputs
+       ()))))
+
 (define-public rust-loom
   (package
     (name "rust-loom")
@@ -5131,6 +5200,25 @@ stream encoding/decoding.")
        (("rust-rawpointer" ,rust-rawpointer))
        #:cargo-development-inputs
        (("rust-bencher" ,rust-bencher))))))
+
+(define-public rust-matrixmultiply-0.1.8
+  (package
+    (inherit rust-matrixmultiply)
+    (name "rust-matrixmultiply")
+    (version "0.1.8")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (crate-uri "matrixmultiply" version))
+        (file-name (string-append name "-" version ".tar.gz"))
+        (sha256
+         (base32
+          "006i0czg8ggd5vz5fbyf8k6y65r3z368yy3mm4cg0njaazzhmcln"))))
+    (arguments
+     `(#:cargo-inputs
+       ()
+       #:cargo-development-inputs
+       ()))))
 
 (define-public rust-memchr
   (package
@@ -6822,6 +6910,25 @@ invocations.")
         ("rust-libc" ,rust-libc)
         ("rust-rand-core" ,rust-rand-core-0.3)
         ("rust-rdrand" ,rust-rdrand-0.4)
+        ("rust-winapi" ,rust-winapi))))))
+
+(define-public rust-rand-0.4.3
+  (package
+    (inherit rust-rand)
+    (name "rust-rand")
+    (version "0.4.3")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (crate-uri "rand" version))
+        (file-name (string-append name "-" version ".tar.gz"))
+        (sha256
+         (base32
+          "1gfgnqfj2pyh27dcb720jpawskllwnbvxh816ddyykv269xz8ml3"))))
+    (arguments
+     `(#:cargo-inputs
+       (("rust-fuchsia-zircon" ,rust-fuchsia-zircon)
+        ("rust-libc" ,rust-libc)
         ("rust-winapi" ,rust-winapi))))))
 
 (define-public rust-rand-0.3
@@ -9064,7 +9171,7 @@ function with proven statistical guarantees.")
 (define-public rust-syn
   (package
     (name "rust-syn")
-    (version "0.15.42")
+    (version "0.15.44")
     (source
       (origin
         (method url-fetch)
@@ -9073,7 +9180,7 @@ function with proven statistical guarantees.")
           (string-append name "-" version ".tar.gz"))
         (sha256
           (base32
-            "0png5pz7jjjj39xy8w7qr65y3s9qam0jpz6nbmal06m5dhq0kp7a"))))
+            "1id5g6x6zihv3j7hwrw3m1jp636bg8dpi671r7zy3jvpkavb794w"))))
     (build-system cargo-build-system)
     (arguments
       `(#:cargo-inputs
@@ -9092,6 +9199,29 @@ function with proven statistical guarantees.")
     (description "Parser for Rust source code")
     (license (list license:asl2.0
                    license:expat))))
+
+(define-public rust-syn-0.15.25
+  (package
+    (inherit rust-syn)
+    (name "rust-syn")
+    (version "0.15.25")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (crate-uri "syn" version))
+        (file-name (string-append name "-" version ".tar.gz"))
+        (sha256
+         (base32
+          "1m9s5injm7pllivqsizsxccsj00871clw79x58v5m4r6jqynkdvi"))))
+    (arguments
+     `(#:cargo-inputs
+       (("rust-proc-macro2" ,rust-proc-macro2)
+        ("rust-quote" ,rust-quote)
+        ("rust-unicode-xid" ,rust-unicode-xid-0.1))
+       #:cargo-development-inputs
+       (("rust-rayon" ,rust-rayon)
+        ("rust-regex" ,rust-regex)
+        ("rust-walkdir" ,rust-walkdir))))))
 
 (define-public rust-synstructure
   (package
@@ -9218,16 +9348,15 @@ function with proven statistical guarantees.")
       (origin
         (method url-fetch)
         (uri (crate-uri "tempdir" version))
-        (file-name
-          (string-append name "-" version ".tar.gz"))
+        (file-name (string-append name "-" version ".tar.gz"))
         (sha256
-          (base32
-            "1n5n86zxpgd85y0mswrp5cfdisizq2rv3la906g6ipyc03xvbwhm"))))
+         (base32
+          "1n5n86zxpgd85y0mswrp5cfdisizq2rv3la906g6ipyc03xvbwhm"))))
     (build-system cargo-build-system)
     (arguments
-      `(#:cargo-inputs
-        (("rust-rand" ,rust-rand-0.4)
-         ("rust-remove-dir-all" ,rust-remove-dir-all))))
+     `(#:cargo-inputs
+       (("rust-rand" ,rust-rand-0.4.3)
+        ("rust-remove-dir-all" ,rust-remove-dir-all))))
     (home-page
       "https://github.com/rust-lang/tempdir")
     (synopsis
