@@ -15,6 +15,7 @@
   #:use-module (gnu packages)
   #:use-module (gnu packages algebra)
   #:use-module (gnu packages base)
+  #:use-module (gnu packages bioconductor)
   #:use-module (gnu packages bioinformatics)
   #:use-module (gnu packages boost)
   #:use-module (gnu packages compression)
@@ -143,9 +144,9 @@ genome-wide association studies in structured populations.")
      ".")
     (license license:expat)))
 
-(define-public r-qvalue
+(define-public r-qvalue-old
   (package
-    (name "r-qvalue")
+    (name "r-qvalue-old")
     (version "2.8.0")
     (source
      (origin
