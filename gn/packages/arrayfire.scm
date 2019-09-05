@@ -1,5 +1,6 @@
 ;;; GNU Guix --- Functional package management for GNU
 ;;; Copyright © 2016 Dennis Mungai <dmngaie@gmail.com>
+;;; Copyright © 2019 Efraim Flashner <efraim@flashner.co.il>
 ;;;
 ;;; This file is part of GNU Guix.
 ;;;
@@ -19,342 +20,216 @@
 (define-module (gn packages arrayfire)
   #:use-module (guix packages)
   #:use-module ((guix licenses) #:prefix license:)
-  #:use-module (guix download)
   #:use-module (guix git-download)
-  #:use-module (guix build-system gnu)
   #:use-module (guix build-system cmake)
   #:use-module (gnu packages)
   #:use-module (guix utils)
   #:use-module (gnu packages algebra)
-  #:use-module (gnu packages autotools)
-  #:use-module (gnu packages bootstrap)
-  #:use-module (gnu packages compression)
-  #:use-module (gnu packages curl)
-  #:use-module (gnu packages gawk)
-  #:use-module (gnu packages cmake)
   #:use-module (gnu packages boost)
-  #:use-module (gnu packages glib)
-  #:use-module (gnu packages image)
-  #:use-module (gnu packages video)
-  #:use-module (gnu packages textutils)
-  ;; #:use-module (gnu packages fftw)
-  ;; #:use-module (gnu packages fftw-openmpi) - in algebra
-  ;; #:use-module (gnu packages fftwf)
-  #:use-module (gnu packages gl)
+  #:use-module (gnu packages check)
   #:use-module (gnu packages gcc)
-  #:use-module (gnu packages gnupg)
-  #:use-module (gnu packages pkg-config)
   #:use-module (gnu packages maths)
-  #:use-module (gnu packages mpi)
-  #:use-module (gnu packages web)
-  #:use-module (gnu packages wget)
-  #:use-module (gnu packages python)
-  #:use-module (gnu packages ruby)
-  #:use-module (gnu packages xorg)
-  #:use-module (gnu packages version-control)
-  #:use-module (gnu packages linux))
+  #:use-module (gnu packages opencl)
+  #:use-module (gnu packages pkg-config)
+  #:use-module (gnu packages python))
 
 (define-public arrayfire
 (package
     (name "arrayfire")
-    (version "3.3.1")
+    (version "3.3.2")
     (source (origin
-              (method url-fetch)
-              (uri (string-append "http://arrayfire.com/arrayfire_source/arrayfire-full-" version
-                                  ".tar.bz2"))
-              (file-name (string-append name "-" version ".tar.bz2"))
+              (method git-fetch)
+              (uri (git-reference
+                     (url "https://github.com/arrayfire/arrayfire.git")
+                     (commit (string-append "v" version))))
+              (file-name (git-file-name name version))
               (sha256
                (base32
-                "045adww6dqmyz6kkfmq7xawi5v9a894yp5j9pzn6j568gi48pyqc"))))
-    (native-inputs `(("autoconf" ,autoconf)
-        ("automake" ,automake)
-        ("gawk" ,gawk)
-        ("git" ,git)
-        ("glew" ,glew)
-        ("libtool" ,libtool)
-        ("pkg-config" ,pkg-config)))
-    (inputs `(("boost" ,boost)
-       ("glfw" ,glfw)
-       ("compute" ,compute)
-       ("curl" ,curl)
+                "113ldnqsil4p84sayv7jh8vnn0nalxibhdyvvwp94vqk20kqg4lw"))
+              (patches (search-patches "arrayfire-lapack-detection.patch"
+                                       "arrayfire-newer-boost-compute.patch"))))
+    (native-inputs
+     `(("pkg-config" ,pkg-config)
+       ("googletest" ,googletest)
+       ("assets" ,(origin
+                    (method git-fetch)
+                     (uri (git-reference
+                            (url "https://github.com/arrayfire/assets.git")
+                            (commit "729c7b64039e6433ae5ee521658ba20147efcb02"))) ; March 4, 2019
+                     (file-name (git-file-name "arrayfire-assets" "submodule"))
+                     (sha256
+                      (base32
+                       "05zg7m6zlwi3llbv7l5wd9qi9ppb9p3ad2i5xmqwvcbgx5ry4l2s"))))
+       ("threads" ,(origin
+                     (method git-fetch)
+                     (uri (git-reference
+                            (url "https://github.com/alltheflops/threads.git")
+                            (commit "5e778ce0a7f0f80af9d32ea3569df3dbec834f59"))) ; Dec 16, 2015
+                     (file-name (git-file-name "arrayfire-threads" "submodule"))
+                     (sha256
+                      (base32
+                       "1rj2357r124b4ry0s467fz9hs4jxcyacliwprggvai85a39pqabx"))))))
+    (inputs
+     `(("boost" ,boost)
        ("clBLAS" ,clBLAS)
        ("clFFT" ,clFFT)
-       ("atlas" ,atlas)
-       ("dbus" ,dbus)
-       ("opencl-headers" ,opencl-headers)
-       ("ocl-icd" ,ocl-icd)
-       ("enca" ,enca)
-       ("eudev" ,eudev)
-       ("glew" ,glew)
-       ("glib" ,glib)
-       ("lapack" ,lapack)
-       ("scalapack" ,scalapack)
-       ("libcap" ,libcap)
-       ("libjpeg" ,libjpeg)
-       ("libltdl" ,libltdl)
-       ("libtiff" ,libtiff)
-       ("libyajl" ,libyajl)
-       ("mesa-utils" ,mesa-utils)
-       ("python" ,python-2)
-       ("freeimage" ,freeimage)
-       ("freeglut" ,freeglut)
-       ("fftw" ,fftw)
-       ("fftwf" ,fftwf)
        ("fftw-openmpi" ,fftw-openmpi)
-       ("glew" ,glew)
-       ("glu" ,glu)
+       ("fftwf" ,fftwf)
+       ("ocl-icd" ,ocl-icd)
        ("openblas" ,openblas)
-       ("wget" ,wget)
-       ("cmake" ,cmake)))
+       ("opencl-headers" ,opencl-headers)))
     (build-system cmake-build-system)
     (arguments
-     `(#:configure-flags '("-DBUILD_OPENCL=ON" "-DBUILD_CUDA=OFF" "-DBUILD_GRAPHICS=OFF" "-DUSE_SYSTEM_BOOST_COMPUTE=ON" "-DUSE_SYSTEM_CLBLAS=ON" "-DUSE_SYSTEM_CLFFT=ON")
-       #:tests? #t))
-    (synopsis "ArrayFire: a general purpose GPU library. https://arrayfire.com")
-    (description "ArrayFire is a high performance software library for parallel computing with an easy-to-use API. Its array based function set makes parallel programming simple.Now on Guix")
-    (home-page "http://arrayfire.com/")
-    (license (list license:gpl2
-                   license:gpl2+
-                   license:gpl3
-                   license:gpl3+))))
-
-(define-public glfw
-  (package
-    (name "glfw")
-    (version "3.1.2")
-    (source (origin
-             (method url-fetch)
-             (uri (string-append "https://github.com/glfw/glfw/archive/"
-                                 version ".tar.gz"))
-             (sha256
-              (base32
-               "08pixv8hd5xsccf7l8cqcijjqaq4k4da8qbp77wggal2fq445ika"))))
-    (build-system cmake-build-system)
-    (arguments `(#:configure-flags '("-DBUILD_SHARED_LIBS=ON")
-                 #:tests? #f))
-    (native-inputs `(("autoconf" ,autoconf)
-        ("automake" ,automake)
-        ("cmake" ,cmake)
-        ("git" ,git)
-        ("libtool" ,libtool)
-        ("libpthread-stubs" ,libpthread-stubs)
-        ("pkg-config" ,pkg-config)))
-    (inputs `(("curl" ,curl)
-       ("dbus" ,dbus)
-       ("enca" ,enca)
-       ("eudev" ,eudev)
-       ("glew" ,glew)
-       ("libcap" ,libcap)
-       ("libjpeg" ,libjpeg)
-       ("libltdl" ,libltdl)
-       ("libtiff" ,libtiff)
-       ("mesa-utils" ,mesa-utils)
-       ("randrproto" ,randrproto)
-       ("libxrandr" ,libxrandr)
-       ("xineramaproto" ,xineramaproto)
-       ("libxinerama" ,libxinerama)
-       ("libxcursor" ,libxcursor)
-       ("python" ,python-2)))
-    (home-page "http://www.glfw.org/")
-    (synopsis "glfw is an Open Source, multi-platform library for creating windows with OpenGL contexts and receiving input and events.")
-    (description "glfw is an Open Source, multi-platform library for creating windows with OpenGL contexts and receiving input and events.")
-    (license (list license:gpl2))))
+     `(#:configure-flags
+       '("-DBUILD_OPENCL=ON"
+         "-DBUILD_CUDA=OFF"
+         "-DBUILD_GRAPHICS=OFF"
+         "-DBUILD_TEST=OFF" ; building tests segfaults
+         "-DUSE_SYSTEM_CLBLAS=ON"
+         "-DUSE_SYSTEM_CLFFT=ON"
+         "-DUSE_SYSTEM_GTEST=ON")
+       #:phases
+       (modify-phases %standard-phases
+         (add-after 'unpack 'add-more-sources
+           (lambda* (#:key inputs #:allow-other-keys)
+             (let ((assets  (assoc-ref inputs "assets"))
+                   (threads (assoc-ref inputs "threads")))
+               (copy-recursively assets "assets")
+               (copy-recursively threads "src/backend/cpu/threads"))
+             #t))
+         (add-after 'unpack 'fix-sources
+           (lambda _
+             (substitute* "src/backend/opencl/blas.cpp"
+               ;; https://github.com/arrayfire/arrayfire/commit/90a9ffbce5c38352a365e03a634ffaf0d2fb9933
+               (("#undef BLAS_FUNC_DEF")
+                "#undef BLAS_FUNC_DEF\n#undef BLAS_FUNC"))
+             (substitute* '("src/backend/cpu/blas.cpp"
+                            "src/backend/opencl/cpu/cpu_blas.cpp")
+               ;; https://github.com/arrayfire/arrayfire/pull/2538/files
+               (("&cblas_##PREFIX##FUNC;")
+                "(FUNC##_func_def<TYPE>)&cblas_##PREFIX##FUNC;"))
+             #t)))
+       #:tests? #f)) ; Building the tests fail linking, so we build the examples as a test.
+    (home-page "https://arrayfire.com/")
+    (synopsis "High performance library for parallel computing")
+    (description
+     "ArrayFire is a high performance software library for parallel computing
+with an easy-to-use API.  Its array based function set makes parallel
+programming simple.")
+    (license (list license:bsd-3 ; everything except CMakeModules folder
+                   license:cc0)))) ; assets
 
 (define-public clBLAS
   (package
     (name "clBLAS")
-    (version "v2.10")
+    (version "2.12")
     (source (origin
-             (method url-fetch)
-             (uri (string-append "https://github.com/clMathLibraries/clBLAS/archive/"
-                                 version ".tar.gz"))
+             (method git-fetch)
+             (uri (git-reference
+                    (url "https://github.com/clMathLibraries/clBLAS.git")
+                    (commit (string-append "v" version))))
+             (file-name (git-file-name name version))
              (sha256
               (base32
-               "0adlb02lqzrklfybhnv4n0p37mvkvdi3vqiwa05x2mv05ywnr93j"))))
+               "154mz52r5hm0jrp5fqrirzzbki14c1jkacj75flplnykbl36ibjs"))))
     (build-system cmake-build-system)
-    (arguments `(#:tests? #f
-                 #:configure-flags '("../clBLAS-2.10/src" "-DBUILD_SHARED_LIBS=ON" "-DCMAKE_BUILD_TYPE=Release" "-DBUILD_TEST=OFF")))
-    (native-inputs `(("autoconf" ,autoconf)
-        ("automake" ,automake)
-        ("cmake" ,cmake)
-        ("gfortran" ,gfortran)
-        ("libtool" ,libtool)
-        ("pkg-config" ,pkg-config)))
-    (inputs `(("curl" ,curl)
-       ("dbus" ,dbus)
-       ("boost" ,boost)
-       ("enca" ,enca)
-       ("eudev" ,eudev)
-       ("fftw-openmpi" ,fftw-openmpi)
-       ("glew" ,glew)
-       ("libcap" ,libcap)
-       ("libjpeg" ,libjpeg)
-       ("libltdl" ,libltdl)
-       ("libtiff" ,libtiff)
-       ("mesa-utils" ,mesa-utils)
-       ("openmpi" ,openmpi)
-       ("ocl-icd" ,ocl-icd)
+    (arguments
+     `(#:tests? #f
+       #:configure-flags
+       (list "../source/src"
+             "-DUSE_SYSTEM_GTEST=ON"
+             ;"-DBoost_USE_STATIC_LIBS=OFF" ; this does not seem to apply
+             "-DBUILD_TEST=OFF")
+       #:phases
+       (modify-phases %standard-phases
+         (add-after 'unpack 'patch-source
+           (lambda _
+             (substitute* "src/CMakeLists.txt"
+               (("Boost_USE_STATIC_LIBS   ON")
+                "Boost_USE_STATIC_LIBS   OFF"))
+             #t)))))
+    (native-inputs
+     `(("gfortran" ,gfortran)
+       ("openblas" ,openblas)
        ("opencl-headers" ,opencl-headers)
-       ("randrproto" ,randrproto)
-       ("libxrandr" ,libxrandr)
-       ("xineramaproto" ,xineramaproto)
-       ("libxinerama" ,libxinerama)
-       ("libxcursor" ,libxcursor)
        ("python" ,python-2)))
-    (home-page "http://www.glfw.org/")
-    (synopsis "glfw is an Open Source, multi-platform library for creating windows with OpenGL contexts and receiving input and events.")
-    (description "glfw is an Open Source, multi-platform library for creating windows with OpenGL contexts and receiving input and events.")
-    (license (list license:gpl2))))
+    (inputs
+     `(("boost" ,boost)
+       ("ocl-icd" ,ocl-icd)))
+    (home-page "https://github.com/clMathLibraries/clBLAS")
+    (synopsis "Library containing BLAS functions written in OpenCL")
+    (description
+     "The primary goal of @code{clBLAS} is to make it easier for developers to
+utilize the inherent performance and power efficiency benefits of heterogeneous
+computing.  @code{clBLAS} interfaces do not hide nor wrap @code{OpenCL}
+interfaces, but rather leaves @code{OpenCL} state management to the control of
+the user to allow for maximum performance and flexibility.  The @code{clBLAS}
+library does generate and enqueue optimized @code{OpenCL} kernels, relieving the
+user from the task of writing, optimizing and maintaining kernel code themselves.")
+    (license license:asl2.0)))
 
 (define-public clFFT
   (package
     (name "clFFT")
-    (version "v2.10.1")
+    (version "2.12.2")
     (source (origin
-             (method url-fetch)
-             (uri (string-append "https://github.com/clMathLibraries/clFFT/archive/"
-                                 version ".tar.gz"))
+             (method git-fetch)
+             (uri (git-reference
+                    (url "https://github.com/clMathLibraries/clFFT.git")
+                    (commit (string-append "v" version))))
+             (file-name (git-file-name name version))
              (sha256
               (base32
-               "19hrk1lf06kch8x9dpbdj0waycn2mldrmj2y4vzi7zn2gdfw6g73"))))
+               "134vb6214hn00qy84m4djg4hqs6hw19gkp8d0wlq8gb9m3mfx7na"))))
     (build-system cmake-build-system)
-    (arguments `(#:configure-flags '("../clFFT-2.10.1/src" "-DBUILD_SHARED_LIBS=ON" "-DCMAKE_BUILD_TYPE=Release") #:tests? #f))
-    (native-inputs `(("autoconf" ,autoconf)
-        ("automake" ,automake)
-        ("cmake" ,cmake)
-        ("libtool" ,libtool)
-        ("pkg-config" ,pkg-config)))
-    (inputs `(("curl" ,curl)
-       ("dbus" ,dbus)
-       ("enca" ,enca)
-       ("eudev" ,eudev)
+    (arguments
+     `(#:configure-flags '("../source/src"
+                           "-DBUILD_TEST=ON"
+                           "-DUSE_SYSTEM_GTEST=ON"
+                           "-DBoost_USE_STATIC_LIBS=OFF")
+       #:test-target "Test"))
+    (native-inputs
+     `(("boost" ,boost)
        ("fftw-openmpi" ,fftw-openmpi)
-       ("glew" ,glew)
-       ("libcap" ,libcap)
-       ("libjpeg" ,libjpeg)
-       ("libltdl" ,libltdl)
-       ("libtiff" ,libtiff)
-       ("mesa-utils" ,mesa-utils)
-       ("openmpi" ,openmpi)
-       ("ocl-icd" ,ocl-icd)
-       ("opencl-headers" ,opencl-headers)
-       ("randrproto" ,randrproto)
-       ("libxrandr" ,libxrandr)
-       ("xineramaproto" ,xineramaproto)
-       ("libxinerama" ,libxinerama)
-       ("libxcursor" ,libxcursor)
-       ("python" ,python-2)))
-    (home-page "http://www.glfw.org/")
-    (synopsis "glfw is an Open Source, multi-platform library for creating windows with OpenGL contexts and receiving input and events.")
-    (description "glfw is an Open Source, multi-platform library for creating windows with OpenGL contexts and receiving input and events.")
-    (license (list license:gpl2))))
+       ("fftwf" ,fftwf)
+       ("googletest" ,googletest)))
+    (inputs
+     `(("ocl-icd" ,ocl-icd)
+       ("opencl-headers" ,opencl-headers)))
+    (home-page "https://github.com/clMathLibraries/clFFT/")
+    (synopsis "Library containing FFT functions written in OpenCL")
+    (description "@code{clFFT} is a software library containing FFT functions
+written in @code{OpenCL}.  In addition to GPU devices, the library also supports
+running on CPU devices to facilitate debugging and heterogeneous programming.")
+    (license license:asl2.0)))
 
-(define-public compute
+(define-public compute ; superceeded by boost-1.61+
   (package
     (name "compute")
-    (version "v0.5")
+    (version "0.5")
     (source (origin
-             (method url-fetch)
-             (uri (string-append "https://github.com/boostorg/compute/archive/"
-                                 version ".tar.gz"))
+             (method git-fetch)
+             (uri (git-reference
+                    (url "https://github.com/boostorg/compute.git")
+                    (commit (string-append "v" version))))
+             (file-name (git-file-name name version))
              (sha256
               (base32
-               "1r16zd1wdnn9gx278mkvr13k3i79hr35v6vj0fn7v3n92ngwxnhd"))))
+               "0jc04k43br49hqgzrxfn3wfz2m94q1z45zfg5nahqb7p0lbfgwyx"))))
     (build-system cmake-build-system)
-    (arguments `(#:configure-flags '("-DBUILD_SHARED_LIBS=ON" "-DCMAKE_BUILD_TYPE=Release") #:tests? #f))
-    (native-inputs `(("autoconf" ,autoconf)
-        ("automake" ,automake)
-        ("cmake" ,cmake)
-        ("libtool" ,libtool)
-        ("pkg-config" ,pkg-config)))
-    (inputs `(("curl" ,curl)
-       ("dbus" ,dbus)
-       ("enca" ,enca)
-       ("eudev" ,eudev)
-       ("fftw-openmpi" ,fftw-openmpi)
-       ("glew" ,glew)
-       ("boost" ,boost)
-       ("libcap" ,libcap)
-       ("libjpeg" ,libjpeg)
-       ("libltdl" ,libltdl)
-       ("libtiff" ,libtiff)
-       ("mesa-utils" ,mesa-utils)
-       ("openmpi" ,openmpi)
-       ("opencl-headers" ,opencl-headers)
-       ("ocl-icd" ,ocl-icd)
-       ("randrproto" ,randrproto)
-       ("libxrandr" ,libxrandr)
-       ("xineramaproto" ,xineramaproto)
-       ("libxinerama" ,libxinerama)
-       ("libxcursor" ,libxcursor)
-       ("python" ,python-2)))
-    (home-page "http://boost.org")
-    (synopsis "Peer-reviewed portable C++ source libraries,BoostCompute")
-    (description "Peer-reviewed portable C++ source libraries,BoostCompute")
-    (license (list license:x11-style))))
-
-(define-public ocl-icd
-  (package
-   (name "ocl-icd")
-   (version "2.2.9")
-   (source (origin
-             (method url-fetch)
-             (uri (string-append "https://forge.imag.fr/frs/download.php/716/ocl-icd-"
-                                 version ".tar.gz"))
-             (file-name (string-append name "-" version ".tar.gz"))
-             (sha256
-              (base32
-               "1rgaixwnxmrq2aq4kcdvs0yx7i6krakarya9vqs7qwsv5hzc32hc"))))
-    (inputs `(("zip" ,zip)
-             ("autoconf" ,autoconf)
-             ("automake" ,automake)
-             ("ruby" ,ruby)
-             ("libtool" ,libtool)
-             ("opencl-headers" ,opencl-headers)
-             ("libgcrypt" ,libgcrypt)))
-    (build-system gnu-build-system)
-     (arguments
-     '(#:phases (modify-phases %standard-phases
-                    (add-after 'unpack `bootstrap
-                      (lambda _
-                        (zero? (system* "autoreconf" "-vfi")))))))
-    (home-page "https://forge.imag.fr/projects/ocl-icd/")
-    (synopsis "OpenCL implementations are provided as ICD (Installable Client Driver).")
-    (description "OpenCL implementations are provided as ICD (Installable Client Driver).
-    An OpenCL program can use several ICD thanks to the use of an ICD Loader as provided by this project.
-    This free ICD Loader can load any (free or non free) ICD")
-    (license (list license:gpl2 license:ruby))))
-
-(define-public opencl-headers
-(let ((commit "c1770dc"))
-  (package
-    (name "opencl-headers")
-    (version (string-append "2.1-" commit ))
-    (source (origin
-              (method git-fetch)
-              (uri (git-reference
-              (url "https://github.com/KhronosGroup/OpenCL-Headers.git")
-              (commit commit)))
-              (file-name (string-append name "-" commit))
-              (sha256
-               (base32
-                "0m9fkblqja0686i2jjqiszvq3df95gp01a2674xknlmkd6525rck"))))
-    (propagated-inputs '())
-    (inputs '())
-    (native-inputs '())
-    (build-system gnu-build-system)
     (arguments
-     '(#:phases
-       (modify-phases %standard-phases
-         (delete 'configure)
-         (delete 'build)
-         (delete 'check)
-         (replace 'install
-                  (lambda* (#:key outputs #:allow-other-keys)
-                    (copy-recursively "." (string-append
-                                                 (assoc-ref outputs "out")
-                                                 "/include/CL")))))))
-    (synopsis "The Khronos OpenCL headers")
-    (description "This package provides the Khronos OpenCL headers")
-    (home-page "https://www.khronos.org/registry/cl/")
-    (license (list license:gpl2)))))
+     `(#:configure-flags '("-DBUILD_SHARED_LIBS=ON"
+                           "-DCMAKE_BUILD_TYPE=Release")
+       #:tests? #f)) ; tests require OpenCL device
+    (native-inputs
+     `(("boost" ,boost-for-mysql) ; 1.59.0
+       ("opencl-headers" ,opencl-headers)
+       ("ocl-icd" ,ocl-icd)))
+    (home-page "http://boostorg.github.io/compute/")
+    (synopsis "C++ GPU Computing Library for OpenCL")
+    (description
+     "@code{Boost.Compute} is a GPU/parallel-computing library for C++ based on
+@code{OpenCL}.  The core library is a thin C++ wrapper over the @code{OpenCL
+API} and provides access to compute devices, contexts, command queues and memory
+buffers.")
+    (license license:boost1.0)))

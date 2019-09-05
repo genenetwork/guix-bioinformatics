@@ -1,0 +1,277 @@
+https://sources.debian.org/data/main/a/arrayfire/3.3.2+dfsg1-4/debian/patches/Fix-LAPACKE-detection.patch
+
+From: Ghislain Antony Vaillant <ghisvail@gmail.com>
+Date: Wed, 2 Mar 2016 10:46:50 +0000
+Subject: Fix LAPACKE detection.
+
+---
+ CMakeModules/FindLAPACKE.cmake    | 54 +++++++++++++++------------------------
+ src/backend/cpu/CMakeLists.txt    | 18 ++++++-------
+ src/backend/cuda/CMakeLists.txt   | 11 ++++----
+ src/backend/opencl/CMakeLists.txt | 19 +++++++-------
+ 4 files changed, 45 insertions(+), 57 deletions(-)
+
+diff --git a/CMakeModules/FindLAPACKE.cmake b/CMakeModules/FindLAPACKE.cmake
+index 9251ee9..1a73632 100644
+--- a/CMakeModules/FindLAPACKE.cmake
++++ b/CMakeModules/FindLAPACKE.cmake
+@@ -4,13 +4,13 @@
+ #   FIND_PACKAGE(LAPACKE [REQUIRED] [QUIET] )
+ #
+ # It sets the following variables:
+-#   LAPACK_FOUND               ... true if LAPACKE is found on the system
+-#   LAPACK_LIBRARIES           ... full path to LAPACKE library
+-#   LAPACK_INCLUDES            ... LAPACKE include directory
+-#
++#   LAPACKE_FOUND               ... true if LAPACKE is found on the system
++#   LAPACKE_INCLUDE_DIRS        ... LAPACKE include directories
++#   LAPACKE_LIBRARIES           ... path to LAPACKE libraries
++#   LAPACKE_LIBRARY_DIRS        ... LAPACKE library directories
+ 
+ SET(LAPACKE_ROOT_DIR CACHE STRING
+-  "Root directory for custom LAPACK implementation")
++  "Root directory for custom LAPACKE implementation")
+ 
+ IF (NOT INTEL_MKL_ROOT_DIR)
+   SET(INTEL_MKL_ROOT_DIR $ENV{INTEL_MKL_ROOT})
+@@ -40,29 +40,20 @@ IF(PKG_CONFIG_FOUND AND NOT LAPACKE_ROOT_DIR)
+ ENDIF()
+ 
+ IF(PC_LAPACKE_FOUND)
++
++    # Verify sanity of LAPACKE pkg-config file.
+     FOREACH(PC_LIB ${PC_LAPACKE_LIBRARIES})
+       FIND_LIBRARY(${PC_LIB}_LIBRARY NAMES ${PC_LIB} HINTS ${PC_LAPACKE_LIBRARY_DIRS} )
+       IF (NOT ${PC_LIB}_LIBRARY)
+         MESSAGE(FATAL_ERROR "Something is wrong in your pkg-config file - lib ${PC_LIB} not found in ${PC_LAPACKE_LIBRARY_DIRS}")
+       ENDIF (NOT ${PC_LIB}_LIBRARY)
+-      LIST(APPEND LAPACKE_LIB ${${PC_LIB}_LIBRARY})
+     ENDFOREACH(PC_LIB)
+ 
+-    FIND_PATH(
+-        LAPACKE_INCLUDES
+-        NAMES "lapacke.h"
+-        PATHS
+-        ${PC_LAPACKE_INCLUDE_DIRS}
+-        ${INCLUDE_INSTALL_DIR}
+-        /usr/include
+-        /usr/local/include
+-        /sw/include
+-        /opt/local/include
+-        DOC "LAPACKE Include Directory"
+-        )
++    set(LAPACKE_LIBRARIES ${PC_LAPACKE_LIBRARIES})
++    set(LAPACKE_LIBRARY_DIRS ${PC_LAPACKE_LIBRARY_DIRS})
+ 
+-    FIND_PACKAGE_HANDLE_STANDARD_ARGS(LAPACKE DEFAULT_MSG LAPACKE_LIB)
+-    MARK_AS_ADVANCED(LAPACKE_INCLUDES LAPACKE_LIB)
++    FIND_PATH(LAPACKE_INCLUDE_DIRS NAMES "lapacke.h"
++              PATHS ${PC_LAPACKE_INCLUDE_DIRS})
+ 
+ ELSE(PC_LAPACKE_FOUND)
+ 
+@@ -97,7 +88,6 @@ ELSE(PC_LAPACKE_FOUND)
+             LAPACKE_LIB
+             NAMES "lapacke" "liblapacke" "openblas" "mkl_rt"
+             PATHS
+-            ${PC_LAPACKE_LIBRARY_DIRS}
+             ${LIB_INSTALL_DIR}
+             /opt/intel/mkl/lib/ia32
+             /opt/intel/mkl/lib/intel64
+@@ -113,7 +103,6 @@ ELSE(PC_LAPACKE_FOUND)
+            LAPACK_LIB
+             NAMES "lapack" "liblapack" "openblas" "mkl_rt"
+             PATHS
+-            ${PC_LAPACKE_LIBRARY_DIRS}
+             ${LIB_INSTALL_DIR}
+             /opt/intel/mkl/lib/ia32
+             /opt/intel/mkl/lib/intel64
+@@ -129,7 +118,6 @@ ELSE(PC_LAPACKE_FOUND)
+             LAPACKE_INCLUDES
+             NAMES "lapacke.h" "mkl_lapacke.h"
+             PATHS
+-            ${PC_LAPACKE_INCLUDE_DIRS}
+             ${INCLUDE_INSTALL_DIR}
+             /opt/intel/mkl/include
+             /usr/include
+@@ -141,17 +129,15 @@ ELSE(PC_LAPACKE_FOUND)
+             lapacke
+             )
+     ENDIF(LAPACKE_ROOT_DIR)
++    SET(LAPACKE_INCLUDE_DIRS ${LAPACKE_INCLUDES})
++    SET(LAPACKE_LIBRARIES ${LAPACKE_LIB} ${LAPACK_LIB})
++    MARK_AS_ADVANCED(LAPACKE_INCLUDES LAPACKE_LIB LAPACK_LIB)
+ ENDIF(PC_LAPACKE_FOUND)
+ 
+-IF(LAPACKE_LIB AND LAPACK_LIB)
+-    SET(LAPACK_LIBRARIES ${LAPACKE_LIB} ${LAPACK_LIB})
+-ENDIF()
+-IF(LAPACKE_INCLUDES)
+-    SET(LAPACK_INCLUDE_DIR ${LAPACKE_INCLUDES})
+-ENDIF()
+-
+ INCLUDE(FindPackageHandleStandardArgs)
+-FIND_PACKAGE_HANDLE_STANDARD_ARGS(LAPACK DEFAULT_MSG
+-  LAPACK_INCLUDE_DIR LAPACK_LIBRARIES)
+-
+-MARK_AS_ADVANCED(LAPACK_INCLUDES LAPACK_LIBRARIES)
++FIND_PACKAGE_HANDLE_STANDARD_ARGS(LAPACKE DEFAULT_MSG
++                                  LAPACKE_LIBRARIES
++                                  LAPACKE_INCLUDE_DIRS)
++MARK_AS_ADVANCED(LAPACKE_LIBRARIES
++                 LAPACKE_INCLUDE_DIRS
++                 LAPACKE_LIBRARY_DIRS)
+diff --git a/src/backend/cpu/CMakeLists.txt b/src/backend/cpu/CMakeLists.txt
+index ea57269..efe50a0 100644
+--- a/src/backend/cpu/CMakeLists.txt
++++ b/src/backend/cpu/CMakeLists.txt
+@@ -55,7 +55,7 @@ MESSAGE(STATUS "FFTW Library: ${FFTW_LIBRARIES}")
+ 
+ IF(APPLE)
+     FIND_PACKAGE(LAPACKE QUIET) # For finding MKL
+-    IF(NOT LAPACK_FOUND)
++    IF(NOT LAPACKE_FOUND)
+         # UNSET THE VARIABLES FROM LAPACKE
+         UNSET(LAPACKE_LIB CACHE)
+         UNSET(LAPACK_LIB CACHE)
+@@ -67,11 +67,10 @@ ELSE(APPLE) # Linux and Windows
+     FIND_PACKAGE(LAPACKE)
+ ENDIF(APPLE)
+ 
+-IF(NOT LAPACK_FOUND)
+-    MESSAGE(WARNING "LAPACK not found. Functionality will be disabled")
+-ELSE(NOT LAPACK_FOUND)
++IF(NOT LAPACKE_FOUND)
++    MESSAGE(WARNING "LAPACKE not found. Functionality will be disabled")
++ELSE(NOT LAPACKE_FOUND)
+     ADD_DEFINITIONS(-DWITH_CPU_LINEAR_ALGEBRA)
+-    MESSAGE(STATUS "LAPACK libraries found: ${LAPACK_LIBRARIES}")
+ ENDIF()
+ 
+ IF(NOT UNIX)
+@@ -99,8 +98,9 @@ INCLUDE_DIRECTORIES(
+     ${CBLAS_INCLUDE_DIR}
+     )
+ 
+-IF(LAPACK_FOUND)
+-    INCLUDE_DIRECTORIES(${LAPACK_INCLUDE_DIR})
++IF(LAPACKE_FOUND)
++    INCLUDE_DIRECTORIES(${LAPACKE_INCLUDE_DIRS})
++    LINK_DIRECTORIES(${LAPACKE_LIBRARY_DIRS})
+ ENDIF()
+ 
+ FILE(GLOB cpu_headers
+@@ -213,8 +213,8 @@ IF(FORGE_FOUND AND NOT USE_SYSTEM_FORGE)
+   ADD_DEPENDENCIES(afcpu forge)
+ ENDIF()
+ 
+-IF(LAPACK_FOUND)
+-   TARGET_LINK_LIBRARIES(afcpu  PRIVATE ${LAPACK_LIBRARIES})
++IF(LAPACKE_FOUND)
++   TARGET_LINK_LIBRARIES(afcpu  PRIVATE ${LAPACKE_LIBRARIES})
+ ENDIF()
+ 
+ IF(FORGE_FOUND)
+diff --git a/src/backend/cuda/CMakeLists.txt b/src/backend/cuda/CMakeLists.txt
+index 4efb427..24c6544 100644
+--- a/src/backend/cuda/CMakeLists.txt
++++ b/src/backend/cuda/CMakeLists.txt
+@@ -105,7 +105,7 @@ ELSE(CUDA_cusolver_LIBRARY)
+         ## Try to use CPU side lapack
+         IF(APPLE)
+             FIND_PACKAGE(LAPACKE QUIET) # For finding MKL
+-            IF(NOT LAPACK_FOUND)
++            IF(NOT LAPACKE_FOUND)
+                 # UNSET THE VARIABLES FROM LAPACKE
+                 UNSET(LAPACKE_LIB CACHE)
+                 UNSET(LAPACK_LIB CACHE)
+@@ -117,9 +117,9 @@ ELSE(CUDA_cusolver_LIBRARY)
+             FIND_PACKAGE(LAPACKE)
+         ENDIF(APPLE)
+ 
+-        IF(NOT LAPACK_FOUND)
++        IF(NOT LAPACKE_FOUND)
+             MESSAGE(STATUS "CUDA Version ${CUDA_VERSION_STRING} does not contain cusolver library. Linear Algebra will not be available.")
+-        ELSE(NOT LAPACK_FOUND)
++        ELSE(NOT LAPACKE_FOUND)
+             MESSAGE(STATUS "CUDA Version ${CUDA_VERSION_STRING} does not contain cusolver library. But CPU LAPACK libraries are available. Will fallback to using host side code.")
+             ADD_DEFINITIONS(-DWITH_CPU_LINEAR_ALGEBRA)
+             IF(USE_CUDA_MKL) # Manual MKL Setup
+@@ -148,7 +148,8 @@ INCLUDE_DIRECTORIES(
+     )
+ 
+ IF(CUDA_LAPACK_CPU_FALLBACK)
+-  INCLUDE_DIRECTORIES(${LAPACK_INCLUDE_DIR})
++  INCLUDE_DIRECTORIES(${LAPACKE_INCLUDE_DIRS})
++  LINK_DIRECTORIES(${LAPACKE_LIBRARY_DIRS})
+ ENDIF()
+ 
+ FILE(GLOB cuda_headers
+@@ -379,7 +380,7 @@ ENDIF()
+ IF(CUDA_cusolver_LIBRARY)
+     TARGET_LINK_LIBRARIES(afcuda PRIVATE ${CUDA_cusolver_LIBRARY})
+ ELSEIF(CUDA_LAPACK_CPU_FALLBACK)
+-    TARGET_LINK_LIBRARIES(afcuda PRIVATE ${LAPACK_LIBRARIES})
++    TARGET_LINK_LIBRARIES(afcuda PRIVATE ${LAPACKE_LIBRARIES})
+ ENDIF()
+ 
+ SET_TARGET_PROPERTIES(afcuda PROPERTIES
+diff --git a/src/backend/opencl/CMakeLists.txt b/src/backend/opencl/CMakeLists.txt
+index 71247ce..ded53bf 100644
+--- a/src/backend/opencl/CMakeLists.txt
++++ b/src/backend/opencl/CMakeLists.txt
+@@ -12,7 +12,7 @@ ENDIF()
+ 
+ IF(APPLE)
+     FIND_PACKAGE(LAPACKE QUIET) # For finding MKL
+-    IF(NOT LAPACK_FOUND)
++    IF(NOT LAPACKE_FOUND)
+         # UNSET THE VARIABLES FROM LAPACKE
+         UNSET(LAPACKE_LIB CACHE)
+         UNSET(LAPACK_LIB CACHE)
+@@ -24,9 +24,9 @@ ELSE(APPLE) # Linux and Windows
+     FIND_PACKAGE(LAPACKE)
+ ENDIF(APPLE)
+ 
+-IF(NOT LAPACK_FOUND)
+-    MESSAGE(WARNING "LAPACK not found. Functionality will be disabled")
+-ELSE(NOT LAPACK_FOUND)
++IF(NOT LAPACKE_FOUND)
++    MESSAGE(WARNING "LAPACKE not found. Functionality will be disabled")
++ELSE(NOT LAPACKE_FOUND)
+   ADD_DEFINITIONS(-DWITH_OPENCL_LINEAR_ALGEBRA)
+ 
+   IF(NOT USE_OPENCL_MKL)
+@@ -105,8 +105,9 @@ INCLUDE_DIRECTORIES(
+     ${BoostCompute_INCLUDE_DIRS}
+     ${CBLAS_INCLUDE_DIR}
+     )
+-IF(LAPACK_FOUND)
+-    INCLUDE_DIRECTORIES(${LAPACK_INCLUDE_DIR})
++IF(LAPACKE_FOUND)
++    INCLUDE_DIRECTORIES(${LAPACKE_INCLUDE_DIRS})
++    LINK_DIRECTORIES(${LAPACKE_LIBRARY_DIRS})
+ ENDIF()
+ 
+ FILE(GLOB opencl_headers
+@@ -163,7 +164,7 @@ source_group(backend\\opencl\\kernel\\convolve\\Sources FILES ${conv_ker_sources
+ source_group(backend\\opencl\\cpu\\Headers FILES ${cpu_headers})
+ source_group(backend\\opencl\\cpu\\Sources FILES ${cpu_sources})
+ 
+-IF(LAPACK_FOUND)
++IF(LAPACKE_FOUND)
+     FILE(GLOB magma_sources
+         "magma/*.cpp")
+ 
+@@ -313,9 +314,9 @@ IF(FORGE_FOUND AND NOT USE_SYSTEM_FORGE)
+     ADD_DEPENDENCIES(afopencl forge)
+ ENDIF()
+ 
+-IF(LAPACK_FOUND)
++IF(LAPACKE_FOUND)
+   TARGET_LINK_LIBRARIES(afopencl
+-    PRIVATE ${LAPACK_LIBRARIES}
++    PRIVATE ${LAPACKE_LIBRARIES}
+     PRIVATE ${CBLAS_LIBRARIES})
+ ENDIF()
+ 
