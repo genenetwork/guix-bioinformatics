@@ -566,6 +566,13 @@ project)")
   (description #f)
   (license #f)))
 
+; penguin2:~/tmp$ env IPFS_PATH=/export/ipfs/ ipfs add -r Imaging/
+; added QmV8Rew1re8gBTLsaqMU4bd7euFUPEpjiD572mtoz6KhPn Imaging/Imaging-1.1.6-gn.tar.gz
+; added QmdkzQpVMLZVtywpYesynt9c7H8w7hHZRYKq8woN7stfpD Imaging
+; env IPFS_PATH=/export/ipfs/ ipfs pin add -r QmdkzQpVMLZVtywpYesynt9c7H8w7hHZRYKq8woN7stfpD
+; pinned QmdkzQpVMLZVtywpYesynt9c7H8w7hHZRYKq8woN7stfpD recursively
+
+
 (define-public python2-pil1-gn ; guix obsolete
   (package
     (name "python2-pil1") ; works with GN2
