@@ -505,6 +505,13 @@ Python 3 support.")
 (define-public python2-shellescape
   (package-with-python2 python-shellescape))
 
+
+; env IPFS_PATH=/export/ipfs/ ipfs add -r htmlgen/
+; added QmUD9LMJTE8q5wYkUyAwLdz2QCGXWt457iFnyYQAGfsN3j htmlgen/htmlgen-2.2.2-gn.tar.gz
+; added QmZLWsPHLFTU3hWAfdTwj3RXFrS8Ma7KEixne1suWuYqeG htmlgen
+; penguin2:~/tmp$ env IPFS_PATH=/export/ipfs/ ipfs pin add -r QmZLWsPHLFTU3hWAfdTwj3RXFrS8Ma7KEixne1suWuYqeG
+; pinned QmZLWsPHLFTU3hWAfdTwj3RXFrS8Ma7KEixne1suWuYqeG recursively
+
 (define-public python2-htmlgen-gn ; guix obsolete
 (package
   (name "python2-htmlgen-gn")
@@ -513,8 +520,7 @@ Python 3 support.")
            (method url-fetch)
            ;; http://files.genenetwork.org/software/contrib/htmlgen-2.2.2-gn.tar.gz
            (uri (string-append
-                 "http://files.genenetwork.org/software/contrib/htmlgen-"
-version "-gn.tar.gz"))
+                 "http://ipfs.genenetwork.org/ipfs/QmZLWsPHLFTU3hWAfdTwj3RXFrS8Ma7KEixne1suWuYqeG/htmlgen-" version "-gn.tar.gz"))
            (sha256
             (base32
              "1lwsk56rymhrma46cbyh3g64ksmq1vsih3qkrc2vh0lpba825y7r"))
@@ -567,11 +573,11 @@ project)")
     (source (origin
              (method url-fetch)
              (uri (string-append
-                   "http://files.genenetwork.org/software/contrib/Imaging-"
-                   version "-gn.tar.gz"))
+                   ; "http://files.genenetwork.org/software/contrib/Imaging-"
+                   "http://effbot.org/downloads/Imaging-1.1.6.tar.gz"))
              (sha256
               (base32
-               "0jhinbcq2k899c76m1jc5a3z39k6ajghiavpzi6991hbg6xhxdzg"))
+               "141zidl3s9v4vfi3nsbg42iq1lc2a932gprqr1kij5hrnn53bmvx"))
     (modules '((guix build utils)))
     (snippet
      ;; Adapt to newer freetype. As the package is unmaintained upstream,
@@ -620,18 +626,23 @@ capabilities to the Python interpreter.")
                "file://README"
                "See 'README' in the distribution."))))
 
+;  agrigento:~/izip/git/opensource/genenetwork$ scp ./contrib/piddle-1.0.15-gn.tgz penguin2.genenetwork.org
+; penguin2:~$ env IPFS_PATH=/export/ipfs/ ipfs add piddle-1.0.15-gn.tgz
+; added QmSMptV2VALL2s7igqRqKJ8ALNvhqFRUYVG54kEF7ac6ve piddle-1.0.15-gn.tgz
+; penguin2:~$ env IPFS_PATH=/export/ipfs/ ipfs pin add -r QmSMptV2VALL2s7igqRqKJ8ALNvhqFRUYVG54kEF7ac6ve
+; pinned QmSMptV2VALL2s7igqRqKJ8ALNvhqFRUYVG54kEF7ac6ve recursively
+
 (define-public python2-piddle-gn ; guix obsolete
   (package
-    (name "python2-piddle")
-    (version "1.0.15-gn-PIL1")
+    (name "python2-piddle-gn")
+    (version "1.0.15-gn")
     (source (origin
      (method url-fetch)
      (uri (string-append
-           "http://files.genenetwork.org/software/contrib/piddle-"
-version ".tgz"))
+           "http://ipfs.genenetwork.org/ipfs/QmeKcMb8AdwZNUcAaTASVpZ39ipwJn8eBoqqDfoCzQYmNk/piddle-" version ".tgz"))
      (sha256
       (base32
-       "1m89xp0d7d5a0nd483qir7zq99ci6wab1r018i698wjdpr8zf86b"))))
+       "05gjnn31v7p0kh58qixrpcizcxqf3b7zv4a5kk8nsmqwgxh0c6gq"))))
 
     (build-system python-build-system)
     (native-inputs
@@ -719,7 +730,7 @@ NOTE: This package is superseded by python-pillow")
                "See 'README' in the distribution."))))
 
 ; upstream version won't work with gn2
-(define-public python2-piddle-1.0.15
+(define-public python2-piddle
   (package
     (name "python2-piddle")
     (version "1.0.15")
@@ -739,7 +750,7 @@ NOTE: This package is superseded by python-pillow")
     (native-inputs
      `(("unzip" ,unzip)))
     (propagated-inputs
-     `(("python2-pil" ,python2-pil1)))
+     `(("python2-pil" ,python2-pil1-gn)))
     (home-page "http://www.strout.net/info/coding/python/piddle/")
     (synopsis "Plug-In Drawing, Does Little Else")
     (description "PIDDLE is designed for vector graphics -- i.e., drawing of
