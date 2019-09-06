@@ -212,10 +212,10 @@ spreadsheets without the need for COM objects.")
 
 (define-public python24-piddle
   (package
-    (inherit python2-piddle-1.0.15)
+    (inherit python2-piddle-gn)
     (name "python24-piddle")
     (arguments
-     (substitute-keyword-arguments (package-arguments python2-piddle-1.0.15)
+     (substitute-keyword-arguments (package-arguments python2-piddle-gn)
        ((#:python _) python-2.4)))
     (propagated-inputs
      `(("python24-pil" ,python24-pil)))))
