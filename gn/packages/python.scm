@@ -412,9 +412,9 @@ until a value is returned.")
 (define-public python2-rserve
   (package-with-python2 python-rserve))
 
-(define-public python-setuptools
+(define-public python-setuptools-old
   (package
-    (name "python-setuptools")
+    (name "python-setuptools-old")
     (version "40.6.0")
     (source
      (origin
