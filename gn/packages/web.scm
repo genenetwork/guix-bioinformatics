@@ -82,6 +82,21 @@ entire app with our Sass variables and mixins, responsive grid system,
 extensive prebuilt components, and powerful plugins built on jQuery.")
     (license license:expat)))
 
+(define-public web-bootstrap-3
+  (package
+    (inherit web-bootstrap)
+    (name "web-bootstrap")
+    (version "3.4.1") ; Feb. 13, 2019
+    (source
+      (origin
+        (method git-fetch)
+        (uri (git-reference
+               (url "https://github.com/twbs/bootstrap.git")
+               (commit (string-append "v" version))))
+        (file-name (git-file-name name version))
+        (sha256
+         (base32 "1wsv79rvzaacyf740mwmhxadpwf28pad711jhbxl26zgqjrpzcbp"))))))
+
 (define-public web-bootstrap-native
   (let ((commit "2e48d7ee29d4063e3bd2024ff83ddc50a550c4dd"))
     (package
