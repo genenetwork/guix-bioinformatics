@@ -1,7 +1,6 @@
 (define-module (gn packages javascript)
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (gnu packages compression)
-  #:use-module (gnu packages javascript)
   #:use-module (gn packages web)
   #:use-module (guix packages)
   #:use-module (guix download)
@@ -540,33 +539,3 @@ not natively support it.")
     (description "FileSaver.js is the solution to saving files on the
 client-side, and is perfect for web apps that generates files on the client.")
     (license license:expat)))
-
-(define-public js-strftime-0.9
-  (package
-    (inherit js-strftime)
-    (name "js-strftime")
-    (version "0.9.2")
-    (source (origin
-              (method git-fetch)
-              (uri (git-reference
-                     (url"https://github.com/samsonjs/strftime")
-                     (commit (string-append "v" version))))
-              (file-name (git-file-name name version))
-              (sha256
-               (base32
-                "0g72286afcd2sxdsbm5k868ms6yqhbz0p4yfg33lmzbk9q42v9bs"))))))
-
-(define-public js-es5-shim-2
-  (package
-    (inherit js-es5-shim)
-    (name "js-es5-shim")
-    (version "2.0.12")
-    (source (origin
-              (method git-fetch)
-              (uri (git-reference
-                     (url "https://github.com/es-shims/es5-shim")
-                     (commit (string-append "v" version))))
-              (file-name (git-file-name name version))
-              (sha256
-               (base32
-                "1j4f0rba6p9bnqvw0riami01nkj0svl3flm7c7d6xydr2642zz8d"))))))
