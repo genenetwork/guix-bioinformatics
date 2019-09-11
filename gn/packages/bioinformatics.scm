@@ -609,3 +609,52 @@ variants.  Unlike existing methods, SVIM integrates information from across the
 genome to precisely distinguish similar events, such as tandem and interspersed
 duplications and novel element insertions.")
    (license license:gpl3)))
+
+(define-public bamaddrg
+  (let ((commit "3fccbf057eef21f6304fade6c306c5bb64158865") ; May 26, 2012
+        (revision "1"))
+    (package
+      (name "bamaddrg")
+      (version (git-version "0.0.0" revision commit))
+      (source (origin
+        (method git-fetch)
+        (uri (git-reference
+               (url "https://github.com/ekg/bamaddrg.git")
+               (commit commit)))
+        (file-name (git-file-name name version))
+        (sha256
+         (base32 "14hq66cc7f4cssagb6079fmd2i6hfr9vmpcw5vi5kzsqr3ifc5yk"))))
+      (build-system gnu-build-system)
+      (arguments
+       `(#:tests? #f ; no tests
+         #:phases
+         (modify-phases %standard-phases
+           (delete 'configure)
+           ;; The Makefile wants to vendor bamtools' source so we mimic it.
+           (replace 'build
+              (lambda* (#:key inputs #:allow-other-keys)
+                (let ((bam (assoc-ref inputs "bamtools")))
+                  (apply invoke
+                         `("g++" "-O3"
+                           ,(string-append "-I" bam "/include/bamtools")
+                           ,(string-append "-L" bam "/lib/libbamtools.a")
+                           "bamaddrg.cpp" "-o" "bamaddrg" "-lbamtools" "-lz")))
+                #t))
+         (replace 'install
+           (lambda* (#:key outputs #:allow-other-keys)
+             (let ((bin (string-append (assoc-ref outputs "out") "/bin")))
+               (install-file "bamaddrg" bin)
+               #t))))))
+      (native-inputs
+       `(("bamtools" ,bamtools)))
+      (inputs
+       `(("zlib" ,zlib)))
+      (home-page "https://github.com/ekg/bamaddrg")
+      (synopsis "Adds read groups to input BAM files, streams BAM output on stdout")
+      (description
+       "This is intended for use \"fixing up\" RG tags on the fly so that they
+reflect the source file from which the aligment originated from.  This allows
+the \"safe\" merging of many files from many individuals into one stream,
+suitable for input into downstream processing systems such as freebayes (
+population variant detector).")
+      (license #f)))) ; no license listed
