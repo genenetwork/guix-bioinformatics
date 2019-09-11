@@ -6,9 +6,11 @@
   #:use-module (guix utils)
   #:use-module (guix download)
   #:use-module (guix git-download)
+  #:use-module (guix hg-download)
   #:use-module (guix build-system ant)
   #:use-module (guix build-system cmake)
   #:use-module (guix build-system gnu)
+  #:use-module (guix build-system waf)
   #:use-module (guix build-system python)
   #:use-module (gnu packages)
   #:use-module (gnu packages bioinformatics)
@@ -20,6 +22,7 @@
   #:use-module (gnu packages perl)
   #:use-module (gnu packages python)
   #:use-module (gnu packages python-xyz)
+  #:use-module (gnu packages readline)
   #:use-module (gnu packages statistics))
 
 (define-public contra
@@ -658,3 +661,58 @@ the \"safe\" merging of many files from many individuals into one stream,
 suitable for input into downstream processing systems such as freebayes (
 population variant detector).")
       (license #f)))) ; no license listed
+
+(define-public qctool
+  (let ((changeset "73662f5f6e1e6efe75796bc64e342fb5d5d35e54") ; May 30, 2019
+        (revision "1"))
+    (package
+      (name "qctool")
+      (version (string-append "2.0.5-" revision "." (string-take changeset 7)))
+      (source
+        (origin
+          (method hg-fetch)
+          (uri (hg-reference
+                 (url "https://bitbucket.org/gavinband/qctool")
+                 (changeset changeset)))
+          (file-name (string-append name "-" version "-checkout"))
+          (sha256
+           (base32 "0lcir6jdw1gsi1l0yrsyqgrb8dryxxw3gyncfx5bx34qbhd6f5dv"))))
+      (build-system waf-build-system)
+      (arguments
+       `(#:python ,python-2
+         #:tests? #f ; no check command
+         #:phases
+         (modify-phases %standard-phases
+           (add-after 'unpack 'rename-waf
+             (lambda _
+               (rename-file "waf-1.5.18" "waf")
+               #t)))))
+      (native-inputs
+       `(("readline" ,readline)
+         ("zlib" ,zlib)))
+      (inputs
+       `(("lapack" ,lapack)
+         ("openblas" ,openblas)))
+      (home-page "https://www.well.ox.ac.uk/~gav/qctool_v2/")
+      (synopsis "Quality control and analysis of gwas datasets")
+      (description
+       "QCTOOL is a command-line utility program for manipulation and quality
+control of gwas datasets and other genome-wide data.  QCTOOL can be used
+@enumerate
+@item To compute per-variant and per-sample QC metrics.
+@item To filter out samples or variants.
+@item To merge datasets in various ways.
+@item To convert dataset between file formats. (In particular QCTOOL can read
+and write BGEN files, including full support for the BGEN v1.2 format that has
+been used for the UK Biobank imputed data full release).
+@item To manipulate datasets in various ways - e.g. by updating data fields or
+aligning alleles to a reference sequence based on information in a strand file.
+@item To annotate variants with information from BED files, sequence from FASTA
+files, or with genetic map positions.
+@item To compute LD metrics between variants.
+@item To compare genotypes for individuals typed or imputed or phased in
+different datasets.
+@item To compute between-sample relatedness and principal components.
+@item To compute 'genetic risk predictor' scores.
+@end enumerate")
+      (license (license:x11-style "https://www.boost.org/LICENSE_1_0.txt")))))
