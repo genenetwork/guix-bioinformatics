@@ -539,3 +539,37 @@ not natively support it.")
     (description "FileSaver.js is the solution to saving files on the
 client-side, and is perfect for web apps that generates files on the client.")
     (license license:expat)))
+
+(define-public javascript-underscore
+  (package
+    (name "javascript-underscore")
+    (version "1.9.1") ; June 1, 2018
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+              (url "https://github.com/jashkenas/underscore.git")
+              (commit version)))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32
+         "1f75wrln5kv5ihkbb9zwhyjqd9imwil801abhv36w09dkkabpjy5"))))
+    (build-system trivial-build-system)
+    (arguments
+     `(#:modules ((guix build utils))
+       #:builder
+       (begin
+         (use-modules (guix build utils))
+         (let* ((out (assoc-ref %outputs "out"))
+                (targetdir (string-append out "/share/genenetwork2/javascript/underscore"))
+                (source (assoc-ref %build-inputs "source")))
+           (install-file (string-append source "/underscore.js") targetdir)
+           (install-file (string-append source "/underscore-min.js") targetdir)
+           (install-file (string-append source "/underscore-min.js.map") targetdir)))))
+    (native-inputs `(("source" ,source)))
+    (home-page "https://underscorejs.org")
+    (synopsis "Utility-belt library for JavaScript")
+    (description
+     "Underscore is a JavaScript library that provides a whole mess of useful
+functional programming helpers without extending any built-in objects.")
+    (license license:expat)))
