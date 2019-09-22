@@ -97,6 +97,22 @@ extensive prebuilt components, and powerful plugins built on jQuery.")
         (sha256
          (base32 "1wsv79rvzaacyf740mwmhxadpwf28pad711jhbxl26zgqjrpzcbp"))))))
 
+(define-public web-bootstrap-3.3
+  (package
+    (inherit web-bootstrap)
+    (name "web-bootstrap")
+    (version "3.3.7") ; July 25, 2016
+    (source
+      (origin
+        (method git-fetch)
+        (uri (git-reference
+               (url "https://github.com/twbs/bootstrap.git")
+               (commit (string-append "v" version))))
+        (file-name (git-file-name name version))
+        (sha256
+         (base32 "0li7vdr4avz34b9xvwk7skbvnvzbx002cw5nfm7iwvi1wk8v5bri"))))
+    (native-inputs `(("source" ,source)))))
+
 (define-public web-bootstrap-native
   (let ((commit "2e48d7ee29d4063e3bd2024ff83ddc50a550c4dd"))
     (package
