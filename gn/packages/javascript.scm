@@ -5,6 +5,7 @@
   #:use-module (guix packages)
   #:use-module (guix download)
   #:use-module (guix git-download)
+  #:use-module (guix build-system minify)
   #:use-module (guix build-system trivial)
   #:use-module (srfi srfi-1))
 
@@ -573,3 +574,11 @@ client-side, and is perfect for web apps that generates files on the client.")
      "Underscore is a JavaScript library that provides a whole mess of useful
 functional programming helpers without extending any built-in objects.")
     (license license:expat)))
+
+(define-public js-underscore
+  (package
+    (inherit javascript-underscore)
+    (name "js-underscore")
+    (arguments
+     `(#:javascript-files '("underscore.js")))
+    (build-system minify-build-system)))
