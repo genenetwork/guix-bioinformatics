@@ -95,7 +95,8 @@ extensive prebuilt components, and powerful plugins built on jQuery.")
                (commit (string-append "v" version))))
         (file-name (git-file-name name version))
         (sha256
-         (base32 "1wsv79rvzaacyf740mwmhxadpwf28pad711jhbxl26zgqjrpzcbp"))))))
+         (base32 "1wsv79rvzaacyf740mwmhxadpwf28pad711jhbxl26zgqjrpzcbp"))))
+    (native-inputs `(("source" ,source)))))
 
 (define-public web-bootstrap-3.3
   (package
