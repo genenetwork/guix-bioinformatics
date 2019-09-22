@@ -624,3 +624,44 @@ timestamps in your document intelligently.  (e.g \"3 hours ago\").")
     (arguments
      `(#:javascript-files '("lib/timeago.js")))
     (build-system minify-build-system)))
+
+(define-public javascript-colorbox
+  (package
+    (name "javascript-colorbox")
+    (version "1.4.36") ; Feb. 11, 2014
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+              (url "https://github.com/jackmoore/colorbox.git")
+              (commit version)))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32
+         "0yjikn0mc1cmhcl3wbd5pjspi6n75swazsahm616xlra73qpagfn"))))
+    (build-system trivial-build-system)
+    (arguments
+     `(#:modules ((guix build utils))
+       #:builder
+       (begin
+         (use-modules (guix build utils))
+         (let* ((out (assoc-ref %outputs "out"))
+                (targetdir (string-append out "/share/genenetwork2/javascript/colorbox"))
+                (source (assoc-ref %build-inputs "source")))
+           (install-file (string-append source "/jquery.colorbox.js") targetdir)
+           (install-file (string-append source "/jquery.colorbox-min.js") targetdir)
+           ))))
+    (native-inputs `(("source" ,source)))
+    (home-page "http://www.jacklmoore.com/colorbox/")
+    (synopsis "Lightweight customizable lightbox plugin for jQuery")
+    (description
+     "Colorbox is a lightweight customizable lightbox plugin for jQuery.")
+    (license license:expat)))
+
+(define-public js-colorbox
+  (package
+    (inherit javascript-colorbox)
+    (name "js-colorbox")
+    (arguments
+     `(#:javascript-files '("jquery.colorbox.js")))
+    (build-system minify-build-system)))
