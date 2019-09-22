@@ -582,3 +582,45 @@ functional programming helpers without extending any built-in objects.")
     (arguments
      `(#:javascript-files '("underscore.js")))
     (build-system minify-build-system)))
+
+(define-public javascript-smart-time-ago
+  (let ((commit "055c3858997b12d44bf06c0fb9eb5847002cf973")
+        (revision "1"))
+    (package
+      (name "javascript-smart-time-ago")
+      (version (git-version "0.1.5" revision commit)) ; Feb, 21, 2014
+      (source
+       (origin
+         (method git-fetch)
+         (uri (git-reference
+                (url "https://github.com/pragmaticly/smart-time-ago.git")
+                (commit commit)))
+         (file-name (git-file-name name version))
+         (sha256
+          (base32
+           "0fj5vf3s3rj7ywvx1s4gh6z0yljn9ax75y2ikf1d41c0lzaxdpyd"))))
+      (build-system trivial-build-system)
+      (arguments
+       `(#:modules ((guix build utils))
+         #:builder
+         (begin
+           (use-modules (guix build utils))
+           (let* ((out (assoc-ref %outputs "out"))
+                  (targetdir (string-append out "/share/genenetwork2/javascript/smart-time-ago"))
+                  (source (assoc-ref %build-inputs "source")))
+             (install-file (string-append source "/lib/timeago.js") targetdir)))))
+      (native-inputs `(("source" ,source)))
+      (home-page "http://pragmaticly.github.com/smart-time-ago/")
+      (synopsis "jQuery library to update the relative timestamps")
+      (description
+       "Smart Time Ago is a little jQuery library to update the relative
+timestamps in your document intelligently.  (e.g \"3 hours ago\").")
+      (license license:expat))))
+
+(define-public js-smart-time-ago
+  (package
+    (inherit javascript-smart-time-ago)
+    (name "js-smart-time-ago")
+    (arguments
+     `(#:javascript-files '("lib/timeago.js")))
+    (build-system minify-build-system)))
