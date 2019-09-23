@@ -287,6 +287,8 @@ location of a putative QTL.")
        ("javascript-panzoom" ,javascript-cytoscape-panzoom)
        ("javascript-qtip" ,javascript-cytoscape-qtip)
        ))
+    (inputs
+     `(("javascript-colorbox" ,(package-source javascript-colorbox))))
     (build-system python-build-system)
     (arguments
      `(#:python ,python-2
@@ -307,9 +309,16 @@ location of a putative QTL.")
                  (("git") (which "git"))
                  (("grep") (which "grep"))
                  (("rm") (which "rm"))
-                 (("which") (which "which")) ; three wiches in a row!
+                 (("which") (which "which")) ; three whiches in a row!
                  )
                #t))
+           (add-after 'unpack 'patch-javascript
+             (lambda* (#:key inputs #:allow-other-keys)
+               (let ((colorbox (assoc-ref inputs "javascript-colorbox"))
+                     (gn2 "/share/genenetwork2/javascript/"))
+                 (delete-file-recursively "wqflask/wqflask/static/packages/colorbox")
+                 (copy-recursively colorbox "wqflask/wqflask/static/packages/colorbox")
+                 #t)))
            (add-before 'install 'fix-paths
              (lambda* (#:key inputs #:allow-other-keys)
                (let* (
