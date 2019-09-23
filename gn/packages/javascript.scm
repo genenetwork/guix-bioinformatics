@@ -3,6 +3,7 @@
   #:use-module (gnu packages compression)
   #:use-module (gn packages web)
   #:use-module (guix packages)
+  #:use-module (guix utils)
   #:use-module (guix download)
   #:use-module (guix git-download)
   #:use-module (guix build-system minify)
@@ -747,4 +748,54 @@ maps or data visualization.")
     (name "js-chroma")
     (arguments
      `(#:javascript-files '("chroma.js")))
+    (build-system minify-build-system)))
+
+(define-public javascript-jscolor
+  (package
+    (name "javascript-jscolor")
+    (version "2.0.5") ; April 26, 2018
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append "http://jscolor.com/release/"
+                           (version-major+minor version)
+                           "/jscolor-" version ".zip"))
+       (sha256
+        (base32
+         "1mjsr7vvark3glipvk5xxg3xsi88swwlkfmlkykwcwnrgw2hyq53"))))
+    (build-system trivial-build-system)
+    (arguments
+     `(#:modules ((guix build utils))
+       #:builder
+       (begin
+         (use-modules (guix build utils))
+         (let* ((out (assoc-ref %outputs "out"))
+                (targetdir (string-append out "/share/genenetwork2/javascript/jscolor"))
+                (unzip (string-append (assoc-ref %build-inputs "unzip") "/bin/unzip"))
+                (source (assoc-ref %build-inputs "source")))
+           (invoke unzip source)
+           (install-file "jscolor.js" targetdir)
+           ))))
+    (native-inputs
+     `(("source" ,source)
+       ("unzip" ,unzip)))
+    (home-page "http://jscolor.com")
+    (synopsis "Javascript web color picker")
+    (description
+     "jscolor is a web color picker component that aims to be super easy both
+for developers to install and for the end users to use.")
+    (license license:gpl3)))
+
+(define-public js-jscolor
+  (package
+    (inherit javascript-jscolor)
+    (name "js-jscolor")
+    (arguments
+     `(#:javascript-files '("jscolor.js")
+       #:phases
+       (modify-phases %standard-phases
+         ;; unpacking the zipbomb breaks javascript-jscolor
+         (replace 'unpack
+           (lambda* (#:key source #:allow-other-keys)
+             (invoke "unzip" source))))))
     (build-system minify-build-system)))
