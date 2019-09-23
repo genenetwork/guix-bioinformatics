@@ -799,3 +799,46 @@ for developers to install and for the end users to use.")
            (lambda* (#:key source #:allow-other-keys)
              (invoke "unzip" source))))))
     (build-system minify-build-system)))
+
+(define-public javascript-jstat
+  (package
+    (name "javascript-jstat")
+    (version "1.9.1") ; Sept. 2, 2019
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+              (url "https://github.com/jstat/jstat.git")
+              (commit (string-append "v" version))))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32
+         "0v69rkvgjykg2msjgpg38raypw7293jawlfxnicn86p2x0c57pzz"))))
+    (build-system trivial-build-system)
+    (arguments
+     `(#:modules ((guix build utils))
+       #:builder
+       (begin
+         (use-modules (guix build utils))
+         (let* ((out (assoc-ref %outputs "out"))
+                (targetdir (string-append out "/share/genenetwork2/javascript/jstat"))
+                (source (assoc-ref %build-inputs "source"))
+                (dist (string-append source "/dist")))
+           (copy-recursively dist targetdir)))))
+    (native-inputs `(("source" ,source)))
+    (home-page "http://jstat.github.io/")
+    (synopsis "Javascript statistical library")
+    (description
+     "jStat provides native javascript implementations of statistical functions.
+jStat provides more functions than most libraries, including the weibull,
+cauchy, poisson, hypergeometric, and beta distributions.  For most
+distributions, jStat provides the pdf, cdf, inverse, mean, mode, variance, and
+a sample function, allowing for more complex calculations.")
+    (license license:expat)))
+
+(define-public js-jstat
+  (package
+    (inherit javascript-jstat)
+    (name "js-jstat")
+    (arguments `(#:javascript-files '("dist/jstat.js")))
+    (build-system minify-build-system)))
