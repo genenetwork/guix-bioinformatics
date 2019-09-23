@@ -665,3 +665,43 @@ timestamps in your document intelligently.  (e.g \"3 hours ago\").")
     (arguments
      `(#:javascript-files '("jquery.colorbox.js")))
     (build-system minify-build-system)))
+
+(define-public javascript-nouislider
+  (package
+    (name "javascript-nouislider")
+    (version "8.0.2") ; July 6, 2015
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+              (url "https://github.com/leongersen/noUiSlider.git")
+              (commit version)))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32
+         "1ngfll2hr9w2q4869n0prfn66lcfyjshvhq4pgi0lb63xla8asfp"))))
+    (build-system trivial-build-system)
+    (arguments
+     `(#:modules ((guix build utils))
+       #:builder
+       (begin
+         (use-modules (guix build utils))
+         (let* ((out (assoc-ref %outputs "out"))
+                (targetdir (string-append out "/share/genenetwork2/javascript/nouislider"))
+                (source (assoc-ref %build-inputs "source"))
+                (dist (string-append source "/distribute")))
+           (copy-recursively dist targetdir)))))
+    (native-inputs `(("source" ,source)))
+    (home-page "https://refreshless.com/nouislider/")
+    (synopsis "Javascript range slider")
+    (description
+     "Nouislider is a lightweight JavaScript range slider with full touch support.")
+    (license license:expat)))
+
+(define-public js-nouislider
+  (package
+    (inherit javascript-nouislider)
+    (name "js-nouislider")
+    (arguments
+     `(#:javascript-files '("distribute/nouislider.js")))
+    (build-system minify-build-system)))
