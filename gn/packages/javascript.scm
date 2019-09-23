@@ -705,3 +705,46 @@ timestamps in your document intelligently.  (e.g \"3 hours ago\").")
     (arguments
      `(#:javascript-files '("distribute/nouislider.js")))
     (build-system minify-build-system)))
+
+(define-public javascript-chroma
+  (package
+    (name "javascript-chroma")
+    (version "1.1.1") ; Aug. 15, 2015
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+              (url "https://github.com/gka/chroma.js")
+              (commit (string-append "v" version))))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32
+         "184bd2cddd9b5ynj2ygr5p7xkrrxnmnjyq5ljyw6g4aqqk4pb0mr"))))
+    (build-system trivial-build-system)
+    (arguments
+     `(#:modules ((guix build utils))
+       #:builder
+       (begin
+         (use-modules (guix build utils))
+         (let* ((out (assoc-ref %outputs "out"))
+                (targetdir (string-append out "/share/genenetwork2/javascript/chroma"))
+                (source (assoc-ref %build-inputs "source")))
+           (install-file (string-append source "/chroma.js") targetdir)
+           (install-file (string-append source "/chroma.min.js") targetdir)))))
+    (native-inputs `(("source" ,source)))
+    (home-page "https://vis4.net/chromajs/")
+    (synopsis "Javascript library for color conversions")
+    (description
+     "chroma.js is a small-ish zero-dependency JavaScript library for all kinds
+of color conversions and color scales.  chroma.js can also help you generate
+nice colors using various methods, for instance to be used in color palette for
+maps or data visualization.")
+    (license (list license:bsd-3 license:asl2.0))))
+
+(define-public js-chroma
+  (package
+    (inherit javascript-chroma)
+    (name "js-chroma")
+    (arguments
+     `(#:javascript-files '("chroma.js")))
+    (build-system minify-build-system)))
