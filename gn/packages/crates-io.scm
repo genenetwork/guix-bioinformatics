@@ -74,7 +74,8 @@
         ("rust-clap" ,rust-clap)
         ("rust-findshlibs" ,rust-findshlibs)
         ("rust-memmap" ,rust-memmap)
-        ("rust-rustc-test" ,rust-rustc-test))))
+        ("rust-rustc-test" ,rust-rustc-test))
+       #:tests? #f)) ; output_equivalence fails
     (home-page "https://github.com/gimli-rs/addr2line")
     (synopsis
       "Symbolication library written in Rust, using `gimli`")
@@ -187,8 +188,8 @@
        #:cargo-development-inputs
        (("rust-csv" ,rust-csv)
         ("rust-docopt" ,rust-docopt)
-        ("rust-memmap" ,rust-memmap)
-        ("rust-quickcheck" ,rust-quickcheck)
+        ("rust-memmap" ,rust-memmap-0.6)
+        ("rust-quickcheck" ,rust-quickcheck-0.7)
         ("rust-rand" ,rust-rand-0.5)
         ("rust-serde" ,rust-serde)
         ("rust-serde-derive" ,rust-serde-derive))))))
@@ -355,9 +356,9 @@ password-based key derivation.")
          ("rust-num-traits" ,rust-num-traits)
          ("rust-serde" ,rust-serde))
         #:cargo-development-inputs
-        (("rust-fst" ,rust-fst)
+        (("rust-fst" ,rust-fst-0.1)
          ("rust-lazy-static" ,rust-lazy-static)
-         ("rust-quickcheck" ,rust-quickcheck)
+         ("rust-quickcheck" ,rust-quickcheck-0.7)
          ("rust-rand" ,rust-rand))))
     (home-page
       "https://github.com/tapeinosyne/atlatl")
@@ -939,6 +940,26 @@ length} and @code{key length} parameters can be used.")
     (license (list license:unlicense
                    license:expat))))
 
+(define-public rust-byteorder-0.5
+  (package
+    (inherit rust-byteorder)
+    (name "rust-byteorder")
+    (version "0.5.3")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (crate-uri "byteorder" version))
+        (file-name
+          (string-append name "-" version ".tar.gz"))
+        (sha256
+          (base32
+            "0ma8pkyz1jbglr29m1yzlc9ghmv6672nvsrn7zd0yn5jqs60xh8g"))))
+    (arguments
+      `(#:cargo-development-inputs
+        (("rust-quickcheck" ,rust-quickcheck-0.2)
+         ("rust-rand" ,rust-rand-0.3))
+        #:tests? #f)))) ; Tests needs 'unicode' crate.
+
 (define-public rust-bytes
   (package
     (name "rust-bytes")
@@ -1199,19 +1220,16 @@ length} and @code{key length} parameters can be used.")
     (arguments
      `(#:cargo-inputs
        (("rust-diff" ,rust-diff)
-        ("rust-filetime" ,rust-filetime)
+        ("rust-filetime" ,rust-filetime-0.1)
         ("rust-getopts" ,rust-getopts)
         ("rust-libc" ,rust-libc)
-        ("rust-log" ,rust-log)
-        ("rust-miow" ,rust-miow)
-        ("rust-regex" ,rust-regex)
-        ("rust-rustfix" ,rust-rustfix)
-        ("rust-serde" ,rust-serde)
-        ("rust-serde-derive" ,rust-serde-derive)
-        ("rust-serde-json" ,rust-serde-json)
-        ("rust-winapi" ,rust-winapi)
-        ("rust-tempfile" ,rust-tempfile)
-        ("rust-tester" ,rust-tester))))
+        ("rust-log" ,rust-log-0.3)
+        ("rust-rustc-serialize" ,rust-rustc-serialize)
+        ("rust-tempdir" ,rust-tempdir))
+       #:phases
+       (modify-phases %standard-phases
+         (delete 'build)) ; Requires unstable features.
+       #:tests? #f)) ; Requires unstable features.
     (home-page "https://github.com/laumann/compiletest-rs")
     (synopsis "Compiletest utility from the Rust compiler")
     (description
@@ -1475,7 +1493,8 @@ compile, issue warnings or otherwise produce compile-time output.")
     (arguments
       `(#:cargo-inputs
         (("rust-afl" ,rust-afl)
-         ("rust-cfg-if" ,rust-cfg-if))
+         ("rust-cfg-if" ,rust-cfg-if)
+         ("rust-glob" ,rust-glob-0.2))
         #:cargo-development-inputs
         (("rust-clap" ,rust-clap)
          ("rust-diff" ,rust-diff)
@@ -2697,6 +2716,28 @@ attributes.")
     (license (list license:asl2.0
                    license:expat))))
 
+(define-public rust-filetime-0.1
+  (package
+    (inherit rust-filetime)
+    (name "rust-filetime")
+    (version "0.1.15")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (crate-uri "filetime" version))
+        (file-name
+          (string-append name "-" version ".tar.gz"))
+        (sha256
+          (base32
+            "03xishfxzpr4nfz4g3r218d6b6g94rxsqw9pw96m6wa8wgrm6iki"))))
+    (arguments
+      `(#:cargo-inputs
+        (("rust-cfg-if" ,rust-cfg-if)
+         ("rust-libc" ,rust-libc)
+         ("rust-redox-syscall" ,rust-redox-syscall))
+        #:cargo-development-inputs
+        (("rust-tempdir" ,rust-tempdir))))))
+
 (define-public rust-findshlibs-0.4
   (package
     (inherit rust-findshlibs)
@@ -2715,7 +2756,8 @@ attributes.")
      `(#:cargo-inputs
        (("rust-cfg-if" ,rust-cfg-if)
         ("rust-lazy-static" ,rust-lazy-static)
-        ("rust-libc" ,rust-libc))
+        ("rust-libc" ,rust-libc)
+        ("rust-bindgen" ,rust-bindgen))
        #:cargo-development-inputs
        (("rust-bindgen" ,rust-bindgen)
         ("rust-cfg-if" ,rust-cfg-if))))))
@@ -2974,6 +3016,58 @@ attributes.")
     (license (list license:asl2.0
                    license:expat))))
 
+(define-public rust-fs2
+  (package
+    (name "rust-fs2")
+    (version "0.4.3")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (crate-uri "fs2" version))
+        (file-name
+          (string-append name "-" version ".tar.gz"))
+        (sha256
+          (base32
+            "04v2hwk7035c088f19mfl5b1lz84gnvv2hv6m935n0hmirszqr4m"))))
+    (build-system cargo-build-system)
+    (arguments
+      `(#:cargo-inputs
+        (("rust-libc" ,rust-libc)
+         ("rust-winapi" ,rust-winapi))
+        #:cargo-development-inputs
+        (("rust-tempdir" ,rust-tempdir))
+        #:tests? #f)) ; Tests require unstable features.
+    (home-page "https://github.com/danburkert/fs2-rs")
+    (synopsis
+      "Cross-platform file locks and file duplication.")
+    (description
+      "Cross-platform file locks and file duplication.")
+    (license (list license:asl2.0
+                   license:expat))))
+
+(define-public rust-fs2-0.2
+  (package
+    (inherit rust-fs2)
+    (name "rust-fs2")
+    (version "0.2.5")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (crate-uri "fs2" version))
+        (file-name
+          (string-append name "-" version ".tar.gz"))
+        (sha256
+          (base32
+            "1vsih93cvds3x6f3w9bc5rnkyv8haix1px4jpcqvjyd9l7ji9m5w"))))
+    (arguments
+      `(#:cargo-inputs
+        (("rust-kernel32-sys" ,rust-kernel32-sys)
+         ("rust-libc" ,rust-libc)
+         ("rust-winapi" ,rust-winapi-0.2))
+        #:cargo-development-inputs
+        (("rust-tempdir" ,rust-tempdir))
+        #:tests? #f)))) ; Tests require unstable features.
+
 (define-public rust-fst
   (package
     (name "rust-fst")
@@ -2990,15 +3084,16 @@ attributes.")
     (build-system cargo-build-system)
     (arguments
       `(#:cargo-inputs
-        (("rust-byteorder" ,rust-byteorder)
+        (("rust-byteorder" ,rust-byteorder-0.5)
          ("rust-memmap" ,rust-memmap-0.6))
         #:cargo-development-inputs
         (("rust-fnv" ,rust-fnv)
          ("rust-fst-levenshtein" ,rust-fst-levenshtein)
          ("rust-fst-regex" ,rust-fst-regex)
-         ("rust-lazy-static" ,rust-lazy-static)
-         ("rust-quickcheck" ,rust-quickcheck)
-         ("rust-rand" ,rust-rand))))
+         ("rust-lazy-static" ,rust-lazy-static-0.2)
+         ("rust-quickcheck" ,rust-quickcheck-0.7)
+         ("rust-rand" ,rust-rand))
+        #:tests? #f)) ; TODO: Fix tests.
     (home-page "https://github.com/BurntSushi/fst")
     (synopsis
       "Use finite state transducers to compactly represents sets or maps of many strings (> 1 billion is possible).")
@@ -3006,6 +3101,32 @@ attributes.")
       "Use finite state transducers to compactly represents sets or maps of many strings (> 1 billion is possible). ")
     (license (list license:unlicense
                    license:expat))))
+
+(define-public rust-fst-0.1
+  (package
+    (inherit rust-fst)
+    (name "rust-fst")
+    (version "0.1.38")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (crate-uri "fst" version))
+        (file-name (string-append name "-" version ".tar.gz"))
+        (sha256
+         (base32
+          "15hm5ijqbb9a67zpz79i9sbk3f1cfp71rgqfqfffl3kgbs54crs6"))))
+    (arguments
+     `(#:cargo-inputs
+       (("rust-byteorder" ,rust-byteorder-0.5)
+        ("rust-memmap" ,rust-memmap-0.4)
+        ("rust-regex-syntax" ,rust-regex-syntax-0.3)
+        ("rust-utf8-ranges" ,rust-utf8-ranges-0.1))
+       #:cargo-development-inputs
+       (("rust-fnv" ,rust-fnv)
+        ("rust-lazy-static" ,rust-lazy-static-0.1)
+        ("rust-quickcheck" ,rust-quickcheck-0.2)
+        ("rust-rand" ,rust-rand))
+       #:tests? #f)))) ; Tests require 'unicode' create.
 
 (define-public rust-fst-levenshtein
   (package
@@ -3520,6 +3641,27 @@ futures-rs.")
     (description
       "An impish, cross-platform, ELF, Mach-o, and PE binary parsing and loading crate")
     (license license:expat)))
+
+(define-public rust-goblin-0.0.22
+  (package
+    (inherit rust-goblin)
+    (name "rust-goblin")
+    (version "0.0.22")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (crate-uri "goblin" version))
+        (file-name
+          (string-append name "-" version ".tar.gz"))
+        (sha256
+          (base32
+            "1a76i6zz71hjwd11pwmc8iirddj6345mfp02zl5d6bzb04sdambz"))))
+    (build-system cargo-build-system)
+    (arguments
+      `(#:cargo-inputs
+        (("rust-log" ,rust-log)
+         ("rust-plain" ,rust-plain)
+         ("rust-scroll" ,rust-scroll))))))
 
 (define-public rust-h2
   (package
@@ -4560,19 +4702,17 @@ futures-rs.")
       (origin
         (method url-fetch)
         (uri (crate-uri "lazycell" version))
-        (file-name
-          (string-append name "-" version ".tar.gz"))
+        (file-name (string-append name "-" version ".tar.gz"))
         (sha256
-          (base32
-            "0gvqycmpv7parc98i6y64ai7rvxrn1947z2a6maa02g4kvxdd55j"))))
+         (base32
+          "0gvqycmpv7parc98i6y64ai7rvxrn1947z2a6maa02g4kvxdd55j"))))
     (build-system cargo-build-system)
     (arguments
-      `(#:cargo-inputs (("rust-clippy" ,rust-clippy))))
+     `(#:cargo-inputs (("rust-clippy" ,rust-clippy))))
     (home-page "https://github.com/indiv0/lazycell")
-    (synopsis
-      "A library providing a lazily filled Cell struct")
+    (synopsis "A library providing a lazily filled Cell struct")
     (description
-      "This package provides a library providing a lazily filled Cell struct")
+     "This package provides a library providing a lazily filled Cell struct.")
     (license (list license:asl2.0
                    license:expat))))
 
@@ -4591,6 +4731,40 @@ futures-rs.")
           "18fy414dxmg92qjsh1dl045yrpnrc64f7hbl792ran5mkndwhx53"))))
     (arguments
      `(#:cargo-inputs (("rust-spin" ,rust-spin-0.4))))))
+
+(define-public rust-lazy-static-0.2
+  (package
+    (inherit rust-lazy-static)
+    (name "rust-lazy-static")
+    (version "0.2.11")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (crate-uri "lazy-static" version))
+        (file-name (string-append name "-" version ".tar.gz"))
+        (sha256
+         (base32
+          "0wxy8vak7jsx6r8gx475pjqpx11p2bfq4wvw6idmqi31mp3k7w3n"))))
+    (arguments
+     `(#:cargo-inputs
+       (("rust-compiletest-rs" ,rust-compiletest-rs)
+        ("rust-spin" ,rust-spin-0.4))
+       #:tests? #f)))) ; Tests fail to compile.
+
+(define-public rust-lazy-static-0.1
+  (package
+    (inherit rust-lazy-static)
+    (name "rust-lazy-static")
+    (version "0.1.16")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (crate-uri "lazy-static" version))
+        (file-name (string-append name "-" version ".tar.gz"))
+        (sha256
+         (base32
+          "05vl1h4b0iv800grsdyc3fg2bq29p70wjav6zpjvxxd5i8d6s66g"))))
+    (arguments '())))
 
 (define-public rust-lexical-core
   (package
@@ -4950,6 +5124,29 @@ futures-rs.")
     (description "Safe interface to memchr.")
     (license (list license:unlicense
                    license:expat))))
+
+(define-public rust-memmap-0.4
+  (package
+    (inherit rust-memmap)
+    (name "rust-memmap")
+    (version "0.4.0")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (crate-uri "memmap" version))
+        (file-name
+          (string-append name "-" version ".tar.gz"))
+        (sha256
+          (base32
+            "1skgf49pasjqkq639frhg4fjpz039blxpscgx9ahh1qhm8j349b9"))))
+    (arguments
+      `(#:cargo-inputs
+        (("rust-fs2" ,rust-fs2-0.2)
+         ("rust-kernel32-sys" ,rust-kernel32-sys)
+         ("rust-libc" ,rust-libc)
+         ("rust-winapi" ,rust-winapi))
+        #:cargo-development-inputs
+        (("rust-tempdir" ,rust-tempdir))))))
 
 (define-public rust-memoffset
   (package
@@ -5350,7 +5547,7 @@ futures-rs.")
     (arguments
       `(#:cargo-inputs
         (("rust-flate2" ,rust-flate2)
-         ("rust-goblin" ,rust-goblin)
+         ("rust-goblin" ,rust-goblin-0.0.22)
          ("rust-parity-wasm" ,rust-parity-wasm)
          ("rust-scroll" ,rust-scroll)
          ("rust-uuid" ,rust-uuid))
@@ -6244,6 +6441,29 @@ invocations.")
        (("rust-env-logger" ,rust-env-logger-0.3)
         ("rust-log" ,rust-log-0.3)
         ("rust-rand" ,rust-rand-0.3))))))
+
+(define-public rust-quickcheck-0.2
+  (package
+    (inherit rust-quickcheck)
+    (name "rust-quickcheck")
+    (version "0.2.27")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (crate-uri "quickcheck" version))
+        (file-name (string-append name "-" version ".tar.gz"))
+        (sha256
+         (base32
+          "1vb4acppaavlnchzc1jmn5wlkgir9x9gmhgp97bavyxxqxgsg1nh"))))
+    (arguments
+     `(#:cargo-inputs
+       (("rust-env-logger" ,rust-env-logger-0.3)
+        ("rust-log" ,rust-log-0.3)
+        ("rust-rand" ,rust-rand-0.3))
+       #:phases
+       (modify-phases %standard-phases
+         (delete 'build)) ; Build needs 'unicode' crate.
+       #:tests? #f)))) ; Tests need 'unicode' crate.
 
 (define-public rust-rand
   (package
@@ -7172,7 +7392,7 @@ invocations.")
           (base32
             "14wjz7s65j0rcc7625gb71f0zk6lrv44hwj5wxplzv0rjz636dyq"))))
     (arguments
-      `(#:cargo-development-inputs
+      `(#:cargo-inputs
         (("rust-regex-macros" ,rust-regex-macros))))))
 
 (define-public rust-regex-automata
@@ -8811,6 +9031,33 @@ function with proven statistical guarantees.")
       "This package provides a set of types for building complex binary streams.")
     (license license:expat)))
 
+(define-public rust-tester
+  (package
+    (name "rust-tester")
+    (version "0.5.0")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (crate-uri "tester" version))
+        (file-name
+          (string-append name "-" version ".tar.gz"))
+        (sha256
+          (base32
+            "1xkgapz2i4j977f6kh1zp6sa5llbhy5vbnr6kfj8czsrdjr2r0ay"))))
+    (build-system cargo-build-system)
+    (arguments
+      `(#:cargo-inputs
+        (("rust-getopts" ,rust-getopts)
+         ("rust-libc" ,rust-libc)
+         ("rust-term" ,rust-term))
+        #:tests? #f)) ; 2 tests fail.
+    (home-page "https://github.com/messense/rustc-test")
+    (synopsis
+      "A fork of Rustâ\x80\x99s `test` crate that doesnâ\x80\x99t require unstable language features.")
+    (description
+      "This package provides a fork of Rustâ\x80\x99s `test` crate that doesnâ\x80\x99t require unstable language features.")
+    (license (list license:expat license:asl2.0))))
+
 (define-public rust-textwrap
   (package
     (name "rust-textwrap")
@@ -10107,6 +10354,24 @@ according to Unicode Standard Annex #29 rules.")
       "Convert ranges of Unicode codepoints to UTF-8 byte ranges.")
     (license (list license:unlicense
                    license:expat))))
+
+(define-public rust-utf8-ranges-0.1
+  (package
+    (inherit rust-utf8-ranges)
+    (name "rust-utf8-ranges")
+    (version "0.1.3")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (crate-uri "utf8-ranges" version))
+        (file-name (string-append name "-" version ".tar.gz"))
+        (sha256
+         (base32
+          "03xf604b2v51ag3jgzw92l97xnb10kw9zv948bhc7ja1ik017jm1"))))
+    (arguments
+     `(#:cargo-development-inputs
+       (("rust-quickcheck" ,rust-quickcheck-0.2))
+       #:tests? #f)))) ; Tests require 'unicode' create.
 
 (define-public rust-uuid
   (package
