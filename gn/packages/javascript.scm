@@ -842,3 +842,45 @@ a sample function, allowing for more complex calculations.")
     (name "js-jstat")
     (arguments `(#:javascript-files '("dist/jstat.js")))
     (build-system minify-build-system)))
+
+(define-public javascript-ckeditor ; version 4
+  (package
+    (name "javascript-ckeditor")
+    (version "4.13.0") ; Sept. 26, 2019
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append "https://cdn.ckeditor.com/" version
+                           "/standard/ckeditor.js"))
+       (file-name (string-append "ckeditor-" version ".js"))
+       (sha256
+        (base32
+         "0cvf1qdva5h2dh8y10c9v7dxrd82siswxx7h6cq0mf46ssjdygd0"))))
+    (build-system trivial-build-system)
+    (arguments
+     `(#:modules ((guix build utils))
+       #:builder
+       (begin
+         (use-modules (guix build utils))
+         (let* ((out (assoc-ref %outputs "out"))
+                (targetdir
+                  (string-append out "/share/genenetwork2/javascript/ckeditor"))
+                (source (assoc-ref %build-inputs "source")))
+           (mkdir-p targetdir)
+           (copy-file source (string-append targetdir "/ckeditor.js"))))))
+    (native-inputs `(("source" ,source)))
+    (home-page "https://ckeditor.com/")
+    (synopsis "Smart WYSIWYG HTML editor")
+    (description
+     "CKEditor is a proven, enterprise-grade WYSIWYG HTML editor with wide
+browser compatibility, including legacy browsers.
+@enumerate
+@item Paste from Word and Excel, spell check, accessibility checker, tables.
+@item Autocomplete, mentions, widgets, code snippets, emoji plugins.
+@item Full control over content: HTML filtering, view source mode.
+@item Great accessibility: WCAG 2.0 AA and Section 508 compliant.
+@item Long-term support (LTS) until 2023.
+@end enumerate")
+    (license (list license:gpl2+
+                   license:lgpl2.1+
+                   license:mpl1.1)))) ; Any of these three
