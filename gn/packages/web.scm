@@ -96,11 +96,25 @@ extensive prebuilt components, and powerful plugins built on jQuery.")
         (file-name (git-file-name name version))
         (sha256
          (base32 "1wsv79rvzaacyf740mwmhxadpwf28pad711jhbxl26zgqjrpzcbp"))))
+    (arguments
+     `(#:modules ((guix build utils))
+       #:builder
+       (begin
+         (use-modules (guix build utils))
+         (let* ((out (assoc-ref %outputs "out"))
+                (name "bootstrap")
+                (targetdir (string-append out "/share/web/" name))
+                (source (assoc-ref %build-inputs "source"))
+                (dist (string-append source "/dist")))
+           (copy-recursively dist targetdir)
+           (substitute* (find-files (string-append targetdir "/css") ".")
+             (("../fonts") (string-append targetdir "/fonts")))
+           #t))))
     (native-inputs `(("source" ,source)))))
 
 (define-public web-bootstrap-3.3
   (package
-    (inherit web-bootstrap)
+    (inherit web-bootstrap-3)
     (name "web-bootstrap")
     (version "3.3.7") ; July 25, 2016
     (source
