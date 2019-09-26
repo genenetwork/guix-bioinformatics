@@ -925,3 +925,37 @@ your forms' modifications and adapts its validation accordingly.")
     (name "js-parsley")
     (arguments `(#:javascript-files '("dist/parsley.js")))
     (build-system minify-build-system)))
+
+(define-public javascript-plotly
+  (package
+    (name "javascript-plotly")
+    (version "1.49.5") ; Sept 18, 2019
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+              (url "https://github.com/plotly/plotly.js")
+              (commit (string-append "v" version))))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32
+         "0l090qlslswgqv0yfnkyvswrv5qx2dcjagcvmr7h1fh11dl6d6zd"))))
+    (build-system trivial-build-system)
+    (arguments
+     `(#:modules ((guix build utils))
+       #:builder
+       (begin
+         (use-modules (guix build utils))
+         (let* ((out (assoc-ref %outputs "out"))
+                (targetdir (string-append out "/share/genenetwork2/javascript/plotly"))
+                (source (assoc-ref %build-inputs "source"))
+                (dist (string-append source "/dist")))
+           (copy-recursively dist targetdir)))))
+    (native-inputs `(("source" ,source)))
+    (home-page "https://plot.ly/javascript/")
+    (synopsis "Javascript charting library")
+    (description
+     "Built on top of d3.js and stack.gl, plotly.js is a high-level, declarative
+charting library. plotly.js ships with 20 chart types, including 3D charts,
+statistical graphs, and SVG maps.")
+    (license license:expat)))
