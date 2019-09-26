@@ -10,14 +10,18 @@
   #:use-module (guix build-system ant)
   #:use-module (guix build-system cmake)
   #:use-module (guix build-system gnu)
-  #:use-module (guix build-system waf)
   #:use-module (guix build-system python)
+  #:use-module (guix build-system trivial)
+  #:use-module (guix build-system waf)
   #:use-module (gnu packages)
   #:use-module (gnu packages bioinformatics)
   #:use-module (gnu packages boost)
-  #:use-module (gnu packages compression)
   #:use-module (gnu packages check)
+  #:use-module (gnu packages compression)
+  #:use-module (gnu packages cran)
+  #:use-module (gnu packages fontutils)
   #:use-module (gnu packages gcc)
+  #:use-module (gnu packages imagemagick)
   #:use-module (gnu packages maths)
   #:use-module (gnu packages perl)
   #:use-module (gnu packages python)
@@ -716,3 +720,51 @@ different datasets.
 @item To compute 'genetic risk predictor' scores.
 @end enumerate")
       (license (license:x11-style "https://www.boost.org/LICENSE_1_0.txt")))))
+
+(define-public rn6-assembly-error-app
+  (package
+   (name "rn6-assembly-error-app")
+   (version "0.11")
+   (source (origin
+     (method git-fetch)
+     (uri (git-reference
+            (url "https://github.com/chen42/rn6_assembly_error_app.git")
+            (commit version)))
+     (file-name (git-file-name name version))
+     (sha256
+      (base32 "0ck3ndii24k4whlmiiv46120wwq5hnndwff83iaiavg703f337y1"))))
+   (build-system trivial-build-system)
+   (arguments
+    `(#:modules ((guix build utils))
+      #:builder
+      (begin
+        (use-modules (guix build utils))
+        (let* ((out       (assoc-ref %outputs "out"))
+               (targetdir (string-append out "/share/" ,name))
+               (ggplot2   (assoc-ref %build-inputs "r-ggplot2"))
+               (shiny     (assoc-ref %build-inputs "r-shiny"))
+               (convert   (string-append (assoc-ref %build-inputs "imagemagick")
+                                         "/bin/convert"))
+               (source    (assoc-ref %build-inputs "source")))
+          ;; Copied from https://stackoverflow.com/questions/2698269/how-do-you-change-library-location-in-r
+          (copy-recursively source targetdir)
+          (substitute* (string-append targetdir "/server.r")
+            (("library\\(\"shiny\"" prefix)
+             (string-append prefix ",lib.loc=" shiny "/site-library\""))
+            (("library\\(\"ggplot2\"" prefix)
+             (string-append prefix ",lib.loc=" ggplot2 "/site-library\""))
+            (("convert") convert)
+            )
+          #t))))
+   (native-inputs `(("source" ,source)))
+   (inputs
+    `(("imagemagick" ,imagemagick)
+      ("r-ggplot2" ,r-ggplot2)
+      ("r-shiny" ,r-shiny)))
+   (propagated-inputs
+    `(("freetype" ,freetype)))
+   (home-page "http://rn6err.opar.io/") ; or similar
+   (synopsis "Display potential assembly errors in rn6")
+   (description
+    "Display potential assembly errors in rn6.")
+   (license #f)))
