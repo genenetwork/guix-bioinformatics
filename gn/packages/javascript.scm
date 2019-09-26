@@ -884,3 +884,44 @@ browser compatibility, including legacy browsers.
     (license (list license:gpl2+
                    license:lgpl2.1+
                    license:mpl1.1)))) ; Any of these three
+
+(define-public javascript-parsley
+  (package
+    (name "javascript-parsley")
+    (version "2.9.1") ; May 28, 2019
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+              (url "https://github.com/guillaumepotier/Parsley.js")
+              (commit version)))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32
+         "0kb2hmnj9rry68qqmj0m4wjk0syrb0i3c2n31sr24y9m8pdr8nck"))))
+    (build-system trivial-build-system)
+    (arguments
+     `(#:modules ((guix build utils))
+       #:builder
+       (begin
+         (use-modules (guix build utils))
+         (let* ((out (assoc-ref %outputs "out"))
+                (targetdir (string-append out "/share/genenetwork2/javascript/parsley"))
+                (source (assoc-ref %build-inputs "source"))
+                (dist (string-append source "/dist")))
+           (copy-recursively dist targetdir)))))
+    (native-inputs `(("source" ,source)))
+    (home-page "https://parsleyjs.org/")
+    (synopsis "Javascript validation library")
+    (description
+     "Parsley is a javascript library which allows you to write in English your
+requirements inside your form HTML tags.  It can also automatically detects
+your forms' modifications and adapts its validation accordingly.")
+    (license license:expat)))
+
+(define-public js-parsley
+  (package
+    (inherit javascript-parsley)
+    (name "js-parsley")
+    (arguments `(#:javascript-files '("dist/parsley.js")))
+    (build-system minify-build-system)))
