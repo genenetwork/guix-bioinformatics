@@ -959,3 +959,50 @@ your forms' modifications and adapts its validation accordingly.")
 charting library. plotly.js ships with 20 chart types, including 3D charts,
 statistical graphs, and SVG maps.")
     (license license:expat)))
+
+(define-public javascript-typeahead
+  (package
+    (name "javascript-typeahead")
+    (version "0.11.1") ; April 27, 2015
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+              (url "https://github.com/twitter/typeahead.js")
+              (commit (string-append "v" version))))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32
+         "1aj070x1l43zyrv9r6az5mc6r8zzfc7ajqavi1fw85a7wgcwchcy"))))
+    (build-system trivial-build-system)
+    (arguments
+     `(#:modules ((guix build utils))
+       #:builder
+       (begin
+         (use-modules (guix build utils))
+         (let* ((out (assoc-ref %outputs "out"))
+                (targetdir (string-append out "/share/genenetwork2/javascript/typeahead"))
+                (source (assoc-ref %build-inputs "source"))
+                (dist (string-append source "/dist")))
+           (copy-recursively dist targetdir)))))
+    (native-inputs `(("source" ,source)))
+    (home-page "https://twitter.github.io/typeahead.js")
+    (synopsis "Javascript library for building typeaheads")
+    (description
+     "Inspired by twitter.com's autocomplete search functionality,
+@code{typeahead.js} is a flexible JavaScript library that provides a strong
+foundation for building robust typeaheads.
+The @code{typeahead.js} library consists of 2 components: the suggestion engine,
+Bloodhound, and the UI view, Typeahead.  The suggestion engine is responsible
+for computing suggestions for a given query.  The UI view is responsible for
+rendering suggestions and handling DOM interactions.  Both components can be
+used separately, but when used together, they can provide a rich typeahead
+experience.")
+    (license license:expat)))
+
+(define-public js-typeahead
+  (package
+    (inherit javascript-typeahead)
+    (name "js-typeahead")
+    (arguments `())
+    (build-system minify-build-system)))
