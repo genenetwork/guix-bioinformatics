@@ -113,7 +113,8 @@
         ("rust-clap" ,rust-clap)
         ("rust-findshlibs" ,rust-findshlibs-0.4)
         ("rust-memmap" ,rust-memmap)
-        ("rust-rustc-test" ,rust-rustc-test))))))
+        ("rust-rustc-test" ,rust-rustc-test))
+       #:tests? #f)))) ; TODO: All the tests fail.
 
 (define-public rust-afl
   (package
@@ -138,8 +139,7 @@
        (("rust-rustc-version" ,rust-rustc-version)
         ("rust-xdg" ,rust-xdg))))
     (home-page "https://github.com/rust-fuzz/afl.rs")
-    (synopsis
-      "Fuzzing Rust code with american-fuzzy-lop")
+    (synopsis "Fuzzing Rust code with american-fuzzy-lop")
     (description
       "Fuzzing Rust code with american-fuzzy-lop")
     (license license:asl2.0)))
@@ -383,9 +383,9 @@ password-based key derivation.")
     (build-system cargo-build-system)
     (arguments
      `(#:cargo-inputs
-       (("rust-proc-macro2" ,rust-proc-macro2)
-        ("rust-quote" ,rust-quote)
-        ("rust-syn" ,rust-syn))))
+       (("rust-proc-macro2" ,rust-proc-macro2-1)
+        ("rust-quote" ,rust-quote-1)
+        ("rust-syn" ,rust-syn-1))))
     (home-page "https://github.com/dtolnay/automod")
     (synopsis "Pull in every source file in a directory as a module.")
     (description
@@ -805,7 +805,7 @@ length} and @code{key length} parameters can be used.")
        (("rust-accelerate-src" ,rust-accelerate-src)
         ("rust-intel-mkl-src" ,rust-intel-mkl-src)
         ("rust-netlib-src" ,rust-netlib-src)
-        ("rust-openblas-src" ,rust-openblas-src))))
+        ("rust-openblas-src" ,rust-openblas-src-0.6))))
     (home-page
       "https://github.com/blas-lapack-rs/blas-src")
     (synopsis
@@ -1064,8 +1064,9 @@ length} and @code{key length} parameters can be used.")
             "09yl2700crxa4n860b080msij25klvs1kfzazhp2aihchvr16q4j"))))
     (build-system cargo-build-system)
     (arguments
-      `(#:cargo-development-inputs
-        (("rust-quickcheck" ,rust-quickcheck-0.4))))
+     `(#:cargo-development-inputs
+       (("rust-quickcheck" ,rust-quickcheck-0.4))
+       #:tests? #f)) ; Tests require 'unicode' crate.
     (home-page "https://github.com/japaric/cast.rs")
     (synopsis
       "Ergonomic, checked cast functions for primitive types")
@@ -1180,19 +1181,18 @@ length} and @code{key length} parameters can be used.")
       (origin
         (method url-fetch)
         (uri (crate-uri "ci_info" version))
-        (file-name
-          (string-append name "-" version ".tar.gz"))
+        (file-name (string-append name "-" version ".tar.gz"))
         (sha256
-          (base32
-            "01n3gxmwp765m6xg1fl8v1y12wsvbqvlcai27kdr5d2skrijyfb7"))))
+         (base32
+          "01n3gxmwp765m6xg1fl8v1y12wsvbqvlcai27kdr5d2skrijyfb7"))))
     (build-system cargo-build-system)
     (arguments
-      `(#:cargo-inputs
-        (("rust-envmnt" ,rust-envmnt)
-         ("rust-serde" ,rust-serde)
-         ("rust-serde-derive" ,rust-serde-derive))))
-    (home-page
-      "https://github.com/sagiegurari/ci_info")
+     `(#:cargo-inputs
+       (("rust-envmnt" ,rust-envmnt)
+        ("rust-serde" ,rust-serde)
+        ("rust-serde-derive" ,rust-serde-derive))
+       #:tests? #f)) ; Tests require internet.
+    (home-page "https://github.com/sagiegurari/ci_info")
     (synopsis
       "Provides current CI environment information.")
     (description
@@ -1276,59 +1276,33 @@ length} and @code{key length} parameters can be used.")
       (origin
         (method url-fetch)
         (uri (crate-uri "clap" version))
-        (file-name
-          (string-append name "-" version ".tar.gz"))
+        (file-name (string-append name "-" version ".tar.gz"))
         (sha256
          (base32
           "1nf6ld3bims1n5vfzhkvcb55pdzh04bbhzf8nil5vvw05nxzarsh"))))
     (build-system cargo-build-system)
     (arguments
-      `(#:cargo-inputs
-        (("rust-ansi-term" ,rust-ansi-term)
-         ("rust-atty" ,rust-atty)
-         ("rust-bitflags" ,rust-bitflags)
-         ("rust-clippy" ,rust-clippy)
-         ("rust-strsim" ,rust-strsim-0.8)
-         ("rust-term-size" ,rust-term-size)
-         ("rust-textwrap" ,rust-textwrap)
-         ("rust-unicode-width" ,rust-unicode-width)
-         ("rust-vec-map" ,rust-vec-map)
-         ("rust-yaml-rust" ,rust-yaml-rust-0.3))
-        #:cargo-development-inputs
-        (("rust-lazy-static" ,rust-lazy-static)
-         ("rust-regex" ,rust-regex)
-         ("rust-version-sync" ,rust-version-sync))))
+     `(#:cargo-inputs
+       (("rust-ansi-term" ,rust-ansi-term)
+        ("rust-atty" ,rust-atty)
+        ("rust-bitflags" ,rust-bitflags)
+        ("rust-clippy" ,rust-clippy)
+        ("rust-strsim" ,rust-strsim-0.8)
+        ("rust-term-size" ,rust-term-size)
+        ("rust-textwrap" ,rust-textwrap)
+        ("rust-unicode-width" ,rust-unicode-width)
+        ("rust-vec-map" ,rust-vec-map)
+        ("rust-yaml-rust" ,rust-yaml-rust-0.3))
+       #:cargo-development-inputs
+       (("rust-lazy-static" ,rust-lazy-static)
+        ("rust-regex" ,rust-regex)
+        ("rust-version-sync" ,rust-version-sync))))
     (home-page "https://clap.rs/")
-    (synopsis
-      "A simple to use, efficient, and full-featured Command Line Argument Parser")
+    (synopsis "Command Line Argument Parser")
     (description
-      "This package provides a simple to use, efficient, and full-featured Command Line Argument Parser")
+     "This package provides a simple to use, efficient, and full-featured
+Command Line Argument Parser.")
     (license license:expat)))
-
-(define-public rust-clippy
-  (package
-    (name "rust-clippy")
-    (version "0.0.302")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (crate-uri "clippy" version))
-        (file-name
-          (string-append name "-" version ".tar.gz"))
-        (sha256
-          (base32
-            "1562x3sq9mgmc8j39gd34wqm7ybrdvpmj7cc1n450gwsawayw4fr"))))
-    (build-system cargo-build-system)
-    (arguments
-      `(#:cargo-inputs
-        (("rust-term" ,rust-term-0.5))))
-    (home-page "https://github.com/rust-lang/rust-clippy")
-    (synopsis
-      "A bunch of helpful lints to avoid common pitfalls in Rust.")
-    (description
-      "This package provides a bunch of helpful lints to avoid common pitfalls in Rust.")
-    (license (list license:asl2.0
-                   license:expat))))
 
 (define-public rust-compiler-error
   (package
@@ -2475,7 +2449,14 @@ attributes.")
     (arguments
       `(#:cargo-inputs
         (("rust-encoding-index-tests"
-          ,rust-encoding-index-tests))))
+          ,rust-encoding-index-tests))
+       #:phases
+       (modify-phases %standard-phases
+         (add-after 'unpack 'fix-Cargo-toml
+           (lambda _
+             (substitute* "Cargo.toml"
+               ((".*../tests.*") ""))
+             #t)))))
     (home-page
       "https://github.com/lifthrasiir/rust-encoding")
     (synopsis "Index tables for Japanese character encodings")
@@ -2500,7 +2481,14 @@ attributes.")
     (arguments
       `(#:cargo-inputs
         (("rust-encoding-index-tests"
-          ,rust-encoding-index-tests))))
+          ,rust-encoding-index-tests))
+       #:phases
+       (modify-phases %standard-phases
+         (add-after 'unpack 'fix-Cargo-toml
+           (lambda _
+             (substitute* "Cargo.toml"
+               ((".*../tests.*") ""))
+             #t)))))
     (home-page
       "https://github.com/lifthrasiir/rust-encoding")
     (synopsis "Index tables for Korean character encodings")
@@ -2525,7 +2513,14 @@ attributes.")
     (arguments
       `(#:cargo-inputs
         (("rust-encoding-index-tests"
-          ,rust-encoding-index-tests))))
+          ,rust-encoding-index-tests))
+       #:phases
+       (modify-phases %standard-phases
+         (add-after 'unpack 'fix-Cargo-toml
+           (lambda _
+             (substitute* "Cargo.toml"
+               ((".*../tests.*") ""))
+             #t)))))
     (home-page
       "https://github.com/lifthrasiir/rust-encoding")
     (synopsis "Index tables for simple Chienese character encodings")
@@ -2550,7 +2545,14 @@ attributes.")
     (arguments
       `(#:cargo-inputs
         (("rust-encoding-index-tests"
-          ,rust-encoding-index-tests))))
+          ,rust-encoding-index-tests))
+       #:phases
+       (modify-phases %standard-phases
+         (add-after 'unpack 'fix-Cargo-toml
+           (lambda _
+             (substitute* "Cargo.toml"
+               ((".*../tests.*") ""))
+             #t)))))
     (home-page
       "https://github.com/lifthrasiir/rust-encoding")
     (synopsis "Index tables for various single-byte character encodings")
@@ -2596,9 +2598,15 @@ attributes.")
     (arguments
       `(#:cargo-inputs
         (("rust-encoding-index-tests"
-          ,rust-encoding-index-tests))))
-    (home-page
-      "https://github.com/lifthrasiir/rust-encoding")
+          ,rust-encoding-index-tests))
+       #:phases
+       (modify-phases %standard-phases
+         (add-after 'unpack 'fix-Cargo-toml
+           (lambda _
+             (substitute* "Cargo.toml"
+               ((".*../tests.*") ""))
+             #t)))))
+    (home-page "https://github.com/lifthrasiir/rust-encoding")
     (synopsis "Index tables for traditional Chienese character encodings")
     (description
       "Index tables for traditional Chienese character encodings")
@@ -2984,9 +2992,9 @@ attributes.")
     (build-system cargo-build-system)
     (arguments
       `(#:cargo-inputs
-        (("rust-proc-macro2" ,rust-proc-macro2) ; 1.0
-         ("rust-quote" ,rust-quote) ; 1.0
-         ("rust-syn" ,rust-syn)))) ; 1.0
+        (("rust-proc-macro2" ,rust-proc-macro2-1)
+         ("rust-quote" ,rust-quote-1)
+         ("rust-syn" ,rust-syn-1))))
     (home-page "https://github.com/dtolnay/rustversion")
     (synopsis
       "Conditional compilation according to rustc compiler version")
@@ -5282,7 +5290,7 @@ futures-rs.")
         (("rust-rawpointer" ,rust-rawpointer))
         #:cargo-development-inputs
         (("rust-bencher" ,rust-bencher)
-         ("rust-itertools" ,rust-itertools))))
+         ("rust-itertools" ,rust-itertools-0.7))))
     (home-page
       "https://github.com/bluss/matrixmultiply/")
     (synopsis "General matrix multiplication for f32 and f64 matrices.")
@@ -5881,13 +5889,52 @@ futures-rs.")
     (build-system cargo-build-system)
     (arguments
      `(#:cargo-development-inputs
-       (("rust-libc" ,rust-libc))))
+       (("rust-libc" ,rust-libc))
+       #:cargo-build-flags '("--release" "--features=system")
+       #:cargo-test-flags '("--release" "--features=system")
+       #:phases
+       (modify-phases %standard-phases
+         (add-after 'unpack 'unbundle-openblas
+           (lambda _
+             (delete-file-recursively "source")
+             #t)))))
+    (inputs
+     `(("gfortran" ,gfortran "lib")
+       ("openblas" ,openblas)))
     (home-page "https://github.com/blas-lapack-rs/openblas-src")
     (synopsis "Source of BLAS and LAPACK via OpenBLAS")
     (description
      "The package provides a source of BLAS and LAPACK via OpenBLAS.")
     (license (list license:asl2.0
                    license:expat))))
+
+(define-public rust-openblas-src-0.6
+  (package
+    (inherit rust-openblas-src)
+    (name "rust-openblas-src")
+    (version "0.6.1")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (crate-uri "openblas-src" version))
+        (file-name (string-append name "-" version ".tar.gz"))
+        (sha256
+         (base32
+          "1bbs55s8bz2z0gcj7kh9ykxqn3x79m4cnmip7r6n5w4msyinalmg"))))
+    (arguments
+     `(#:cargo-development-inputs
+       (("rust-libc" ,rust-libc))
+       #:cargo-build-flags '("--release" "--features=system")
+       #:cargo-test-flags '("--release" "--features=system")
+       #:phases
+       (modify-phases %standard-phases
+         (add-after 'unpack 'unbundle-openblas
+           (lambda _
+             (delete-file-recursively "source")
+             #t)))))
+    (inputs
+     `(("gfortran" ,gfortran "lib")
+       ("openblas" ,openblas)))))
 
 (define-public rust-openssl
   (package
@@ -5907,7 +5954,7 @@ futures-rs.")
       `(#:cargo-inputs
         (("rust-bitflags" ,rust-bitflags)
          ("rust-cfg-if" ,rust-cfg-if)
-         ("rust-foreign-types" ,rust-foreign-types)
+         ("rust-foreign-types" ,rust-foreign-types) ; 0.3
          ("rust-lazy-static" ,rust-lazy-static)
          ("rust-libc" ,rust-libc)
          ("rust-openssl-sys" ,rust-openssl-sys))
@@ -6535,6 +6582,27 @@ futures-rs.")
     (license (list license:asl2.0
                    license:expat))))
 
+(define-public rust-proc-macro2-1
+  (package
+    (inherit rust-proc-macro2)
+    (name "rust-proc-macro2")
+    (version "1.0.4")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (crate-uri "proc-macro2" version))
+        (file-name
+          (string-append name "-" version ".tar.gz"))
+        (sha256
+          (base32
+            "1k5brpv0c20whjhjvyjwksg4fgdcgnxjx53248kfsw7cfk67gp5g"))))
+    (build-system cargo-build-system)
+    (arguments
+      `(#:cargo-inputs
+        (("rust-unicode-xid" ,rust-unicode-xid))
+        #:cargo-development-inputs
+        (("rust-quote" ,rust-quote-1))))))
+
 (define-public rust-proc-macro2-0.3.5
   (package
     (inherit rust-proc-macro2)
@@ -6888,6 +6956,28 @@ invocations.")
        (modify-phases %standard-phases
          (delete 'build)) ; Build needs 'unicode' crate.
        #:tests? #f)))) ; Tests need 'unicode' crate.
+
+(define-public rust-quote-1
+  (package
+    (inherit rust-quote)
+    (name "rust-quote")
+    (version "1.0.2")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (crate-uri "quote" version))
+        (file-name
+          (string-append name "-" version ".tar.gz"))
+        (sha256
+          (base32
+            "1zkc46ryacf2jdkc6krsy2z615xbk1x8kp1830rcxz3irj5qqfh5"))))
+    (build-system cargo-build-system)
+    (arguments
+     `(#:cargo-inputs
+       (("rust-proc-macro2" ,rust-proc-macro2-1))
+       #:cargo-development-inputs
+       (("rust-rustversion" ,rust-rustversion)
+        ("rust-trybuild" ,rust-trybuild))))))
 
 (define-public rust-quote-0.5
   (package
@@ -7955,7 +8045,7 @@ invocations.")
           "0ms9hgdhhsxw9w920i7gipydvagf100bb56jbs192rz86ln01v7r"))))
     (arguments
      `(#:cargo-development-inputs
-       (("rust-quickcheck" ,rust-quickcheck) ; 0.2
+       (("rust-quickcheck" ,rust-quickcheck-0.2)
         ("rust-rand" ,rust-rand-0.3))))))
 
 (define-public rust-reqwest
@@ -8228,7 +8318,7 @@ invocations.")
         (("rust-no-panic" ,rust-no-panic))
         #:cargo-development-inputs
         (("rust-num-cpus" ,rust-num-cpus)
-         ("rust-rand" ,rust-rand))))
+         ("rust-rand" ,rust-rand-0.5))))
     (home-page "https://github.com/dtolnay/ryu")
     (synopsis
       "Fast floating point to string conversion")
@@ -9545,6 +9635,34 @@ function with proven statistical guarantees.")
        (("rust-rayon" ,rust-rayon)
         ("rust-regex" ,rust-regex)
         ("rust-walkdir" ,rust-walkdir))))))
+
+(define-public rust-syn-1
+  (package
+    (inherit rust-syn)
+    (name "rust-syn")
+    (version "1.0.5")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (crate-uri "syn" version))
+        (file-name
+          (string-append name "-" version ".tar.gz"))
+        (sha256
+          (base32
+            "1gw03w7lzrlqmp2vislcybikgl5wkhrqi6sy70w93xss2abhx1b6"))))
+    (build-system cargo-build-system)
+    (arguments
+      `(#:cargo-inputs
+        (("rust-proc-macro2" ,rust-proc-macro2-1)
+         ("rust-quote" ,rust-quote-1)
+         ("rust-unicode-xid" ,rust-unicode-xid))
+        #:cargo-development-inputs
+        (("rust-insta" ,rust-insta)
+         ("rust-rayon" ,rust-rayon)
+         ("rust-ref-cast" ,rust-ref-cast)
+         ("rust-regex" ,rust-regex)
+         ("rust-termcolor" ,rust-termcolor)
+         ("rust-walkdir" ,rust-walkdir))))))
 
 (define-public rust-syn-0.11
   (package
