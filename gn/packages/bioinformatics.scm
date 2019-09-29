@@ -724,15 +724,15 @@ different datasets.
 (define-public rn6-assembly-error-app
   (package
    (name "rn6-assembly-error-app")
-   (version "0.11")
+   (version "0.12")
    (source (origin
      (method git-fetch)
      (uri (git-reference
             (url "https://github.com/chen42/rn6_assembly_error_app.git")
-            (commit version)))
+            (commit (string-append "v" version))))
      (file-name (git-file-name name version))
      (sha256
-      (base32 "0ck3ndii24k4whlmiiv46120wwq5hnndwff83iaiavg703f337y1"))))
+      (base32 "0ilmn6w0l17041dlizf4dy4pqn26k7956k7fjx4fvssb525g4gi6"))))
    (build-system trivial-build-system)
    (arguments
     `(#:modules ((guix build utils))
@@ -767,4 +767,4 @@ different datasets.
    (synopsis "Display potential assembly errors in rn6")
    (description
     "Display potential assembly errors in rn6.")
-   (license #f)))
+   (license license:expat)))
