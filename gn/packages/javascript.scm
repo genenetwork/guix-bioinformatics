@@ -1045,3 +1045,37 @@ experience.")
     (name "js-md5")
     (arguments `(#:javascript-files '("src/md5.js")))
     (build-system minify-build-system)))
+
+(define-public javascript-d3-tip
+  (package
+    (name "javascript-d3-tip")
+    (version "0.9.1") ; May 10, 2018
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+              (url "https://github.com/caged/d3-tip")
+              (commit (string-append "v" version))))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32
+         "1v7kw5j73kgjidxzra2hi33wgcyqr4l26wybp1czmv1kndxqfyzw"))))
+    (build-system trivial-build-system)
+    (arguments
+     `(#:modules ((guix build utils))
+       #:builder
+       (begin
+         (use-modules (guix build utils))
+         (let* ((out (assoc-ref %outputs "out"))
+                (targetdir (string-append out "/share/genenetwork2/javascript/d3-tip"))
+                (source (assoc-ref %build-inputs "source")))
+           (mkdir-p targetdir)
+           (copy-file (string-append source "/index.js") (string-append targetdir "/d3-tip.js"))
+           (copy-file (string-append source "/examples/example-styles.css")
+                      (string-append targetdir "/d3-tip.css"))))))
+    (native-inputs `(("source" ,source)))
+    (home-page "http://labratrevenge.com/d3-tip")
+    (synopsis "Tooltips for d3.js visualizations")
+    (description
+     "Tooltips for d3.js visualizations.")
+    (license license:expat)))
