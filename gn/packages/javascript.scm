@@ -8,7 +8,7 @@
   #:use-module (guix git-download)
   #:use-module (guix build-system minify)
   #:use-module (guix build-system trivial)
-  #:use-module (srfi srfi-1))
+  #:use-module ((srfi srfi-1) #:hide (zip)))
 
 ;; see color-make package for great example - also install-file and invoke
 
@@ -1079,3 +1079,45 @@ experience.")
     (description
      "Tooltips for d3.js visualizations.")
     (license license:expat)))
+
+
+(define-public javascript-jquery-ui
+  (package
+    (name "javascript-jquery-ui")
+    (version "1.9.2")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append "https://jqueryui.com/resources/download/jquery-ui-" version ".zip"))
+       (sha256
+        (base32
+         "0r0ypq7f5rvyjc8fjywc5zrwas6n6by02zl7lx78njgnb0cp04h1"))))
+    (build-system trivial-build-system)
+    (arguments
+     `(#:modules ((guix build utils))
+       #:builder
+       (begin
+         (use-modules (guix build utils))
+         (let* ((out (assoc-ref %outputs "out"))
+                (targetdir (string-append out "/share/genenetwork2/javascript/jquery-ui"))
+                (source (assoc-ref %build-inputs "source")))
+           (invoke (string-append (assoc-ref %build-inputs "unzip") "/bin/unzip")
+                   source)
+           (copy-recursively (string-append "jquery-ui-" ,version "/ui") targetdir)
+           #t))))
+    (native-inputs
+     `(("source" ,source)
+       ("unzip" ,unzip)))
+    (home-page "https://jqueryui.com/")
+    (synopsis "user interface interactions built on top of jquery")
+    (description
+     "jQuery UI is a curated set of user interface interactions, effects,
+widgets, and themes built on top of the jQuery JavaScript Library.")
+    (license license:expat)))
+
+(define-public js-jquery-ui
+  (package
+    (inherit javascript-jquery-ui)
+    (name "js-jquery-ui")
+    (arguments `(#:javascript-files '("ui/jquery-ui.js")))
+    (build-system minify-build-system)))
