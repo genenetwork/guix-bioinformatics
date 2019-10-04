@@ -6,6 +6,7 @@
   #:use-module (gnu packages gperf)
   #:use-module (gnu packages maths)
   #:use-module (gnu packages texinfo)
+  #:use-module (gn packages gnulib)
   #:use-module (srfi srfi-1))
 
 (define-public octave-3.4.3
@@ -38,9 +39,12 @@
                               "src/DLD-FUNCTIONS/convhulln.cc")
                  (("qhull/qhull.h") "libqhull/libqhull.h")
                  (("qhull/qhull_a.h") "libqhull/qhull_a.h"))
-               (copy-file (assoc-ref %build-inputs "fseeko.c")
-                          "libgnu/fseeko.c")
                #t))
+           (add-after 'unpack 'update-gnulib
+             (lambda* (#:key inputs #:allow-other-keys)
+               (let ((gnulib (assoc-ref inputs "gnulib")))
+                 (install-file (string-append gnulib "/lib/fseeko.c") "libgnu")
+                 #t)))
            (replace 'configure-makeinfo
              (lambda* (#:key inputs #:allow-other-keys)
                (substitute* "src/help.cc"
@@ -49,13 +53,7 @@
                     "\"" (assoc-ref inputs "texinfo") "/bin/makeinfo\"")))
                #t))))))
     (native-inputs
-     `(("fseeko.c" ,(origin
-                      (method url-fetch)
-                      (uri "https://git.savannah.gnu.org/gitweb/?p=gnulib.git;a=blob_plain;f=lib/fseeko.c;hb=d40db5e23197dcd105fa3c0dc6633b51af3c08d9")
-                      (file-name "gnulib-fseeko.c-0.0.0-1-d40db5e23")
-                      (sha256
-                       (base32
-                        "1ifa5200pskgdzd6qi4nicwyjjkc415bs403mjrrzv8cdrf6hp3k"))))
+     `(("gnulib" ,(package-source gnulib))
        ,@(fold alist-delete (package-native-inputs octave-cli)
                '("lzip"))))
     (inputs
