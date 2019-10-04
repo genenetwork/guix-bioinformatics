@@ -3,6 +3,7 @@
   #:use-module (guix packages)
   #:use-module (guix download)
   #:use-module (guix utils)
+  #:use-module (gnu packages gcc)
   #:use-module (gnu packages gperf)
   #:use-module (gnu packages maths)
   #:use-module (gnu packages texinfo)
@@ -54,6 +55,7 @@
                #t))))))
     (native-inputs
      `(("gnulib" ,(package-source gnulib))
+       ("gcc-5" ,gcc-5)
        ,@(fold alist-delete (package-native-inputs octave-cli)
                '("lzip"))))
     (inputs
