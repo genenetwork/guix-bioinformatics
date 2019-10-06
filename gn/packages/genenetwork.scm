@@ -206,7 +206,17 @@ location of a putative QTL.")
           ("rust-rayon" ,rust-rayon-1.0)
           ("rust-serde" ,rust-serde)
           ("rust-serde-json" ,rust-serde-json)
-          ("rust-ndarray" ,rust-ndarray))))
+          ("rust-ndarray" ,rust-ndarray))
+         #:phases
+         (modify-phases %standard-phases
+           (add-after 'unpack 'update-test-data
+             (lambda _
+               (substitute* "src/geneobject.rs"
+                 ;; array![Genotype::Unk, Genotype::Unk, Genotype::Pat]
+                 (("0.3421367343627405") "0.3421367343627406")
+                 ;; array![Genotype::Unk, Genotype::Unk, Genotype::Unk]
+                 (("-0.3223330030526561") "-0.32233300305265566"))
+               #t)))))
       (home-page "https://github.com/chfi/rust-qtlreaper")
       (synopsis "Reimplementation of genenetwork/QTLReaper in Rust")
       (description "Reimplementation of genenetwork/QTLReaper in Rust")
