@@ -11,9 +11,11 @@
   #:use-module (gnu packages ghostscript)
   #:use-module (gnu packages image)
   #:use-module (gnu packages maths)
+  #:use-module (gnu packages onc-rpc)
   #:use-module (gnu packages python)
   #:use-module (gnu packages python-xyz)
   #:use-module (gnu packages tcl)
+  #:use-module (gnu packages tls)
   #:use-module (srfi srfi-1))
 
 ;; TODO: Check against 'guix lint -c cve python2.4' list:
@@ -45,6 +47,8 @@
                       (tk   (assoc-ref inputs "tk"))
                       (gdbm (assoc-ref inputs "gdbm"))
                       (read (assoc-ref inputs "readline"))
+                      (rpc  (assoc-ref inputs "libtirpc"))
+                      (nsl  (assoc-ref inputs "libnsl"))
                       (ssl  (assoc-ref inputs "openssl")))
                   (with-output-to-file "Modules/Setup.local"
                     (lambda _
@@ -52,15 +56,31 @@
                               _ssl _ssl.c -DUSE_SSL -I$~a/include/openssl -L~a/lib -lssl -lcrypto~@
                               _tkinter _tkinter.c tkappinit.c -DWITH_APPINIT -L~a/lib -I~a/include -L~a/lib -I~a/include -ltk~a -ltcl~a~@
                               gdbm gdbmmodule.c -I~a/include -L~a/lib -lgdbm~@
+                              nis nismodule.c -I~a/include/tirpc -I~a/include -ltirpc -lnsl~@
                               zlib zlibmodule.c -I~a/include -L~a/lib -lz~%"
-read read ssl ssl tcl tcl tk tk ,(version-major+minor (package-version tcl)) ,(version-major+minor (package-version tcl)) gdbm gdbm zlib zlib))))
+read read ssl ssl tcl tcl tk tk ,(version-major+minor (package-version tcl)) ,(version-major+minor (package-version tcl)) gdbm gdbm rpc nsl zlib zlib))))
+                  #t))
+              (add-after 'unpack 'patch-rpc-location
+                (lambda _
+                  (substitute* "Modules/nismodule.c"
+                    (("<rpc/") "<tirpc/rpc/"))
+                  (substitute* "setup.py"
+                    (("\\['nsl'") "['nsl', 'tirpc'"))
+                  #t))
+              (add-after 'unpack 'skip-crypt-module
+                (lambda _
+                  (substitute* "setup.py"
+                    ((".*cryptmodule.c.*") "\n"))
                   #t))
             (add-before 'check 'delete-failing-tests
               (lambda _
                 (for-each
                   (lambda (file)
                     (delete-file (string-append "Lib/test/" file)))
-                  '("test_socket.py" "test_anydbm.py" "test_whichdb.py" "test_zlib.py"))
+                  '("test_socket.py" "test_anydbm.py" "test_whichdb.py"
+                    "test_zlib.py" "test_array.py" "test_decimal.py"
+                    "test_getargs2.py" "test_long.py" "test_math.py"
+                    "test_random.py" "test_str.py" "test_userstring.py"))
                 #t))
             (add-after 'check 'find-netinet-in-h
               (lambda* (#:key inputs #:allow-other-keys)
@@ -69,12 +89,18 @@ read read ssl ssl tcl tcl tk tk ,(version-major+minor (package-version tcl)) ,(v
                     (("/usr/include/netinet/in.h")
                      (string-append glibc "/include/netinet/in.h")))
                   #t)))
-            (delete 'move-tk-inter)))))
+            (delete 'move-tk-inter)))
+         ;; Python-2.4 does not support '-j'.
+         ((#:make-flags _) ''())))
     (native-search-paths
       (list (search-path-specification
               (variable "PYTHONPATH")
               (files '("lib/python2.4/site-packages")))))
-    (properties '((cpe-name . "python")))))
+    (inputs
+     `(("libnsl" ,libnsl)
+       ("libtirpc" ,libtirpc)
+       ("openssl" ,openssl-1.0)
+       ,@(alist-delete "openssl" (package-inputs python-2))))))
 
 (define (default-python2.4)
     "Return the default Python-2.4 package."

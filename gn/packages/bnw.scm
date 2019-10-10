@@ -3,6 +3,7 @@
   #:use-module (guix packages)
   #:use-module (guix git-download)
   #:use-module (guix build-system gnu)
+  #:use-module (gnu packages gcc)
   #:use-module (gn packages graphviz)
   #:use-module (gn packages javascript)
   #:use-module (gn packages maths)
@@ -124,6 +125,8 @@
          ("filesaver" ,javascript-filesaver)
          ("cyto-dagre" ,javascript-cytoscape-dagre)
          ("panzoom" ,javascript-cytoscape-panzoom)))
+      (native-inputs
+       `(("gcc" ,gcc-5)))
       (home-page "http://compbio.uthsc.edu/BNW/")
       (synopsis "Bayesian Network Webserver")
       (description "This contains the code for the @dfn{Bayesian Network Webserver} (BNW).")
