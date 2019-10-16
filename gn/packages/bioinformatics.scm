@@ -768,3 +768,72 @@ different datasets.
    (description
     "Display potential assembly errors in rn6.")
    (license license:expat)))
+
+(define-public bxd-power-calculator-app
+  (let ((commit "7cdd73daa9a7aa79af1de04dc314c325f9706fb8")
+        (revision "1"))
+    (package
+      (name "bxd-power-calculator-app")
+      (version (git-version "0.7" revision commit))
+      (source (origin
+                (method git-fetch)
+                (uri (git-reference
+                       (url "https://github.com/Dashbrook/BXD_power_calculator_app/")
+                       (commit commit)))
+                (file-name (git-file-name name version))
+                (sha256
+                 (base32 "0vdfilzy78jalkh9w9xxvarnzgnlaz943crmhlds8bcrvwbmf6yh"))))
+      (build-system trivial-build-system)
+      (arguments
+       `(#:modules ((guix build utils))
+         #:builder
+         (begin
+           (use-modules (guix build utils))
+           (let* ((out       (assoc-ref %outputs "out"))
+                  (targetdir (string-append out "/share/" ,name))
+                  (app       (string-append out "/bin/" ,name))
+                  (Rbin      (string-append (assoc-ref %build-inputs "r-min")
+                                            "/bin/Rscript"))
+                  (datasets  (assoc-ref %build-inputs "datasets"))
+                  (source    (assoc-ref %build-inputs "source")))
+             (copy-recursively source targetdir)
+             (mkdir-p (string-append out "/bin"))
+             (call-with-output-file app
+               (lambda (port)
+                 (format port
+"#!~a
+library(shiny)
+setwd(\"~a\")
+runApp(launch.browser=0)~%\n"
+                 Rbin targetdir)))
+             (chmod app #o555)
+             (substitute* (string-append targetdir "/server.R")
+               (("read.csv.*")
+               (string-append "read.csv(url(\"file://" datasets "\"), header = TRUE)\n")))
+             #t))))
+      (native-inputs `(("source" ,source)))
+      (propagated-inputs
+       `(("r" ,r)
+         ("r-data-table" ,r-data-table)
+         ("r-dt" ,r-dt)
+         ("r-dplyr" ,r-dplyr)
+         ("r-ggplot2" ,r-ggplot2)
+         ("r-rcolorbrewer" ,r-rcolorbrewer)
+         ("r-shiny" ,r-shiny)))
+      (inputs
+       `(("r-min" ,r-minimal)
+         ("datasets" ,(origin
+                        (method url-fetch)
+                        (uri "http://individual.utoronto.ca/D_Ashbrook/Effect_size_analysis_heritability_28th_Nov_2018_recalc.csv")
+                        (sha256
+                         (base32
+                          "1ldr9infavd0vak8n8ry9smcnrir3xgs1bahmmx7n2csx4n6qx2x"))))))
+      (home-page "https://dashbrook1.shinyapps.io/bxd_power_calculator_app/")
+      (synopsis "Visualize probability (beta) of detecting a QTL")
+      (description
+       "The BXD power app seeks to provide a quick and easy graphical interface
+for users to calculate the theortical power to detect an effect in a two parent
+recombinant inbred population.  A power calculator such as this is needed as all
+grants require a calculation of the applications power to detect the effect of
+interest, and this app can provide values and figures for applicants to use.")
+        (license license:gpl3))))
