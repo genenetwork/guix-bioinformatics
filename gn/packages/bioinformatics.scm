@@ -741,29 +741,37 @@ different datasets.
         (use-modules (guix build utils))
         (let* ((out       (assoc-ref %outputs "out"))
                (targetdir (string-append out "/share/" ,name))
-               (ggplot2   (assoc-ref %build-inputs "r-ggplot2"))
-               (shiny     (assoc-ref %build-inputs "r-shiny"))
+               (app       (string-append out "/bin/" ,name))
+               (Rbin      (string-append (assoc-ref %build-inputs "r-min")
+                                         "/bin/Rscript"))
                (convert   (string-append (assoc-ref %build-inputs "imagemagick")
                                          "/bin/convert"))
                (source    (assoc-ref %build-inputs "source")))
-          ;; Copied from https://stackoverflow.com/questions/2698269/how-do-you-change-library-location-in-r
           (copy-recursively source targetdir)
           (substitute* (string-append targetdir "/server.r")
-            (("library\\(\"shiny\"" prefix)
-             (string-append prefix ",lib.loc=" shiny "/site-library\""))
-            (("library\\(\"ggplot2\"" prefix)
-             (string-append prefix ",lib.loc=" ggplot2 "/site-library\""))
-            (("convert") convert)
-            )
+            (("./pngs") (string-append targetdir "/pngs"))
+            (("convert") convert))
+          (mkdir-p (string-append out "/bin"))
+          (call-with-output-file app
+            (lambda (port)
+              (format port
+"#!~a
+library(shiny)
+setwd(\"~a\")
+runApp(launch.browser=0, port=4202)~%\n"
+              Rbin targetdir)))
+          (chmod app #o555)
           #t))))
    (native-inputs `(("source" ,source)))
    (inputs
     `(("imagemagick" ,imagemagick)
+      ("r-min" ,r-minimal)))
+   (propagated-inputs
+    `(("freetype" ,freetype)
+      ("r" ,r)
       ("r-ggplot2" ,r-ggplot2)
       ("r-shiny" ,r-shiny)))
-   (propagated-inputs
-    `(("freetype" ,freetype)))
-   (home-page "http://rn6err.opar.io/") ; or similar
+   (home-page "http://rn6err.opar.io/")
    (synopsis "Display potential assembly errors in rn6")
    (description
     "Display potential assembly errors in rn6.")
