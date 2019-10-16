@@ -812,7 +812,7 @@ runApp(launch.browser=0, port=4202)~%\n"
 "#!~a
 library(shiny)
 setwd(\"~a\")
-runApp(launch.browser=0)~%\n"
+runApp(launch.browser=0, port=3978)~%\n"
                  Rbin targetdir)))
              (chmod app #o555)
              (substitute* (string-append targetdir "/server.R")
