@@ -830,9 +830,11 @@ runApp(launch.browser=0, port=3978)~%\n"
          ("r-shiny" ,r-shiny)))
       (inputs
        `(("r-min" ,r-minimal)
+         ;; Also available from ipfs
+         ;; ipfs get Qma3LWJBoks77btTmp6rn6jGSBcuBoPgcPCmofY2RRKEKf
          ("datasets" ,(origin
                         (method url-fetch)
-                        (uri "http://individual.utoronto.ca/D_Ashbrook/Effect_size_analysis_heritability_28th_Nov_2018_recalc.csv")
+                        (uri "https://web.archive.org/web/20191016132922/http://individual.utoronto.ca/D_Ashbrook/Effect_size_analysis_heritability_28th_Nov_2018_recalc.csv")
                         (sha256
                          (base32
                           "1ldr9infavd0vak8n8ry9smcnrir3xgs1bahmmx7n2csx4n6qx2x"))))))
