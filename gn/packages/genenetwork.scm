@@ -31,7 +31,7 @@
   #:use-module (gn packages gemma)
   #:use-module (gn packages javascript)
   #:use-module (gn packages phewas)
-  #:use-module (gn packages python) 
+  #:use-module (gn packages python)
   #:use-module (gn packages python24)
   #:use-module (gn packages statistics))
 
@@ -60,14 +60,14 @@
            ;; wrap-program uses `which' to find bash for the wrapper
            ;; shebang, but it can't know about the bootstrap bash in
            ;; the store, since it's not named "bash".  Help it out a
-           ;; bit by providing a symlink it this package's output.
+           ;; bit by providing a symlink to this package's output.
            (symlink bash (string-append out "/bash"))
            (setenv "PATH" out)
            (wrap-program foo `("GUIX_FOO" prefix ("hello")))
            (wrap-program foo `("GUIX_BAR" prefix ("world")))
            #t))))
-    (inputs `(("bash" ,(search-bootstrap-binary "bash"
-                                                (%current-system)))))
+    (inputs `(("bash" ,(bootstrap-executable "bash"
+                                             (%current-system)))))
 
     (home-page #f)
     (synopsis #f)
