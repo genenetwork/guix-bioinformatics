@@ -147,6 +147,9 @@ functions.")
        ("python-retrying" ,python-retrying)
        ("python-six" ,python-six)))))
 
+(define-public python2-plotly-3.2.1
+  (package-with-python2 python-plotly-3.2.1))
+
 (define-public python-retrying
   (package
     (name "python-retrying")
