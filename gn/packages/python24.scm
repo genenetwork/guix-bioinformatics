@@ -77,10 +77,11 @@ read read ssl ssl tcl tcl tk tk ,(version-major+minor (package-version tcl)) ,(v
                 (for-each
                   (lambda (file)
                     (delete-file (string-append "Lib/test/" file)))
-                  '("test_socket.py" "test_anydbm.py" "test_whichdb.py"
-                    "test_zlib.py" "test_array.py" "test_decimal.py"
+                  '("test_anydbm.py" "test_array.py" "test_decimal.py"
                     "test_getargs2.py" "test_long.py" "test_math.py"
-                    "test_random.py" "test_str.py" "test_userstring.py"))
+                    "test_mhlib.py" "test_random.py" "test_socket.py"
+                    "test_str.py" "test_userstring.py" "test_whichdb.py"
+                    "test_zlib.py"))
                 #t))
             (add-after 'check 'find-netinet-in-h
               (lambda* (#:key inputs #:allow-other-keys)
