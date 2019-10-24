@@ -4,16 +4,17 @@
   #:use-module (guix git-download)
   #:use-module (guix build-system gnu)
   #:use-module (gnu packages gcc)
+  #:use-module (gnu packages python)
+  #:use-module (gnu packages statistics)
   #:use-module (gn packages graphviz)
   #:use-module (gn packages javascript)
   #:use-module (gn packages maths)
-  #:use-module (gnu packages python)
-  #:use-module (gnu packages statistics)
+  #:use-module (gn packages python)
   #:use-module (gn packages web))
 
 (define-public bnw
   (let ((commit "eb6b002b924694808384f1a8d7c6d1121806ae04")
-        (revision "1"))
+        (revision "2"))
     (package
       (name "bnw")
       (version (git-version "1.22" revision commit)) ; June 28, 2019
@@ -32,7 +33,12 @@
          #:phases
          (modify-phases %standard-phases
            (delete 'configure)
-           (add-after 'patch-source-shebangs 'patch--more-shebangs
+           (add-after 'unpack 'patch-source
+             (lambda _
+               (substitute* "sourcecodes/header_batchsearch.inc"
+                 (("my_style.css") "my_new_style.css"))
+               #t))
+           (add-after 'patch-source-shebangs 'patch-more-shebangs
              (lambda* (#:key inputs #:allow-other-keys)
                (let* ((bash     (assoc-ref inputs "bash"))
                       (graphviz (assoc-ref inputs "graphviz"))
@@ -58,6 +64,10 @@
                            (string-append octave "/bin")
                            (string-append python "/bin"))))
                    (find-files "." ".*"))
+                 (substitute* '("sourcecodes/examplefilecopy.sh"
+                                "sourcecodes/filecopy.sh")
+                   (("rm") (which "rm"))
+                   (("cp") (which "cp")))
                  (substitute*
                    (append '("home.php")
                            (find-files "sourcecodes" ".php")
@@ -101,17 +111,33 @@
                  (delete-file "sourcecodes/localscore/libRmath.so")
                  (copy-recursively "." out))
                #t))
+           (add-after 'install 'make-files-executable
+             (lambda* (#:key outputs #:allow-other-keys)
+               (let ((out (assoc-ref outputs "out")))
+                 (for-each
+                   (lambda (file)
+                     (chmod file #o555))
+                   (find-files out "\\.sh$"))
+                 #t)))
            (replace 'build
              (lambda _
                (with-directory-excursion "sourcecodes"
                  (substitute* "build.sh"
                    (("./localscore") "localscore"))
                  (chmod "k-best/src/buildk_poster.sh" #o755)
-                 (invoke "sh" "build.sh")))))))
+                 (invoke "sh" "build.sh")
+                 ;; from info_files/plotly_notes.txt
+                 ;(with-directory-excursion "data"
+                 ;  (setenv "HOME" "/tmp")
+                 ;  (invoke "python" "../cv_plotly.py" "LvQ")
+                 ;  (invoke "sh" "../plotly_loo.sh"))
+                 ;(invoke "./run_loo" "LvQ Weight")
+                 ))))))
       (inputs
        `(("graphviz" ,graphviz-2.26)
          ("octave" ,octave-3.4.3)
          ("python" ,python-2)
+         ("plotly" ,python2-plotly-3.2.1)
          ("rmath" ,rmath-standalone) ; Should this be r-minimal? Which version?
          ("jquery" ,web-jquery)
          ("awesome" ,web-font-awesome)
