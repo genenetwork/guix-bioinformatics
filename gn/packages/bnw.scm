@@ -35,6 +35,8 @@
            (delete 'configure)
            (add-after 'unpack 'patch-source
              (lambda _
+               (substitute* "index.html"
+                 (("url=home.php") "url=sourcecodes/home.php"))
                (substitute* "sourcecodes/header_batchsearch.inc"
                  (("my_style.css") "my_new_style.css"))
                #t))
