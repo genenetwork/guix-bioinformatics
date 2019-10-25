@@ -14,7 +14,7 @@
 
 (define-public bnw
   (let ((commit "eb6b002b924694808384f1a8d7c6d1121806ae04")
-        (revision "2"))
+        (revision "3"))
     (package
       (name "bnw")
       (version (git-version "1.22" revision commit)) ; June 28, 2019
@@ -37,6 +37,8 @@
              (lambda _
                (substitute* "index.html"
                  (("url=home.php") "url=sourcecodes/home.php"))
+               (substitute* "home.php"
+                 (("http://bnw.genenetwork.org/BNW_1.22") "http://bnw-test.genenetwork.org"))
                (substitute* "sourcecodes/header_batchsearch.inc"
                  (("my_style.css") "my_new_style.css"))
                #t))
@@ -71,8 +73,7 @@
                    (("rm") (which "rm"))
                    (("cp") (which "cp")))
                  (substitute*
-                   (append '("home.php")
-                           (find-files "sourcecodes" ".php")
+                   (append (find-files "sourcecodes" ".php")
                            (find-files "sourcecodes/run_scripts" ".*"))
                    (("/usr/bin/dot") (string-append graphviz "/bin/dot")))
                  (substitute* "sourcecodes/build.sh"
