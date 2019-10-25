@@ -1,0 +1,10 @@
+[Unit]
+Description=BNW web server
+Wants=guix-daemon.service
+
+[Service]
+Environment="BNW_COMMAND=$(/bin/su -l bnw -c '/var/guix/profiles/per-user/bnw/current-guix/bin/guix system container /home/bnw/guix-bioinformatics/gn/services/bnw-container.scm --share=/home/bnw/server=/srv/http --network')"
+ExecStart=/bin/bash -c '${BNW_COMMAND}'
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,22 @@
+SETUP:
+
+The setup process works like this:
+$ guix build bnw
+$ mkdir -p /home/bnw/server/bnw
+$ cp -a $(guix build bnw)/* /home/bnw/server/bnw/
+$ chmod a+w /home/bnw/server -R
+
+for testing changes to the container, you'll want to do the following (or thereabouts):
+$ guix system container gn/services/GN1-container.scm --share=/home/bnw/server=/srv/http --network
+$ sudo -E $(guix system container gn/services/GN1-container.scm --share=/home/bnw/server=/srv/http --network)
+
+for running the service:
+see included bnw.service
+
+for upgrades:
+$ guix pull
+$ rm -rf /home/bnw/server
+$ guix build bnw
+$ mkdir -p /home/bnw/server/bnw
+$ cp -a $(guix build bnw)/* /home/bnw/server/bnw/
+$ chmod a+w /home/bnw/server -R
