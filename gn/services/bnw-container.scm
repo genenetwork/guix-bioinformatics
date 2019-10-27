@@ -1,3 +1,5 @@
+(define-module (gn services bnw-container))
+
 (use-modules (gnu))
 (use-service-modules base networking web)
 
