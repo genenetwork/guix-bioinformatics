@@ -1,0 +1,9 @@
+[Unit]
+Description=Gitea git server and web ui
+Wants=guix-daemon.service
+
+[Service]
+ExecStart=$(/var/guix/profiles/per-user/efraim/current-guix/bin/guix system container /home/efraimf/workspace/guix-bioinformatics/gn/services/gitea-container.scm --share=/home/efraimf/tmp=/var/lib --network)
+
+[Install]
+WantedBy=multi-user.target

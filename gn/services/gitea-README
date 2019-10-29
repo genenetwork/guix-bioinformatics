@@ -1,0 +1,17 @@
+SETUP:
+
+The setup process works like this:
+Decide where you want the base directory for gitea
+  for example: /srv/services/gitea
+# mkdir -p /srv/services
+Make the directory itself writable
+# chmod o+w /srv/services
+Decide the user/group you want to own the directory and service and change the container
+$ sed -i 's/1009/<insert-number>/g' gitea-container.scm
+
+for running the service:
+see included gitea.service
+
+for upgrades:
+# guix pull
+# systemctl restart gitea.service
