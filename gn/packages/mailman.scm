@@ -4,13 +4,20 @@
   #:use-module (guix download)
   #:use-module (guix build-system python)
   #:use-module (gnu packages check)
+  #:use-module (gnu packages compression)
   #:use-module (gnu packages databases)
+  #:use-module (gnu packages django)
+  #:use-module (gnu packages geo)
   #:use-module (gnu packages libffi)
+  #:use-module (gnu packages mail)
+  #:use-module (gnu packages ncurses)
+  #:use-module (gnu packages python-check)
   #:use-module (gnu packages python-crypto)
   #:use-module (gnu packages python-xyz)
   #:use-module (gnu packages python-web)
   #:use-module (gnu packages time)
-  #:use-module (gnu packages tls))
+  #:use-module (gnu packages tls)
+  #:use-module (gn packages python))
 
 ;;;
 ;;;^L
@@ -37,15 +44,6 @@
          (base32
           "1qph9i93ndahfxi3bb2sd0kjm2c0pkh844ai6zacfmvihl1k3pvy"))))
     (build-system python-build-system)
-    (arguments
-     '(#:phases
-       (modify-phases %standard-phases
-         (add-after 'unpack 'patch-sources
-           (lambda _
-             ;; This module is built into Python 3.7+.
-             (substitute* "setup.py"
-               ((".*importlib_resources.*") ""))
-             #t)))))
     (propagated-inputs
      `(("python-aiosmtpd" ,python-aiosmtpd)
        ("python-alembic" ,python-alembic)
@@ -60,7 +58,7 @@
        ("python-flufl.i18n" ,python-flufl.i18n)
        ("python-flufl.lock" ,python-flufl.lock)
        ("python-gunicorn" ,python-gunicorn)
-       ;("python-importlib-resources" ,python-importlib-resources) ; built into python-3.7
+       ("python-importlib-resources" ,python-importlib-resources) ; built into python-3.7
        ("python-lazr.config" ,python-lazr.config)
        ("python-passlib" ,python-passlib)
        ("python-requests" ,python-requests)
@@ -320,13 +318,21 @@ implemented, light on server resource usage, and fairly speedy.")
          (base32
           "0y3hg12iby1qyaspnbisz4s4vxax7syikk3skznwqizqyv89y9yk"))))
     (build-system python-build-system)
+    (arguments
+     '(#:phases
+       (modify-phases %standard-phases
+         (replace 'check
+           (lambda _
+             (invoke "python" "-m" "unittest" "discover"))))))
     (propagated-inputs
-     `(("python-pathlib2" ,python-pathlib2)
-       ("python-typing" ,python-typing)))
+     `(("python-pathlib2" ,python-pathlib2)))
+    (native-inputs
+     `(("python-wheel" ,python-wheel)))
     (home-page "https://importlib-resources.readthedocs.io/")
     (synopsis "Read resources from Python packages")
     (description
-     "Read resources from Python packages")
+     "@code{importlib_resources} is a backport of Python 3.7's standard library
+@code{importlib.resources} module for Python 2.7, and 3.4 through 3.6.")
     (license license:asl2.0)))
 
 (define-public python-lazr.config
@@ -1035,3 +1041,695 @@ conflicts detected by that mechanism.")
     (description "This package contains a generic transaction implementation
 for Python.  It is mainly used by the ZODB.")
     (license zpl2.1)))
+
+(define-public python-mailmanclient-3.3
+  (package
+    (inherit python-mailmanclient)
+    (name "python-mailmanclient")
+    (version "3.3.0")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "mailmanclient" version))
+        (sha256
+         (base32
+          "1s8sbhg1vyc9v9zjwxrh6m8h3qx1nspvrkvcnicbvq9a2nz6qwy8"))))
+    (propagated-inputs
+     `(("python-requests" ,python-requests)))
+    (native-inputs
+     `(("python-falcon" ,python-falcon)
+       ("python-mailman" ,mailman)
+       ("python-pytest" ,python-pytest)
+       ("python-pytest-services" ,python-pytest-services)
+       ("python-pytest-vcr" ,python-pytest-vcr)))))
+
+(define-public python-pytest-services
+  (package
+    (name "python-pytest-services")
+    (version "1.3.1")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "pytest-services" version))
+        (sha256
+          (base32
+            "0b2zfv04w6m3gp2v44ifdhx22vcji069qnn95ry3zcyxib7cjnq3"))))
+    (build-system python-build-system)
+    (arguments '(#:tests? #f)) ; Tests not included in release tarball.
+    (propagated-inputs
+      `(("python-psutil" ,python-psutil)
+        ("python-pytest" ,python-pytest)
+        ("python-requests" ,python-requests)
+        ("python-setuptools" ,python-setuptools)
+        ("python-subprocess32" ,python-subprocess32)))
+    (home-page
+      "https://github.com/pytest-dev/pytest-services")
+    (synopsis
+      "Services plugin for pytest testing framework")
+    (description
+      "Services plugin for pytest testing framework")
+    (license license:expat)))
+
+(define-public python-pytest-vcr
+  (package
+    (name "python-pytest-vcr")
+    (version "1.0.2")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "pytest-vcr" version))
+        (sha256
+          (base32
+            "15hq5vwiixhb5n2mdvbmxfn977zkwjm769r74vcl7k5vbavm3vi3"))))
+    (build-system python-build-system)
+    (propagated-inputs
+      `(("python-pytest" ,python-pytest)
+        ("python-vcrpy" ,python-vcrpy)))
+    (home-page "https://github.com/ktosiek/pytest-vcr")
+    (synopsis "Plugin for managing VCR.py cassettes")
+    (description
+      "Plugin for managing VCR.py cassettes")
+    (license license:expat)))
+
+(define-public python-mailman-hyperkitty
+  (package
+    (name "python-mailman-hyperkitty")
+    (version "1.1.0")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "mailman-hyperkitty" version))
+        (sha256
+         (base32
+          "1lfqa9admhvdv71f528jmz2wl0i5cv77v6l64px2pm4zqr9ckkjx"))
+        (patches (list (origin
+                         (method url-fetch)
+                         (uri "https://salsa.debian.org/mailman-team/mailman-hyperkitty/raw/debian/1.1.0-9/debian/patches/0002-Skip-the-test_archive_message_unserializable.patch")
+                         (sha256
+                          (base32
+                           "0p1fwm46c4bl81lvsg3kjhn2r1lwgkpgxamb3xyqn7h9qdrw10hw")))))))
+    (build-system python-build-system)
+    (propagated-inputs
+      `(("python-mailman" ,mailman)
+        ("python-requests" ,python-requests)
+        ("python-setuptools" ,python-setuptools)
+        ("python-zope.interface" ,python-zope.interface)))
+    (native-inputs
+     `(("python-mock" ,python-mock)
+       ("python-nose2" ,python-nose2)))
+    (home-page "https://gitlab.com/mailman/mailman-hyperkitty/")
+    (synopsis
+      "Mailman archiver plugin for HyperKitty")
+    (description
+      "Mailman archiver plugin for HyperKitty")
+    (license license:gpl3+)))
+
+(define-public python-hyperkitty
+  (package
+    (name "python-hyperkitty")
+    (version "1.3.0")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "HyperKitty" version))
+        (sha256
+         (base32
+          "1h39l5r3ml0687nwc9qpajvis5dqpdbrcklxwrshvk1d1y8dlc5b"))))
+    (build-system python-build-system)
+    (arguments
+     '(#:phases
+       (modify-phases %standard-phases
+         (replace 'check
+           (lambda _
+             (setenv "PYTHONPATH" (string-append ".:" (getenv "PYTHONPATH")))
+             (invoke "example_project/manage.py" "test"
+                     "--settings=hyperkitty.tests.settings_test"))))))
+    (propagated-inputs
+     `(("python-dateutil" ,python-dateutil)
+       ("python-django" ,python-django)
+       ("python-django-compressor" ,python-django-compressor)
+       ("python-django-extensions" ,python-django-extensions)
+       ("python-django-gravatar2" ,python-django-gravatar2)
+       ("python-django-haystack" ,python-django-haystack)
+       ("python-django-mailman3" ,python-django-mailman3)
+       ("python-django-q" ,python-django-q)
+       ("python-djangorestframework" ,python-djangorestframework)
+       ("python-flufl.lock" ,python-flufl.lock)
+       ("python-mailmanclient" ,python-mailmanclient)
+       ("python-networkx" ,python-networkx)
+       ("python-pytz" ,python-pytz)
+       ("python-robot-detection" ,python-robot-detection)))
+    (native-inputs
+     `(("python-beautifulsoup4" ,python-beautifulsoup4)
+       ("python-isort" ,python-isort)
+       ("python-mock" ,python-mock)
+       ("python-whoosh" ,python-whoosh)))
+    (home-page "https://gitlab.com/mailman/hyperkitty")
+    (synopsis
+      "A web interface to access GNU Mailman v3 archives")
+    (description
+      "A web interface to access GNU Mailman v3 archives")
+    (license license:gpl3))) ; Some files are gpl2+
+
+(define-public python-django-compressor
+  (package
+    (name "python-django-compressor")
+    (version "2.3")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "django-compressor" version))
+        (sha256
+         (base32
+          "1pbygd00l0k5p1r959131khij1km1a1grfxg0r59ar2wyx3n7j27"))))
+    (build-system python-build-system)
+    (arguments
+     '(#:phases
+       (modify-phases %standard-phases
+         (replace 'check
+           (lambda _
+             (setenv "DJANGO_SETTINGS_MODULE" "compressor.test_settings")
+             (invoke "django-admin" "test"
+                     "--pythonpath=."))))))
+    (propagated-inputs
+     `(("python-django-appconf" ,python-django-appconf)
+       ("python-rcssmin" ,python-rcssmin)
+       ("python-rjsmin" ,python-rjsmin)))
+    (native-inputs
+     `(("python-beautifulsoup4" ,python-beautifulsoup4)
+       ("python-brotli" ,python-brotli)
+       ("python-csscompressor" ,python-csscompressor)
+       ("python-django-sekizai" ,python-django-sekizai)
+       ("python-mock" ,python-mock)))
+    (home-page "https://django-compressor.readthedocs.io/en/latest/")
+    (synopsis
+      "Compresses linked and inline JavaScript or CSS into single cached files.")
+    (description
+      "Compresses linked and inline JavaScript or CSS into single cached files.")
+    (license license:expat)))
+
+(define-public python-csscompressor
+  (package
+    (name "python-csscompressor")
+    (version "0.9.5")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "csscompressor" version))
+        (sha256
+         (base32
+          "018ssffvlpnc1salmnpyl52c11glzzwj4k9f757hl4pkpjnjp8mg"))))
+    (build-system python-build-system)
+    (arguments
+     '(#:phases
+       (modify-phases %standard-phases
+         (replace 'check
+           (lambda _
+             (invoke "py.test"))))))
+    (native-inputs
+     `(("python-pytest" ,python-pytest)))
+    (home-page "https://github.com/sprymix/csscompressor")
+    (synopsis "A python port of YUI CSS Compressor")
+    (description
+      "A python port of YUI CSS Compressor")
+    (license license:bsd-3)))
+
+(define-public python-brotli
+  (package
+    (name "python-brotli")
+    (version "1.0.7")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "Brotli" version ".zip"))
+        (sha256
+         (base32
+          "19x5dqxckb62n37mpnczp21rfxqvgpm0ki5ds8ac65zx8hbxqf05"))))
+    (build-system python-build-system)
+    (native-inputs
+     `(("unzip" ,unzip)))
+    (home-page "https://github.com/google/brotli")
+    (synopsis
+      "Python bindings for the Brotli compression library")
+    (description
+      "Python bindings for the Brotli compression library")
+    (license license:asl2.0)))
+
+(define-public python-django-sekizai
+  (package
+    (name "python-django-sekizai")
+    (version "1.0.0")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "django-sekizai" version))
+        (sha256
+          (base32
+            "052y7cgrmbbdlbl17cgvnarzqb6x9sv21wwprif9pzljzrb36ak4"))))
+    (build-system python-build-system)
+    (arguments '(#:tests? #f)) ; Test script not included with release.
+    (propagated-inputs
+      `(("python-django" ,python-django)
+        ("python-django-classy-tags" ,python-django-classy-tags)))
+    (home-page "http://github.com/ojii/django-sekizai")
+    (synopsis "template blocks for Django projects")
+    (description "Sekizai means blocks in Japanese, and thats what this app
+provides.  A fresh look at blocks.  With @code{django-sekizai} you can define
+placeholders where your blocks get rendered and at different places in your
+templates append to those blocks.  This is especially useful for css and
+javascript.  Your subtemplates can now define css and javscript files to be
+included, and the css will be nicely put at the top and the javascript to the
+bottom, just like you should. Also sekizai will ignore any duplicate content in
+a single block.")
+    (license license:bsd-3)))
+
+(define-public python-django-classy-tags
+  (package
+    (name "python-django-classy-tags")
+    (version "0.9.0")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "django-classy-tags" version))
+        (sha256
+          (base32
+          "0axzsigvmb17ha5mnr3xf6c851kwinjpkxksxwprwjakh1m59d1q"))))
+    (build-system python-build-system)
+    (arguments '(#:tests? #f)) ; Test script not distributed with release.
+    (propagated-inputs
+     `(("python-django" ,python-django)))
+    (home-page "https://github.com/divio/django-classy-tags")
+    (synopsis "Class based template tags for Django")
+    (description
+      "Class based template tags for Django")
+    (license license:bsd-3)))
+
+(define-public python-django-haystack
+  (package
+    (name "python-django-haystack")
+    (version "2.8.1")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "django-haystack" version))
+        (sha256
+         (base32
+          "1302fqsrx8w474xk5cmnmg3hjqfprlxnjg9qlg86arsr4v4vqm4b"))))
+    (build-system python-build-system)
+    (arguments
+     '(#:phases
+       (modify-phases %standard-phases
+         (add-after 'unpack 'loosen-verion-restrictions
+           (lambda _
+             (substitute* "setup.py"
+               (("geopy.*") "geopy',\n"))
+             #t))
+         (add-before 'check 'set-gdal-lib-path
+           (lambda* (#:key inputs #:allow-other-keys)
+             (setenv "GDAL_LIBRARY_PATH"
+                     (string-append (assoc-ref inputs "gdal")
+                                    "/lib"))
+             #t)))
+       #:tests? #f)) ; OSError: libgdal.so.20: cannot open shared object file
+    (propagated-inputs
+     `(("python-django" ,python-django)))
+    (native-inputs
+     `(
+       ("gdal" ,gdal)
+       ("python-coverage" ,python-coverage)
+       ("python-dateutil" ,python-dateutil)
+       ("python-geopy" ,python-geopy)
+       ("python-mock" ,python-mock)
+       ("python-nose" ,python-nose)
+       ("python-requests" ,python-requests)
+       ("python-setuptools-scm" ,python-setuptools-scm)
+       ("python-pysolr" ,python-pysolr)
+       ("python-whoosh" ,python-whoosh)
+       ))
+    (home-page "http://haystacksearch.org/")
+    (synopsis "Pluggable search for Django.")
+    (description "Pluggable search for Django.")
+    (license license:bsd-3)))
+
+(define-public python-pysolr
+  (package
+    (name "python-pysolr")
+    (version "3.8.1")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "pysolr" version))
+        (sha256
+          (base32
+            "06x8q23llzcmkbcadcp4ifv3qdm0pxq3ajmrmvwvrdkxc9vb3v48"))))
+    (build-system python-build-system)
+    (arguments
+     '(#:tests? #f)) ; Tests require network access.
+    (propagated-inputs
+      `(("python-requests" ,python-requests)))
+    (native-inputs
+     `(("python-setuptools-scm" ,python-setuptools-scm)))
+    (home-page "https://github.com/django-haystack/pysolr/")
+    (synopsis
+      "Lightweight python wrapper for Apache Solr.")
+    (description
+      "Lightweight python wrapper for Apache Solr.")
+    (license license:bsd-3)))
+
+(define-public python-geopy
+  (package
+    (name "python-geopy")
+    (version "1.20.0")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "geopy" version))
+        (sha256
+         (base32
+          "1qih13l4csa3l6kafbcl6q3vvvvc2b7z3b779865jcb2xs8bq6cl"))))
+    (build-system python-build-system)
+    (propagated-inputs
+     `(("python-geographiclib" ,python-geographiclib)))
+    (native-inputs
+     `(("python-contextlib2" ,python-contextlib2)
+       ("python-coverage" ,python-coverage)
+       ("python-flake8" ,python-flake8)
+       ("python-isort" ,python-isort)
+       ("python-mock" ,python-mock)
+       ("python-pytest" ,python-pytest)
+       ("python-readme-renderer"
+        ,python-readme-renderer)
+       ("python-six" ,python-six)
+       ;("python-sphinx" ,python-sphinx)
+       ;("python-sphinx-rtd-theme" ,python-sphinx-rtd-theme)
+       ;("python-statistics" ,python-statistics) for python-2
+       ))
+    (home-page "https://github.com/geopy/geopy")
+    (synopsis "Python Geocoding Toolbox")
+    (description "Python Geocoding Toolbox")
+    (license license:expat)))
+
+(define-public python-geographiclib
+  (package
+    (name "python-geographiclib")
+    (version "1.50")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "geographiclib" version))
+        (sha256
+          (base32
+            "0cn6ap5fkh3mkfa57l5b44z3gvz7j6lpmc9rl4g2jny2gvp4dg8j"))))
+    (build-system python-build-system)
+    (home-page
+      "https://geographiclib.sourceforge.io/1.50/python")
+    (synopsis
+      "The geodesic routines from GeographicLib")
+    (description
+      "The geodesic routines from GeographicLib")
+    (license license:expat)))
+
+(define-public python-readme-renderer
+  (package
+    (name "python-readme-renderer")
+    (version "24.0")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "readme_renderer" version))
+        (sha256
+         (base32
+          "0br0562lnvj339f1nwz4nfl4ay49rw05xkqacigzf9wz4mdza5mv"))))
+    (build-system python-build-system)
+    (propagated-inputs
+     `(("python-bleach" ,python-bleach)
+       ("python-docutils" ,python-docutils)
+       ("python-pygments" ,python-pygments)
+       ("python-six" ,python-six)))
+    (native-inputs
+     `(("python-mock" ,python-mock)
+       ("python-pytest" ,python-pytest)))
+    (home-page "https://github.com/pypa/readme_renderer")
+    (synopsis
+      "readme_renderer is a library for rendering \"readme\" descriptions for Warehouse")
+    (description
+      "readme_renderer is a library for rendering \"readme\" descriptions for Warehouse")
+    (license license:asl2.0)))
+
+(define-public python-django-mailman3
+  (package
+    (name "python-django-mailman3")
+    (version "1.3.0")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "django-mailman3" version))
+        (sha256
+         (base32
+          "0wppv1q3jkkg2d66qsygc4dfpvhfcj5i2as2xpqnzf3l3w7dgja1"))))
+    (build-system python-build-system)
+    (arguments
+     '(#:phases
+       (modify-phases %standard-phases
+         (replace 'check
+           (lambda _
+             (setenv "DJANGO_SETTINGS_MODULE" "django_mailman3.tests.settings_test")
+             (invoke "django-admin" "test"
+                     "--pythonpath=."))))))
+    (propagated-inputs
+     `(("python-django" ,python-django)
+       ("python-django-allauth" ,python-django-allauth-gn)
+       ("python-django-gravatar2" ,python-django-gravatar2)
+       ("python-mailmanclient" ,python-mailmanclient)
+       ("python-pytz" ,python-pytz)))
+    (native-inputs
+     `(("python-mock" ,python-mock)))
+    (home-page "https://gitlab.com/mailman/django-mailman3")
+    (synopsis "Django library to help interaction with Mailman")
+    (description
+     "This package contains libraries and templates for Django-based interfaces
+interacting with Mailman.")
+    (license license:gpl3+)))
+
+(define-public python-django-allauth-gn
+  (package
+    (inherit python-django-allauth)
+    (name "python-django-allauth")
+    (version "0.40.0")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "django-allauth" version))
+        (sha256
+         (base32
+          "12f5gjidcpb7a0d1f601k0c5dcdmb6fg9sfn7xn5j8zfsg29y63a"))))
+    (arguments
+     '(#:tests? #f)) ; skip tests for now
+    (propagated-inputs
+     `(("python-django" ,python-django)
+       ("python-openid" ,python-openid)
+       ("python-requests" ,python-requests)
+       ("python-requests-oauthlib" ,python-requests-oauthlib)))))
+
+(define-public python-django-q
+  (package
+    (name "python-django-q")
+    (version "1.0.2")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "django-q" version))
+        (sha256
+         (base32
+          "17q7q7xgrdpix4qkv3gkdp1qf5k4zclg1jsacvc4i1ypqrc1y23h"))))
+    (build-system python-build-system)
+    (arguments
+     '(#:phases
+       (modify-phases %standard-phases
+         (replace 'check
+           (lambda _
+             (setenv "DJANGO_SETTINGS_MODULE" "django_q.tests.settings")
+             (invoke "django-admin" "test" "django_q.tests"
+                     "--pythonpath=."))))))
+    (propagated-inputs
+     `(("python-arrow" ,python-arrow)
+       ("python-blessed" ,python-blessed)
+       ("python-django" ,python-django)
+       ("python-django-picklefield" ,python-django-picklefield)))
+    (native-inputs
+     `(("python-django-redis" ,python-django-redis)
+       ("python-pytest-django" ,python-pytest-django)))
+    (home-page "https://django-q.readthedocs.org")
+    (synopsis "Multiprocessing distributed task queue for Django")
+    (description
+     "Django Q is a native Django task queue, scheduler and worker application
+using Python multiprocessing.")
+    (license license:expat)))
+
+(define-public python-robot-detection
+  (package
+    (name "python-robot-detection")
+    (version "0.4")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "robot-detection" version))
+        (sha256
+         (base32
+          "1xd2jm3yn31bnk1kqzggils2rxj26ylxsfz3ap7bhr3ilhnbg3rx"))))
+    (build-system python-build-system)
+    (arguments '(#:tests? #f)) ; Tests not shipped in pypi release.
+    (propagated-inputs `(("python-six" ,python-six)))
+    (home-page "https://github.com/rory/robot-detection")
+    (synopsis
+      "Library for detecting if a HTTP User Agent header is likely to be a bot")
+    (description
+      "Library for detecting if a HTTP User Agent header is likely to be a bot")
+    (license #f)))
+
+(define-public python-rcssmin
+  (package
+    (name "python-rcssmin")
+    (version "1.0.6")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "rcssmin" version))
+        (sha256
+         (base32
+          "0w42l4dhxghcz7pj3q7hkxp015mvb8z2cq9sfxbl31npsfavd1ya"))))
+    (build-system python-build-system)
+    (arguments
+     '(#:phases
+       (modify-phases %standard-phases
+         (replace 'check
+           (lambda _
+             (invoke "python" "run_tests.py" "tests"))))))
+    (home-page "http://opensource.perlig.de/rcssmin/")
+    (synopsis "CSS Minifier")
+    (description "CSS Minifier")
+    (license license:asl2.0)))
+
+(define-public python-rjsmin
+  (package
+    (name "python-rjsmin")
+    (version "1.1.0")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "rjsmin" version))
+        (sha256
+         (base32
+          "0cmc72rlkvzz8fl89bc83czkx0pcvhzj7yn7m29r8pgnf5fcfpdi"))))
+    (build-system python-build-system)
+    (native-inputs
+     `(("python-pytest" ,python-pytest)))
+    (home-page "http://opensource.perlig.de/rjsmin/")
+    (synopsis "Javascript Minifier")
+    (description "Javascript Minifier")
+    (license license:asl2.0)))
+
+(define-public python-blessed
+  (package
+    (name "python-blessed")
+    (version "1.16.1")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "blessed" version))
+        (sha256
+         (base32
+          "1yhxgibvjyzccyy2rzmygkq515p7kpyls7x0ymvcyrpj14xph8m2"))
+        (modules '((guix build utils)))
+        (snippet
+         '(begin
+            ;; Don't get hung up on Windows test failures.
+            (delete-file "blessed/win_terminal.py") #t))))
+    (build-system python-build-system)
+    (propagated-inputs
+     `(("python-six" ,python-six)
+       ("python-wcwidth" ,python-wcwidth)))
+    (native-inputs
+     `(("python-mock" ,python-mock)
+       ("python-pytest" ,python-pytest)))
+    (home-page "https://github.com/jquast/blessed")
+    (synopsis "Wrapper around terminal capabilities")
+    (description
+     "Blessed is a thin, practical wrapper around terminal styling, screen
+positioning, and keyboard input.")
+    (license license:expat)))
+
+(define-public python-django-picklefield
+  (package
+    (name "python-django-picklefield")
+    (version "2.0")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "django-picklefield" version))
+        (sha256
+          (base32
+            "097aljd37ab36jci3phmh8ckrakmk1gpi3kkgl6nq15nn66klwzi"))))
+    (build-system python-build-system)
+    (propagated-inputs
+      `(("python-django" ,python-django)))
+    (native-inputs `(("python-tox" ,python-tox)))
+    (home-page
+      "http://github.com/gintas/django-picklefield")
+    (synopsis "Pickled object field for Django")
+    (description "Pickled object field for Django")
+    (license license:expat)))
+
+(define-public python-jinxed
+  (package
+    (name "python-jinxed")
+    (version "1.0.0")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "jinxed" version))
+        (sha256
+         (base32
+          "1n7vl03rhjd0xhjgbjlh8x9f8yfbhamcwkgvs4jg7g5qj8f0wk89"))))
+    (build-system python-build-system)
+    (arguments
+     '(#:phases
+       (modify-phases %standard-phases
+         (add-before 'check 'set-environment-variables
+           (lambda* (#:key inputs #:allow-other-keys)
+             (let ((ncurses (assoc-ref inputs "ncurses")))
+               (setenv "TERM" "LINUX")
+               (setenv "TERMINFO" (string-append ncurses "/share/terminfo"))
+               #t))))
+       #:tests? #f)) ; _curses.error: setupterm: could not find terminal
+    (native-inputs
+     `(("ncurses" ,ncurses)))
+    ;(propagated-inputs
+    ;  `(("python-ansicon" ,python-ansicon))) ; windows
+    (home-page
+      "https://github.com/Rockhopper-Technologies/jinxed")
+    (synopsis "Jinxed Terminal Library")
+    (description
+     "Jinxed is an implementation of a subset of the Python curses library.")
+    (license license:mpl2.0)))
+
+;; Windows only?
+(define-public python-ansicon
+  (package
+    (name "python-ansicon")
+    (version "1.89.0")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "ansicon" version))
+        (sha256
+          (base32
+            "1cfj8js404jdj4gqbb80pwk5mbn37vl8k3pcmzj4g2knypg3kl74"))))
+    (build-system python-build-system)
+    (home-page
+      "https://github.com/Rockhopper-Technologies/ansicon")
+    (synopsis
+      "Python wrapper for loading Jason Hood's ANSICON")
+    (description
+      "Python wrapper for loading Jason Hood's ANSICON")
+    (license license:mpl2.0)))
