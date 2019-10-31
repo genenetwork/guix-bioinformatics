@@ -429,8 +429,7 @@ validation.")
        ("python-zope.testing" ,python-zope.testing)
        ("python-zope.testrunner" ,python-zope.testrunner)))
     (home-page "https://github.com/zopefoundation/zope.configuration")
-    (synopsis
-      "Zope Configuration Markup Language (ZCML)")
+    (synopsis "Zope Configuration Markup Language (ZCML)")
     (description
       "Zope Configuration Markup Language (ZCML)")
     (license zpl2.1)))
@@ -1072,18 +1071,17 @@ for Python.  It is mainly used by the ZODB.")
         (method url-fetch)
         (uri (pypi-uri "pytest-services" version))
         (sha256
-          (base32
-            "0b2zfv04w6m3gp2v44ifdhx22vcji069qnn95ry3zcyxib7cjnq3"))))
+         (base32
+          "0b2zfv04w6m3gp2v44ifdhx22vcji069qnn95ry3zcyxib7cjnq3"))))
     (build-system python-build-system)
     (arguments '(#:tests? #f)) ; Tests not included in release tarball.
     (propagated-inputs
-      `(("python-psutil" ,python-psutil)
-        ("python-pytest" ,python-pytest)
-        ("python-requests" ,python-requests)
-        ("python-setuptools" ,python-setuptools)
-        ("python-subprocess32" ,python-subprocess32)))
-    (home-page
-      "https://github.com/pytest-dev/pytest-services")
+     `(("python-psutil" ,python-psutil)
+       ("python-pytest" ,python-pytest)
+       ("python-requests" ,python-requests)
+       ("python-setuptools" ,python-setuptools)
+       ("python-subprocess32" ,python-subprocess32)))
+    (home-page "https://github.com/pytest-dev/pytest-services")
     (synopsis
       "Services plugin for pytest testing framework")
     (description
@@ -1099,12 +1097,12 @@ for Python.  It is mainly used by the ZODB.")
         (method url-fetch)
         (uri (pypi-uri "pytest-vcr" version))
         (sha256
-          (base32
-            "15hq5vwiixhb5n2mdvbmxfn977zkwjm769r74vcl7k5vbavm3vi3"))))
+         (base32
+          "15hq5vwiixhb5n2mdvbmxfn977zkwjm769r74vcl7k5vbavm3vi3"))))
     (build-system python-build-system)
     (propagated-inputs
-      `(("python-pytest" ,python-pytest)
-        ("python-vcrpy" ,python-vcrpy)))
+     `(("python-pytest" ,python-pytest)
+       ("python-vcrpy" ,python-vcrpy)))
     (home-page "https://github.com/ktosiek/pytest-vcr")
     (synopsis "Plugin for managing VCR.py cassettes")
     (description
@@ -1130,10 +1128,10 @@ for Python.  It is mainly used by the ZODB.")
                            "0p1fwm46c4bl81lvsg3kjhn2r1lwgkpgxamb3xyqn7h9qdrw10hw")))))))
     (build-system python-build-system)
     (propagated-inputs
-      `(("python-mailman" ,mailman)
-        ("python-requests" ,python-requests)
-        ("python-setuptools" ,python-setuptools)
-        ("python-zope.interface" ,python-zope.interface)))
+     `(("python-mailman" ,mailman)
+       ("python-requests" ,python-requests)
+       ("python-setuptools" ,python-setuptools)
+       ("python-zope.interface" ,python-zope.interface)))
     (native-inputs
      `(("python-mock" ,python-mock)
        ("python-nose2" ,python-nose2)))
@@ -1284,13 +1282,13 @@ for Python.  It is mainly used by the ZODB.")
         (method url-fetch)
         (uri (pypi-uri "django-sekizai" version))
         (sha256
-          (base32
-            "052y7cgrmbbdlbl17cgvnarzqb6x9sv21wwprif9pzljzrb36ak4"))))
+         (base32
+          "052y7cgrmbbdlbl17cgvnarzqb6x9sv21wwprif9pzljzrb36ak4"))))
     (build-system python-build-system)
     (arguments '(#:tests? #f)) ; Test script not included with release.
     (propagated-inputs
-      `(("python-django" ,python-django)
-        ("python-django-classy-tags" ,python-django-classy-tags)))
+     `(("python-django" ,python-django)
+       ("python-django-classy-tags" ,python-django-classy-tags)))
     (home-page "http://github.com/ojii/django-sekizai")
     (synopsis "template blocks for Django projects")
     (description "Sekizai means blocks in Japanese, and thats what this app
@@ -1312,7 +1310,7 @@ a single block.")
         (method url-fetch)
         (uri (pypi-uri "django-classy-tags" version))
         (sha256
-          (base32
+         (base32
           "0axzsigvmb17ha5mnr3xf6c851kwinjpkxksxwprwjakh1m59d1q"))))
     (build-system python-build-system)
     (arguments '(#:tests? #f)) ; Test script not distributed with release.
@@ -1354,8 +1352,7 @@ a single block.")
     (propagated-inputs
      `(("python-django" ,python-django)))
     (native-inputs
-     `(
-       ("gdal" ,gdal)
+     `(("gdal" ,gdal)
        ("python-coverage" ,python-coverage)
        ("python-dateutil" ,python-dateutil)
        ("python-geopy" ,python-geopy)
@@ -1364,8 +1361,7 @@ a single block.")
        ("python-requests" ,python-requests)
        ("python-setuptools-scm" ,python-setuptools-scm)
        ("python-pysolr" ,python-pysolr)
-       ("python-whoosh" ,python-whoosh)
-       ))
+       ("python-whoosh" ,python-whoosh)))
     (home-page "http://haystacksearch.org/")
     (synopsis "Pluggable search for Django.")
     (description "Pluggable search for Django.")
@@ -1380,13 +1376,13 @@ a single block.")
         (method url-fetch)
         (uri (pypi-uri "pysolr" version))
         (sha256
-          (base32
-            "06x8q23llzcmkbcadcp4ifv3qdm0pxq3ajmrmvwvrdkxc9vb3v48"))))
+         (base32
+          "06x8q23llzcmkbcadcp4ifv3qdm0pxq3ajmrmvwvrdkxc9vb3v48"))))
     (build-system python-build-system)
     (arguments
      '(#:tests? #f)) ; Tests require network access.
     (propagated-inputs
-      `(("python-requests" ,python-requests)))
+     `(("python-requests" ,python-requests)))
     (native-inputs
      `(("python-setuptools-scm" ,python-setuptools-scm)))
     (home-page "https://github.com/django-haystack/pysolr/")
@@ -1417,13 +1413,8 @@ a single block.")
        ("python-isort" ,python-isort)
        ("python-mock" ,python-mock)
        ("python-pytest" ,python-pytest)
-       ("python-readme-renderer"
-        ,python-readme-renderer)
-       ("python-six" ,python-six)
-       ;("python-sphinx" ,python-sphinx)
-       ;("python-sphinx-rtd-theme" ,python-sphinx-rtd-theme)
-       ;("python-statistics" ,python-statistics) for python-2
-       ))
+       ("python-readme-renderer" ,python-readme-renderer)
+       ("python-six" ,python-six)))
     (home-page "https://github.com/geopy/geopy")
     (synopsis "Python Geocoding Toolbox")
     (description "Python Geocoding Toolbox")
@@ -1438,15 +1429,13 @@ a single block.")
         (method url-fetch)
         (uri (pypi-uri "geographiclib" version))
         (sha256
-          (base32
-            "0cn6ap5fkh3mkfa57l5b44z3gvz7j6lpmc9rl4g2jny2gvp4dg8j"))))
+         (base32
+          "0cn6ap5fkh3mkfa57l5b44z3gvz7j6lpmc9rl4g2jny2gvp4dg8j"))))
     (build-system python-build-system)
-    (home-page
-      "https://geographiclib.sourceforge.io/1.50/python")
-    (synopsis
-      "The geodesic routines from GeographicLib")
+    (home-page "https://geographiclib.sourceforge.io/1.50/python/")
+    (synopsis "Python geodesic routines from GeographicLib")
     (description
-      "The geodesic routines from GeographicLib")
+     "This is a python implementation of the geodesic routines in GeographicLib.")
     (license license:expat)))
 
 (define-public python-readme-renderer
@@ -1470,10 +1459,12 @@ a single block.")
      `(("python-mock" ,python-mock)
        ("python-pytest" ,python-pytest)))
     (home-page "https://github.com/pypa/readme_renderer")
-    (synopsis
-      "readme_renderer is a library for rendering \"readme\" descriptions for Warehouse")
+    (synopsis "Render README files in Warehouse")
     (description
-      "readme_renderer is a library for rendering \"readme\" descriptions for Warehouse")
+     "Readme Renderer is a library that will safely render arbitrary README
+files into HTML.  It is designed to be used in Warehouse to render the
+@code{long_description} for packages.  It can handle Markdown, reStructuredText,
+and plain text.")
     (license license:asl2.0)))
 
 (define-public python-django-mailman3
@@ -1581,11 +1572,12 @@ using Python multiprocessing.")
     (arguments '(#:tests? #f)) ; Tests not shipped in pypi release.
     (propagated-inputs `(("python-six" ,python-six)))
     (home-page "https://github.com/rory/robot-detection")
-    (synopsis
-      "Library for detecting if a HTTP User Agent header is likely to be a bot")
+    (synopsis "Detect web crawlers")
     (description
-      "Library for detecting if a HTTP User Agent header is likely to be a bot")
-    (license #f)))
+     "@code{robot_detection} is a python module to detect if a given HTTP User
+Agent is a web crawler.  It uses the list of registered robots from
+@url{http://www.robotstxt.org}.")
+    (license license:gpl3+)))
 
 (define-public python-rcssmin
   (package
@@ -1668,14 +1660,12 @@ positioning, and keyboard input.")
         (method url-fetch)
         (uri (pypi-uri "django-picklefield" version))
         (sha256
-          (base32
-            "097aljd37ab36jci3phmh8ckrakmk1gpi3kkgl6nq15nn66klwzi"))))
+         (base32
+          "097aljd37ab36jci3phmh8ckrakmk1gpi3kkgl6nq15nn66klwzi"))))
     (build-system python-build-system)
-    (propagated-inputs
-      `(("python-django" ,python-django)))
+    (propagated-inputs `(("python-django" ,python-django)))
     (native-inputs `(("python-tox" ,python-tox)))
-    (home-page
-      "http://github.com/gintas/django-picklefield")
+    (home-page "http://github.com/gintas/django-picklefield")
     (synopsis "Pickled object field for Django")
     (description "Pickled object field for Django")
     (license license:expat)))
@@ -1723,13 +1713,75 @@ positioning, and keyboard input.")
         (method url-fetch)
         (uri (pypi-uri "ansicon" version))
         (sha256
-          (base32
-            "1cfj8js404jdj4gqbb80pwk5mbn37vl8k3pcmzj4g2knypg3kl74"))))
+         (base32
+          "1cfj8js404jdj4gqbb80pwk5mbn37vl8k3pcmzj4g2knypg3kl74"))))
     (build-system python-build-system)
-    (home-page
-      "https://github.com/Rockhopper-Technologies/ansicon")
+    (home-page "https://github.com/Rockhopper-Technologies/ansicon")
     (synopsis
       "Python wrapper for loading Jason Hood's ANSICON")
     (description
       "Python wrapper for loading Jason Hood's ANSICON")
     (license license:mpl2.0)))
+
+(define-public postorius-1.3
+  (package
+    (name "postorius")
+    (version "1.3.0")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "postorius" version))
+        (sha256
+         (base32
+          "12aghg862js5sxm61xy7ijjb5ixdlv86vhp3nr8l94yiiq92k8sl"))))
+    (build-system python-build-system)
+    (arguments
+     '(#:phases
+       (modify-phases %standard-phases
+         (replace 'check
+           (lambda* (#:key inputs outputs tests? #:allow-other-keys)
+             (add-installed-pythonpath inputs outputs)
+             (if tests?
+                 (invoke "python" "example_project/manage.py" "test"
+                         "--settings=test_settings" "postorius")
+                 #t))))
+       #:tests? #f)) ; Tests try to run a mailman instance to test against.
+    (propagated-inputs
+     `(("python-django" ,python-django)
+       ("python-django-mailman3" ,python-django-mailman3)
+       ("python-mailmanclient" ,python-mailmanclient-3.3)
+       ("python-readme-renderer" ,python-readme-renderer)))
+    (native-inputs
+     `(("python-beautifulsoup4" ,python-beautifulsoup4)
+       ("python-isort" ,python-isort)
+       ("python-mock" ,python-mock)
+       ("python-vcrpy" ,python-vcrpy)))
+    (home-page "https://gitlab.com/mailman/postorius")
+    (synopsis "Web user interface for GNU Mailman")
+    (description
+     "Postorius is a Django app which provides a web user interface
+to access GNU Mailman.")
+    (license (list license:gpl3+ license:lgpl3+))))
+
+(define-public python-cmarkgfm
+  (package
+    (name "python-cmarkgfm")
+    (version "0.4.2")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "cmarkgfm" version))
+        (sha256
+          (base32
+            "0350y5z5qggp7lyiqn9rhj0301f89g9li4xfhfbi1wkpcgqh02gj"))))
+    (build-system python-build-system)
+    (propagated-inputs
+     `(("python-cffi" ,python-cffi)))
+    (native-inputs
+     `(("python-isort" ,python-isort)))
+    (home-page "https://github.com/jonparrott/cmarkgfm")
+    (synopsis
+      "Minimal bindings to GitHub's fork of cmark")
+    (description
+      "Minimal bindings to GitHub's fork of cmark")
+    (license #f)))
