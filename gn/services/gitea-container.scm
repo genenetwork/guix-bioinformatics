@@ -6,7 +6,7 @@
              (ice-9 match))
 (use-service-modules base networking shepherd)
 
-(define %GITEA_WORK_DIR "/var/lib/gitea")
+(define %GITEA_WORK_DIR "/var/lib/git/gitea")
 (define-record-type* <gitea-configuration>
   gitea-configuration
   make-gitea-configuration
@@ -16,7 +16,7 @@
   (work-dir         gitea-configuration-work-dir    ; string
                     (default %GITEA_WORK_DIR))
   (port             gitea-configuration-port        ; number
-                    (default 3001)))
+                    (default 3300)))
 
 (define gitea-activation
   (match-lambda
@@ -47,7 +47,7 @@
                         (list (string-append "GITEA_WORK_DIR=" #$work-dir)
                               (string-append "HOME=" #$work-dir))
                         #:user "gitea"
-                        #:group "gitea"))
+                        #:group "git"))
              (stop #~(make-kill-destructor)))))))
 
 (define gitea-service-type
@@ -80,14 +80,14 @@
   (users (cons (user-account
                  (name "gitea")
                  (group "gitea")
-                 (system? #t)
-                 (uid 1009))
+                 ;(system? #t)
+                 (uid 1021))
            %base-user-accounts))
 
   (groups (cons (user-group
-                  (name "gitea")
-                  (system? #t)
-                  (id 1009))
+                  (name "git")
+                  ;(system? #t)
+                  (id 998))
                 %base-groups))
 
   (services (list (service dhcp-client-service-type)
