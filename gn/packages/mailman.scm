@@ -16,21 +16,7 @@
   #:use-module (gnu packages python-xyz)
   #:use-module (gnu packages python-web)
   #:use-module (gnu packages time)
-  #:use-module (gnu packages tls)
-  #:use-module (gn packages python))
-
-;;;
-;;;^L
-;;;
-
-(define zpl2.1
-  ((@@ (guix licenses) license) "Zope Public License 2.1"
-                                "http://old.zope.org/Resources/ZPL/"
-                                "https://directory.fsf.org/wiki/License:ZPL-2.1"))
-
-;;;
-;;;^L
-;;;
+  #:use-module (gnu packages tls))
 
 (define-public mailman
   (package
@@ -398,7 +384,7 @@ validation.")
     (home-page "https://github.com/zopefoundation/zope.component")
     (synopsis "Zope Component Architecture")
     (description "Zope Component Architecture")
-    (license zpl2.1)))
+    (license license:zpl2.1)))
 
 (define-public python-zope.component-bootstrap
   (package
@@ -432,7 +418,7 @@ validation.")
     (synopsis "Zope Configuration Markup Language (ZCML)")
     (description
       "Zope Configuration Markup Language (ZCML)")
-    (license zpl2.1)))
+    (license license:zpl2.1)))
 
 (define-public python-zope.configuration-bootstrap
   (package
@@ -463,7 +449,7 @@ event systems can be built.  For example, a type-based event dispatching system
 that builds on @code{zope.interface} can be found in @code{zope.component}.  A
 simpler system is distributed with this package and is described in Class-based
 event handlers.")
-    (license zpl2.1)))
+    (license license:zpl2.1)))
 
 (define-public python-zope.interface
   (package
@@ -484,7 +470,7 @@ event handlers.")
     (home-page "https://github.com/zopefoundation/zope.interface")
     (synopsis "Interfaces for Python")
     (description "Interfaces for Python")
-    (license zpl2.1)))
+    (license license:zpl2.1)))
 
 (define-public python-dkimpy
   (package
@@ -580,7 +566,7 @@ convenience, but not actually perform the imports until necessary.  The
 @code{zope.deferredimport} package provided facilities for defining names in
 modules that will be imported from somewhere else when used.  You can also cause
 deprecation warnings to be issued when a variable is used.")
-    (license zpl2.1)))
+    (license license:zpl2.1)))
 
 (define-public python-zope.deprecation
   (package
@@ -599,7 +585,7 @@ deprecation warnings to be issued when a variable is used.")
     (home-page "https://github.com/zopefoundation/zope.deprecation")
     (synopsis "Zope Deprecation Infrastructure")
     (description "Zope Deprecation Infrastructure")
-    (license zpl2.1)))
+    (license license:zpl2.1)))
 
 (define-public python-zope.hookable
   (package
@@ -624,7 +610,7 @@ The idea is that you create a function that does some default thing and make i
 hookable.  Later, someone can modify what it does by calling its sethook method
 and changing its implementation.  All users of the function, including those
 that imported it, will see the change.")
-    (license zpl2.1)))
+    (license license:zpl2.1)))
 
 (define-public python-zope.i18nmessageid
   (package
@@ -649,7 +635,7 @@ that imported it, will see the change.")
      "This package provides facilities for declaring messages within program
 source text; translation of the messages is the responsiblitiy of the
 @code{zope.i18n} package.")
-    (license zpl2.1)))
+    (license license:zpl2.1)))
 
 (define-public python-zope.schema
   (package
@@ -671,7 +657,7 @@ source text; translation of the messages is the responsiblitiy of the
        ("python-zope.testing" ,python-zope.testing)
        ("python-zope.testrunner" ,python-zope.testrunner)))
     (home-page "https://github.com/zopefoundation/zope.schema")
-    (synopsis "zope.interface extension for defining data schemas")
+    (synopsis "Zope.interface extension for defining data schemas")
     (description
      "Schemas extend the notion of interfaces to detailed descriptions of
 Attributes (but not methods).  Every schema is an interface and specifies the
@@ -680,7 +666,7 @@ Python object.  But a Field provides space for at least a title and a
 description.  It can also constrain its value and provide a validation method.
 Besides you can optionally specify characteristics such as its value being
 read-only or not required.")
-    (license zpl2.1)))
+    (license license:zpl2.1)))
 
 (define-public python-py3dns
   (package
@@ -730,10 +716,10 @@ read-only or not required.")
        ("python-zope.testrunner" ,python-zope.testrunner)))
     (home-page "https://github.com/zopefoundation/zope.proxy")
     (synopsis "Generic Transparent Proxies")
-    (description "zope.proxy is implemented via a C extension module, which
-lets it do things like lie about its own __class__ that are difficult in pure
-Python (and were completely impossible before metaclasses).")
-    (license zpl2.1)))
+    (description "@code{zope.proxy} is implemented via a C extension module,
+which lets it do things like lie about its own __class__ that are difficult in
+pure Python (and were completely impossible before metaclasses).")
+    (license license:zpl2.1)))
 
 (define-public python-zope.proxy-bootstrap
   (package
@@ -766,7 +752,7 @@ Python (and were completely impossible before metaclasses).")
     (synopsis "Zope testrunner script")
     (description "This package provides a flexible test runner with layer
 support for the Zope framework.")
-    (license zpl2.1)))
+    (license license:zpl2.1)))
 
 (define-public python-zope.testrunner-bootstrap
   (package
@@ -804,7 +790,7 @@ support for the Zope framework.")
     (description "This package contains exception exceptions and
  implementations which are so general purpose that they don't belong in Zope
  application-specific packages.")
-    (license zpl2.1)))
+    (license license:zpl2.1)))
 
 (define-public python-zope.exceptions-bootstrap
   (package
@@ -829,7 +815,7 @@ support for the Zope framework.")
     (home-page "https://github.com/zopefoundation/zope.testing")
     (synopsis "Zope testing helpers")
     (description "This package provides a number of Zope testing helpers")
-    (license zpl2.1)))
+    (license license:zpl2.1)))
 
 (define-public python-persistent
   (package
@@ -854,7 +840,7 @@ support for the Zope framework.")
     (description "This package contains a generic persistence implementation for
 Python.  It forms the core protocol for making objects interact
 \"transparently\" with a database such as the ZODB.")
-    (license zpl2.1)))
+    (license license:zpl2.1)))
 
 (define-public python-zope.location
   (package
@@ -868,6 +854,12 @@ Python.  It forms the core protocol for making objects interact
          (base32
           "1b40pzl8v00d583d3gsxv1qjdw2dhghlgkbgxl3m07d5r3izj857"))))
     (build-system python-build-system)
+    (arguments
+     '(#:phases
+       (modify-phases %standard-phases
+         (replace 'check
+           (lambda _
+             (invoke "zope-testrunner" "--test-path=src" "\\[]"))))))
     (propagated-inputs
      `(("python-zope.interface" ,python-zope.interface)
        ("python-zope.proxy" ,python-zope.proxy)
@@ -879,8 +871,9 @@ Python.  It forms the core protocol for making objects interact
        ("python-zope.testrunner" ,python-zope.testrunner)))
     (home-page "https://github.com/zopefoundation/zope.location/")
     (synopsis "Zope Location")
-    (description "Zope Location")
-    (license zpl2.1)))
+    (description "In Zope3, \"locations\" are special objects that have a
+structural location.")
+    (license license:zpl2.1)))
 
 (define-public python-zope.location-bootstrap
   (package
@@ -919,7 +912,7 @@ Python.  It forms the core protocol for making objects interact
     (synopsis "Zope Security Framework")
     (description "The security framework provides a generic mechanism to
 implement security policies on Python objects.")
-    (license zpl2.1)))
+    (license license:zpl2.1)))
 
 (define-public python-zope.security-bootstrap
   (package
@@ -951,7 +944,7 @@ implement security policies on Python objects.")
      `(("python-six" ,python-six)))
     (native-inputs
      `(("python-zope.testing" ,python-zope.testing)))
-    (home-page "https://pypi.python.org/pypi/manuel")
+    (home-page "https://pypi.org/project/manuel/")
     (synopsis "Build tested documentation")
     (description
      "Manuel lets you mix and match traditional doctests with custom test syntax.")
@@ -969,6 +962,12 @@ implement security policies on Python objects.")
          (base32
           "06m75434krl57n6p73c2qj55k5i3fixg887j8ss01ih6zw4rvfs7"))))
     (build-system python-build-system)
+    (arguments
+     '(#:phases
+       (modify-phases %standard-phases
+         (replace 'check
+           (lambda _
+             (invoke "zope-testrunner" "--test-path=src" "\\[]"))))))
     (propagated-inputs
      `(("python-zope.interface" ,python-zope.interface)))
     (native-inputs
@@ -980,7 +979,7 @@ implement security policies on Python objects.")
     (synopsis "Pluggable object copying mechanism")
     (description
      "This package provides a pluggable mechanism for copying persistent objects.")
-    (license zpl2.1)))
+    (license license:zpl2.1)))
 
 (define-public python-zope.copy-bootstrap
   (package
@@ -1015,7 +1014,7 @@ implement security policies on Python objects.")
 modified BTree data structure.  The trees are optimized for use inside ZODB's
 \"optimistic concurrency\" paradigm, and include explicit resolution of
 conflicts detected by that mechanism.")
-    (license zpl2.1)))
+    (license license:zpl2.1)))
 
 (define-public python-transaction
   (package
@@ -1039,7 +1038,7 @@ conflicts detected by that mechanism.")
     (synopsis "Transaction management for Python")
     (description "This package contains a generic transaction implementation
 for Python.  It is mainly used by the ZODB.")
-    (license zpl2.1)))
+    (license license:zpl2.1)))
 
 (define-public python-mailmanclient-3.3
   (package
@@ -1079,13 +1078,12 @@ for Python.  It is mainly used by the ZODB.")
      `(("python-psutil" ,python-psutil)
        ("python-pytest" ,python-pytest)
        ("python-requests" ,python-requests)
-       ("python-setuptools" ,python-setuptools)
-       ("python-subprocess32" ,python-subprocess32)))
+       ("python-setuptools" ,python-setuptools))) ; enumerated in setup.py
     (home-page "https://github.com/pytest-dev/pytest-services")
-    (synopsis
-      "Services plugin for pytest testing framework")
+    (synopsis "Services plugin for pytest testing framework")
     (description
-      "Services plugin for pytest testing framework")
+     "This plugin provides a set of fixtures and utility functions to start
+service processes for your tests with pytest.")
     (license license:expat)))
 
 (define-public python-pytest-vcr
@@ -1121,6 +1119,7 @@ for Python.  It is mainly used by the ZODB.")
          (base32
           "1lfqa9admhvdv71f528jmz2wl0i5cv77v6l64px2pm4zqr9ckkjx"))
         (patches (list (origin
+                         ;; see: https://gitlab.com/mailman/mailman-hyperkitty/issues/17
                          (method url-fetch)
                          (uri "https://salsa.debian.org/mailman-team/mailman-hyperkitty/raw/debian/1.1.0-9/debian/patches/0002-Skip-the-test_archive_message_unserializable.patch")
                          (sha256
@@ -1130,14 +1129,13 @@ for Python.  It is mainly used by the ZODB.")
     (propagated-inputs
      `(("python-mailman" ,mailman)
        ("python-requests" ,python-requests)
-       ("python-setuptools" ,python-setuptools)
+       ("python-setuptools" ,python-setuptools) ; enumerated in setup.py
        ("python-zope.interface" ,python-zope.interface)))
     (native-inputs
      `(("python-mock" ,python-mock)
        ("python-nose2" ,python-nose2)))
     (home-page "https://gitlab.com/mailman/mailman-hyperkitty/")
-    (synopsis
-      "Mailman archiver plugin for HyperKitty")
+    (synopsis "Mailman archiver plugin for HyperKitty")
     (description
       "Mailman archiver plugin for HyperKitty")
     (license license:gpl3+)))
@@ -1173,7 +1171,7 @@ for Python.  It is mainly used by the ZODB.")
        ("python-django-q" ,python-django-q)
        ("python-djangorestframework" ,python-djangorestframework)
        ("python-flufl.lock" ,python-flufl.lock)
-       ("python-mailmanclient" ,python-mailmanclient)
+       ("python-mailmanclient" ,python-mailmanclient-3.3)
        ("python-networkx" ,python-networkx)
        ("python-pytz" ,python-pytz)
        ("python-robot-detection" ,python-robot-detection)))
@@ -1183,8 +1181,7 @@ for Python.  It is mainly used by the ZODB.")
        ("python-mock" ,python-mock)
        ("python-whoosh" ,python-whoosh)))
     (home-page "https://gitlab.com/mailman/hyperkitty")
-    (synopsis
-      "A web interface to access GNU Mailman v3 archives")
+    (synopsis "Web interface to access GNU Mailman v3 archives")
     (description
       "A web interface to access GNU Mailman v3 archives")
     (license license:gpl3))) ; Some files are gpl2+
@@ -1196,7 +1193,7 @@ for Python.  It is mainly used by the ZODB.")
     (source
       (origin
         (method url-fetch)
-        (uri (pypi-uri "django-compressor" version))
+        (uri (pypi-uri "django_compressor" version))
         (sha256
          (base32
           "1pbygd00l0k5p1r959131khij1km1a1grfxg0r59ar2wyx3n7j27"))))
@@ -1221,9 +1218,9 @@ for Python.  It is mainly used by the ZODB.")
        ("python-mock" ,python-mock)))
     (home-page "https://django-compressor.readthedocs.io/en/latest/")
     (synopsis
-      "Compresses linked and inline JavaScript or CSS into single cached files.")
+     "Compresses linked and inline JavaScript or CSS into single cached files")
     (description
-      "Compresses linked and inline JavaScript or CSS into single cached files.")
+     "Compresses linked and inline JavaScript or CSS into single cached files.")
     (license license:expat)))
 
 (define-public python-csscompressor
@@ -1247,9 +1244,9 @@ for Python.  It is mainly used by the ZODB.")
     (native-inputs
      `(("python-pytest" ,python-pytest)))
     (home-page "https://github.com/sprymix/csscompressor")
-    (synopsis "A python port of YUI CSS Compressor")
+    (synopsis "Python port of YUI CSS Compressor")
     (description
-      "A python port of YUI CSS Compressor")
+     "This package provides a python port of YUI CSS Compressor.")
     (license license:bsd-3)))
 
 (define-public python-brotli
@@ -1267,10 +1264,9 @@ for Python.  It is mainly used by the ZODB.")
     (native-inputs
      `(("unzip" ,unzip)))
     (home-page "https://github.com/google/brotli")
-    (synopsis
-      "Python bindings for the Brotli compression library")
+    (synopsis "Python bindings for the Brotli compression library")
     (description
-      "Python bindings for the Brotli compression library")
+     "This package provides python bindings for the Brotli compression library.")
     (license license:asl2.0)))
 
 (define-public python-django-sekizai
@@ -1289,15 +1285,15 @@ for Python.  It is mainly used by the ZODB.")
     (propagated-inputs
      `(("python-django" ,python-django)
        ("python-django-classy-tags" ,python-django-classy-tags)))
-    (home-page "http://github.com/ojii/django-sekizai")
-    (synopsis "template blocks for Django projects")
+    (home-page "https://github.com/divio/django-sekizai")
+    (synopsis "Template blocks for Django projects")
     (description "Sekizai means blocks in Japanese, and thats what this app
 provides.  A fresh look at blocks.  With @code{django-sekizai} you can define
 placeholders where your blocks get rendered and at different places in your
 templates append to those blocks.  This is especially useful for css and
 javascript.  Your subtemplates can now define css and javscript files to be
 included, and the css will be nicely put at the top and the javascript to the
-bottom, just like you should. Also sekizai will ignore any duplicate content in
+bottom, just like you should.  Also sekizai will ignore any duplicate content in
 a single block.")
     (license license:bsd-3)))
 
@@ -1363,8 +1359,11 @@ a single block.")
        ("python-pysolr" ,python-pysolr)
        ("python-whoosh" ,python-whoosh)))
     (home-page "http://haystacksearch.org/")
-    (synopsis "Pluggable search for Django.")
-    (description "Pluggable search for Django.")
+    (synopsis "Pluggable search for Django")
+    (description "Haystack provides modular search for Django.  It features a
+unified, familiar API that allows you to plug in different search backends
+(such as Solr, Elasticsearch, Whoosh, Xapian, etc.) without having to modify
+your code.")
     (license license:bsd-3)))
 
 (define-public python-pysolr
@@ -1386,8 +1385,7 @@ a single block.")
     (native-inputs
      `(("python-setuptools-scm" ,python-setuptools-scm)))
     (home-page "https://github.com/django-haystack/pysolr/")
-    (synopsis
-      "Lightweight python wrapper for Apache Solr.")
+    (synopsis "Lightweight python wrapper for Apache Solr")
     (description
       "Lightweight python wrapper for Apache Solr.")
     (license license:bsd-3)))
@@ -1491,7 +1489,7 @@ and plain text.")
      `(("python-django" ,python-django)
        ("python-django-allauth" ,python-django-allauth-gn)
        ("python-django-gravatar2" ,python-django-gravatar2)
-       ("python-mailmanclient" ,python-mailmanclient)
+       ("python-mailmanclient" ,python-mailmanclient-3.3)
        ("python-pytz" ,python-pytz)))
     (native-inputs
      `(("python-mock" ,python-mock)))
@@ -1550,7 +1548,7 @@ interacting with Mailman.")
     (native-inputs
      `(("python-django-redis" ,python-django-redis)
        ("python-pytest-django" ,python-pytest-django)))
-    (home-page "https://django-q.readthedocs.org")
+    (home-page "https://django-q.readthedocs.io/")
     (synopsis "Multiprocessing distributed task queue for Django")
     (description
      "Django Q is a native Django task queue, scheduler and worker application
@@ -1665,7 +1663,7 @@ positioning, and keyboard input.")
     (build-system python-build-system)
     (propagated-inputs `(("python-django" ,python-django)))
     (native-inputs `(("python-tox" ,python-tox)))
-    (home-page "http://github.com/gintas/django-picklefield")
+    (home-page "https://github.com/gintas/django-picklefield")
     (synopsis "Pickled object field for Django")
     (description "Pickled object field for Django")
     (license license:expat)))
@@ -1694,33 +1692,11 @@ positioning, and keyboard input.")
        #:tests? #f)) ; _curses.error: setupterm: could not find terminal
     (native-inputs
      `(("ncurses" ,ncurses)))
-    ;(propagated-inputs
-    ;  `(("python-ansicon" ,python-ansicon))) ; windows
     (home-page
       "https://github.com/Rockhopper-Technologies/jinxed")
     (synopsis "Jinxed Terminal Library")
     (description
      "Jinxed is an implementation of a subset of the Python curses library.")
-    (license license:mpl2.0)))
-
-;; Windows only?
-(define-public python-ansicon
-  (package
-    (name "python-ansicon")
-    (version "1.89.0")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (pypi-uri "ansicon" version))
-        (sha256
-         (base32
-          "1cfj8js404jdj4gqbb80pwk5mbn37vl8k3pcmzj4g2knypg3kl74"))))
-    (build-system python-build-system)
-    (home-page "https://github.com/Rockhopper-Technologies/ansicon")
-    (synopsis
-      "Python wrapper for loading Jason Hood's ANSICON")
-    (description
-      "Python wrapper for loading Jason Hood's ANSICON")
     (license license:mpl2.0)))
 
 (define-public postorius-1.3
@@ -1762,26 +1738,3 @@ positioning, and keyboard input.")
      "Postorius is a Django app which provides a web user interface
 to access GNU Mailman.")
     (license (list license:gpl3+ license:lgpl3+))))
-
-(define-public python-cmarkgfm
-  (package
-    (name "python-cmarkgfm")
-    (version "0.4.2")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (pypi-uri "cmarkgfm" version))
-        (sha256
-          (base32
-            "0350y5z5qggp7lyiqn9rhj0301f89g9li4xfhfbi1wkpcgqh02gj"))))
-    (build-system python-build-system)
-    (propagated-inputs
-     `(("python-cffi" ,python-cffi)))
-    (native-inputs
-     `(("python-isort" ,python-isort)))
-    (home-page "https://github.com/jonparrott/cmarkgfm")
-    (synopsis
-      "Minimal bindings to GitHub's fork of cmark")
-    (description
-      "Minimal bindings to GitHub's fork of cmark")
-    (license #f)))
