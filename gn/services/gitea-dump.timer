@@ -1,0 +1,9 @@
+[Unit]
+Description=Backup Gitea git server timer
+
+[Timer]
+OnBootSec=15m
+OnUnitInactiveSec=1day
+
+[Install]
+WantedBy=default.target

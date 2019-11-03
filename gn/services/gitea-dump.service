@@ -1,0 +1,11 @@
+[Unit]
+Description=Backup Gitea git server
+Wants=gitea.service
+
+[Service]
+Type=oneshot
+Environment="GITEA_COMMAND=$(GUIX_PACKAGE_PATH=/home/efraimf/workspace/guix-bioinformatics /var/guix/profiles/per-user/efraimf/current-guix/bin/guix build gitea)/bin/gitea"
+ExecStart=/bin/su -l gitea -c 'GITEA_WORK_DIR=/var/lib/git/gitea HOME=/var/lib/git/gitea ${GITEA_COMMAND} dump'
+
+[Install]
+WantedBy=multi-user.target
