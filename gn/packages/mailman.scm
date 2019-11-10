@@ -51,7 +51,7 @@
        ("python-sqlalchemy" ,python-sqlalchemy)
        ("python-zope.component" ,python-zope.component)
        ("python-zope.configuration" ,python-zope.configuration)
-       ("python-zope.event" ,python-zope.event)
+       ("python-zope-event" ,python-zope-event)
        ("python-zope.interface" ,python-zope.interface)))
     (home-page "https://www.list.org")
     (synopsis "Mailing list manager")
@@ -369,7 +369,7 @@ validation.")
     (propagated-inputs
      `(("python-zope.deferredimport" ,python-zope.deferredimport)
        ("python-zope.deprecation" ,python-zope.deprecation)
-       ("python-zope.event" ,python-zope.event)
+       ("python-zope-event" ,python-zope-event)
        ("python-zope.hookable" ,python-zope.hookable)
        ("python-zope.interface" ,python-zope.interface)))
     (native-inputs
@@ -427,30 +427,6 @@ validation.")
     (native-inputs `())
     (properties `((hidden? . #t)))))
 
-(define-public python-zope.event
-  (package
-    (name "python-zope.event")
-    (version "4.4")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (pypi-uri "zope.event" version))
-        (sha256
-         (base32
-          "1ksbc726av9xacml6jhcfyn828hlhb9xlddpx6fcvnlvmpmpvhk9"))))
-    (build-system python-build-system)
-    (native-inputs
-     `(("python-zope.testrunner" ,python-zope.testrunner-bootstrap)))
-    (home-page "https://github.com/zopefoundation/zope.event")
-    (synopsis "Basic event publishing system")
-    (description
-     "This package provides a simple event system on which application-specific
-event systems can be built.  For example, a type-based event dispatching system
-that builds on @code{zope.interface} can be found in @code{zope.component}.  A
-simpler system is distributed with this package and is described in Class-based
-event handlers.")
-    (license license:zpl2.1)))
-
 (define-public python-zope.interface
   (package
     (name "python-zope.interface")
@@ -466,7 +442,7 @@ event handlers.")
     (native-inputs
      `(("python-coverage" ,python-coverage)
        ("python-nose" ,python-nose)
-       ("python-zope.event" ,python-zope.event)))
+       ("python-zope-event" ,python-zope-event)))
     (home-page "https://github.com/zopefoundation/zope.interface")
     (synopsis "Interfaces for Python")
     (description "Interfaces for Python")
@@ -650,7 +626,7 @@ source text; translation of the messages is the responsiblitiy of the
           "178631dks473rfsfd46pmqipz7fdkn9bjd35j6qlgavwf2l1v5rd"))))
     (build-system python-build-system)
     (propagated-inputs
-     `(("python-zope.event" ,python-zope.event)
+     `(("python-zope-event" ,python-zope-event)
        ("python-zope.interface" ,python-zope.interface)))
     (native-inputs
      `(("python-zope.i18nmessageid" ,python-zope.i18nmessageid)
