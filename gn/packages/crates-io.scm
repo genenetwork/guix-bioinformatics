@@ -11,7 +11,7 @@
 (define-public rust-arrayvec-0.4
   (package
     (name "rust-arrayvec")
-    (version "0.4.11")
+    (version "0.4.12")
     (source
       (origin
         (method url-fetch)
@@ -19,7 +19,7 @@
         (file-name (string-append name "-" version ".crate"))
         (sha256
          (base32
-          "1fmhq4ljxr954mdyazaqa9kdxryl5d2ggr5rialylrd6xndkzmxq"))))
+          "1fdiv5m627gh6flp4mpmi1mh647imm9x423licsr11psz97d97yd"))))
     (build-system cargo-build-system)
     (home-page "https://github.com/bluss/arrayvec")
     (synopsis
@@ -95,7 +95,7 @@
 (define-public rust-either-1.5
   (package
     (name "rust-either")
-    (version "1.5.2")
+    (version "1.5.3")
     (source
       (origin
         (method url-fetch)
@@ -103,7 +103,7 @@
         (file-name (string-append name "-" version ".crate"))
         (sha256
          (base32
-          "0yyggfd5yq9hyyp0bd5jj0fgz3rwws42d19ri0znxwwqs3hcy9sm"))))
+          "1qyz1b1acad6w0k5928jw5zaq900zhsk7p8dlcp4hh61w4f6n7xv"))))
     (build-system cargo-build-system)
     (home-page "https://github.com/bluss/either")
     (synopsis
@@ -348,10 +348,10 @@
     (license (list license:asl2.0
                    license:expat))))
 
-(define-public rust-unicode-segmentation-1.3
+(define-public rust-unicode-segmentation-1.6
   (package
     (name "rust-unicode-segmentation")
-    (version "1.3.0")
+    (version "1.6.0")
     (source
       (origin
         (method url-fetch)
@@ -359,7 +359,7 @@
         (file-name (string-append name "-" version ".crate"))
         (sha256
          (base32
-          "1a9jqg7rb1yq6w2xc9jgxcs111yk5vxm9afjfvykfnrmzk6z8rqr"))))
+          "1h7d48mzpi8hwf5cvnq07warkv86pvapzzzf32hvbjsk20yiagp8"))))
     (build-system cargo-build-system)
     (home-page "https://github.com/unicode-rs/unicode-segmentation")
     (synopsis "Grapheme Cluster, Word and Sentence boundaries for rust")
@@ -369,3 +369,17 @@ according to Unicode Standard Annex #29 rules.")
     (properties '((hidden? . #t)))
     (license (list license:asl2.0
                    license:expat))))
+
+(define-public rust-unicode-segmentation-1.3
+  (package
+    (inherit rust-unicode-segmentation-1.6)
+    (name "rust-unicode-segmentation")
+    (version "1.3.0")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (crate-uri "unicode-segmentation" version))
+        (file-name (string-append name "-" version ".crate"))
+        (sha256
+         (base32
+          "1a9jqg7rb1yq6w2xc9jgxcs111yk5vxm9afjfvykfnrmzk6z8rqr"))))))
