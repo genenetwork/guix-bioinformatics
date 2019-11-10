@@ -6,6 +6,7 @@
   #:use-module (guix build-system python)
   #:use-module (gnu packages check)
   #:use-module (gnu packages databases)
+  #:use-module (gnu packages docker)
   #:use-module (gnu packages libffi)
   #:use-module (gnu packages linux)
   #:use-module (gnu packages monitoring)
@@ -478,3 +479,34 @@ task of adding retry behavior to just about anything.")
     (synopsis "A parser for TOML-0.4.0")
     (description "A parser for TOML-0.4.0")
     (license license:expat)))
+
+(define-public python-jupyter-repo2docker
+  (package
+    (name "python-jupyter-repo2docker")
+    (version "0.10.0")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "jupyter-repo2docker" version))
+        (sha256
+         (base32
+          "0nn0vcm3pmsrb0hhjwkqy80kgyab7mgny0f8ch7fcsxy2cljcrbr"))))
+    (build-system python-build-system)
+    (propagated-inputs
+     `(("python-docker-py" ,python-docker-py)
+       ("python-escapism" ,python-escapism)
+       ("python-jinja2" ,python-jinja2)
+       ("python-json-logger" ,python-json-logger)
+       ("python-ruamel.yaml" ,python-ruamel.yaml)
+       ("python-semver" ,python-semver)
+       ("python-toml" ,python-toml)
+       ("python-traitlets" ,python-traitlets)))
+    (native-inputs
+     `(("python-requests" ,python-requests)
+       ("python-websocket-client" ,python-websocket-client)))
+    (home-page "https://repo2docker.readthedocs.io/en/latest/")
+    (synopsis "Turn git repositories into Jupyter enabled Docker Images")
+    (description
+     "@code{repo2docker} fetches a git repository and builds a container image
+based on the configuration files found in the repository.")
+    (license license:bsd-3)))
