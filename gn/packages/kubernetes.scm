@@ -6,6 +6,7 @@
   #:use-module (guix build-system go)
   #:use-module (guix build-system trivial)
   #:use-module (gnu packages base)
+  #:use-module (gnu packages compression)
   #:use-module (gnu packages rsync)
   )
 
@@ -125,5 +126,40 @@ deployment, maintenance, and scaling of applications.")
     (description "Minikube implements a local Kubernetes cluster.  Minikube's
 primary goals are to be the best tool for local Kubernetes application
 development and to support all Kubernetes features that fit.")
+    (supported-systems '("x86_64-linux"))
+    (license license:asl2.0)))
+
+(define-public crictl
+  (package
+    (name "crictl")
+    (version "1.16.1")
+    (source (origin
+              (method url-fetch)
+              (uri (string-append "https://github.com/kubernetes-sigs/cri-tools/releases/download/v" version "/crictl-v" version "-linux-amd64.tar.gz"))
+              (sha256
+               (base32
+                "1l9s7g9ahpd1y5b5adanj25466bw2fxq6cspymcgxk0gf4hx9zhr"))))
+    (build-system trivial-build-system)
+    (arguments
+     `(#:modules ((guix build utils))
+       #:builder
+       (begin
+         (use-modules (guix build utils))
+         (let* ((out     (assoc-ref %outputs "out"))
+                (bin     (string-append out "/bin"))
+                (target  (string-append bin "/crictl"))
+                (tar     (assoc-ref %build-inputs "tar"))
+                (gzip    (assoc-ref %build-inputs "gzip"))
+                (source  (assoc-ref %build-inputs "source")))
+           (setenv "PATH" (string-append gzip "/bin"))
+           (invoke (string-append tar "/bin/tar") "xvf" source)
+           (install-file "crictl" target))
+         #t)))
+    (native-inputs
+     `(("gzip" ,gzip)
+       ("tar" ,tar)))
+    (home-page "")
+    (synopsis "CLI and validation tools for Kubelet Container Runtime Interface")
+    (description "")
     (supported-systems '("x86_64-linux"))
     (license license:asl2.0)))
