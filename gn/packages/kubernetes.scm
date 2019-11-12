@@ -3,12 +3,12 @@
   #:use-module (guix packages)
   #:use-module (guix git-download)
   #:use-module (guix download)
+  #:use-module (guix utils)
   #:use-module (guix build-system go)
   #:use-module (guix build-system trivial)
   #:use-module (gnu packages base)
   #:use-module (gnu packages compression)
-  #:use-module (gnu packages rsync)
-  )
+  #:use-module (gnu packages rsync))
 
 (define-public kubernetes
   (package
@@ -153,37 +153,46 @@ development and to support all Kubernetes features that fit.")
     (name "crictl")
     (version "1.16.1")
     (source (origin
-              (method url-fetch)
-              (uri (string-append "https://github.com/kubernetes-sigs/"
-                                  "cri-tools/releases/download/v" version
-                                  "/crictl-v" version "-linux-amd64.tar.gz"))
+              (method git-fetch)
+              (uri (git-reference
+                     (url "https://github.com/kubernetes-sigs/cri-tools.git")
+                     (commit (string-append "v" version))))
+              (file-name (git-file-name name version))
               (sha256
                (base32
-                "1l9s7g9ahpd1y5b5adanj25466bw2fxq6cspymcgxk0gf4hx9zhr"))))
-    (build-system trivial-build-system)
+                "0qsbqml7jlhf73hlpqrh10bidz4v219bi2m5xg7914dzi0mzm733"))))
+    (build-system go-build-system)
     (arguments
-     `(#:modules ((guix build utils))
-       #:builder
-       (begin
-         (use-modules (guix build utils))
-         (let* ((out     (assoc-ref %outputs "out"))
-                (bin     (string-append out "/bin"))
-                (target  (string-append bin "/crictl"))
-                (tar     (assoc-ref %build-inputs "tar"))
-                (gzip    (assoc-ref %build-inputs "gzip"))
-                (source  (assoc-ref %build-inputs "source")))
-           (setenv "PATH" (string-append gzip "/bin"))
-           (invoke (string-append tar "/bin/tar") "xvf" source)
-           (install-file "crictl" target))
-         #t)))
-    (native-inputs
-     `(("gzip" ,gzip)
-       ("tar" ,tar)))
+     `(;#:import-path "github.com/kubernetes-sigs/cri-tools"
+       #:install-source? #f
+       #:tests? #f ; tests require 'framwork' from kubernetes
+       #:phases
+       (modify-phases %standard-phases
+         (add-after 'unpack 'change-directory
+           (lambda _
+             (chdir "src") #t))
+         (add-before 'build 'prepare-source
+           (lambda* (#:key outputs #:allow-other-keys)
+             (let ((out (assoc-ref outputs "out")))
+               (substitute* "Makefile"
+                 (("/usr/local") out)
+                 (("^VERSION .*") (string-append "VERSION := " ,version "\n")))
+               #t)))
+         (replace 'build
+           (lambda _
+             (invoke "make")))
+         ;(replace 'check
+         ;  (lambda _
+         ;    (invoke "make" "test-e2e")))
+         (replace 'install
+           (lambda* (#:key outputs #:allow-other-keys)
+             (let ((out (assoc-ref outputs "out")))
+               (setenv "BINDIR" (string-append out "/bin"))
+               (invoke "make" "install")))))))
     (home-page "https://github.com/kubernetes-sigs/cri-tools")
     (synopsis "CLI and validation tools for Kubelet Container Runtime Interface")
     (description "Cri-tools aims to provide a series of debugging and validation
 tools for Kubelet CRI.")
-    (supported-systems '("x86_64-linux"))
     (license license:asl2.0)))
 
 (define-public crictl-1.15
@@ -192,10 +201,29 @@ tools for Kubelet CRI.")
     (name "crictl")
     (version "1.15.0")
     (source (origin
-              (method url-fetch)
-              (uri (string-append "https://github.com/kubernetes-sigs/"
-                                  "cri-tools/releases/download/v" version
-                                  "/crictl-v" version "-linux-amd64.tar.gz"))
+              (method git-fetch)
+              (uri (git-reference
+                     (url "https://github.com/kubernetes-sigs/cri-tools.git")
+                     (commit (string-append "v" version))))
+              (file-name (git-file-name name version))
               (sha256
                (base32
-                "0nnlg6bh4kkmwwgscr7g8qpzgd5a91rrcd0knmw61qb3yghipdy3"))))))
+                "03fhddncwqrdyxz43m3bak9dlrsqzibqqja3p94nic4ydk2hry62"))))
+    (arguments
+     (substitute-keyword-arguments (package-arguments crictl)
+       ((#:phases phases)
+        `(modify-phases ,phases
+           (replace 'build
+             (lambda _
+               (invoke "make" "windows"))) ; This is the correct invocation
+           (replace 'prepare-source
+             (lambda* (#:key outputs #:allow-other-keys)
+               (let ((out (assoc-ref outputs "out")))
+                 (substitute* "Makefile"
+                   (("/usr/local") out)
+                   (("^VERSION .*") (string-append "VERSION := " ,version "\n"))
+                   ;; So we can use 'make windows'.
+                   ((".exe") "")
+                   (("GOOS=windows") "CGO_ENABLED=0")
+                   (("_output") "../bin"))
+                 #t)))))))))
