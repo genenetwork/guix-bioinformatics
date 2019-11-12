@@ -97,6 +97,23 @@ applications across multiple hosts.  It provides basic mechanisms for
 deployment, maintenance, and scaling of applications.")
     (license license:asl2.0)))
 
+(define-public kubernetes-1.15
+  (package
+    (inherit kubernetes)
+    (name "kubernetes")
+    (version "1.15.5")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                     (url "https://github.com/kubernetes/kubernetes.git")
+                     (commit (string-append "v" version))))
+              (file-name (git-file-name name version))
+              (sha256
+               (base32
+                "1izgkwxww5hfdncg89slixvgsl1iy7p670j6ph1xm3a7bjfgcsis"))))
+    (propagated-inputs
+     `(("crictl" ,crictl-1.15)))))
+
 (define-public minikube
   (package
     (name "minikube")
@@ -137,7 +154,9 @@ development and to support all Kubernetes features that fit.")
     (version "1.16.1")
     (source (origin
               (method url-fetch)
-              (uri (string-append "https://github.com/kubernetes-sigs/cri-tools/releases/download/v" version "/crictl-v" version "-linux-amd64.tar.gz"))
+              (uri (string-append "https://github.com/kubernetes-sigs/"
+                                  "cri-tools/releases/download/v" version
+                                  "/crictl-v" version "-linux-amd64.tar.gz"))
               (sha256
                (base32
                 "1l9s7g9ahpd1y5b5adanj25466bw2fxq6cspymcgxk0gf4hx9zhr"))))
@@ -160,8 +179,23 @@ development and to support all Kubernetes features that fit.")
     (native-inputs
      `(("gzip" ,gzip)
        ("tar" ,tar)))
-    (home-page "")
+    (home-page "https://github.com/kubernetes-sigs/cri-tools")
     (synopsis "CLI and validation tools for Kubelet Container Runtime Interface")
-    (description "")
+    (description "Cri-tools aims to provide a series of debugging and validation
+tools for Kubelet CRI.")
     (supported-systems '("x86_64-linux"))
     (license license:asl2.0)))
+
+(define-public crictl-1.15
+  (package
+    (inherit crictl)
+    (name "crictl")
+    (version "1.15.0")
+    (source (origin
+              (method url-fetch)
+              (uri (string-append "https://github.com/kubernetes-sigs/"
+                                  "cri-tools/releases/download/v" version
+                                  "/crictl-v" version "-linux-amd64.tar.gz"))
+              (sha256
+               (base32
+                "0nnlg6bh4kkmwwgscr7g8qpzgd5a91rrcd0knmw61qb3yghipdy3"))))))
