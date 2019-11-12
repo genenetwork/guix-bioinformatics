@@ -88,6 +88,8 @@
      `(("which" ,which)))
     (inputs
      `(("rsync" ,rsync)))
+    (propagated-inputs
+     `(("crictl" ,crictl))) ; Must be the same major+minor version as kubernetes.
     (home-page "https://kubernetes.io/")
     (synopsis "Production-Grade Container Scheduling and Management")
     (description "Kubernetes is an open source system for managing containerized
