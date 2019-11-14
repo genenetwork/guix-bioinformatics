@@ -114,6 +114,23 @@ deployment, maintenance, and scaling of applications.")
     (propagated-inputs
      `(("crictl" ,crictl-1.15)))))
 
+(define-public kubernetes-1.14
+  (package
+    (inherit kubernetes)
+    (name "kubernetes")
+    (version "1.14.9")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                     (url "https://github.com/kubernetes/kubernetes.git")
+                     (commit (string-append "v" version))))
+              (file-name (git-file-name name version))
+              (sha256
+               (base32
+                "06w2jjd89jjzmc0db1fgwnsyfwjr07chh8q3zvmx5pznprvv485l"))))
+    (propagated-inputs
+     `(("crictl" ,crictl-1.14)))))
+
 (define-public minikube
   (package
     (name "minikube")
@@ -231,3 +248,27 @@ tools for Kubelet CRI.")
                    (("GOOS=windows") "CGO_ENABLED=0")
                    (("_output") "../bin"))
                  #t)))))))))
+
+(define-public crictl-1.14
+  (package
+    (inherit crictl-1.15)
+    (name "crictl")
+    (version "1.14.0")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                     (url "https://github.com/kubernetes-sigs/cri-tools.git")
+                     (commit (string-append "v" version))))
+              (file-name (git-file-name name version))
+              (sha256
+               (base32
+                "0yzb2vpypf2psrmbaqfh1fw6nba5mzdqr99lkga1204xygs863by"))))
+    (arguments
+     (substitute-keyword-arguments (package-arguments crictl-1.15)
+       ((#:phases phases)
+        `(modify-phases ,phases
+           (replace 'update-version
+             (lambda _
+               (substitute* "Makefile"
+                 (("^VERSION .*") (string-append "VERSION := " ,version "\n")))
+               #t))))))))
