@@ -13,7 +13,7 @@
 (define-public kubernetes
   (package
     (name "kubernetes")
-    (version "1.16.2")
+    (version "1.16.3")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -22,7 +22,7 @@
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "1al6jvljscqg6j39rpm03sb33ns10pqz1j298bm3vispphbqx0j7"))))
+                "1v4dhlpvi8gkc26zaxdfypng8b1f2lwm6hjz2amvq8mh49j5x7ld"))))
     (build-system go-build-system)
     (arguments
      `(#:import-path "k8s.io/kubernetes"
@@ -101,7 +101,7 @@ deployment, maintenance, and scaling of applications.")
   (package
     (inherit kubernetes)
     (name "kubernetes")
-    (version "1.15.5")
+    (version "1.15.6")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -110,7 +110,7 @@ deployment, maintenance, and scaling of applications.")
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "1izgkwxww5hfdncg89slixvgsl1iy7p670j6ph1xm3a7bjfgcsis"))))
+                "055xizqpg5yjda7b6l1vnajmbfz2ljh2z85r1d63683rqyw2y078"))))
     (propagated-inputs
      `(("crictl" ,crictl-1.15)))))
 
@@ -216,12 +216,16 @@ tools for Kubelet CRI.")
            (replace 'build
              (lambda _
                (invoke "make" "windows"))) ; This is the correct invocation
+           (add-before 'prepare-source 'update-version
+             (lambda _
+               (substitute* "Makefile"
+                 (("^VERSION .*") (string-append "VERSION := " ,version "\n")))
+               #t))
            (replace 'prepare-source
              (lambda* (#:key outputs #:allow-other-keys)
                (let ((out (assoc-ref outputs "out")))
                  (substitute* "Makefile"
                    (("/usr/local") out)
-                   (("^VERSION .*") (string-append "VERSION := " ,version "\n"))
                    ;; So we can use 'make windows'.
                    ((".exe") "")
                    (("GOOS=windows") "CGO_ENABLED=0")
