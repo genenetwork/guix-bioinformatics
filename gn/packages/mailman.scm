@@ -40,19 +40,19 @@
        ("python-dateutil" ,python-dateutil)
        ("python-dnspython" ,python-dnspython)
        ("python-falcon" ,python-falcon)
-       ("python-flufl.bounce" ,python-flufl.bounce)
-       ("python-flufl.i18n" ,python-flufl.i18n)
-       ("python-flufl.lock" ,python-flufl.lock)
+       ("python-flufl-bounce" ,python-flufl-bounce)
+       ("python-flufl-i18n" ,python-flufl-i18n)
+       ("python-flufl-lock" ,python-flufl-lock)
        ("python-gunicorn" ,python-gunicorn)
        ("python-importlib-resources" ,python-importlib-resources) ; built into python-3.7
-       ("python-lazr.config" ,python-lazr.config)
+       ("python-lazr-config" ,python-lazr-config)
        ("python-passlib" ,python-passlib)
        ("python-requests" ,python-requests)
        ("python-sqlalchemy" ,python-sqlalchemy)
-       ("python-zope.component" ,python-zope.component)
-       ("python-zope.configuration" ,python-zope.configuration)
+       ("python-zope-component" ,python-zope-component)
+       ("python-zope-configuration" ,python-zope-configuration)
        ("python-zope-event" ,python-zope-event)
-       ("python-zope.interface" ,python-zope.interface)))
+       ("python-zope-interface" ,python-zope-interface)))
     (home-page "https://www.list.org")
     (synopsis "Mailing list manager")
     (description
@@ -86,7 +86,7 @@ filtering, digest delivery, and more.")
            (lambda _
              (invoke "python" "-m" "nose2" "-v"))))))
     (native-inputs
-     `(("python-flufl.testing" ,python-flufl.testing)
+     `(("python-flufl-testing" ,python-flufl-testing)
        ("python-nose2" ,python-nose2)))
     (propagated-inputs
      `(("python-atpublic" ,python-atpublic)))
@@ -97,9 +97,9 @@ filtering, digest delivery, and more.")
 based on asyncio.")
     (license license:asl2.0)))
 
-(define-public python-flufl.testing
+(define-public python-flufl-testing
   (package
-    (name "python-flufl.testing")
+    (name "python-flufl-testing")
     (version "0.8")
     (source
       (origin
@@ -187,9 +187,9 @@ pure-Python implementation and an optional C implementation.")
 generation and parsing for Python.")
     (license license:asl2.0)))
 
-(define-public python-flufl.bounce
+(define-public python-flufl-bounce
   (package
-    (name "python-flufl.bounce")
+    (name "python-flufl-bounce")
     (version "3.0")
     (source
       (origin
@@ -201,7 +201,7 @@ generation and parsing for Python.")
     (build-system python-build-system)
     (propagated-inputs
      `(("python-atpublic" ,python-atpublic)
-       ("python-zope.interface" ,python-zope.interface)))
+       ("python-zope-interface" ,python-zope-interface)))
     (native-inputs
      `(("python-nose2" ,python-nose2)))
     (home-page "https://fluflbounce.readthedocs.io/en/latest/")
@@ -212,9 +212,9 @@ message.  Many formats found in the wild are supported, as are VERP and
 RFC 3464.")
     (license license:asl2.0)))
 
-(define-public python-flufl.i18n
+(define-public python-flufl-i18n
   (package
-    (name "python-flufl.i18n")
+    (name "python-flufl-i18n")
     (version "2.0.2")
     (source
       (origin
@@ -238,9 +238,9 @@ applications, such as servers, which may need to switch language contexts for
 different tasks.")
     (license license:asl2.0)))
 
-(define-public python-flufl.lock
+(define-public python-flufl-lock
   (package
-    (name "python-flufl.lock")
+    (name "python-flufl-lock")
     (version "3.2")
     (source
       (origin
@@ -321,9 +321,9 @@ implemented, light on server resource usage, and fairly speedy.")
 @code{importlib.resources} module for Python 2.7, and 3.4 through 3.6.")
     (license license:asl2.0)))
 
-(define-public python-lazr.config
+(define-public python-lazr-config
   (package
-    (name "python-lazr.config")
+    (name "python-lazr-config")
     (version "2.2.1")
     (source
       (origin
@@ -334,8 +334,8 @@ implemented, light on server resource usage, and fairly speedy.")
           "1s7pyvlq06qjrkaw9r6nc290lb095n25ybzgavvy51ygpxkgqxwn"))))
     (build-system python-build-system)
     (propagated-inputs
-     `(("python-lazr.delegates" ,python-lazr.delegates)
-       ("python-zope.interface" ,python-zope.interface)))
+     `(("python-lazr-delegates" ,python-lazr-delegates)
+       ("python-zope-interface" ,python-zope-interface)))
     (home-page "https://launchpad.net/lazr.config")
     (synopsis "Create configuration schemas and process and validate configurations")
     (description
@@ -347,9 +347,9 @@ to minimize duplication of information across files.  The format supports schema
 validation.")
     (license license:lgpl3)))
 
-(define-public python-zope.component
+(define-public python-zope-component
   (package
-    (name "python-zope.component")
+    (name "python-zope-component")
     (version "4.5")
     (source
       (origin
@@ -367,35 +367,35 @@ validation.")
              (add-installed-pythonpath inputs outputs)
              (invoke "python" "setup.py" "test"))))))
     (propagated-inputs
-     `(("python-zope.deferredimport" ,python-zope.deferredimport)
-       ("python-zope.deprecation" ,python-zope.deprecation)
+     `(("python-zope-deferredimport" ,python-zope-deferredimport)
+       ("python-zope-deprecation" ,python-zope-deprecation)
        ("python-zope-event" ,python-zope-event)
-       ("python-zope.hookable" ,python-zope.hookable)
-       ("python-zope.interface" ,python-zope.interface)))
+       ("python-zope-hookable" ,python-zope-hookable)
+       ("python-zope-interface" ,python-zope-interface)))
     (native-inputs
      `(("python-persistent" ,python-persistent)
-       ("python-zope.configuration" ,python-zope.configuration-bootstrap)
-       ("python-zope.i18nmessageid" ,python-zope.i18nmessageid)
-       ("python-zope.location" ,python-zope.location-bootstrap)
-       ("python-zope.proxy" ,python-zope.proxy-bootstrap)
-       ("python-zope.security" ,python-zope.security-bootstrap)
-       ("python-zope.testing" ,python-zope.testing)
-       ("python-zope.testrunner" ,python-zope.testrunner)))
+       ("python-zope-configuration" ,python-zope-configuration-bootstrap)
+       ("python-zope-i18nmessageid" ,python-zope-i18nmessageid)
+       ("python-zope-location" ,python-zope-location-bootstrap)
+       ("python-zope-proxy" ,python-zope-proxy-bootstrap)
+       ("python-zope-security" ,python-zope-security-bootstrap)
+       ("python-zope-testing" ,python-zope-testing)
+       ("python-zope-testrunner" ,python-zope-testrunner)))
     (home-page "https://github.com/zopefoundation/zope.component")
     (synopsis "Zope Component Architecture")
     (description "Zope Component Architecture")
     (license license:zpl2.1)))
 
-(define-public python-zope.component-bootstrap
+(define-public python-zope-component-bootstrap
   (package
-    (inherit python-zope.component)
+    (inherit python-zope-component)
     (arguments `(#:tests? #f))
     (native-inputs `())
     (properties `((hidden? . #t)))))
 
-(define-public python-zope.configuration
+(define-public python-zope-configuration
   (package
-    (name "python-zope.configuration")
+    (name "python-zope-configuration")
     (version "4.3.1")
     (source
       (origin
@@ -406,30 +406,30 @@ validation.")
           "1qb88764fd7nkkmqv7fl9bxd1jirynkg5vbqkpqdiffnkxzp85kf"))))
     (build-system python-build-system)
     (propagated-inputs
-     `(("python-zope.i18nmessageid" ,python-zope.i18nmessageid)
-       ("python-zope.interface" ,python-zope.interface)
-       ("python-zope.schema" ,python-zope.schema)))
+     `(("python-zope-i18nmessageid" ,python-zope-i18nmessageid)
+       ("python-zope-interface" ,python-zope-interface)
+       ("python-zope-schema" ,python-zope-schema)))
     (native-inputs
      `(("python-manuel" ,python-manuel)
-       ("python-zope.schema" ,python-zope.schema)
-       ("python-zope.testing" ,python-zope.testing)
-       ("python-zope.testrunner" ,python-zope.testrunner)))
+       ("python-zope-schema" ,python-zope-schema)
+       ("python-zope-testing" ,python-zope-testing)
+       ("python-zope-testrunner" ,python-zope-testrunner)))
     (home-page "https://github.com/zopefoundation/zope.configuration")
     (synopsis "Zope Configuration Markup Language (ZCML)")
     (description
       "Zope Configuration Markup Language (ZCML)")
     (license license:zpl2.1)))
 
-(define-public python-zope.configuration-bootstrap
+(define-public python-zope-configuration-bootstrap
   (package
-    (inherit python-zope.configuration)
+    (inherit python-zope-configuration)
     (arguments `(#:tests? #f))
     (native-inputs `())
     (properties `((hidden? . #t)))))
 
-(define-public python-zope.interface
+(define-public python-zope-interface
   (package
-    (name "python-zope.interface")
+    (name "python-zope-interface")
     (version "4.6.0")
     (source
       (origin
@@ -488,9 +488,9 @@ signing/verifying of ed25519-sha256 signatures (RFC 8463).  It also supports
 the RFC 8617 Authenticated Received Chain (ARC) protocol.")
     (license license:bsd-3)))
 
-(define-public python-lazr.delegates
+(define-public python-lazr-delegates
   (package
-    (name "python-lazr.delegates")
+    (name "python-lazr-delegates")
     (version "2.0.4")
     (source
       (origin
@@ -508,7 +508,7 @@ the RFC 8617 Authenticated Received Chain (ARC) protocol.")
              (invoke "python" "setup.py" "nosetests"))))))
     (propagated-inputs
      `(("python-nose" ,python-nose)
-       ("python-zope.interface" ,python-zope.interface)))
+       ("python-zope-interface" ,python-zope-interface)))
     (home-page "https://launchpad.net/lazr.delegates")
     (synopsis "Easily write objects that delegate behavior")
     (description
@@ -518,9 +518,9 @@ behavior on to the other object, while still providing the underlying interface,
 and delegating behavior.")
     (license license:lgpl3)))
 
-(define-public python-zope.deferredimport
+(define-public python-zope-deferredimport
   (package
-    (name "python-zope.deferredimport")
+    (name "python-zope-deferredimport")
     (version "4.3.1")
     (source
       (origin
@@ -531,9 +531,9 @@ and delegating behavior.")
           "1q89v54dwniiqypjbwywwdfjdr4kdkqlyqsgrpplgvsygdg39cjp"))))
     (build-system python-build-system)
     (propagated-inputs
-     `(("python-zope.proxy" ,python-zope.proxy)))
+     `(("python-zope-proxy" ,python-zope-proxy)))
     (native-inputs
-     `(("python-zope.testrunner" ,python-zope.testrunner)))
+     `(("python-zope-testrunner" ,python-zope-testrunner)))
     (home-page "https://github.com/zopefoundation/zope.deferredimport")
     (synopsis "Defer imports until used by code")
     (description
@@ -544,9 +544,9 @@ modules that will be imported from somewhere else when used.  You can also cause
 deprecation warnings to be issued when a variable is used.")
     (license license:zpl2.1)))
 
-(define-public python-zope.deprecation
+(define-public python-zope-deprecation
   (package
-    (name "python-zope.deprecation")
+    (name "python-zope-deprecation")
     (version "4.4.0")
     (source
       (origin
@@ -557,15 +557,15 @@ deprecation warnings to be issued when a variable is used.")
           "1pz2cv7gv9y1r3m0bdv7ks1alagmrn5msm5spwdzkb2by0w36i8d"))))
     (build-system python-build-system)
     (native-inputs
-     `(("python-zope.testrunner" ,python-zope.testrunner)))
+     `(("python-zope-testrunner" ,python-zope-testrunner)))
     (home-page "https://github.com/zopefoundation/zope.deprecation")
     (synopsis "Zope Deprecation Infrastructure")
     (description "Zope Deprecation Infrastructure")
     (license license:zpl2.1)))
 
-(define-public python-zope.hookable
+(define-public python-zope-hookable
   (package
-    (name "python-zope.hookable")
+    (name "python-zope-hookable")
     (version "4.2.0")
     (source
       (origin
@@ -577,7 +577,7 @@ deprecation warnings to be issued when a variable is used.")
     (build-system python-build-system)
     (native-inputs
      `(("python-coverage" ,python-coverage)
-       ("python-zope.testing" ,python-zope.testing)))
+       ("python-zope-testing" ,python-zope-testing)))
     (home-page "https://github.com/zopefoundation/zope.hookable")
     (synopsis "Zope hookable")
     (description "This package supports the efficient creation of hookable
@@ -588,9 +588,9 @@ and changing its implementation.  All users of the function, including those
 that imported it, will see the change.")
     (license license:zpl2.1)))
 
-(define-public python-zope.i18nmessageid
+(define-public python-zope-i18nmessageid
   (package
-    (name "python-zope.i18nmessageid")
+    (name "python-zope-i18nmessageid")
     (version "4.3.1")
     (source
       (origin
@@ -613,9 +613,9 @@ source text; translation of the messages is the responsiblitiy of the
 @code{zope.i18n} package.")
     (license license:zpl2.1)))
 
-(define-public python-zope.schema
+(define-public python-zope-schema
   (package
-    (name "python-zope.schema")
+    (name "python-zope-schema")
     (version "4.9.3")
     (source
       (origin
@@ -627,11 +627,11 @@ source text; translation of the messages is the responsiblitiy of the
     (build-system python-build-system)
     (propagated-inputs
      `(("python-zope-event" ,python-zope-event)
-       ("python-zope.interface" ,python-zope.interface)))
+       ("python-zope-interface" ,python-zope-interface)))
     (native-inputs
-     `(("python-zope.i18nmessageid" ,python-zope.i18nmessageid)
-       ("python-zope.testing" ,python-zope.testing)
-       ("python-zope.testrunner" ,python-zope.testrunner)))
+     `(("python-zope-i18nmessageid" ,python-zope-i18nmessageid)
+       ("python-zope-testing" ,python-zope-testing)
+       ("python-zope-testrunner" ,python-zope-testrunner)))
     (home-page "https://github.com/zopefoundation/zope.schema")
     (synopsis "Zope.interface extension for defining data schemas")
     (description
@@ -673,9 +673,9 @@ read-only or not required.")
     (description "Python 3 DNS library")
     (license license:psfl)))
 
-(define-public python-zope.proxy
+(define-public python-zope-proxy
   (package
-    (name "python-zope.proxy")
+    (name "python-zope-proxy")
     (version "4.3.2")
     (source
       (origin
@@ -686,10 +686,10 @@ read-only or not required.")
           "05svkbri0jsavjy5jk36n1iba7z2ilb07zr8r3516765v5snjvdb"))))
     (build-system python-build-system)
     (propagated-inputs
-     `(("python-zope.interface" ,python-zope.interface)))
+     `(("python-zope-interface" ,python-zope-interface)))
     (native-inputs
-     `(("python-zope.security" ,python-zope.security-bootstrap)
-       ("python-zope.testrunner" ,python-zope.testrunner)))
+     `(("python-zope-security" ,python-zope-security-bootstrap)
+       ("python-zope-testrunner" ,python-zope-testrunner)))
     (home-page "https://github.com/zopefoundation/zope.proxy")
     (synopsis "Generic Transparent Proxies")
     (description "@code{zope.proxy} is implemented via a C extension module,
@@ -697,16 +697,16 @@ which lets it do things like lie about its own __class__ that are difficult in
 pure Python (and were completely impossible before metaclasses).")
     (license license:zpl2.1)))
 
-(define-public python-zope.proxy-bootstrap
+(define-public python-zope-proxy-bootstrap
   (package
-    (inherit python-zope.proxy)
+    (inherit python-zope-proxy)
     (arguments `(#:tests? #f))
     (native-inputs `())
     (properties `((hidden? . #t)))))
 
-(define-public python-zope.testrunner
+(define-public python-zope-testrunner
   (package
-    (name "python-zope.testrunner")
+    (name "python-zope-testrunner")
     (version "5.1")
     (source
       (origin
@@ -720,28 +720,28 @@ pure Python (and were completely impossible before metaclasses).")
      '(#:tests? #f)) ; Tests can't find zope.exceptions.
     (propagated-inputs
      `(("python-six" ,python-six)
-       ("python-zope.exceptions" ,python-zope.exceptions)
-       ("python-zope.interface" ,python-zope.interface)))
+       ("python-zope-exceptions" ,python-zope-exceptions)
+       ("python-zope-interface" ,python-zope-interface)))
     (native-inputs
-     `(("python-zope.testing" ,python-zope.testing)))
+     `(("python-zope-testing" ,python-zope-testing)))
     (home-page "https://github.com/zopefoundation/zope.testrunner")
     (synopsis "Zope testrunner script")
     (description "This package provides a flexible test runner with layer
 support for the Zope framework.")
     (license license:zpl2.1)))
 
-(define-public python-zope.testrunner-bootstrap
+(define-public python-zope-testrunner-bootstrap
   (package
-    (inherit python-zope.testrunner)
+    (inherit python-zope-testrunner)
     (arguments `(#:tests? #f))
     (propagated-inputs
      `(("python-six" ,python-six)
-       ("python-zope.exceptions" ,python-zope.exceptions-bootstrap)))
+       ("python-zope-exceptions" ,python-zope-exceptions-bootstrap)))
     (properties `((hidden? . #t)))))
 
-(define-public python-zope.exceptions
+(define-public python-zope-exceptions
   (package
-    (name "python-zope.exceptions")
+    (name "python-zope-exceptions")
     (version "4.3")
     (source
       (origin
@@ -758,9 +758,9 @@ support for the Zope framework.")
            (lambda _
              (invoke "zope-testrunner" "--test-path=src" "\\[]"))))))
     (propagated-inputs
-     `(("python-zope.interface" ,python-zope.interface)))
+     `(("python-zope-interface" ,python-zope-interface)))
     (native-inputs
-     `(("python-zope.testrunner" ,python-zope.testrunner-bootstrap)))
+     `(("python-zope-testrunner" ,python-zope-testrunner-bootstrap)))
     (home-page "https://github.com/zopefoundation/zope.exceptions")
     (synopsis "Zope Exceptions")
     (description "This package contains exception exceptions and
@@ -768,17 +768,17 @@ support for the Zope framework.")
  application-specific packages.")
     (license license:zpl2.1)))
 
-(define-public python-zope.exceptions-bootstrap
+(define-public python-zope-exceptions-bootstrap
   (package
-    (inherit python-zope.exceptions)
+    (inherit python-zope-exceptions)
     (arguments `(#:tests? #f))
     (propagated-inputs `())
     (native-inputs `())
     (properties `((hidden? . #t)))))
 
-(define-public python-zope.testing
+(define-public python-zope-testing
   (package
-    (name "python-zope.testing")
+    (name "python-zope-testing")
     (version "4.7")
     (source
       (origin
@@ -807,10 +807,10 @@ support for the Zope framework.")
     (build-system python-build-system)
     (propagated-inputs
      `(("python-cffi" ,python-cffi)
-       ("python-zope.interface" ,python-zope.interface)))
+       ("python-zope-interface" ,python-zope-interface)))
     (native-inputs
      `(("python-manuel" ,python-manuel)
-       ("python-zope.testrunner" ,python-zope.testrunner)))
+       ("python-zope-testrunner" ,python-zope-testrunner)))
     (home-page "https://github.com/zopefoundation/persistent/")
     (synopsis "Translucent persistent objects")
     (description "This package contains a generic persistence implementation for
@@ -818,9 +818,9 @@ Python.  It forms the core protocol for making objects interact
 \"transparently\" with a database such as the ZODB.")
     (license license:zpl2.1)))
 
-(define-public python-zope.location
+(define-public python-zope-location
   (package
-    (name "python-zope.location")
+    (name "python-zope-location")
     (version "4.2")
     (source
       (origin
@@ -837,30 +837,30 @@ Python.  It forms the core protocol for making objects interact
            (lambda _
              (invoke "zope-testrunner" "--test-path=src" "\\[]"))))))
     (propagated-inputs
-     `(("python-zope.interface" ,python-zope.interface)
-       ("python-zope.proxy" ,python-zope.proxy)
-       ("python-zope.schema" ,python-zope.schema)))
+     `(("python-zope-interface" ,python-zope-interface)
+       ("python-zope-proxy" ,python-zope-proxy)
+       ("python-zope-schema" ,python-zope-schema)))
     (native-inputs
-     `(("python-zope.component" ,python-zope.component-bootstrap)
-       ("python-zope.configuration" ,python-zope.configuration-bootstrap)
-       ("python-zope.copy" ,python-zope.copy-bootstrap)
-       ("python-zope.testrunner" ,python-zope.testrunner)))
+     `(("python-zope-component" ,python-zope-component-bootstrap)
+       ("python-zope-configuration" ,python-zope-configuration-bootstrap)
+       ("python-zope-copy" ,python-zope-copy-bootstrap)
+       ("python-zope-testrunner" ,python-zope-testrunner)))
     (home-page "https://github.com/zopefoundation/zope.location/")
     (synopsis "Zope Location")
     (description "In Zope3, \"locations\" are special objects that have a
 structural location.")
     (license license:zpl2.1)))
 
-(define-public python-zope.location-bootstrap
+(define-public python-zope-location-bootstrap
   (package
-    (inherit python-zope.location)
+    (inherit python-zope-location)
     (arguments `(#:tests? #f))
     (native-inputs `())
     (properties `((hidden? . #t)))))
 
-(define-public python-zope.security
+(define-public python-zope-security
   (package
-    (name "python-zope.security")
+    (name "python-zope-security")
     (version "4.3.1")
     (source
       (origin
@@ -871,36 +871,36 @@ structural location.")
           "1zzaggsq4d9pslzh1h1i9qizsrykrm91iyqzi1dz0vw5rixyaj4l"))))
     (build-system python-build-system)
     (propagated-inputs
-     `(("python-zope.component" ,python-zope.component)
-       ("python-zope.i18nmessageid" ,python-zope.i18nmessageid)
-       ("python-zope.interface" ,python-zope.interface)
-       ("python-zope.location" ,python-zope.location)
-       ("python-zope.proxy" ,python-zope.proxy)
-       ("python-zope.schema" ,python-zope.schema)))
+     `(("python-zope-component" ,python-zope-component)
+       ("python-zope-i18nmessageid" ,python-zope-i18nmessageid)
+       ("python-zope-interface" ,python-zope-interface)
+       ("python-zope-location" ,python-zope-location)
+       ("python-zope-proxy" ,python-zope-proxy)
+       ("python-zope-schema" ,python-zope-schema)))
     (native-inputs
      `(("python-btrees" ,python-btrees)
-       ("python-zope.component" ,python-zope.component-bootstrap)
-       ("python-zope.configuration" ,python-zope.configuration-bootstrap)
-       ("python-zope.location" ,python-zope.location-bootstrap)
-       ("python-zope.testing" ,python-zope.testing)
-       ("python-zope.testrunner" ,python-zope.testrunner)))
+       ("python-zope-component" ,python-zope-component-bootstrap)
+       ("python-zope-configuration" ,python-zope-configuration-bootstrap)
+       ("python-zope-location" ,python-zope-location-bootstrap)
+       ("python-zope-testing" ,python-zope-testing)
+       ("python-zope-testrunner" ,python-zope-testrunner)))
     (home-page "https://github.com/zopefoundation/zope.security")
     (synopsis "Zope Security Framework")
     (description "The security framework provides a generic mechanism to
 implement security policies on Python objects.")
     (license license:zpl2.1)))
 
-(define-public python-zope.security-bootstrap
+(define-public python-zope-security-bootstrap
   (package
-    (inherit python-zope.security)
+    (inherit python-zope-security)
     (arguments `(#:tests? #f))
     (propagated-inputs
-     `(;("python-zope.component" ,python-zope.component-bootstrap)
-       ("python-zope.i18nmessageid" ,python-zope.i18nmessageid)
-       ("python-zope.interface" ,python-zope.interface)
-       ;("python-zope.location" ,python-zope.location)
-       ("python-zope.proxy" ,python-zope.proxy-bootstrap)
-       ("python-zope.schema" ,python-zope.schema)))
+     `(;("python-zope-component" ,python-zope-component-bootstrap)
+       ("python-zope-i18nmessageid" ,python-zope-i18nmessageid)
+       ("python-zope-interface" ,python-zope-interface)
+       ;("python-zope-location" ,python-zope-location)
+       ("python-zope-proxy" ,python-zope-proxy-bootstrap)
+       ("python-zope-schema" ,python-zope-schema)))
     (native-inputs `())
     (properties `((hidden? . #t)))))
 
@@ -919,16 +919,16 @@ implement security policies on Python objects.")
     (propagated-inputs
      `(("python-six" ,python-six)))
     (native-inputs
-     `(("python-zope.testing" ,python-zope.testing)))
+     `(("python-zope-testing" ,python-zope-testing)))
     (home-page "https://pypi.org/project/manuel/")
     (synopsis "Build tested documentation")
     (description
      "Manuel lets you mix and match traditional doctests with custom test syntax.")
     (license license:asl2.0)))
 
-(define-public python-zope.copy
+(define-public python-zope-copy
   (package
-    (name "python-zope.copy")
+    (name "python-zope-copy")
     (version "4.2")
     (source
       (origin
@@ -945,21 +945,21 @@ implement security policies on Python objects.")
            (lambda _
              (invoke "zope-testrunner" "--test-path=src" "\\[]"))))))
     (propagated-inputs
-     `(("python-zope.interface" ,python-zope.interface)))
+     `(("python-zope-interface" ,python-zope-interface)))
     (native-inputs
-     `(("python-zope.component" ,python-zope.component-bootstrap)
-       ("python-zope.location" ,python-zope.location-bootstrap)
-       ("python-zope.testing" ,python-zope.testing)
-       ("python-zope.testrunner" ,python-zope.testrunner)))
+     `(("python-zope-component" ,python-zope-component-bootstrap)
+       ("python-zope-location" ,python-zope-location-bootstrap)
+       ("python-zope-testing" ,python-zope-testing)
+       ("python-zope-testrunner" ,python-zope-testrunner)))
     (home-page "https://github.com/zopefoundation/zope.copy")
     (synopsis "Pluggable object copying mechanism")
     (description
      "This package provides a pluggable mechanism for copying persistent objects.")
     (license license:zpl2.1)))
 
-(define-public python-zope.copy-bootstrap
+(define-public python-zope-copy-bootstrap
   (package
-    (inherit python-zope.copy)
+    (inherit python-zope-copy)
     (arguments `(#:tests? #f))
     (native-inputs `())
     (properties `((hidden? . #t)))))
@@ -978,11 +978,11 @@ implement security policies on Python objects.")
     (build-system python-build-system)
     (propagated-inputs
      `(("python-persistent" ,python-persistent)
-       ("python-zope.interface" ,python-zope.interface)))
+       ("python-zope-interface" ,python-zope-interface)))
     (native-inputs
      `(("python-persistent" ,python-persistent)
        ("python-transaction" ,python-transaction)
-       ("python-zope.testrunner" ,python-zope.testrunner)))
+       ("python-zope-testrunner" ,python-zope-testrunner)))
     (home-page "https://github.com/zopefoundation/BTrees")
     (synopsis "Scalable persistent object containers")
     (description
@@ -1005,7 +1005,7 @@ conflicts detected by that mechanism.")
           "17wz1y524ca07vr03yddy8dv0gbscs06dbdywmllxv5rc725jq3j"))))
     (build-system python-build-system)
     (propagated-inputs
-     `(("python-zope.interface" ,python-zope.interface)))
+     `(("python-zope-interface" ,python-zope-interface)))
     (native-inputs
      `(("python-coverage" ,python-coverage)
        ("python-mock" ,python-mock)
@@ -1106,7 +1106,7 @@ service processes for your tests with pytest.")
      `(("python-mailman" ,mailman)
        ("python-requests" ,python-requests)
        ("python-setuptools" ,python-setuptools) ; enumerated in setup.py
-       ("python-zope.interface" ,python-zope.interface)))
+       ("python-zope-interface" ,python-zope-interface)))
     (native-inputs
      `(("python-mock" ,python-mock)
        ("python-nose2" ,python-nose2)))
@@ -1146,7 +1146,7 @@ service processes for your tests with pytest.")
        ("python-django-mailman3" ,python-django-mailman3)
        ("python-django-q" ,python-django-q)
        ("python-djangorestframework" ,python-djangorestframework)
-       ("python-flufl.lock" ,python-flufl.lock)
+       ("python-flufl-lock" ,python-flufl-lock)
        ("python-mailmanclient" ,python-mailmanclient-3.3)
        ("python-networkx" ,python-networkx)
        ("python-pytz" ,python-pytz)
