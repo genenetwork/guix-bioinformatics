@@ -95,7 +95,8 @@ filtering, digest delivery, and more.")
     (description
      "This project is a reimplementation of the Python stdlib @code{smtpd.py}
 based on asyncio.")
-    (license license:asl2.0)))
+    (license (list license:asl2.0
+                   license:lgpl3)))) ; only for setup_helpers.py
 
 (define-public python-flufl-testing
   (package
@@ -132,18 +133,24 @@ based on asyncio.")
     (arguments
      '(#:phases
        (modify-phases %standard-phases
+         (add-before 'build 'enable-c-implementation
+           (lambda _
+             (setenv "ATPUBLIC_BUILD_EXTENSION" "yes")
+             #t))
          (replace 'check
            (lambda _
              (invoke "python" "-m" "nose2" "-v"))))))
     (native-inputs
      `(("python-nose2" ,python-nose2)))
     (home-page "https://public.readthedocs.io/")
-    (synopsis "Python library for populating __all__")
+    (synopsis "@code{@@public} decorator for populating @code{__all__}")
     (description
-     "This is a very simple decorator and function which populates a modules
-@code{__all__} and optionally the module globals.  This provides both a
-pure-Python implementation and an optional C implementation.")
-    (license license:asl2.0)))
+     "This Python module adds a @code{@@public} decorator and function which
+populates a module's @code{__all__} and optionally the module globals.  With
+it, the declaration of a name's public export semantics are not separated from
+the implementation of that name.")
+    (license (list license:asl2.0
+                   license:lgpl3)))) ; only for setup_helpers.py
 
 (define-public python-authheaders
   (package
@@ -155,8 +162,34 @@ pure-Python implementation and an optional C implementation.")
         (uri (pypi-uri "authheaders" version))
         (sha256
          (base32
-          "1ljcp8vk2n4xwk8p758b6q5sgdicyj4gxxpkmh33mx21jscn6q4i"))))
+          "1ljcp8vk2n4xwk8p758b6q5sgdicyj4gxxpkmh33mx21jscn6q4i"))
+        (modules '((guix build utils)))
+        (snippet
+         '(begin
+            ;; Remove bundled public suffix list and its license.
+            (delete-file "authheaders/public_suffix_list.txt")
+            (delete-file "MPL-2.0")
+            #t))))
     (build-system python-build-system)
+    (arguments
+     `(#:phases
+       (modify-phases %standard-phases
+         (add-before 'build 'configure-public-suffix-list
+           ;; Use public suffix list from Guix package.
+           (lambda* (#:key inputs #:allow-other-keys)
+             (let ((publicsuffix (assoc-ref inputs "python-publicsuffix")))
+               (invoke "python" "setup.py" "psllocal"
+                 (string-append "--path=" publicsuffix "/lib/python"
+                                (python-version (assoc-ref inputs "python"))
+                                "/site-packages/publicsuffix"
+                                "/public_suffix_list.dat"))
+               #t)))
+         (replace 'check
+           (lambda _
+             ;; Make it find the only test file.
+             (invoke "python" "-m" "unittest" "-v" "test"
+                     "authheaders/test/test_authentication.py")
+             #t)))))
     (propagated-inputs
      `(("python-authres" ,python-authres)
        ("python-dkimpy" ,python-dkimpy)
@@ -165,8 +198,13 @@ pure-Python implementation and an optional C implementation.")
     (home-page "https://github.com/ValiMail/authentication-headers")
     (synopsis "Library wrapping email authentication header verification and generation")
     (description
-     "A library wrapping email authentication header verification and generation.")
-    (license license:expat)))
+     "This is a Python library for the generation of email authentication
+headers.  The library can perform DKIM, SPF, and DMARC validation, and the
+results are packaged into the Authentication-Results header.  The library can
+DKIM and ARC sign messages and output the corresponding signature headers.")
+    ;; The package's metadata claims it were MIT licensed, but the source file
+    ;; headers disagree.¬
+    (license (list license:zpl2.1 license:zlib))))
 
 (define-public python-authres
   (package
@@ -180,11 +218,31 @@ pure-Python implementation and an optional C implementation.")
          (base32
           "1dr5zpqnb54h4f5ax8334l1dcp8j9083d7v4vdi1xqkwmnavklck"))))
     (build-system python-build-system)
+    (arguments
+     '(#:phases
+       (modify-phases %standard-phases
+         (replace 'check
+           ;; Run doctests as described in the README.
+           (lambda _
+             (invoke "python" "-m" "authres" "-v"))))))
     (home-page "https://launchpad.net/authentication-results-python")
-    (synopsis "Authentication Results Header Module")
+    (synopsis "Email Authentication Results Header Module")
     (description
-     "This package provides RFC 5451/7001/7601 Authentication-Results Headers
-generation and parsing for Python.")
+     "This module can be used to generate and parse RFC 5451/7001/7601
+Authentication-Results headers.  It also supports Authentication Results
+extensions:
+@itemize
+@item RFC 5617 DKIM/ADSP
+@item RFC 6008 DKIM signature identification (header.b)
+@item RFC 6212 Vouch By Reference (VBR)
+@item RFC 6577 Sender Policy Framework (SPF)
+@item RFC 7281 Authentication-Results Registration for S/MIME
+@item RFC 7293 The Require-Recipient-Valid-Since Header Field
+@item RFC 7489 Domain-based Message Authentication, Reporting, and Conformance (DMARC)
+@item Authenticated Recieved Chain (ARC) (draft-ietf-dmarc-arc-protocol-08)
+@end itemize
+Note: RFC 7601 obsoletes RFC 5451, 6577, 7001, and 7410.  Authres supports the
+current standard.  No backward compatibility issues have been noted.")
     (license license:asl2.0)))
 
 (define-public python-flufl-bounce
@@ -210,7 +268,8 @@ generation and parsing for Python.")
 and an API for detecting the original bouncing email addresses from a bounce
 message.  Many formats found in the wild are supported, as are VERP and
 RFC 3464.")
-    (license license:asl2.0)))
+    (license (list license:asl2.0
+                   license:lgpl3)))) ; only for setup_headers.py
 
 (define-public python-flufl-i18n
   (package
@@ -255,8 +314,12 @@ different tasks.")
     (home-page "https://flufllock.readthedocs.io")
     (synopsis "NFS-safe file locking with timeouts for POSIX systems")
     (description
-     "This package provides NFS-safe file locking with timeouts for POSIX systems.")
-    (license license:asl2.0)))
+     "The @dfn{flufl.lock} package provides NFS-safe file locking with
+timeouts for POSIX systems.  It is similar to the @code{O_EXCL} option of the
+@code{open} system call but uses a lockfile.  Lock object support lock-breaking
+and have a maximum lifetime built-in.")
+    (license (list license:asl2.0
+                   license:lgpl3)))) ; only for setup_helpers.py
 
 (define-public python-gunicorn
   (package
@@ -333,6 +396,12 @@ implemented, light on server resource usage, and fairly speedy.")
          (base32
           "1s7pyvlq06qjrkaw9r6nc290lb095n25ybzgavvy51ygpxkgqxwn"))))
     (build-system python-build-system)
+    (arguments
+     '(#:phases
+       (modify-phases %standard-phases
+         (replace 'check
+           (lambda _
+             (invoke "python" "-s" "-m" "nose" "-P" "lazr"))))))
     (propagated-inputs
      `(("python-lazr-delegates" ,python-lazr-delegates)
        ("python-zope-interface" ,python-zope-interface)))
@@ -670,7 +739,9 @@ read-only or not required.")
        #:tests? #f)) ; Also skip the tests.
     (home-page "https://launchpad.net/py3dns")
     (synopsis "Python 3 DNS library")
-    (description "Python 3 DNS library")
+    (description "This Python 3 module provides a DNS API for looking up DNS
+entries from within Python 3 modules and applications.  This module is a
+simple, lightweight implementation.")
     (license license:psfl)))
 
 (define-public python-zope-proxy
