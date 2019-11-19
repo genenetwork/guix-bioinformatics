@@ -19,10 +19,12 @@
   #:use-module (gnu packages check)
   #:use-module (gnu packages compression)
   #:use-module (gnu packages cran)
+  #:use-module (gnu packages datastructures)
   #:use-module (gnu packages fontutils)
   #:use-module (gnu packages gcc)
   #:use-module (gnu packages imagemagick)
   #:use-module (gnu packages maths)
+  #:use-module (gnu packages mpi)
   #:use-module (gnu packages perl)
   #:use-module (gnu packages python)
   #:use-module (gnu packages python-xyz)
@@ -847,3 +849,213 @@ recombinant inbred population.  A power calculator such as this is needed as all
 grants require a calculation of the applications power to detect the effect of
 interest, and this app can provide values and figures for applicants to use.")
         (license license:gpl3))))
+
+(define-public seqwish
+  (package
+    (name "seqwish")
+    (version "0.1")
+    (source (origin
+             (method git-fetch)
+             (uri (git-reference
+                   (url "https://github.com/ekg/seqwish.git")
+                   (commit (string-append "v" version))))
+             (file-name (git-file-name name version))
+             (sha256
+              (base32
+               "1gp72cmi13hbkmwwhgckmxkbx8w644jc5l6dvvvxdbl6sk8xsi5r"))))
+    (build-system gnu-build-system)
+    (arguments
+     `(#:phases
+       (modify-phases %standard-phases
+         (delete 'configure)
+         (replace 'build
+           (lambda* (#:key inputs #:allow-other-keys)
+             (let ((sdsl-lite      (assoc-ref inputs "sdsl-lite"))
+                   (bsort          (assoc-ref inputs "bsort"))
+                   (mmap_allocator (assoc-ref inputs "mmap-allocator"))
+                   (tayweeargs     (assoc-ref inputs "tayweeargs-source"))
+                   (gzipreader     (assoc-ref inputs "gzipreader-source"))
+                   (mmmultimap     (assoc-ref inputs "mmmultimap-source"))
+                   (iitii          (assoc-ref inputs "iitii-source"))
+                   (ips4o          (assoc-ref inputs "ips4o-source")))
+               (apply invoke "g++" "-o" "seqwish"
+                      "-O3" "-g" "-std=c++14" "-fopenmp"
+                      "-latomic" "-lz"
+                      (string-append "-I" sdsl-lite "/include")
+                      (string-append "-I" sdsl-lite "/include/sdsl")
+                      (string-append "-I" bsort "/include")
+                      (string-append "-I" tayweeargs)
+                      (string-append "-I" gzipreader)
+                      (string-append "-I" mmmultimap "/src")
+                      (string-append "-I" iitii "/src")
+                      (string-append "-I" mmap_allocator "/include")
+                      (string-append "-I" ips4o)
+                      (append
+                        (find-files "src" ".")
+                        (list
+                          (string-append sdsl-lite "/lib/libsdsl.a")
+                          (string-append sdsl-lite "/lib/libdivsufsort.a")
+                          (string-append sdsl-lite "/lib/libdivsufsort64.a")
+                          (string-append mmap_allocator "/lib/libmmap_allocator.a")
+                          (string-append bsort "/lib/libbsort.a")))))))
+         (replace 'check
+           (lambda _
+             ;; Add seqwish to the PATH for the tests.
+             (setenv "PATH" (string-append (getcwd) ":" (getenv "PATH")))
+             (with-directory-excursion "test"
+               (invoke "make"))))
+         (replace 'install
+           (lambda* (#:key outputs #:allow-other-keys)
+             (let ((out (assoc-ref outputs "out")))
+               (install-file "seqwish" (string-append out "/bin")))
+             #t)))))
+    (inputs
+     `(("bsort" ,ekg-bsort)
+       ("mmap-allocator" ,ekg-mmap-allocator)
+       ("openmpi" ,openmpi)
+       ("sdsl-lite" ,sdsl-lite-gn)
+       ("zlib" ,zlib)))
+    (native-inputs
+     `(("prove" ,perl)
+       ("tayweeargs-source" ,(origin
+                               (method git-fetch)
+                               (uri (git-reference
+                                      (url "https://github.com/Taywee/args.git")
+                                      (commit "3de44ec671db452cc0c4ef86399b108939768abb")))
+                               (file-name "tayweeargs-source-for-seqwish")
+                               (sha256
+                                (base32
+                                 "1v8kq1gvl5waysrfp0s58881rx39mnf3ifdsl6pb3y3c4zaki2xh"))))
+       ("gzipreader-source" ,(origin
+                               (method git-fetch)
+                               (uri (git-reference
+                                      (url "https://github.com/gatoravi/gzip_reader.git")
+                                      (commit "0ef26c0399e926087f9d6c4a56067a7bf1fc4f5e")))
+                               (file-name "gzipreader-source-for-seqwish")
+                               (sha256
+                                (base32
+                                 "1wy84ksx900840c06w0f1mgzvr7zsfsgxq1b0jdjh8qka26z1r17"))))
+       ("mmmultimap-source" ,(origin
+                               (method git-fetch)
+                               (uri (git-reference
+                                      (url "https://github.com/ekg/mmmultimap.git")
+                                      (commit "88c734c36563048b0f3acc04dd8856f19e02b75f")))
+                               (file-name "mmmultimap-source-for-seqwish")
+                               (sha256
+                                (base32
+                                 "06mnf3bd32s3ngxkl573ylg2qsvlw80r1ksdwamx3fzxa1a5yls0"))))
+       ("iitii-source" ,(origin
+                          (method git-fetch)
+                          (uri (git-reference
+                                 (url "https://github.com/ekg/iitii.git")
+                                 (commit "85209e07a3ee403fb6557387a7f897cd76be4406")))
+                          (file-name "iitii-source-for-seqwish")
+                          (sha256
+                           (base32
+                            "0sszvffkswf89nkbjmjg3wjwqvy2w0d3wgy3ngy33ma4sy4s025s"))))
+       ("ips4o-source" ,(origin
+                          (method git-fetch)
+                          (uri (git-reference
+                                 (url "https://github.com/SaschaWitt/ips4o.git")
+                                 (commit "bff3ccf0bf349497f2bb10f825d160b792236367")))
+                          (file-name "ips4o-source-for-seqwish")
+                          (sha256
+                           (base32
+                            "0yjfvrkiwgmy5cn0a7b9j8jwc3zp0l8j4dl5n0jgz68pdnhlp96h"))))))
+    (home-page "https://github.com/ekg/seqwish")
+    (synopsis "Alignment to variation graph inducer")
+    (description "Seqwish implements a lossless conversion from pairwise
+alignments between sequences to a variation graph encoding the sequences and
+their alignments.  As input we typically take all-versus-all alignments, but the
+exact structure of the alignment set may be defined in an application specific
+way.  This algorithm uses a series of disk-backed sorts and passes over the
+alignment and sequence inputs to allow the graph to be constructed from very
+large inputs that are commonly encountered when working with large numbers of
+noisy input sequences.  Memory usage during construction and traversal is
+limited by the use of sorted disk-backed arrays and succinct rank/select
+dictionaries to record a queryable version of the graph.")
+    (license license:expat)))
+
+(define sdsl-lite-gn
+  (package
+    (inherit sdsl-lite)
+    (name "sdsl-lite-gn")
+    (arguments
+     '(#:phases
+       (modify-phases %standard-phases
+         (add-after 'install 'install-libdivsufsort
+           (lambda* (#:key outputs #:allow-other-keys)
+             (let ((out (assoc-ref outputs "out")))
+               (install-file "lib/libdivsufsort.a" (string-append out "/lib"))
+               (install-file "lib/libdivsufsort64.a" (string-append out "/lib"))
+               #t))))))))
+
+(define ekg-bsort
+  (let ((commit "c3ab0d3308424030e0a000645a26d2c10a59a124")
+        (revision "1"))
+    (package
+      (name "bsort")
+      (version (git-version "0.0.0" revision commit))
+      (source
+        (origin
+          (method git-fetch)
+          (uri (git-reference
+                 (url "https://github.com/ekg/bsort.git")
+                 (commit commit)))
+          (file-name (git-file-name name version))
+          (sha256
+           (base32
+            "0dgpflzcp3vdhbjwbjw347czi86gyk73hxcwjdqnaqh5vg61bdb6"))))
+      (build-system cmake-build-system)
+      (arguments
+       '(#:tests? #f ; no test target
+         #:out-of-source? #f
+         #:phases
+         (modify-phases %standard-phases
+           (replace 'install
+             (lambda* (#:key outputs #:allow-other-keys)
+               (let ((out (assoc-ref outputs "out")))
+                 (install-file "bin/bsort" (string-append out "/bin"))
+                 (install-file "src/bsort.hpp" (string-append out "/include"))
+                 (install-file "lib/libbsort.a" (string-append out "/lib")))
+               #t)))))
+      (home-page "")
+      (synopsis "")
+      (description "")
+      (license license:gpl2))))
+
+(define ekg-mmap-allocator
+  (let ((commit "ed61daf094de1c2e1adbe8306287ad52da5f0264")
+        (revision "1"))
+    (package
+      (name "mmap-allocator")
+      (version (git-version "0.10.1" revision commit))
+      (source
+        (origin
+          (method git-fetch)
+          (uri (git-reference
+                 (url "https://github.com/ekg/mmap_allocator.git")
+                 (commit commit)))
+          (file-name (git-file-name name version))
+          (sha256
+           (base32
+            "1f30b2kpwwzh6333s0qi5samk458ghbnvyycf6rwx6n6j7xswhbw"))))
+      (build-system gnu-build-system)
+      (arguments
+       '(#:phases
+         (modify-phases %standard-phases
+           (delete 'configure) ; no configure script
+           (add-before 'install 'pre-install
+             (lambda* (#:key outputs #:allow-other-keys)
+               (let ((out (assoc-ref outputs "out")))
+                 (substitute* "Makefile"
+                  (("HEADERS=") "HEADERS=mmappable_vector.h ")
+                   (("/usr") out))
+                 (mkdir-p (string-append out "/lib"))
+                 (mkdir (string-append out "/include"))
+                 #t))))
+         #:test-target "test"))
+      (home-page "")
+      (synopsis "")
+      (description "")
+      (license license:lgpl2.0+)))) ; README just says "lpgl".
