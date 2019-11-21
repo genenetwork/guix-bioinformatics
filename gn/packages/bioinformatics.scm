@@ -751,7 +751,10 @@ different datasets.
                (source    (assoc-ref %build-inputs "source")))
           (copy-recursively source targetdir)
           (substitute* (string-append targetdir "/server.r")
-            (("./pngs") (string-append targetdir "/pngs"))
+            ;; This version is ideal for deploying with the included PNGs.
+            ;; But we want all of them, so we use a local copy in gn-rshiny's $HOME.
+            ;;(("./pngs") (string-append targetdir "/pngs"))
+            (("./pngs") "/home/gn-rshiny/hchen/rn6app/pngs")
             (("convert") convert))
           (mkdir-p (string-append out "/bin"))
           (call-with-output-file app
