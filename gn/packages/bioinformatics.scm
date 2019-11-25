@@ -900,7 +900,7 @@ interest, and this app can provide values and figures for applicants to use.")
                       (append
                         (find-files "src" ".")
                         (list
-                          (string-append sdsl-lite "/lib/libsdsl.a")
+                          (string-append sdsl-lite "/lib/libsdsl.so")
                           (string-append sufsort "/lib/libdivsufsort.so")
                           (string-append sufsort "/lib/libdivsufsort64.so")
                           (string-append mmap_allocator "/lib/libmmap_allocator.a")
