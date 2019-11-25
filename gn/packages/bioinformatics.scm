@@ -878,6 +878,7 @@ interest, and this app can provide values and figures for applicants to use.")
          (replace 'build
            (lambda* (#:key inputs #:allow-other-keys)
              (let ((sdsl-lite      (assoc-ref inputs "sdsl-lite"))
+                   (sufsort        (assoc-ref inputs "sufsort"))
                    (bsort          (assoc-ref inputs "bsort"))
                    (mmap_allocator (assoc-ref inputs "mmap-allocator"))
                    (tayweeargs     (assoc-ref inputs "tayweeargs-source"))
@@ -901,8 +902,8 @@ interest, and this app can provide values and figures for applicants to use.")
                         (find-files "src" ".")
                         (list
                           (string-append sdsl-lite "/lib/libsdsl.a")
-                          (string-append sdsl-lite "/lib/libdivsufsort.a")
-                          (string-append sdsl-lite "/lib/libdivsufsort64.a")
+                          (string-append sufsort "/lib/libdivsufsort.so")
+                          (string-append sufsort "/lib/libdivsufsort64.so")
                           (string-append mmap_allocator "/lib/libmmap_allocator.a")
                           (string-append bsort "/lib/libbsort.a")))))))
          (replace 'check
@@ -920,7 +921,8 @@ interest, and this app can provide values and figures for applicants to use.")
      `(("bsort" ,ekg-bsort)
        ("mmap-allocator" ,ekg-mmap-allocator)
        ("openmpi" ,openmpi)
-       ("sdsl-lite" ,sdsl-lite-gn)
+       ("sdsl-lite" ,sdsl-lite)
+       ("sufsort" ,libdivsufsort)
        ("zlib" ,zlib)))
     (native-inputs
      `(("prove" ,perl)
@@ -982,20 +984,6 @@ noisy input sequences.  Memory usage during construction and traversal is
 limited by the use of sorted disk-backed arrays and succinct rank/select
 dictionaries to record a queryable version of the graph.")
     (license license:expat)))
-
-(define sdsl-lite-gn
-  (package
-    (inherit sdsl-lite)
-    (name "sdsl-lite-gn")
-    (arguments
-     '(#:phases
-       (modify-phases %standard-phases
-         (add-after 'install 'install-libdivsufsort
-           (lambda* (#:key outputs #:allow-other-keys)
-             (let ((out (assoc-ref outputs "out")))
-               (install-file "lib/libdivsufsort.a" (string-append out "/lib"))
-               (install-file "lib/libdivsufsort64.a" (string-append out "/lib"))
-               #t))))))))
 
 (define ekg-bsort
   (let ((commit "c3ab0d3308424030e0a000645a26d2c10a59a124")
@@ -1089,11 +1077,7 @@ dictionaries to record a queryable version of the graph.")
           (lambda* (#:key inputs #:allow-other-keys)
             (let ((sdsl (assoc-ref inputs "sdsl-lite")))
               (substitute* "makefile"
-                (("VERSION .*") (string-append "VERSION = " ,version "\n"))
-                (("`pkg-config --libs libdivsufsort`")
-                 (string-append sdsl "/lib/libdivsufsort.a"))
-                (("`pkg-config --libs libdivsufsort64`")
-                 (string-append sdsl "/lib/libdivsufsort64.a"))))
+                (("VERSION .*") (string-append "VERSION = " ,version "\n"))))
             #t))
         (delete 'configure) ; no configure phase
         (replace 'install
@@ -1111,12 +1095,13 @@ dictionaries to record a queryable version of the graph.")
    (native-inputs
     `(("pkg-config" ,pkg-config)
       ("protobuf" ,protobuf "static")
-      ("sdsl-lite" ,sdsl-lite-gn)
+      ("sdsl-lite" ,sdsl-lite)
       ("sparsehash" ,sparsehash)
       ("zlib" ,zlib "static")))
    (inputs
     `(("boost" ,boost-static)
       ("jemalloc" ,jemalloc)
+      ("libdivsufsort" ,libdivsufsort)
       ("mummer" ,mummer)
       ("protobuf" ,protobuf)
       ("zlib" ,zlib)))
