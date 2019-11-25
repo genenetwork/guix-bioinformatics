@@ -9,7 +9,7 @@
 (define-public gitea
   (package
     (name "gitea")
-    (version "1.9.4")
+    (version "1.9.6")
     (source (origin
               (method url-fetch)
               (uri (string-append "https://github.com/go-gitea/gitea/releases"
@@ -17,7 +17,7 @@
                                   "/gitea-" version "-linux-amd64"))
               (sha256
                (base32
-                 "017bf09ym3244wqvqbpdqxmpnb7gs23fqn7h5k1vfcrwamfwc82n"))))
+                "0d9p7h8vl37vsz43s12w45bvnsjz30kzkvavk4j7xpdikx3cd040"))))
     (build-system trivial-build-system)
     (arguments
      `(#:modules ((guix build utils))
