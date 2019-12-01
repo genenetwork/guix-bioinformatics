@@ -316,7 +316,7 @@ different tasks.")
     (description
      "The @dfn{flufl.lock} package provides NFS-safe file locking with
 timeouts for POSIX systems.  It is similar to the @code{O_EXCL} option of the
-@code{open} system call but uses a lockfile.  Lock object support lock-breaking
+@code{open} system call but uses a lockfile.  Lock objects support lock-breaking
 and have a maximum lifetime built-in.")
     (license (list license:asl2.0
                    license:lgpl3)))) ; only for setup_helpers.py
