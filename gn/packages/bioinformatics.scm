@@ -450,9 +450,9 @@ reads.")
                     (lambda (file)
                       (install-file file bin))
                     '("archive-pubmed" "asp-cp" "asp-ls" "download-pubmed"
-                      "edirect.pl" "efetch" "epost" "fetch-pubmed" "ftp-cp"
-                      "ftp-ls" "has-asp" "pm-prepare" "pm-refresh" "pm-stash"
-                      "rchive" "xtract"))
+                      "edirect.pl" "efetch" "epost" "esearch" "fetch-pubmed"
+                      "ftp-cp" "ftp-ls" "has-asp" "pm-prepare" "pm-refresh"
+                      "pm-stash" "rchive" "xtract"))
                   (copy-file xtract.linux (string-append bin "/xtract.Linux"))
                   (copy-file rchive.linux (string-append bin "/rchive.Linux"))
                   (chmod (string-append bin "/xtract.Linux") #o555)
