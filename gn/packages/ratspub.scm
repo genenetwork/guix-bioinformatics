@@ -3,17 +3,19 @@
   #:use-module (guix packages)
   #:use-module (guix git-download)
   #:use-module (guix build-system python)
+  #:use-module (gnu packages admin)
+  #:use-module (gn packages bioinformatics)
   #:use-module (gn packages javascript)
   #:use-module (gnu packages python-web)
   #:use-module (gnu packages python-xyz)
   #:use-module (gn packages web))
 
 (define-public ratspub
-  (let ((commit "19bc3078c06bef3c10c55dc6e69018e595d07d17")
-        (revision "1"))
+  (let ((commit "88ab6a3a21fcc2715c9a7528d8b4d15bb7ea85ed")
+        (revision "2"))
     (package
       (name "ratspub")
-      (version (git-version "0.0.0" revision commit)) ; June 1, 2019
+      (version (git-version "0.0.0" revision commit)) ; Aug 30, 2019
       (source (origin
                (method git-fetch)
                (uri (git-reference
@@ -22,7 +24,7 @@
                (file-name (git-file-name name version))
                (sha256
                 (base32
-                 "1v05rrjmiwrjmjspn487hd39403vb452hmk2l1l55rkm26781hwk"))))
+                 "0gg2wikajbz248qgg7vyclrmjhdw01wb721zvzgil9qd2gm0g4c6"))))
       (build-system python-build-system)
       (arguments
        `(#:tests? #f ; no test suite
@@ -30,34 +32,40 @@
          (modify-phases %standard-phases
            (delete 'configure)
            (delete 'build)
-           (add-after 'unpack 'patch-javascript-references
-             (lambda* (#:key inputs #:allow-other-keys)
-               (let ((cytoscape (assoc-ref inputs "cytoscape"))
-                     (bootstrap (assoc-ref inputs "bootstrap")))
-                 (substitute* "templates/cytoscape.html"
-                   (("script src=.*")
-                    (string-append "script src=\"" cytoscape
-                                   "/share/genenetwork2/javascript/cytoscape/cytoscape.min.js\"></script>\n")))
-                 (substitute* "templates/layout.html"
-                   (("https://stackpath.bootstrapcdn.com/bootstrap/.*")
-                    (string-append bootstrap "/share/web/bootstrap/css/bootstrap.min.css\">\n"))))
+           (add-after 'unpack 'patch-sources
+             (lambda* (#:key inputs outputs #:allow-other-keys)
+               (let ((out       (assoc-ref outputs "out"))
+                     (cytoscape (assoc-ref inputs "cytoscape"))
+                     (bootstrap (assoc-ref inputs "bootstrap"))
+                     (inetutils (assoc-ref inputs "inetutils")))
+                 ;; Source cannot find the substituted css currently.
+                 ;(substitute* "templates/cytoscape.html"
+                 ;  (("script src=.*")
+                 ;   (string-append "script src=\"" cytoscape
+                 ;                  "/share/genenetwork2/javascript/cytoscape/cytoscape.min.js\"></script>\n")))
+                 ;(substitute* "templates/layout.html"
+                 ;  (("https://stackpath.bootstrapcdn.com/bootstrap/.*")
+                 ;   (string-append bootstrap "/share/web/bootstrap/css/bootstrap.min.css\">\n")))
+                 (substitute* "ratspub.py"
+                   (("hostname") (string-append inetutils "/bin/hostname"))))
                #t))
            (replace 'install
              (lambda* (#:key outputs #:allow-other-keys)
                (let ((out (assoc-ref outputs "out")))
-                 (copy-recursively "static" (string-append out "/static"))
-                 (copy-recursively "templates" (string-append out "/templates"))
-                 (install-file "server.py" out))
+                 (copy-recursively "." out))
                #t))
            (add-after 'install 'wrap-executable
-             (lambda* (#:key outputs #:allow-other-keys)
+             (lambda* (#:key inputs outputs #:allow-other-keys)
                (let ((out  (assoc-ref outputs "out"))
                      (path (getenv "PYTHONPATH")))
                  (wrap-program (string-append out "/server.py")
-                               `("PYTHONPATH" ":" prefix (,path))))
+                   `("PATH" ":" prefix (,(dirname (which "edirect.pl"))))
+                   `("PYTHONPATH" ":" prefix (,path))))
                #t)))))
       (inputs
-       `(("python-flask" ,python-flask)
+       `(("edirect" ,edirect-gn)
+         ("inetutils" ,inetutils)
+         ("python-flask" ,python-flask)
          ("python-nltk" ,python-nltk)))
       (native-inputs
        `(("cytoscape" ,javascript-cytoscape)
