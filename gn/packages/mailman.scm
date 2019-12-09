@@ -31,7 +31,8 @@
           "1qph9i93ndahfxi3bb2sd0kjm2c0pkh844ai6zacfmvihl1k3pvy"))))
     (build-system python-build-system)
     (propagated-inputs
-     `(("python-aiosmtpd" ,python-aiosmtpd)
+     `(("gunicorn" ,gunicorn)
+       ("python-aiosmtpd" ,python-aiosmtpd)
        ("python-alembic" ,python-alembic)
        ("python-atpublic" ,python-atpublic)
        ("python-authheaders" ,python-authheaders)
@@ -43,7 +44,6 @@
        ("python-flufl-bounce" ,python-flufl-bounce)
        ("python-flufl-i18n" ,python-flufl-i18n)
        ("python-flufl-lock" ,python-flufl-lock)
-       ("python-gunicorn" ,python-gunicorn)
        ("python-importlib-resources" ,python-importlib-resources) ; built into python-3.7
        ("python-lazr-config" ,python-lazr-config)
        ("python-passlib" ,python-passlib)
@@ -320,40 +320,6 @@ timeouts for POSIX systems.  It is similar to the @code{O_EXCL} option of the
 and have a maximum lifetime built-in.")
     (license (list license:asl2.0
                    license:lgpl3)))) ; only for setup_helpers.py
-
-(define-public python-gunicorn
-  (package
-    (name "python-gunicorn")
-    (version "19.9.0")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (pypi-uri "gunicorn" version))
-        (sha256
-         (base32
-          "1wzlf4xmn6qjirh5w81l6i6kqjnab1n1qqkh7zsj1yb6gh4n49ps"))))
-    (build-system python-build-system)
-    (arguments
-     '(#:phases
-       (modify-phases %standard-phases
-         (add-after 'unpack 'loosen-verion-restrictions
-           (lambda _
-             (substitute* "requirements_test.txt"
-               (("coverage.*") "coverage\n")
-               (("pytest.*") "pytest\n")
-               (("pytest-cov.*") "pytest-cov\n"))
-             #t)))))
-    (native-inputs
-     `(("python-coverage" ,python-coverage)
-       ("python-pytest" ,python-pytest)
-       ("python-pytest-cov" ,python-pytest-cov)))
-    (home-page "https://gunicorn.org")
-    (synopsis "WSGI HTTP Server for UNIX")
-    (description "Gunicorn 'Green Unicorn' is a Python WSGI HTTP Server for
-UNIX.  It's a pre-fork worker model ported from Ruby's Unicorn project.  The
-Gunicorn server is broadly compatible with various web frameworks, simply
-implemented, light on server resource usage, and fairly speedy.")
-    (license license:expat)))
 
 (define-public python-importlib-resources
   (package
