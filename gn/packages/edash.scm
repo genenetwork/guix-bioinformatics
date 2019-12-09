@@ -226,29 +226,6 @@ necessary.")
      "A collection of helpers and mock objects for unit tests and doc tests.")
     (license license:expat)))
 
-(define-public python-pytest-timeout
-  (package
-    (name "python-pytest-timeout")
-    (version "1.3.3")
-    (source
-     (origin
-       (method url-fetch)
-       (uri (pypi-uri "pytest-timeout" version))
-       (sha256
-        (base32
-         "1cczcjhw4xx5sjkhxlhc5c1bkr7x6fcyx12wrnvwfckshdvblc2a"))))
-    (build-system python-build-system)
-    (propagated-inputs
-     `(("python-pytest" ,python-pytest)))
-    (arguments `(#:tests? #f))
-    (home-page
-     "http://bitbucket.org/pytest-dev/pytest-timeout/")
-    (synopsis
-     "py.test plugin to abort hanging tests")
-    (description
-     "py.test plugin to abort hanging tests")
-    (license license:expat)))
-
 (define-public python-pytest-aiohttp
   (package
     (name "python-pytest-aiohttp")
