@@ -11,7 +11,6 @@
   #:use-module (guix build-system cmake)
   #:use-module (guix build-system gnu)
   #:use-module (guix build-system python)
-  #:use-module (guix build-system r)
   #:use-module (guix build-system trivial)
   #:use-module (guix build-system waf)
   #:use-module (gnu packages)
@@ -1135,32 +1134,3 @@ here}.")
     (synopsis "Efficient sequence alignment of full genomes")
     (description "MUMmer is a versatil alignment tool for DNA and protein sequences.")
     (license license:artistic2.0)))
-
-(define-public r-qtl2
-  (package
-    (name "r-qtl2")
-    (version "0.20")
-    (source (origin
-      (method git-fetch)
-      ;; Not yet available in cran.
-      (uri (git-reference
-             (url "https://github.com/rqtl/qtl2.git")
-             (commit version)))
-      (file-name (git-file-name name version))
-      (sha256
-       (base32 "0l1asr28q25jzbwrbg5490962sg3y4sjrd0qf09p78ws1aq8vfs0"))))
-    (build-system r-build-system)
-    (propagated-inputs
-     `(("r-data-table" ,r-data-table)
-       ("r-jsonlite" ,r-jsonlite)
-       ("r-rcpp" ,r-rcpp)
-       ("r-rcppeigen" ,r-rcppeigen)
-       ("r-rsqlite" ,r-rsqlite)
-       ("r-yaml" ,r-yaml)))
-    (home-page "https://kbroman.org/qtl2/")
-    (synopsis
-     "QTL analysis software for high-dimensional data and complex cross designs")
-    (description
-     "R/qtl2 (aka qtl2) is a reimplementation of the QTL analysis software
-R/qtl, to better handle high-dimensional data and complex cross designs.")
-    (license license:gpl3)))
