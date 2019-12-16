@@ -92,7 +92,7 @@ The cheerful way of overriding a version of a package:
 
 and then run:
 
-:    guix package --install-from-file=that-file.scm
+: guix package --install-from-file=that-file.scm
 
 
 * LICENSE
