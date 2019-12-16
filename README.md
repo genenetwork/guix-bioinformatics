@@ -5,24 +5,26 @@ http://genenetwork.org/.  See
 [Guix Notes](https://github.com/pjotrp/guix-notes/blob/master/HACKING.org)
 for installing and hacking GNU Guix.
 
-To easily use the packages from this repo, simply add it to your `channels` list:
+To easily use the packages from this repo, simply add it to your
+`channels` list in ~/.config/guix/channels.scm as described
+[here](https://guix.gnu.org/manual/en/html_node/Channels.html)
 
     (cons*
       (channel
         (name 'gn-bioinformatics)
-        (url "https://gitlab.com/genenetwork/guix-bioinformatics")
+        (url "https://git.genenetwork.org/pjotrp/guix-bioinformatics.git")
         (branch "master"))
       %default-channels)
 
-and run `guix pull` like normal to update your software. This is the recommended
-way to use the software from this repository and the code snippets in this
-README assume you have done so.
+and run `guix pull` like normal to update your software. This is the
+recommended way to use the software from this repository and the code
+snippets in this README assume you have done so.
 
 If you want to make changes to the packages in this repo then simply set
 the GUIX_PACKAGE_PATH to point to the root of this directory
 before running Guix. E.g.
 
-    git clone https://github.com/genenetwork/guix-bioinformatics.git
+    git clone https://git.genenetwork.org/pjotrp/guix-bioinformatics.git
     export GUIX_PACKAGE_PATH=$PWD/guix-bioinformatics/
     guix package -A cwl
 
@@ -70,27 +72,6 @@ Install the common workflow language tool cwltool with
 
     cwtool --version
       1.0.20150916041152
-
-# Packages moved from here to main line GNU Guix
-
-## LLVM D compiler
-
-The LLVM D compiler was added to GNU Guix main stream!
-
-    guix package -i ldc
-
-## Elixir and Erlang
-
-Both languages have gone in to main line Guix:
-
-    guix package -i elixir
-    guix package -i erlang
-
-## R/qtl
-
-R-qtl is now part of main stream GNU Guix:
-
-    guix package -i r-qtl r
 
 # Development tips
 
