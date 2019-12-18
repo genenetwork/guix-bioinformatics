@@ -1,6 +1,7 @@
 (define-module (gn services bnw-container))
 
-(use-modules (gnu))
+(use-modules (gnu)
+             (gn packages bnw))
 (use-service-modules base networking web)
 
 (operating-system
@@ -22,9 +23,14 @@
                              (server-blocks
                                (list
                                  (nginx-server-configuration
-                                   (root "/srv/http/bnw")
+                                   (server-name '("Bayesian Network"))
+                                   (listen '("8888"))
+                                   (root bnw)
                                    (locations
-                                     (list (nginx-php-location)))
-                                   (listen '("8880"))
-                                   (ssl-certificate #f)
-                                   (ssl-certificate-key #f)))))))))
+                                     (list
+                                       (nginx-php-location)
+                                       (nginx-location-configuration
+                                         (uri "/sourcecodes/data/")
+                                         (body (list "alias /tmp/bnw/;")))
+                                       ))
+                                   ))))))))
