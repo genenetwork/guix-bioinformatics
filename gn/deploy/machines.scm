@@ -5,6 +5,7 @@
   #:use-module (guix packages)
   #:use-module (guix utils)
   #:use-module (guix download)
+  #:use-module (guix gexp)
   #:use-module (guix git-download)
   #:use-module (guix build-system gnu)
   #:use-module (guix build-system cmake)
@@ -53,6 +54,9 @@
                                         ; (copy-recursively nginx-etc target)
             (copy-file (string-append nginx-etc "/nginx.conf")
                        (string-append target "/nginx.conf"))
+            (plain-file "sudoers" "\
+root ALL=(ALL) ALL
+%wheel ALL=(ALL) ALL\n")
             #t))))
      (home-page "http://git.genenetwork.org/pjotrp/guix-bioinformatics")
      (synopsis "Nginx configuration")
