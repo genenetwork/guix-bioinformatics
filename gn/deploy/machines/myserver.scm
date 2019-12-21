@@ -1,13 +1,14 @@
 ;; This is an operating system configuration template
 ;; for a "bare bones" setup, with no X11 display server.
 
-(use-modules (gnu))
-(use-service-modules networking ssh)
-(use-package-modules screen)
+(use-modules (gnu)
+             (gnu packages web))
+(use-service-modules networking ssh web)
+(use-package-modules screen ruby)
 
 (operating-system
   (host-name "komputilo")
-  (timezone "Europe/Berlin")
+  (timezone "Europe/Amsterdam")
   (locale "en_US.utf8")
 
   ;; Boot in "legacy" BIOS mode, assuming /dev/sdX is the
@@ -26,8 +27,9 @@
   ;; account is implicit, and is initially created with the
   ;; empty password.
   (users (cons (user-account
-                (name "alice")
-                (comment "Bob's sister")
+                (name "pjotr")
+                (password "$6$EoLVFsCpLywbQmy1$aJJ3dIrgIH4UtiTVynIZ0MiC667w4C5ybygGisUnUfusPrgxZ7ncz.Cjv67EJPA6VW3EPFbOaiadQzxFn2sLb.")
+                (comment "Pjotr")
                 (group "users")
 
                 ;; Adding the account to the "wheel" group
@@ -39,12 +41,26 @@
                %base-user-accounts))
 
   ;; Globally-installed packages.
-  (packages (cons screen %base-packages))
+  ; (packages (cons screen %base-packages))
+
+  (packages (append (list
+                     screen nginx)
+                    %base-packages))
+
 
   ;; Add services to the baseline: a DHCP client and
-  ;; an SSH server.
+  ;; an SSH server with nginx
   (services (append (list (service dhcp-client-service-type)
                           (service openssh-service-type
                                    (openssh-configuration
-                                    (port-number 2222))))
+                                    ; (authorized-keys
+                                    ;  `(("pjotr" ,(local-file "/home/pjotr/.ssh/authorized_keys"))))
+                                    (password-authentication? #t)
+                                    (port-number 2222)))
+                          (service nginx-service-type
+                                   (nginx-configuration
+                                    (server-blocks
+                                     (list (nginx-server-configuration
+                                            (listen '("8080")))))))
+                                   )
                     %base-services)))
