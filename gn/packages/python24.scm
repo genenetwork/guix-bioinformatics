@@ -244,6 +244,7 @@ spreadsheets without the need for COM objects.")
     (arguments
      (substitute-keyword-arguments (package-arguments python2-piddle-gn)
        ((#:python _) python-2.4)))
+    (native-inputs `(("python24-setuptools" ,python24-setuptools)))
     (propagated-inputs
      `(("python24-pil" ,python24-pil)))))
 
