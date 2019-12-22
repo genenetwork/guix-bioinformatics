@@ -44,6 +44,9 @@
                (substitute* (find-files "." "\\.php")
                  (("HTTP_POST_VARS") "_POST")
                  (("HTTP_POST_FILES") "_FILES"))
+               ;; change $dir to a writable directory
+               ;(substitute* (find-files "sourcecodes" "\\.php$")
+               ;  (("\\$dir=\"./data") "$dir=\"./data/tmp"))
                #t))
            (add-after 'patch-source-shebangs 'patch-more-shebangs
              (lambda* (#:key inputs #:allow-other-keys)
@@ -84,6 +87,11 @@
                  (substitute* '("sourcecodes/build.sh"
                                 "downloads/BNW/src/build.sh")
                    (("./localscore/libRmath.so") (string-append rmath "/lib/libRmath.so")))
+                 (substitute* "sourcecodes/run.sh"
+                   (("rm ") (string-append (which "rm") " "))
+                   (("rmdir ") (string-append (which "rmdir") " "))
+                   (("mkdir ") (string-append (which "mkdir") " "))
+                   (("dirname ") (string-append (which "dirname")" ")))
                  ;(substitute* "sourcecodes/layout_cyto.php"
                  ;  (("https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.7.1/cytoscape.min.js")
                  ;   (string-append cyto js-path "cytoscape/cytoscape.min.js"))
@@ -127,8 +135,8 @@
                    (lambda (file)
                      (chmod file #o555))
                    (append (find-files out "\\.(sh|py)$")
-                           (find-files (string-append out "/sourcecodes/run_scripts" ".*"))
-                           ))
+                           (find-files (string-append out "/sourcecodes/run_scripts/" "."))))
+                 (chmod (string-append out "/sourcecodes/data") #o777) ; needs to be writable
                  #t)))
            (replace 'build
              (lambda _
