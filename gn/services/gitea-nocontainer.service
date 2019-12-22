@@ -3,7 +3,7 @@ Description=Gitea git server and web ui
 Wants=guix-daemon.service
 
 [Service]
-Environment="GITEA_COMMAND=$(GUIX_PACKAGE_PATH=/home/efraimf/workspace/guix-bioinformatics /var/guix/profiles/per-user/efraimf/current-guix/bin/guix build gitea)/bin/gitea"
+Environment="GITEA_COMMAND=/usr/local/guix-profiles/gitea/bin/gitea"
 ExecStart=/bin/su -l gitea -c 'GITEA_WORK_DIR=/var/lib/git/gitea HOME=/var/lib/git/gitea ${GITEA_COMMAND} --port 3300'
 
 [Install]

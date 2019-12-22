@@ -14,7 +14,7 @@
 
 (define-public bnw
   (let ((commit "eb6b002b924694808384f1a8d7c6d1121806ae04")
-        (revision "3"))
+        (revision "4"))
     (package
       (name "bnw")
       (version (git-version "1.22" revision commit)) ; June 28, 2019
@@ -41,6 +41,9 @@
                  (("http://bnw.genenetwork.org/BNW_1.22") "http://bnw-test.genenetwork.org"))
                (substitute* "sourcecodes/header_batchsearch.inc"
                  (("my_style.css") "my_new_style.css"))
+               (substitute* (find-files "." "\\.php")
+                 (("HTTP_POST_VARS") "_POST")
+                 (("HTTP_POST_FILES") "_FILES"))
                #t))
            (add-after 'patch-source-shebangs 'patch-more-shebangs
              (lambda* (#:key inputs #:allow-other-keys)
@@ -70,48 +73,51 @@
                    (find-files "." ".*"))
                  (substitute* '("sourcecodes/examplefilecopy.sh"
                                 "sourcecodes/filecopy.sh")
-                   (("rm") (which "rm"))
-                   (("cp") (which "cp")))
+                   (("^rm") (which "rm"))
+                   (("\\ cp") (string-append " " (which "cp"))))
+                 (substitute* (find-files "sourcecodes" "(^run|py$)")
+                   (("/home/jziebart/python/Python-2.7.15/python") (which "python2")))
                  (substitute*
                    (append (find-files "sourcecodes" ".php")
                            (find-files "sourcecodes/run_scripts" ".*"))
                    (("/usr/bin/dot") (string-append graphviz "/bin/dot")))
-                 (substitute* "sourcecodes/build.sh"
+                 (substitute* '("sourcecodes/build.sh"
+                                "downloads/BNW/src/build.sh")
                    (("./localscore/libRmath.so") (string-append rmath "/lib/libRmath.so")))
-                 (substitute* "sourcecodes/layout_cyto.php"
-                   (("https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.7.1/cytoscape.min.js")
-                    (string-append cyto js-path "cytoscape/cytoscape.min.js"))
-                   (("https://cdnjs.cloudflare.com/ajax/libs/cytoscape/2.7.29/cytoscape.min.js")
-                    (string-append cyto2 js-path "cytoscape/cytoscape.min.js"))
-                   (("http://spades.bioinf.spbau.ru/~alla/graph_viewer/js/cytoscape-dagre.js")
-                    (string-append cs-dagre js-path "cytoscape-dagre/cytoscape-dagre.js"))
-                   (("https://unpkg.com/dagre@0.7.4/dist/dagre.js")
-                    (string-append dagre js-path "dagre/dagre.js"))
-                   (("https://cdnjs.cloudflare.com/ajax/libs/cytoscape-panzoom/2.5.3/cytoscape.js-panzoom.css")
-                    (string-append panzoom js-path "cytoscape-panzoom/cytoscape.js-panzoom.css"))
-                   (("https://cdnjs.cloudflare.com/ajax/libs/cytoscape-panzoom/2.5.3/cytoscape-panzoom.js")
-                    (string-append panzoom js-path "cytoscape-panzoom/cytoscape-panzoom.js"))
-                   (("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.3/css/font-awesome.css")
-                    (string-append awesome "/share/web/font-awesome/css/font-awesome.css"))
-                   (("https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js")
-                    (string-append jquery "/share/web/jquery/jquery.min.js"))
-                   (("https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.10/lodash.js")
-                    (string-append lodash js-path "lodash/lodash.js")))
-                 (substitute* '("sourcecodes/layout_svg_wt.php"
-                                "sourcecodes/layout_svg_no.php")
-                   (("http://d3js.org/d3.v4.min.js")
-                    (string-append d3js js-path "d3js/d3.min.js"))
-                   (("http://d3js.org/d3-selection-multi.v1.js")
-                    (string-append d3js-multi js-path "d3js-multi/d3-selection-multi.js"))
-                   (("https://cdn.rawgit.com/eligrey/canvas-toBlob.js/f1a01896135ab378aa5c0118eadd81da55e698d8/canvas-toBlob.js")
-                    (string-append canvas-toblob js-path "canvas-toBlob/canvas-toBlob.js"))
-                   (("https://cdn.rawgit.com/eligrey/FileSaver.js/e9d941381475b5df8b7d7691013401e171014e89/FileSaver.min.js")
-                    (string-append filesaver js-path "filesaver/filesaver.js"))))
+                 ;(substitute* "sourcecodes/layout_cyto.php"
+                 ;  (("https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.7.1/cytoscape.min.js")
+                 ;   (string-append cyto js-path "cytoscape/cytoscape.min.js"))
+                 ;  (("https://cdnjs.cloudflare.com/ajax/libs/cytoscape/2.7.29/cytoscape.min.js")
+                 ;   (string-append cyto2 js-path "cytoscape/cytoscape.min.js"))
+                 ;  (("http://spades.bioinf.spbau.ru/~alla/graph_viewer/js/cytoscape-dagre.js")
+                 ;   (string-append cs-dagre js-path "cytoscape-dagre/cytoscape-dagre.js"))
+                 ;  (("https://unpkg.com/dagre@0.7.4/dist/dagre.js")
+                 ;   (string-append dagre js-path "dagre/dagre.js"))
+                 ;  (("https://cdnjs.cloudflare.com/ajax/libs/cytoscape-panzoom/2.5.3/cytoscape.js-panzoom.css")
+                 ;   (string-append panzoom js-path "cytoscape-panzoom/cytoscape.js-panzoom.css"))
+                 ;  (("https://cdnjs.cloudflare.com/ajax/libs/cytoscape-panzoom/2.5.3/cytoscape-panzoom.js")
+                 ;   (string-append panzoom js-path "cytoscape-panzoom/cytoscape-panzoom.js"))
+                 ;  (("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.3/css/font-awesome.css")
+                 ;   (string-append awesome "/share/web/font-awesome/css/font-awesome.css"))
+                 ;  (("https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js")
+                 ;   (string-append jquery "/share/web/jquery/jquery.min.js"))
+                 ;  (("https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.10/lodash.js")
+                 ;   (string-append lodash js-path "lodash/lodash.js")))
+                 ;(substitute* '("sourcecodes/layout_svg_wt.php"
+                 ;               "sourcecodes/layout_svg_no.php")
+                 ;  (("http://d3js.org/d3.v4.min.js")
+                 ;   (string-append d3js js-path "d3js/d3.min.js"))
+                 ;  (("http://d3js.org/d3-selection-multi.v1.js")
+                 ;   (string-append d3js-multi js-path "d3js-multi/d3-selection-multi.js"))
+                 ;  (("https://cdn.rawgit.com/eligrey/canvas-toBlob.js/f1a01896135ab378aa5c0118eadd81da55e698d8/canvas-toBlob.js")
+                 ;   (string-append canvas-toblob js-path "canvas-toBlob/canvas-toBlob.js"))
+                 ;  (("https://cdn.rawgit.com/eligrey/FileSaver.js/e9d941381475b5df8b7d7691013401e171014e89/FileSaver.min.js")
+                 ;   (string-append filesaver js-path "filesaver/filesaver.js")))
+                 )
                #t))
            (replace 'install
              (lambda* (#:key outputs #:allow-other-keys)
                (let ((out (assoc-ref outputs "out")))
-                 (delete-file "sourcecodes/localscore/libRmath.so")
                  (copy-recursively "." out))
                #t))
            (add-after 'install 'make-files-executable
@@ -120,28 +126,30 @@
                  (for-each
                    (lambda (file)
                      (chmod file #o555))
-                   (find-files out "\\.sh$"))
+                   (append (find-files out "\\.(sh|py)$")
+                           (find-files (string-append out "/sourcecodes/run_scripts" ".*"))
+                           ))
                  #t)))
            (replace 'build
              (lambda _
                (with-directory-excursion "sourcecodes"
                  (substitute* "build.sh"
                    (("./localscore") "localscore"))
-                 (chmod "k-best/src/buildk_poster.sh" #o755)
+                 (chmod "k-best/src/buildk_poster.sh" #o555)
                  (invoke "sh" "build.sh")
                  ;; from info_files/plotly_notes.txt
                  ;(with-directory-excursion "data"
                  ;  (setenv "HOME" "/tmp")
                  ;  (invoke "python" "../cv_plotly.py" "LvQ")
                  ;  (invoke "sh" "../plotly_loo.sh"))
-                 ;(invoke "./run_loo" "LvQ Weight")
+                 ;(invoke "./run_scripts/run_loo" "LvQ Weight")
                  ))))))
       (inputs
        `(("graphviz" ,graphviz-2.26)
          ("octave" ,octave-3.4.3)
          ("python" ,python-2)
          ("plotly" ,python2-plotly-3.2.1)
-         ("rmath" ,rmath-standalone) ; Should this be r-minimal? Which version?
+         ("rmath" ,rmath-standalone)
          ("jquery" ,web-jquery)
          ("awesome" ,web-font-awesome)
          ("cytoscape" ,javascript-cytoscape)

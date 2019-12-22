@@ -857,6 +857,67 @@ grants require a calculation of the applications power to detect the effect of
 interest, and this app can provide values and figures for applicants to use.")
         (license license:gpl3))))
 
+(define-public singlecellrshiny
+  (let ((commit "8061dcb477ba355de77d3e4fd3a15cf3267b56af")
+        (revision "1"))
+    (package
+     (name "singlecellrshiny")
+     (version (git-version "0.0.0" revision commit))
+     (source (origin
+       (method git-fetch)
+       (uri (git-reference
+              (url "https://github.com/syousefi/singleCellRshiny.git")
+              (commit commit)))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32 "1pd8a9jx6ijjggsifvq66madx31h29rah5pmz4kdzfzb4fskpqz1"))))
+     (build-system trivial-build-system)
+     (arguments
+      `(#:modules ((guix build utils))
+        #:builder
+        (begin
+          (use-modules (guix build utils))
+          (let* ((out       (assoc-ref %outputs "out"))
+                 (targetdir (string-append out "/share/" ,name))
+                 (app       (string-append out "/bin/" ,name))
+                 (Rbin      (string-append (assoc-ref %build-inputs "r-min")
+                                           "/bin/Rscript"))
+                 (source    (assoc-ref %build-inputs "source")))
+            (copy-recursively source targetdir)
+            (substitute* (string-append targetdir "/global.R")
+              (("800-H1-H20-RNA-Seq-SingleCell-Retina-OMRF-03-29-19_FPKM_v2_SiamakPlay.csv")
+               "shinyRappToyDataset_SiamakPlay.csv")
+              ;; Comment out the two unreferenced files for now
+              (("^rgc.*") "")
+              ;(("CellTypes_RGC_Master_08Dec2018.csv") "")
+              ;(("RobTop1001.csv") "")
+              )
+            (mkdir-p (string-append out "/bin"))
+            (call-with-output-file app
+              (lambda (port)
+                (format port
+"#!~a
+library(shiny)
+setwd(\"~a\")
+runApp(launch.browser=0, port=4208)~%\n"
+                Rbin targetdir)))
+            (chmod app #o555)
+            #t))))
+     (native-inputs `(("source" ,source)))
+     (inputs
+      `(("r-min" ,r-minimal)))
+     (propagated-inputs
+      `(("r" ,r)
+        ("r-dt" ,r-dt)
+        ("r-seurat" ,r-seurat)
+        ("r-shiny" ,r-shiny)))
+     (home-page "http://rn6err.opar.io/")
+     (synopsis "RNA sequencing data analysis")
+     (description
+      "This is the R-Shiny programs to run some basic single cell RNA sequencing
+(scRNA-seq) data analysis.")
+     (license license:gpl3))))
+
 (define-public seqwish
   (package
     (name "seqwish")
