@@ -75,8 +75,10 @@
                (bootloader grub-bootloader)
                (target "does-not-matter")))
   (file-systems %base-file-systems)
-  ;; No firmware for VMs
+  ;; No firmware for VMs.
   (firmware '())
+  ;; We don't need any packages inside the container.
+  (packages '())
 
   (services (list (service dhcp-client-service-type)
                   (service bnw-service-type
