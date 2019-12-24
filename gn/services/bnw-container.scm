@@ -13,7 +13,7 @@
   (package          bnw-configuration-package       ; package
                     (default bnw))
   (deploy-directory bnw-deploy-directory            ; string
-                    (default "/home/bnw/server"))
+                    (default "/srv/http"))
   (port             bnw-configuration-port          ; list of strings
                     (default '("8880"))))
 
@@ -23,11 +23,12 @@
      #~(begin
          (use-modules (guix build utils))
          (when (directory-exists? #$deploy-directory)
-           (delete-file-recusively #$deploy-directory))
+           ;; Not 'delete-file-recursively' because the directory might be empty.
+           (system* "rm" "-r" #$(string-append deploy-directory "/*")))
          (mkdir-p #$deploy-directory)
          (copy-recursively #$package #$deploy-directory)
-         (system* #$(file-append coreutils "/bin/chmod") "a+w"
-                  (string-append #$deploy-directory "/sourcecodes/data"))))))
+         (invoke #$(file-append coreutils "/bin/chmod") "a+w"
+                 (string-append #$deploy-directory "/sourcecodes/data"))))))
 
 (define bnw-nginx-config
   (match-lambda
@@ -37,7 +38,7 @@
          (server-name '("Bayesian Network"))
          (listen port)
          ;(root package)
-         (root "/srv/http")
+         (root deploy-directory)
          (locations
            (list
              (nginx-php-location)
@@ -81,6 +82,5 @@
                   (service bnw-service-type
                            ;; The following is for testing:
                            ;(bnw-configuration
-                           ;  (deploy-directory "/home/efraimf/bnw")
                            ;  (port '("8888")))
                            ))))
