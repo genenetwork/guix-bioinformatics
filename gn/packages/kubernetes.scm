@@ -13,7 +13,7 @@
 (define-public kubernetes
   (package
     (name "kubernetes")
-    (version "1.16.3")
+    (version "1.16.4")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -22,7 +22,7 @@
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "1v4dhlpvi8gkc26zaxdfypng8b1f2lwm6hjz2amvq8mh49j5x7ld"))))
+                "0snk4jr5is8rwx0px2kwx802dg770mrgp11irnwy2z50p327jrcs"))))
     (build-system go-build-system)
     (arguments
      `(#:import-path "k8s.io/kubernetes"
@@ -101,7 +101,7 @@ deployment, maintenance, and scaling of applications.")
   (package
     (inherit kubernetes)
     (name "kubernetes")
-    (version "1.15.6")
+    (version "1.15.7")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -110,7 +110,7 @@ deployment, maintenance, and scaling of applications.")
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "055xizqpg5yjda7b6l1vnajmbfz2ljh2z85r1d63683rqyw2y078"))))
+                "0xk5cx0ihvnfb3y6s0xhkfyb7a62dy2bkxsarq4wdis5nkc2jdim"))))
     (propagated-inputs
      `(("crictl" ,crictl-1.15)))))
 
@@ -118,7 +118,7 @@ deployment, maintenance, and scaling of applications.")
   (package
     (inherit kubernetes)
     (name "kubernetes")
-    (version "1.14.9")
+    (version "1.14.10")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -127,7 +127,7 @@ deployment, maintenance, and scaling of applications.")
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "06w2jjd89jjzmc0db1fgwnsyfwjr07chh8q3zvmx5pznprvv485l"))))
+                "09p3w64f7spcj2mg1gw32g2mwjpii4zmpd2ychazdq7zrc85lxdq"))))
     (propagated-inputs
      `(("crictl" ,crictl-1.14)))))
 
