@@ -46,8 +46,27 @@
                  (("defaultMountCommand.*")
                   (string-append "defaultMountCommand = \""
                                  (assoc-ref inputs "util-linux")
-                                 "/bin/mount\"\n")))
-               )
+                                 "/bin/mount\"\n"))))
+             #t))
+         (add-before 'build 'fix-version-numbers
+           (lambda _
+             (with-directory-excursion "src/k8s.io/kubernetes"
+               (substitute* '("cmd/kubeadm/app/version/base.go"
+                              "staging/src/k8s.io/client-go/pkg/version/base.go"
+                              "staging/src/k8s.io/kubectl/pkg/version/base.go"
+                              "staging/src/k8s.io/component-base/version/base.go"
+                              "staging/src/k8s.io/component-base/metrics/version_parser_test.go"
+                              "pkg/version/base.go"
+                              "vendor/k8s.io/client-go/pkg/version/base.go"
+                              "vendor/k8s.io/kubectl/pkg/version/base.go"
+                              "vendor/k8s.io/component-base/metrics/version_parser_test.go")
+                 (("v0.0.0-master\\+\\$Format:\\%h\\$") (string-append "v" ,version))
+                 (("v0.0.0-master") (string-append "v" ,version))
+                 (("gitMajor string = \"\"")
+                  (string-append "gitMajor string = \"" ,(version-major version) "\""))
+                 (("gitMinor string = \"\"")
+                  (string-append "gitMinor string = \""
+                                 ,(string-drop (version-major+minor version) 2) "\""))))
              #t))
          (replace 'build
            (lambda _
@@ -119,12 +138,17 @@ deployment, maintenance, and scaling of applications.")
               (sha256
                (base32
                 "0xk5cx0ihvnfb3y6s0xhkfyb7a62dy2bkxsarq4wdis5nkc2jdim"))))
+    (arguments
+     (substitute-keyword-arguments (package-arguments kubernetes)
+       ((#:phases phases)
+        `(modify-phases ,phases
+           (delete 'fix-version-numbers)))))
     (propagated-inputs
      `(("crictl" ,crictl-1.15)))))
 
 (define-public kubernetes-1.14
   (package
-    (inherit kubernetes)
+    (inherit kubernetes-1.15)
     (name "kubernetes")
     (version "1.14.10")
     (source (origin
@@ -141,7 +165,7 @@ deployment, maintenance, and scaling of applications.")
 
 (define-public kubernetes-1.13
   (package
-    (inherit kubernetes)
+    (inherit kubernetes-1.15)
     (name "kubernetes")
     (version "1.13.12")
     (source (origin
