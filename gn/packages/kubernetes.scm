@@ -8,6 +8,7 @@
   #:use-module (guix build-system trivial)
   #:use-module (gnu packages base)
   #:use-module (gnu packages compression)
+  #:use-module (gnu packages linux)
   #:use-module (gnu packages rsync))
 
 (define-public kubernetes
@@ -35,12 +36,18 @@
              (for-each make-file-writable (find-files "."))
              #t))
          (add-before 'build 'prepare-build
-           (lambda _
+           (lambda* (#:key inputs #:allow-other-keys)
              (with-directory-excursion "src/k8s.io/kubernetes"
                (substitute* '("build/root/Makefile"
                               "build/root/Makefile.generated_files"
                               "build/pause/Makefile")
-                 (("/bin/bash") (which "bash"))))
+                 (("/bin/bash") (which "bash")))
+               (substitute* "pkg/util/mount/mount.go"
+                 (("defaultMountCommand.*")
+                  (string-append "defaultMountCommand = \""
+                                 (assoc-ref inputs "util-linux")
+                                 "/bin/mount\"\n")))
+               )
              #t))
          (replace 'build
            (lambda _
@@ -87,7 +94,8 @@
     (native-inputs
      `(("which" ,which)))
     (inputs
-     `(("rsync" ,rsync)))
+     `(("rsync" ,rsync)
+       ("util-linux" ,util-linux)))
     (propagated-inputs
      `(("crictl" ,crictl))) ; Must be the same major+minor version as kubernetes.
     (home-page "https://kubernetes.io/")
