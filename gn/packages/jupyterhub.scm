@@ -17,7 +17,7 @@
   #:use-module (gnu packages python-xyz)
   #:use-module (gnu packages serialization)
   #:use-module (gnu packages time)
-  )
+  #:use-module (gn packages node))
 
 (define-public jupyterhub
   (package
@@ -29,30 +29,46 @@
         (uri (pypi-uri "jupyterhub" version))
         (sha256
          (base32
-          "0zx6gw9yhgki05j21p6x1x2sf5a2mg2c2mx0ii8rl6q4b98ilm1k"))))
+          "0zx6gw9yhgki05j21p6x1x2sf5a2mg2c2mx0ii8rl6q4b98ilm1k"))
+        (patches
+          (list
+            (origin
+              (method url-fetch)
+              (uri "https://github.com/jupyterhub/jupyterhub/commit/b624116be79168f37af728195af663498f3c55c0.patch")
+              (file-name "jupyterhub-fix-first-launch-errors.patch")
+              (sha256
+               (base32
+                "00rbqz0rz2642ypfgpd49fv7wzpc9n0pdfqixqp3zxs6vqf3x372")))))))
     (build-system python-build-system)
     (arguments
      '(#:tests? #f ; Tests require a webserver, postgresql database and npm.
        #:phases
        (modify-phases %standard-phases
          (replace 'check
-           (lambda* (#:key tests? #:allow-other-keys)
+           (lambda* (#:key tests? inputs #:allow-other-keys)
              (if tests?
-               (;; From .travis.yml
-                (invoke "initdb" "main")
-                (invoke "pg_ctl" "-D" "main" "start")
-                (invoke "psql" "--list")
-                ;; From ci/init-db.sh
-                (invoke "psql" "-d" "postgres" "-c"
-                        "CREATE DATABASE jupyterhub_upgrade_072;")
-                (invoke "psql" "-d" "postgres" "-c"
-                        "CREATE DATABASE jupyterhub_upgrade_081;")
-                (invoke "psql" "-d" "postgres" "-c"
-                        "CREATE DATABASE jupyterhub_upgrade_094;")
-                (invoke "pytest" "-v" "--maxfail=2" "jupyterhub/tests"))
+               ((let* ((postgres (assoc-ref inputs "postgresql"))
+                       (initdb   (string-append postgres "/bin/initdb"))
+                       (pg_ctl   (string-append postgres "/bin/pg_ctl"))
+                       (psql     (string-append postgres "/bin/psql"))
+                       )
+                  ;; From .travis.yml
+                  (invoke initdb "main")
+                  (invoke pg_ctl "-D" "main" "start")
+                  (invoke psql "--list")
+                  ;; From ci/init-db.sh
+                  (invoke psql "-d" "postgres" "-c"
+                          "CREATE DATABASE jupyterhub_upgrade_072;")
+                  (invoke psql "-d" "postgres" "-c"
+                          "CREATE DATABASE jupyterhub_upgrade_081;")
+                  (invoke psql "-d" "postgres" "-c"
+                          "CREATE DATABASE jupyterhub_upgrade_094;")
+                  (invoke "pytest" "-v" "--maxfail=2" "jupyterhub/tests"))
+                )
                #t))))))
     (propagated-inputs
-     `(("python-alembic" ,python-alembic)
+     `(;("node-configurable-http-proxy" ,node-configurable-http-proxy)
+       ("python-alembic" ,python-alembic)
        ("python-async-generator" ,python-async-generator)
        ("python-certipy" ,python-certipy)
        ("python-dateutil" ,python-dateutil)
@@ -64,11 +80,13 @@
        ("python-requests" ,python-requests)
        ("python-sqlalchemy" ,python-sqlalchemy)
        ("python-tornado" ,python-tornado)
-       ("python-traitlets" ,python-traitlets)))
+       ("python-traitlets" ,python-traitlets)
+       ;; Recommended but not required:
+       ("python-pycurl" ,python-pycurl)))
     (native-inputs
      `(
-       ;("postgresql" ,postgresql)
-       ;("python-psycopg2" ,python-psycopg2)
+       ("postgresql" ,postgresql)
+       ("python-psycopg2" ,python-psycopg2)
 
        ("python-beautifulsoup4" ,python-beautifulsoup4)
        ("python-jupyter-client" ,python-jupyter-client)
@@ -86,8 +104,8 @@ proxies multiple instances of the single-user Jupyter notebook server.")
     (license license:bsd-3)))
 
 (define-public the-littlest-jupyterhub
-  (let ((commit "770b95027951c1e191690b0f65d3e2e2d72ba05f") ; Oct 30, 2019
-        (revision "1"))
+  (let ((commit "29e8bcc4865d26ef67910862a567f55f46f96593") ; Dec 6, 2019
+        (revision "2"))
     (package
       (name "the-littlest-jupyterhub")
       (version (git-version "0.0.0" revision commit))
@@ -100,7 +118,7 @@ proxies multiple instances of the single-user Jupyter notebook server.")
           (file-name (git-file-name name version))
           (sha256
            (base32
-            "0dnin2rwrqr8nzf7gj6sjqchvdi24kd0sgjh655c4zq1hdbpsmc6"))))
+            "10xrmia8w9vd9zmgww426kyd95jx81l5c4zpq84gqbvkibq61rsa"))))
       (build-system python-build-system)
       (arguments
        '(#:phases
