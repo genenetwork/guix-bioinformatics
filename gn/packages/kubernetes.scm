@@ -282,7 +282,7 @@ tools for Kubelet CRI.")
            (replace 'build
              (lambda _
                (invoke "make" "windows"))) ; This is the correct invocation
-           (add-before 'prepare-source 'update-version
+           (add-after 'prepare-source 'update-version
              (lambda _
                (substitute* "Makefile"
                  (("^VERSION .*") (string-append "VERSION := " ,version "\n")))
