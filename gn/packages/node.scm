@@ -4,8 +4,7 @@
   #:use-module (guix packages)
   #:use-module (guix git-download)
   #:use-module (guix build-system node)
-  #:use-module (gnu packages javascript)
-  )
+  #:use-module (gnu packages lisp-xyz))
 
 (define-public node-asap
   (package
