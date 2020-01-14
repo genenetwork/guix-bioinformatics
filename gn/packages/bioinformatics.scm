@@ -480,11 +480,10 @@ reads.")
         ,(origin
            (method url-fetch)
            (uri (string-append "ftp://ftp.ncbi.nlm.nih.gov/entrez/entrezdirect/"
-                               "versions/" (package-version edirect) "/xtract.Linux"))
-           (file-name (string-append "xtract.Linux-" (package-version edirect)))
+                               "/xtract.Linux")) ;; March 10, 2016
            (sha256
             (base32
-             "0fx6arpn38spnwszmvkkpa3498qrrlglg2l9jw91icgqbyjjq9wq"))))
+             "0wppi3q3wcind6za043w0g7a987qr59yiyh553h46a1apjkd8y9b"))))
        ("rchive.Linux"
         ,(origin
            (method url-fetch)

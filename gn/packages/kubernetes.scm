@@ -8,12 +8,13 @@
   #:use-module (guix build-system trivial)
   #:use-module (gnu packages base)
   #:use-module (gnu packages compression)
+  #:use-module (gnu packages linux)
   #:use-module (gnu packages rsync))
 
 (define-public kubernetes
   (package
     (name "kubernetes")
-    (version "1.16.3")
+    (version "1.16.4")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -22,7 +23,7 @@
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "1v4dhlpvi8gkc26zaxdfypng8b1f2lwm6hjz2amvq8mh49j5x7ld"))))
+                "0snk4jr5is8rwx0px2kwx802dg770mrgp11irnwy2z50p327jrcs"))))
     (build-system go-build-system)
     (arguments
      `(#:import-path "k8s.io/kubernetes"
@@ -35,12 +36,37 @@
              (for-each make-file-writable (find-files "."))
              #t))
          (add-before 'build 'prepare-build
-           (lambda _
+           (lambda* (#:key inputs #:allow-other-keys)
              (with-directory-excursion "src/k8s.io/kubernetes"
                (substitute* '("build/root/Makefile"
                               "build/root/Makefile.generated_files"
                               "build/pause/Makefile")
-                 (("/bin/bash") (which "bash"))))
+                 (("/bin/bash") (which "bash")))
+               (substitute* "pkg/util/mount/mount.go"
+                 (("defaultMountCommand.*")
+                  (string-append "defaultMountCommand = \""
+                                 (assoc-ref inputs "util-linux")
+                                 "/bin/mount\"\n"))))
+             #t))
+         (add-before 'build 'fix-version-numbers
+           (lambda _
+             (with-directory-excursion "src/k8s.io/kubernetes"
+               (substitute* '("cmd/kubeadm/app/version/base.go"
+                              "staging/src/k8s.io/client-go/pkg/version/base.go"
+                              "staging/src/k8s.io/kubectl/pkg/version/base.go"
+                              "staging/src/k8s.io/component-base/version/base.go"
+                              "staging/src/k8s.io/component-base/metrics/version_parser_test.go"
+                              "pkg/version/base.go"
+                              "vendor/k8s.io/client-go/pkg/version/base.go"
+                              "vendor/k8s.io/kubectl/pkg/version/base.go"
+                              "vendor/k8s.io/component-base/metrics/version_parser_test.go")
+                 (("v0.0.0-master\\+\\$Format:\\%h\\$") (string-append "v" ,version))
+                 (("v0.0.0-master") (string-append "v" ,version))
+                 (("gitMajor string = \"\"")
+                  (string-append "gitMajor string = \"" ,(version-major version) "\""))
+                 (("gitMinor string = \"\"")
+                  (string-append "gitMinor string = \""
+                                 ,(string-drop (version-major+minor version) 2) "\""))))
              #t))
          (replace 'build
            (lambda _
@@ -87,7 +113,8 @@
     (native-inputs
      `(("which" ,which)))
     (inputs
-     `(("rsync" ,rsync)))
+     `(("rsync" ,rsync)
+       ("util-linux" ,util-linux)))
     (propagated-inputs
      `(("crictl" ,crictl))) ; Must be the same major+minor version as kubernetes.
     (home-page "https://kubernetes.io/")
@@ -101,7 +128,7 @@ deployment, maintenance, and scaling of applications.")
   (package
     (inherit kubernetes)
     (name "kubernetes")
-    (version "1.15.6")
+    (version "1.15.7")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -110,15 +137,20 @@ deployment, maintenance, and scaling of applications.")
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "055xizqpg5yjda7b6l1vnajmbfz2ljh2z85r1d63683rqyw2y078"))))
+                "0xk5cx0ihvnfb3y6s0xhkfyb7a62dy2bkxsarq4wdis5nkc2jdim"))))
+    (arguments
+     (substitute-keyword-arguments (package-arguments kubernetes)
+       ((#:phases phases)
+        `(modify-phases ,phases
+           (delete 'fix-version-numbers)))))
     (propagated-inputs
      `(("crictl" ,crictl-1.15)))))
 
 (define-public kubernetes-1.14
   (package
-    (inherit kubernetes)
+    (inherit kubernetes-1.15)
     (name "kubernetes")
-    (version "1.14.9")
+    (version "1.14.10")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -127,13 +159,13 @@ deployment, maintenance, and scaling of applications.")
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "06w2jjd89jjzmc0db1fgwnsyfwjr07chh8q3zvmx5pznprvv485l"))))
+                "09p3w64f7spcj2mg1gw32g2mwjpii4zmpd2ychazdq7zrc85lxdq"))))
     (propagated-inputs
      `(("crictl" ,crictl-1.14)))))
 
 (define-public kubernetes-1.13
   (package
-    (inherit kubernetes)
+    (inherit kubernetes-1.15)
     (name "kubernetes")
     (version "1.13.12")
     (source (origin
@@ -250,7 +282,7 @@ tools for Kubelet CRI.")
            (replace 'build
              (lambda _
                (invoke "make" "windows"))) ; This is the correct invocation
-           (add-before 'prepare-source 'update-version
+           (add-after 'prepare-source 'update-version
              (lambda _
                (substitute* "Makefile"
                  (("^VERSION .*") (string-append "VERSION := " ,version "\n")))

@@ -8,28 +8,6 @@
 
 ;; Please keep these packages sorted alphabetically
 
-(define-public rust-arrayvec-0.4
-  (package
-    (name "rust-arrayvec")
-    (version "0.4.12")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (crate-uri "arrayvec" version))
-        (file-name (string-append name "-" version ".crate"))
-        (sha256
-         (base32
-          "1fdiv5m627gh6flp4mpmi1mh647imm9x423licsr11psz97d97yd"))))
-    (build-system cargo-build-system)
-    (home-page "https://github.com/bluss/arrayvec")
-    (synopsis
-      "A vector with fixed capacity, backed by an array (it can be stored on the stack too). Implements fixed capacity ArrayVec and ArrayString.")
-    (description
-      "This package provides a vector with fixed capacity, backed by an array (it can be stored on the stack too).  Implements fixed capacity ArrayVec and ArrayString.")
-    (properties '((hidden? . #t)))
-    (license (list license:asl2.0
-                   license:expat))))
-
 (define-public rust-crossbeam-deque-0.2
   (package
     (name "rust-crossbeam-deque")
@@ -88,28 +66,6 @@
     (synopsis "Utilities for concurrent programming")
     (description
       "Utilities for concurrent programming")
-    (properties '((hidden? . #t)))
-    (license (list license:asl2.0
-                   license:expat))))
-
-(define-public rust-either-1.5
-  (package
-    (name "rust-either")
-    (version "1.5.3")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (crate-uri "either" version))
-        (file-name (string-append name "-" version ".crate"))
-        (sha256
-         (base32
-          "1qyz1b1acad6w0k5928jw5zaq900zhsk7p8dlcp4hh61w4f6n7xv"))))
-    (build-system cargo-build-system)
-    (home-page "https://github.com/bluss/either")
-    (synopsis
-      "The enum `Either` with variants `Left` and `Right` is a general purpose sum type with two cases.")
-    (description
-      "The enum `Either` with variants `Left` and `Right` is a general purpose sum type with two cases.")
     (properties '((hidden? . #t)))
     (license (list license:asl2.0
                    license:expat))))
@@ -177,27 +133,6 @@
     (license (list license:asl2.0
                    license:expat))))
 
-(define-public rust-memoffset-0.2
-  (package
-    (name "rust-memoffset")
-    (version "0.2.1")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (crate-uri "memoffset" version))
-        (file-name (string-append name "-" version ".crate"))
-        (sha256
-         (base32
-          "1cvm2z7dy138s302ii7wlzcxbka5a8yfl5pl5di7lbdnw9hw578g"))))
-    (build-system cargo-build-system)
-    (home-page "https://github.com/Gilnaa/memoffset")
-    (synopsis
-      "offset_of functionality for Rust structs.")
-    (description
-      "offset_of functionality for Rust structs.")
-    (properties '((hidden? . #t)))
-    (license license:expat)))
-
 (define-public rust-ndarray-0.12
   (package
     (name "rust-ndarray")
@@ -216,28 +151,6 @@
       "ndarray implements an n-dimensional container for general elements and for numerics.")
     (description
       "ndarray implements an n-dimensional container for general elements and for numerics.")
-    (properties '((hidden? . #t)))
-    (license (list license:asl2.0
-                   license:expat))))
-
-(define-public rust-num-complex-0.2
-  (package
-    (name "rust-num-complex")
-    (version "0.2.3")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (crate-uri "num-complex" version))
-        (file-name (string-append name "-" version ".crate"))
-        (sha256
-         (base32
-          "1z6zjdzx1g1hj4y132ddy83d3p3zvw06igbf59npxxrzzcqwzc7w"))))
-    (build-system cargo-build-system)
-    (home-page "https://github.com/rust-num/num-complex")
-    (synopsis
-      "Complex numbers implementation for Rust")
-    (description
-      "Complex numbers implementation for Rust")
     (properties '((hidden? . #t)))
     (license (list license:asl2.0
                    license:expat))))
@@ -328,26 +241,6 @@
     (license (list license:asl2.0
                    license:expat))))
 
-(define-public rust-syn-0.15
-  (package
-    (name "rust-syn")
-    (version "0.15.44")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (crate-uri "syn" version))
-        (file-name (string-append name "-" version ".crate"))
-        (sha256
-         (base32
-          "1id5g6x6zihv3j7hwrw3m1jp636bg8dpi671r7zy3jvpkavb794w"))))
-    (build-system cargo-build-system)
-    (home-page "https://github.com/dtolnay/syn")
-    (synopsis "Parser for Rust source code")
-    (description "Parser for Rust source code")
-    (properties '((hidden? . #t)))
-    (license (list license:asl2.0
-                   license:expat))))
-
 (define-public rust-unicode-segmentation-1.6
   (package
     (name "rust-unicode-segmentation")
@@ -369,17 +262,3 @@ according to Unicode Standard Annex #29 rules.")
     (properties '((hidden? . #t)))
     (license (list license:asl2.0
                    license:expat))))
-
-(define-public rust-unicode-segmentation-1.3
-  (package
-    (inherit rust-unicode-segmentation-1.6)
-    (name "rust-unicode-segmentation")
-    (version "1.3.0")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (crate-uri "unicode-segmentation" version))
-        (file-name (string-append name "-" version ".crate"))
-        (sha256
-         (base32
-          "1a9jqg7rb1yq6w2xc9jgxcs111yk5vxm9afjfvykfnrmzk6z8rqr"))))))

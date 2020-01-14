@@ -14,7 +14,7 @@
 
 (define-public bnw
   (let ((commit "eb6b002b924694808384f1a8d7c6d1121806ae04")
-        (revision "4"))
+        (revision "5"))
     (package
       (name "bnw")
       (version (git-version "1.22" revision commit)) ; June 28, 2019
@@ -38,7 +38,8 @@
                (substitute* "index.html"
                  (("url=home.php") "url=sourcecodes/home.php"))
                (substitute* "home.php"
-                 (("http://bnw.genenetwork.org/BNW_1.22") "http://bnw-test.genenetwork.org"))
+                 (("http://bnw.genenetwork.org/BNW_1.22")
+                  "http://bnw-test.genenetwork.org"))
                (substitute* "sourcecodes/header_batchsearch.inc"
                  (("my_style.css") "my_new_style.css"))
                (substitute* (find-files "." "\\.php")
@@ -50,48 +51,58 @@
                #t))
            (add-after 'patch-source-shebangs 'patch-more-shebangs
              (lambda* (#:key inputs #:allow-other-keys)
-               (let* ((bash     (assoc-ref inputs "bash"))
-                      (graphviz (assoc-ref inputs "graphviz"))
-                      (octave   (assoc-ref inputs "octave"))
-                      (python   (assoc-ref inputs "python"))
-                      (rmath    (assoc-ref inputs "rmath"))
-                      (jquery (assoc-ref inputs "jquery"))
-                      (awesome (assoc-ref inputs "awesome"))
-                      (cyto (assoc-ref inputs "cytoscape"))
-                      (cyto2 (assoc-ref inputs "cytoscape-2"))
-                      (cs-dagre (assoc-ref inputs "cyto-dagre"))
-                      (d3js (assoc-ref inputs "d3js"))
-                      (d3js-multi (assoc-ref inputs "d3js-multi"))
-                      (dagre (assoc-ref inputs "dagre"))
-                      (lodash (assoc-ref inputs "lodash"))
-                      (canvas-toblob (assoc-ref inputs "canvas-toblob"))
-                      (filesaver (assoc-ref inputs "filesaver"))
-                      (panzoom (assoc-ref inputs "panzoom"))
-                      (js-path "/share/genenetwork2/javascript/"))
+               (let ((bash     (assoc-ref inputs "bash"))
+                     (graphviz (assoc-ref inputs "graphviz"))
+                     (octave   (assoc-ref inputs "octave"))
+                     (python   (assoc-ref inputs "python"))
+                     (rmath    (assoc-ref inputs "rmath")))
                  (for-each (lambda (file)
                    (patch-shebang file
                      (list (string-append bash "/bin")
                            (string-append octave "/bin")
                            (string-append python "/bin"))))
                    (find-files "." ".*"))
-                 (substitute* '("sourcecodes/examplefilecopy.sh"
-                                "sourcecodes/filecopy.sh")
-                   (("^rm") (which "rm"))
-                   (("\\ cp") (string-append " " (which "cp"))))
                  (substitute* (find-files "sourcecodes" "(^run|py$)")
-                   (("/home/jziebart/python/Python-2.7.15/python") (which "python2")))
+                   (("/home/jziebart/python/Python-2.7.15/python")
+                    (which "python2")))
                  (substitute*
                    (append (find-files "sourcecodes" ".php")
                            (find-files "sourcecodes/run_scripts" ".*"))
                    (("/usr/bin/dot") (string-append graphviz "/bin/dot")))
                  (substitute* '("sourcecodes/build.sh"
                                 "downloads/BNW/src/build.sh")
-                   (("./localscore/libRmath.so") (string-append rmath "/lib/libRmath.so")))
-                 (substitute* "sourcecodes/run.sh"
-                   (("rm ") (string-append (which "rm") " "))
-                   (("rmdir ") (string-append (which "rmdir") " "))
+                   (("./localscore/libRmath.so")
+                    (string-append rmath "/lib/libRmath.so")))
+                 (substitute* (find-files "." "\\.sh$")
+                   (("cat ") (string-append (which "cat") " "))
+                   (("\\ cp") (string-append " " (which "cp")))
+                   (("date ") (string-append (which "date") " "))
+                   (("dirname \\$0") (string-append (which "dirname")" $0"))
+                   (("dirname \"\\$0") (string-append (which "dirname")" \"$0"))
+                   (("expr ") (string-append (which "expr") " "))
+                   (("head ") (string-append (which "head") " "))
                    (("mkdir ") (string-append (which "mkdir") " "))
-                   (("dirname ") (string-append (which "dirname")" ")))
+                   (("^rm ") (string-append (which "rm") " "))
+                   (("rmdir ") (string-append (which "rmdir") " "))
+                   (("wc ") (string-append (which "wc") " ")))
+               #t)))
+           ;(add-after 'patch-source-shebangs 'replace-javascript
+           ;  (lambda* (#:key inputs #:allow-other-keys)
+           ;    (let (
+           ;          (jquery        (assoc-ref inputs "jquery"))
+           ;          (awesome       (assoc-ref inputs "awesome"))
+           ;          (cyto          (assoc-ref inputs "cytoscape"))
+           ;          (cyto2         (assoc-ref inputs "cytoscape-2"))
+           ;          (cs-dagre      (assoc-ref inputs "cyto-dagre"))
+           ;          (d3js          (assoc-ref inputs "d3js"))
+           ;          (d3js-multi    (assoc-ref inputs "d3js-multi"))
+           ;          (dagre         (assoc-ref inputs "dagre"))
+           ;          (lodash        (assoc-ref inputs "lodash"))
+           ;          (canvas-toblob (assoc-ref inputs "canvas-toblob"))
+           ;          (filesaver     (assoc-ref inputs "filesaver"))
+           ;          (panzoom       (assoc-ref inputs "panzoom"))
+           ;          (js-path "/share/genenetwork2/javascript/")
+           ;          )
                  ;(substitute* "sourcecodes/layout_cyto.php"
                  ;  (("https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.7.1/cytoscape.min.js")
                  ;   (string-append cyto js-path "cytoscape/cytoscape.min.js"))
@@ -121,8 +132,8 @@
                  ;   (string-append canvas-toblob js-path "canvas-toBlob/canvas-toBlob.js"))
                  ;  (("https://cdn.rawgit.com/eligrey/FileSaver.js/e9d941381475b5df8b7d7691013401e171014e89/FileSaver.min.js")
                  ;   (string-append filesaver js-path "filesaver/filesaver.js")))
-                 )
-               #t))
+           ;      )
+           ;    #t))
            (replace 'install
              (lambda* (#:key outputs #:allow-other-keys)
                (let ((out (assoc-ref outputs "out")))
@@ -136,7 +147,8 @@
                      (chmod file #o555))
                    (append (find-files out "\\.(sh|py)$")
                            (find-files (string-append out "/sourcecodes/run_scripts/" "."))))
-                 (chmod (string-append out "/sourcecodes/data") #o777) ; needs to be writable
+                 ;; This folder needs to be writable.
+                 (chmod (string-append out "/sourcecodes/data") #o777)
                  #t)))
            (replace 'build
              (lambda _
@@ -155,26 +167,28 @@
       (inputs
        `(("graphviz" ,graphviz-2.26)
          ("octave" ,octave-3.4.3)
-         ("python" ,python-2)
          ("plotly" ,python2-plotly-3.2.1)
+         ("python" ,python-2)
          ("rmath" ,rmath-standalone)
-         ("jquery" ,web-jquery)
+         ;; the javascript libraries:
          ("awesome" ,web-font-awesome)
+         ("canvas-toblob" ,javascript-canvas-toblob)
+         ("cyto-dagre" ,javascript-cytoscape-dagre)
          ("cytoscape" ,javascript-cytoscape)
          ("cytoscape-2" ,javascript-cytoscape-2)
          ("d3js" ,javascript-d3js-4)
          ("d3js-multi" ,javascript-d3js-multi)
          ("dagre" ,javascript-dagre)
-         ("lodash" ,javascript-lodash)
-         ("canvas-toblob" ,javascript-canvas-toblob)
          ("filesaver" ,javascript-filesaver)
-         ("cyto-dagre" ,javascript-cytoscape-dagre)
+         ("jquery" ,web-jquery)
+         ("lodash" ,javascript-lodash)
          ("panzoom" ,javascript-cytoscape-panzoom)))
       (native-inputs
        `(("gcc" ,gcc-5)))
       (home-page "http://compbio.uthsc.edu/BNW/")
       (synopsis "Bayesian Network Webserver")
-      (description "This contains the code for the @dfn{Bayesian Network Webserver} (BNW).")
+      (description
+       "This contains the code for the @dfn{Bayesian Network Webserver} (BNW).")
       (license (list license:gpl2
                      license:gpl2+
                      license:lgpl2.1+)))))
