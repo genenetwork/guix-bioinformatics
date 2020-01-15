@@ -539,6 +539,53 @@ project)")
   (description #f)
   (license #f)))
 
+(define-public python2-htmlgen-2.2
+  (package
+    (name "python2-htmlgen-2.2")
+    (version "2.2.2")
+    (source (origin
+              (method url-fetch)
+              (uri (string-append "mirror://debian/pool/main/h/htmlgen/htmlgen_" version ".orig.tar.gz"))
+              (sha256
+               (base32
+                 "186kb434q6z84g31ysvzi4kcfcvl3pmm57k4jlng4ccgls94x6wb"))))
+    (build-system python-build-system)
+    (arguments
+     `(#:python ,python-2
+       #:phases
+       (modify-phases %standard-phases
+         (add-after 'unpack 'modernize-imports
+           (lambda _
+             (substitute* "HTMLgen.py"
+               (("whrandom") "random"))
+             (substitute* "HTMLcalendar.py"
+               (("import regex") "import re as regex"))
+             (substitute* "HTMLutil.py"
+               (("import string, regex") "import re as regex\nimport string"))
+             (substitute* "HTMLtest.py"
+               (("import string, regex, regsub") "import re as regex\nimport string")
+               (("regsub.split") "re.split"))
+             #t))
+         (replace 'build
+           (lambda _
+             (invoke "python" "-m" "compileall" ".")))
+         (replace 'check
+           (lambda _
+             (invoke "python" "HTMLtest.py")))
+         (replace 'install
+           (lambda* (#:key outputs #:allow-other-keys)
+             (let* ((out (assoc-ref outputs "out"))
+                    (lib (string-append out "/lib/python2.7/site-packages/htmlgen/")))
+               ;; Install libs and headers.
+               (for-each (lambda (file)
+                           (install-file file lib))
+                         (find-files "." "\\.py[c]?$"))
+               #t))))))
+    (home-page "https://packages.debian.org/unstable/python/python-htmlgen")
+    (synopsis "Genenetwork version of Python2 HTMLgen (defunkt project)")
+    (description #f)
+    (license #f)))
+
 ; penguin2:~/tmp$ env IPFS_PATH=/export/ipfs/ ipfs add -r Imaging/
 ; added QmV8Rew1re8gBTLsaqMU4bd7euFUPEpjiD572mtoz6KhPn Imaging/Imaging-1.1.6-gn.tar.gz
 ; added QmdkzQpVMLZVtywpYesynt9c7H8w7hHZRYKq8woN7stfpD Imaging
