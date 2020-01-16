@@ -486,58 +486,60 @@ Python 3 support.")
 ; pinned QmZLWsPHLFTU3hWAfdTwj3RXFrS8Ma7KEixne1suWuYqeG recursively
 
 (define-public python2-htmlgen-gn ; guix obsolete
-(package
-  (name "python2-htmlgen-gn")
-  (version "2.2.2")
-  (source (origin
-           (method url-fetch)
-           ;; http://files.genenetwork.org/software/contrib/htmlgen-2.2.2-gn.tar.gz
-           (uri (string-append
-                 "http://ipfs.genenetwork.org/ipfs/QmZLWsPHLFTU3hWAfdTwj3RXFrS8Ma7KEixne1suWuYqeG/htmlgen-" version "-gn.tar.gz"))
-           (sha256
-            (base32
-             "1lwsk56rymhrma46cbyh3g64ksmq1vsih3qkrc2vh0lpba825y7r"))
-           ;;(patches (list
-           ;;          (search-patch "python2-htmlgen-Applied-Deb-patch.patch")
-           ;;          (search-patch "python2-htmlgen-Fix-test-for-random.patch")
-            ))
-  (build-system python-build-system)
-  (outputs '("out"))
-  (native-inputs
-   `(("make" ,gnu-make)
-     ))
-  (propagated-inputs
-   `(("python2" ,python-2)))
-  (arguments
-   `(#:phases (modify-phases %standard-phases
-     (replace 'build
-              (lambda _
-                (system* "python2" "-m" "compileall" ".")))
-     (replace 'install
-              (lambda* (#:key outputs #:allow-other-keys)
-                       (let* ((out (assoc-ref outputs "out"))
-                              (include (string-append out "/include"))
-                              (lib2 (string-append out "/lib/htmlgen"))
-                              (lib (string-append (assoc-ref %outputs "out") "/lib/python2.7/site-packages/htmlgen"))
-                              (pkgconfig (string-append out "/lib/pkgconfig"))
-                              (doc (string-append out "/share/doc")))
-                         ;; Install libs and headers.
-                         ;; (copy-file "HTMLgen.pyc" "HTMLgen2.pyc")
-                         (install-file "HTMLgen.pyc" lib)
-                         (install-file "HTMLgen2.pyc" lib)
-                         (install-file "imgsize.pyc" lib)
-                         (install-file "ImageH.pyc" lib)
-                         (install-file "ImagePaletteH.pyc" lib)
-                         (install-file "__init__.pyc" lib)
-              ))) ; install
-     ) ; phases
-     #:tests? #f))
-  (home-page
-    "https://packages.debian.org/unstable/python/python-htmlgen")
-  (synopsis "Genenetwork version of Python2 HTMLgen (defunkt
-project)")
-  (description #f)
-  (license #f)))
+  (package
+    (name "python2-htmlgen-gn")
+    (version "2.2.2")
+    (source (origin
+              (method url-fetch)
+              ;; http://files.genenetwork.org/software/contrib/htmlgen-2.2.2-gn.tar.gz
+              (uri (string-append
+                     "http://ipfs.genenetwork.org/ipfs/QmZLWsPHLFTU3hWAfdTwj3RXFrS8Ma7KEixne1suWuYqeG/htmlgen-" version "-gn.tar.gz"))
+              (sha256
+               (base32
+                "1lwsk56rymhrma46cbyh3g64ksmq1vsih3qkrc2vh0lpba825y7r"))
+              ;;(patches (list
+              ;;          (search-patch "python2-htmlgen-Applied-Deb-patch.patch")
+              ;;          (search-patch "python2-htmlgen-Fix-test-for-random.patch")
+              ))
+    (build-system python-build-system)
+    (arguments
+     `(#:python ,python-2
+       #:tests? #f
+       #:phases
+       (modify-phases %standard-phases
+         (add-after 'unpack 'modernize-imports
+           (lambda _
+             (substitute* "HTMLgen.py"
+               (("whrandom") "random"))
+             (substitute* "HTMLcalendar.py"
+               (("import regex") "import re as regex"))
+             (substitute* "HTMLutil.py"
+               (("import string, regex") "import re as regex\nimport string"))
+             (substitute* "HTMLtest.py"
+               (("import string, regex, regsub") "import re as regex\nimport string")
+               (("regsub.split") "re.split"))
+             #t))
+         (replace 'build
+           (lambda _
+             (invoke "python" "-m" "compileall" ".")))
+         (replace 'check
+           (lambda* (#:key (tests? '()) #:allow-other-keys)
+             (if tests?
+               (invoke "python" "HTMLtest.py")
+               #t)))
+         (replace 'install
+           (lambda* (#:key outputs #:allow-other-keys)
+             (let* ((out (assoc-ref outputs "out"))
+                    (lib (string-append out "/lib/python2.7/site-packages/htmlgen/")))
+               ;; Install libs and headers.
+               (for-each (lambda (file)
+                           (install-file file lib))
+                         (find-files "." "\\.py[c]?$"))
+               #t))))))
+    (home-page "https://packages.debian.org/unstable/python/python-htmlgen")
+    (synopsis "Genenetwork version of Python2 HTMLgen (defunkt project)")
+    (description #f)
+    (license #f)))
 
 (define-public python2-htmlgen-2.2
   (package
