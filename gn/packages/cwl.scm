@@ -13,6 +13,7 @@
   #:use-module (gnu packages serialization)
   #:use-module (gnu packages time)
   #:use-module (gnu packages version-control)
+  #:use-module (gnu packages xml)
   #:use-module (gn packages python)
   #:use-module (guix download)
   #:use-module (guix packages)

@@ -27,6 +27,7 @@
   #:use-module (gnu packages version-control)
   #:use-module (gnu packages vim)
   #:use-module (gnu packages web)
+  #:use-module (gnu packages xml)
   #:use-module (gn packages bioinformatics)
   #:use-module (gn packages crates-io)
   #:use-module (gn packages elixir)
