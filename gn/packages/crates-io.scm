@@ -4,92 +4,10 @@
   #:use-module (guix packages)
   #:use-module (guix download)
   #:use-module (guix utils)
-  #:use-module (guix build-system cargo))
+  #:use-module (guix build-system cargo)
+  #:use-module (gnu packages crates-io))
 
 ;; Please keep these packages sorted alphabetically
-
-(define-public rust-crossbeam-deque-0.2
-  (package
-    (name "rust-crossbeam-deque")
-    (version "0.2.0")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (crate-uri "crossbeam-deque" version))
-        (file-name (string-append name "-" version ".crate"))
-        (sha256
-         (base32
-          "1wwwbnvxh0rza38xiws8qc46klzhv19zgvarn37pijis6v2zhfgp"))))
-    (build-system cargo-build-system)
-    (home-page "https://github.com/crossbeam-rs/crossbeam/tree/master/crossbeam-deque")
-    (synopsis "Concurrent work-stealing deque")
-    (description "Concurrent work-stealing deque")
-    (properties '((hidden? . #t)))
-    (license (list license:asl2.0
-                   license:expat))))
-
-(define-public rust-crossbeam-epoch-0.3
-  (package
-    (name "rust-crossbeam-epoch")
-    (version "0.3.1")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (crate-uri "crossbeam-epoch" version))
-        (file-name
-          (string-append name "-" version ".crate"))
-        (sha256
-         (base32
-          "0l4igvp2i7b6dgaiq040j8kj8hygwdpr6ppzh1hrbsbx83sj2wcj"))))
-      (build-system cargo-build-system)
-    (home-page "https://github.com/crossbeam-rs/crossbeam/tree/master/crossbeam-epoch")
-    (synopsis "Epoch-based garbage collection")
-    (description "Epoch-based garbage collection")
-    (properties '((hidden? . #t)))
-    (license (list license:asl2.0
-                   license:expat))))
-
-(define-public rust-crossbeam-utils-0.2
-  (package
-    (name "rust-crossbeam-utils")
-    (version "0.2.2")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (crate-uri "crossbeam-utils" version))
-        (file-name (string-append name "-" version ".crate"))
-        (sha256
-         (base32
-          "1n8qr52sw9y6yxzyfxi1phh55rsxms7ry4iipdd8vmd16ag8jq17"))))
-      (build-system cargo-build-system)
-    (home-page "https://github.com/crossbeam-rs/crossbeam/tree/master/crossbeam-utils")
-    (synopsis "Utilities for concurrent programming")
-    (description
-      "Utilities for concurrent programming")
-    (properties '((hidden? . #t)))
-    (license (list license:asl2.0
-                   license:expat))))
-
-(define-public rust-heck-0.3
-  (package
-    (name "rust-heck")
-    (version "0.3.1")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (crate-uri "heck" version))
-        (file-name (string-append name "-" version ".crate"))
-        (sha256
-         (base32
-          "01a2v7yvkiqxakdqz4hw3w3g4sm52ivz9cs3qcsv2arxsmw4wmi0"))))
-    (build-system cargo-build-system)
-    (home-page "https://github.com/withoutboats/heck")
-    (synopsis "heck is a case conversion library.")
-    (description
-      "heck is a case conversion library.")
-    (properties '((hidden? . #t)))
-    (license (list license:asl2.0
-                   license:expat))))
 
 (define-public rust-itertools-0.7
   (package
@@ -104,31 +22,18 @@
          (base32
           "03cpsj26xmyamcalclqzr1i700vwx8hnbgxbpjvs354f8mnr8iqd"))))
     (build-system cargo-build-system)
+    (arguments
+     `(#:skip-build? #t
+       #:cargo-inputs
+       (("rust-either" ,rust-either-1.5))
+       #:cargo-development-inputs
+       (("rust-permutohedron" ,rust-permutohedron-0.2)
+        ("rust-quickcheck" ,rust-quickcheck-0.5))))
     (home-page "https://github.com/rust-itertools/itertools")
     (synopsis
-      "Extra iterator adaptors, iterator methods, free functions, and macros.")
+     "Extra iterator adaptors, iterator methods, free functions, and macros")
     (description
-      "Extra iterator adaptors, iterator methods, free functions, and macros.")
-    (properties '((hidden? . #t)))
-    (license (list license:asl2.0
-                   license:expat))))
-
-(define-public rust-matrixmultiply-0.1
-  (package
-    (name "rust-matrixmultiply")
-    (version "0.1.15")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (crate-uri "matrixmultiply" version))
-        (file-name (string-append name "-" version ".crate"))
-        (sha256
-         (base32
-          "00p0fpjhm45qdzi37mgv7ggsy8b9gqvq4999yrbgyn1dxkf6gbfw"))))
-    (build-system cargo-build-system)
-    (home-page "https://github.com/bluss/matrixmultiply/")
-    (synopsis "General matrix multiplication for f32 and f64 matrices.")
-    (description "General matrix multiplication for f32 and f64 matrices. Operates on matrices with general layout (they can use arbitrary row and column stride). Detects and uses AVX or SSE2 on x86 platforms transparently for higher performance. Uses a microkernel strategy, so that the implementation is easy to parallelize and optimize.")
+     "Extra iterator adaptors, iterator methods, free functions, and macros.")
     (properties '((hidden? . #t)))
     (license (list license:asl2.0
                    license:expat))))
@@ -146,53 +51,25 @@
          (base32
           "0a5rfwcbqnvbwi3nw5sfz6kf0flhmjxs64s0b4kxc6lhmyl81wvw"))))
     (build-system cargo-build-system)
+    (arguments
+     `(#:skip-build? #t
+       #:cargo-inputs
+       (("rust-itertools" ,rust-itertools-0.7)
+        ("rust-matrixmultiply" ,rust-matrixmultiply-0.1)
+        ("rust-num-complex" ,rust-num-complex-0.2)
+        ;("rust-blas-src" ,rust-blas-src-0.2)
+        ;("rust-cblas-src" ,rust-cblas-src-0.1)
+        ("rust-rustc-serialize" ,rust-rustc-serialize-0.3)
+        ("rust-serde" ,rust-serde-1.0))
+       #:cargo-development-inputs
+       (("rust-defmac" ,rust-defmac-0.1)
+        ("rust-quickcheck" ,rust-quickcheck-0.7)
+        ("rust-rawpointer" ,rust-rawpointer-0.1))))
     (home-page "https://github.com/rust-ndarray/ndarray")
     (synopsis
-      "ndarray implements an n-dimensional container for general elements and for numerics.")
+     "ndarray implements an n-dimensional container for general elements and for numerics")
     (description
-      "ndarray implements an n-dimensional container for general elements and for numerics.")
-    (properties '((hidden? . #t)))
-    (license (list license:asl2.0
-                   license:expat))))
-
-(define-public rust-rayon-1.0
-  (package
-    (name "rust-rayon")
-    (version "1.0.3")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (crate-uri "rayon" version))
-        (file-name (string-append name "-" version ".crate"))
-        (sha256
-        (base32
-        "0wq41f15y05nlarijn9c1vxscxj5sazn3lhd6mmnicj5fzr18f1p"))))
-    (build-system cargo-build-system)
-    (home-page "https://github.com/rayon-rs/rayon")
-    (synopsis
-      "Simple work-stealing parallelism for Rust")
-    (description
-      "Simple work-stealing parallelism for Rust")
-    (properties '((hidden? . #t)))
-    (license (list license:asl2.0
-                   license:expat))))
-
-(define-public rust-rayon-core-1.4
-  (package
-    (name "rust-rayon-core")
-    (version "1.4.1")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (crate-uri "rayon-core" version))
-        (file-name (string-append name "-" version ".crate"))
-        (sha256
-         (base32
-          "0mkkabm3h4xvrkvjp675c07zcpcb7jk09rlg9mbpfs5s5blx2mdh"))))
-    (build-system cargo-build-system)
-    (home-page "https://github.com/rayon-rs/rayon")
-    (synopsis "Core APIs for Rayon")
-    (description "Core APIs for Rayon")
+     "ndarray implements an n-dimensional container for general elements and for numerics.")
     (properties '((hidden? . #t)))
     (license (list license:asl2.0
                    license:expat))))
@@ -210,11 +87,15 @@
          (base32
           "1mvfv1l8vp3y402fkl2wcl34hi7gmr4bqha13dfz2xf3kjzwvhhn"))))
     (build-system cargo-build-system)
+    (arguments
+     `(#:skip-build? #t
+       #:cargo-inputs
+       (("rust-clap" ,rust-clap-2)
+        ("rust-structopt-derive" ,rust-structopt-derive-0.2))))
     (home-page "https://github.com/TeXitoi/structopt")
-    (synopsis
-      "Parse command line argument by defining a struct.")
+    (synopsis "Parse command line arguments by defining a struct")
     (description
-      "Parse command line argument by defining a struct.")
+     "Parse command line arguments by defining a struct.")
     (properties '((hidden? . #t)))
     (license (list license:asl2.0
                    license:expat))))
@@ -232,33 +113,18 @@
          (base32
           "01sis9z5kqmyhvzbnmlzpdxcry99a0b9blypksgnhdsbm1hh40ak"))))
     (build-system cargo-build-system)
+    (arguments
+     `(#:skip-build? #t
+       #:cargo-inputs
+       (("rust-heck" ,rust-heck-0.3)
+        ("rust-proc-macro2" ,rust-proc-macro2-0.4)
+        ("rust-quote" ,rust-quote-0.6)
+        ("rust-syn" ,rust-syn-0.15))))
     (home-page "https://github.com/TeXitoi/structopt")
     (synopsis
-      "Parse command line argument by defining a struct, derive crate.")
+     "Parse command line argument by defining a struct, derive crate")
     (description
-      "Parse command line argument by defining a struct, derive crate.")
-    (properties '((hidden? . #t)))
-    (license (list license:asl2.0
-                   license:expat))))
-
-(define-public rust-unicode-segmentation-1.6
-  (package
-    (name "rust-unicode-segmentation")
-    (version "1.6.0")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (crate-uri "unicode-segmentation" version))
-        (file-name (string-append name "-" version ".crate"))
-        (sha256
-         (base32
-          "1h7d48mzpi8hwf5cvnq07warkv86pvapzzzf32hvbjsk20yiagp8"))))
-    (build-system cargo-build-system)
-    (home-page "https://github.com/unicode-rs/unicode-segmentation")
-    (synopsis "Grapheme Cluster, Word and Sentence boundaries for rust")
-    (description
-     "This crate provides Grapheme Cluster, Word and Sentence boundaries
-according to Unicode Standard Annex #29 rules.")
+     "Parse command line argument by defining a struct, derive crate.")
     (properties '((hidden? . #t)))
     (license (list license:asl2.0
                    license:expat))))
