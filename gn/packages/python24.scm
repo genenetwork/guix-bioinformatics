@@ -109,10 +109,63 @@ read read ssl ssl tcl tcl tk tk ,(version-major+minor (package-version tcl)) ,(v
         (let ((python (resolve-interface '(gn packages python24))))
               (module-ref python 'python-2.4)))
 
+;; We borrow this from (guix build-system python) since we cannot refer to it
+;; with the magic '@@' symbol since Guix has switched to guile-3.0.
+(define* (package-with-explicit-python python old-prefix new-prefix
+                                       #:key variant-property)
+  "Return a procedure of one argument, P.  The procedure creates a package with
+the same fields as P, which is assumed to use PYTHON-BUILD-SYSTEM, such that
+it is compiled with PYTHON instead.  The inputs are changed recursively
+accordingly.  If the name of P starts with OLD-PREFIX, this is replaced by
+NEW-PREFIX; otherwise, NEW-PREFIX is prepended to the name.
+
+When VARIANT-PROPERTY is present, it is used as a key to search for
+pre-defined variants of this transformation recorded in the 'properties' field
+of packages.  The property value must be the promise of a package.  This is a
+convenient way for package writers to force the transformation to use
+pre-defined variants."
+  (define package-variant
+    (if variant-property
+        (lambda (package)
+          (assq-ref (package-properties package)
+                    variant-property))
+        (const #f)))
+
+  (define (transform p)
+    (cond
+     ;; If VARIANT-PROPERTY is present, use that.
+     ((package-variant p)
+      => force)
+
+     ;; Otherwise build the new package object graph.
+     ((eq? (package-build-system p) python-build-system)
+      (package
+        (inherit p)
+        (location (package-location p))
+        (name (let ((name (package-name p)))
+                (string-append new-prefix
+                               (if (string-prefix? old-prefix name)
+                                   (substring name
+                                              (string-length old-prefix))
+                                   name))))
+        (arguments
+         (let ((python (if (promise? python)
+                           (force python)
+                           python)))
+           (ensure-keyword-arguments (package-arguments p)
+                                     `(#:python ,python))))))
+     (else p)))
+
+  (define (cut? p)
+    (or (not (eq? (package-build-system p) python-build-system))
+        (package-variant p)))
+
+  (package-mapping transform cut?))
+
 (define package-with-python24
-  ((@@ (guix build-system python) package-with-explicit-python) (delay (default-python2.4))
-                                                                "python-" "python24-"
-                                                                #:variant-property 'python24-variant))
+  (package-with-explicit-python (delay (default-python2.4))
+                                "python-" "python24-"
+                                #:variant-property 'python24-variant))
 
 (define (strip-python24-variant p)
   (package

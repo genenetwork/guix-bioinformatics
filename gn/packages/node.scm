@@ -4,7 +4,8 @@
   #:use-module (guix packages)
   #:use-module (guix git-download)
   #:use-module (guix build-system node)
-  #:use-module (gnu packages lisp-xyz))
+  #:use-module (gnu packages lisp-xyz)
+  #:use-module (gnu packages node-xyz))
 
 (define-public node-asap
   (package
@@ -325,29 +326,6 @@ Google Maps, and others.")
     (home-page "https://github.com/Qix-/color-convert")
     (synopsis "Plain color conversion functions in JavaScript")
     (description "Plain color conversion functions in JavaScript.")
-    (license license:expat)))
-
-(define-public node-color-name
-  (package
-    (name "node-color-name")
-    (version "1.1.3")
-    (source
-      (origin
-        (method git-fetch)
-        (uri (git-reference
-               (url "https://github.com/colorjs/color-name")
-               (commit (string-append "v" version))))
-        (file-name (git-file-name name version))
-        (sha256
-         (base32
-          "09rbmj16nfwcwkhrybqxyy66bkrs50vpw6hkdqqb14l3gsyxpr74"))))
-    (build-system node-build-system)
-    (arguments '(#:tests? #f))
-    ;(native-inputs
-    ; `(("node-assert" ,node-assert)))
-    (home-page "https://github.com/colorjs/color-name")
-    (synopsis "A JSON with CSS color names")
-    (description "A JSON with CSS color names.")
     (license license:expat)))
 
 (define-public node-color-string
@@ -703,27 +681,6 @@ functionality to JupyterHub deployments.")
     (description "Check if a certain flag is enabled.")
     (license license:expat)))
 
-(define-public node-env-variable
-  (package
-    (name "node-env-variable")
-    (version "0.0.4")
-    (source
-      (origin
-        (method git-fetch)
-        (uri (git-reference
-               (url "https://github.com/bigpipe/env-variable")
-               (commit version)))
-        (file-name (git-file-name name version))
-        (sha256
-         (base32
-          "0nnpxjxfhy4na7fixb7p3ww6ard5xgggfm83b78i333867r4gmsq"))))
-    (build-system node-build-system)
-    (arguments '(#:tests? #f)) ; No tests.
-    (home-page "https://github.com/bigpipe/env-variable")
-    (synopsis "Cross platform environment variables with process.env, window.name, location.hash and localStorage fallbacks")
-    (description "Cross platform environment variables with process.env, window.name, location.hash and localStorage fallbacks.")
-    (license license:expat)))
-
 (define-public node-eventemitter3
   (package
     (name "node-eventemitter3")
@@ -766,34 +723,6 @@ are some slight differences:
 @item Support for custom context for events so there is no need to use fn.bind.
 @item The removeListener method removes all matching listeners, not only the first.
 @end itemize")
-    (license license:expat)))
-
-(define-public node-far
-  (package
-    (name "node-far")
-    (version "0.0.7")
-    (source
-      (origin
-        (method git-fetch)
-        (uri (git-reference
-               (url "https://github.com/felixge/node-far")
-               (commit (string-append "v" version))))
-        (file-name (git-file-name name version))
-        (sha256
-         (base32
-          "083rv1rszjn0i91zcpaghlid0kwhk0angmpj4hiflrlyhd6cmjzw"))))
-    (build-system node-build-system)
-    (arguments
-     '(#:phases
-       (modify-phases %standard-phases
-         (replace 'check
-           (lambda _
-             (invoke "bin/node-far" "tests/"))))))
-    (inputs
-     `(("node-oop" ,node-oop)))
-    (home-page "https://github.com/felixge/node-far")
-    (synopsis "Node.js test runner")
-    (description "A simple test runner that finds and runs multiple node.js files, while providing useful information about output and exit codes.")
     (license license:expat)))
 
 (define-public node-fast-safe-stringify
@@ -1185,27 +1114,6 @@ such as reverse proxies and load balancers.")
     (description "A mutable object format designed for chaining & objectMode streams.")
     (license license:expat)))
 
-(define-public node-long-stack-traces
-  (package
-    (name "node-long-stack-traces")
-    (version "0.1.2")
-    (source
-      (origin
-        (method git-fetch)
-        (uri (git-reference
-               (url "https://github.com/tlrobinson/long-stack-traces")
-               (commit (string-append "v" version))))
-        (file-name (git-file-name name version))
-        (sha256
-         (base32
-          "0famwsyc6xawi30v25zi65d8fhbvlvh976bqydf1dqn5gz200cl3"))))
-    (build-system node-build-system)
-    (arguments '(#:tests? #f)) ; No tests.
-    (home-page "https://github.com/tlrobinson/long-stack-traces")
-    (synopsis "Long stacktraces for V8 implemented in user-land JavaScript")
-    (description "Long stacktraces for V8 implemented in user-land JavaScript.")
-    (license license:expat))) ; in README
-
 (define-public node-lynx
   (package
     (name "node-lynx")
@@ -1231,27 +1139,6 @@ such as reverse proxies and load balancers.")
     (synopsis "node.js client for Etsy'd StatsD server")
     (description "Minimalistic StatsD client for Node.js programs.")
     (license license:expat)))
-
-(define-public node-mersenne
-  (package
-    (name "node-mersenne")
-    (version "0.0.4")
-    (source
-      (origin
-        (method git-fetch)
-        (uri (git-reference
-               (url "https://github.com/jwatte/node-mersenne")
-               (commit "f9fa01694ee49d6ae6ff9d90cfda594bddd3ccef"))) ; release is untagged
-        (file-name (git-file-name name version))
-        (sha256
-         (base32
-          "034iaiq2pdqn342p2404cpz364g282d2hkp9375hysnh9i968wbb"))))
-    (build-system node-build-system)
-    (arguments '(#:tests? #f)) ; No tests.
-    (home-page "http://www.enchantedage.com/node-mersenne")
-    (synopsis "node.js module for generating Mersenne Twister random numbers")
-    (description "Node.js port of the Mersenne Twister random number generator.")
-    (license license:bsd-3)))
 
 (define-public node-ms
   (package
@@ -1314,29 +1201,6 @@ such as reverse proxies and load balancers.")
     (synopsis "Run the supplied function exactly one time (once)")
     (description "Run the supplied function exactly one time (once).")
     (license license:expat)))
-
-(define-public node-oop
-  (let ((commit "f9d87cda0958886955c14a0a716e57021ed295dc")
-        (revision "1"))
-    (package
-      (name "node-oop")
-      (version (git-version "0.0.0" revision commit))
-      (source
-        (origin
-          (method git-fetch)
-          (uri (git-reference
-                 (url "https://github.com/felixge/node-oop")
-                 (commit commit)))
-          (file-name (git-file-name name version))
-          (sha256
-           (base32
-            "0mqrcf0xi2jbwffwkk00cljpqfsri1jk8s6kz8jny45apn7zjds1"))))
-      (build-system node-build-system)
-      (arguments '(#:tests? #f)) ; Tests run during build phase.
-      (home-page "https://github.com/felixge/node-oop")
-      (synopsis "Simple & light-weight oop")
-      (description "This library tries to bring basic oop features to JavaScript while being as light-weight and simple as possible.")
-      (license license:expat))))
 
 (define-public node-process-nextick-args
   (package
@@ -1526,56 +1390,6 @@ Google Maps, and others.")
     (description "Simply swizzle your arguments.")
     (license license:expat)))
 
-(define-public node-stack-trace
-  (package
-    (name "node-stack-trace")
-    (version "0.0.10")
-    (source
-      (origin
-        (method git-fetch)
-        (uri (git-reference
-               (url "https://github.com/felixge/node-stack-trace")
-               (commit (string-append "v" version))))
-        (file-name (git-file-name name version))
-        (sha256
-         (base32
-          "1vci7qmkmrhgvncz24ihwpi7ivwj6ffw63l0jd216lgmlcv3xscg"))))
-    (build-system node-build-system)
-    (arguments
-     '(#:tests? #f
-       #:phases
-       (modify-phases %standard-phases
-         (delete 'build)) ; 'make' runs the test suite.
-       ))
-    (native-inputs
-     `(("node-far" ,node-far)
-       ("node-long-stack-traces" ,node-long-stack-traces)))
-    (home-page "https://github.com/felixge/node-stack-trace")
-    (synopsis "Get v8 stack traces as an array of CallSite objects")
-    (description "Get v8 stack traces as an array of CallSite objects.")
-    (license license:expat)))
-
-(define-public node-statsd-parser
-  (package
-    (name "node-statsd-parser")
-    (version "0.0.4")
-    (source
-      (origin
-        (method git-fetch)
-        (uri (git-reference
-               (url "https://github.com/dscape/statsd-parser")
-               (commit version)))
-        (file-name (git-file-name name version))
-        (sha256
-         (base32
-          "049rnczsd6pv6bk282q4w72bhqc5cs562djgr7yncy7lk0wzq5j3"))))
-    (build-system node-build-system)
-    (arguments '(#:tests? #f)) ; No tests.
-    (home-page "https://github.com/dscape/statsd-parser")
-    (synopsis "Streaming parser for the statsd protocol")
-    (description "Streaming parser for the statsd protocol used in node-lynx.")
-    (license license:asl2.0)))
-
 (define-public node-storage-engine
   (package
     (name "node-storage-engine")
@@ -1726,27 +1540,6 @@ from C are supported as well as some other extensions from Ruby.")
     (home-page "https://github.com/winstonjs/triple-beam")
     (synopsis "Definitions of levels for logging purposes & shareable Symbol constants")
     (description "Definitions of levels for logging purposes & shareable Symbol constants.")
-    (license license:expat)))
-
-(define-public node-util-deprecate
-  (package
-    (name "node-util-deprecate")
-    (version "1.0.1")
-    (source
-      (origin
-        (method git-fetch)
-        (uri (git-reference
-               (url "https://github.com/TooTallNate/util-deprecate")
-               (commit (string-append "v" version))))
-        (file-name (git-file-name name version))
-        (sha256
-         (base32
-          "0npj4mksv10z6l0q1m84s263xx4afrmgq6f2v7y29gam2phifz6n"))))
-    (build-system node-build-system)
-    (arguments '(#:tests? #f)) ; No test suite.
-    (home-page "https://github.com/TooTallNate/util-deprecate")
-    (synopsis "The Node.js `util.deprecate()` function with browser support")
-    (description "The Node.js `util.deprecate()` function with browser support.")
     (license license:expat)))
 
 (define-public node-winston
