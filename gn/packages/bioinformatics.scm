@@ -483,16 +483,15 @@ reads.")
                                "/xtract.Linux")) ;; March 10, 2016
            (sha256
             (base32
-             "0wppi3q3wcind6za043w0g7a987qr59yiyh553h46a1apjkd8y9b"))))
+             "15yhhh8kfipk12rhzabap81ys8wgj0khn0mp8p7zwqhq028fwj0l"))))
        ("rchive.Linux"
         ,(origin
            (method url-fetch)
            (uri (string-append "ftp://ftp.ncbi.nlm.nih.gov/entrez/entrezdirect/"
-                               "versions/" (package-version edirect) "/rchive.Linux"))
-           (file-name (string-append "rchive.Linux-" (package-version edirect)))
+                               "/rchive.Linux")) ;; November 14, 2017
            (sha256
             (base32
-             "134y0zprplqlplc6qmcjb97411bxkwghmq3z0qjgh0dgdbzjq1w3"))))))
+             "0hl8zj1md9xbmaj0pv99rjyisw8w74rirw97xwqk47dz8v8ml338"))))))
     (native-search-paths
      ;; Ideally this should be set for LWP somewhere.
      (list (search-path-specification
