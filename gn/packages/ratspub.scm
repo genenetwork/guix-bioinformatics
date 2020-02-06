@@ -33,17 +33,13 @@
          (add-after 'unpack 'patch-sources
            (lambda* (#:key inputs outputs #:allow-other-keys)
              (let ((out       (assoc-ref outputs "out"))
-                   (cytoscape (assoc-ref inputs "cytoscape"))
-                   (bootstrap (assoc-ref inputs "bootstrap"))
                    (inetutils (assoc-ref inputs "inetutils")))
-               ;; Source cannot find the substituted css currently.
-               ;(substitute* "templates/cytoscape.html"
-               ;  (("script src=.*")
-               ;   (string-append "script src=\"" cytoscape
-               ;                  "/share/genenetwork2/javascript/cytoscape/cytoscape.min.js\"></script>\n")))
-               ;(substitute* "templates/layout.html"
-               ;  (("https://stackpath.bootstrapcdn.com/bootstrap/.*")
-               ;   (string-append bootstrap "/share/web/bootstrap/css/bootstrap.min.css\">\n")))
+               (substitute* "templates/cytoscape.html"
+                 (("script src=.*")
+                  "script src=\"/static/cytoscape.min.js\"></script>\n"))
+               (substitute* "templates/layout.html"
+                 (("https://stackpath.bootstrapcdn.com/bootstrap/.*")
+                  "/static/bootstrap.min.css\">\n"))
                (substitute* "ratspub.py"
                  (("hostname") (string-append inetutils "/bin/hostname"))))
              #t))
@@ -51,6 +47,18 @@
            (lambda* (#:key outputs #:allow-other-keys)
              (let ((out (assoc-ref outputs "out")))
                (copy-recursively "." out))
+             #t))
+         (add-after 'install 'install-javascript
+           (lambda* (#:key inputs outputs #:allow-other-keys)
+             (let ((out       (assoc-ref outputs "out"))
+                   (cytoscape (assoc-ref inputs "cytoscape"))
+                   (bootstrap (assoc-ref inputs "bootstrap")))
+               (symlink (string-append cytoscape
+                                       "/share/genenetwork2/javascript/cytoscape/cytoscape.min.js")
+                        (string-append out "/static/cytoscape.min.js"))
+               (symlink (string-append bootstrap
+                                       "/share/web/bootstrap/css/bootstrap.min.css")
+                        (string-append out "/static/bootstrap.min.css")))
              #t))
          (add-after 'install 'wrap-executable
            (lambda* (#:key inputs outputs #:allow-other-keys)
