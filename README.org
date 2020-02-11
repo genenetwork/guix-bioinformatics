@@ -9,6 +9,8 @@ interest can be found at
 2. https://github.com/UMCUGenetics/guix-additions
 3. https://github.com/ekg/guix-genomics
 
+Also see [[http://git.genenetwork.org/pjotrp/guix-notes/src/branch/master/CHANNELS.org][Guix notes]] for a list of channels.
+
 To easily use the packages from this repo, simply add it to your
 `channels` list in ~/.config/guix/channels.scm as described
 [[https://guix.gnu.org/manual/en/html_node/Channels.html][here]]:
