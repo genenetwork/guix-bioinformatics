@@ -427,20 +427,12 @@ reads.")
          ;       (let ((go (string-append (assoc-ref inputs "go") "/bin/go")))
          ;         (invoke go "build" "xtract.go"))))
             (add-after 'unpack 'patch-programs
-              (lambda* (#:key inputs #:allow-other-keys)
-                (let ((gzip (assoc-ref inputs "gzip")))
-                  (substitute* '("index-bioc"
-                                 "pm-index"
-                                 "pm-invert"
-                                 "pm-stash"
-                                 "rchive.go"
-                                 "run-ncbi-converter")
-                    (("gunzip") (string-append gzip "/bin/gunzip")))
-                  (substitute* (find-files "." "^e")
-                    (("exec perl") "exec"))
-                  (substitute* '("xtract" "rchive")
-                    ;; or add current directory to PATH
-                    ((".*PATH.*") "")))
+              (lambda _
+                (substitute* (find-files "." "^e")
+                  (("exec perl") "exec"))
+                (substitute* '("xtract" "rchive")
+                  ;; or add current directory to PATH
+                  ((".*PATH.*") ""))
                 #t))
             (replace 'install
               (lambda* (#:key inputs outputs #:allow-other-keys)
@@ -466,9 +458,13 @@ reads.")
                       (path (getenv "PERL5LIB")))
                   (for-each
                     (lambda (file)
-                      (wrap-program (string-append out "/bin/" file)
-                                    `("PERL5LIB" ":" prefix (,path))))
-                    '("edirect.pl" "asp-ls" "ftp-cp" "ftp-ls")))
+                      (wrap-program file
+                                    `("PERL5LIB" ":" prefix (,path)))
+                      (wrap-program file
+                                    `("PATH" ":" prefix (,(dirname (which "sed"))
+                                                         ,(dirname (which "gzip"))
+                                                         ,(dirname (which "uname"))))))
+                    (find-files out ".")))
                 #t))))))
     (inputs
      `(("gzip" ,gzip)
