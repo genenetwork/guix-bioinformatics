@@ -65,7 +65,10 @@
              (let ((out  (assoc-ref outputs "out"))
                    (path (getenv "PYTHONPATH")))
                (wrap-program (string-append out "/server.py")
-                 `("PATH" ":" prefix (,(dirname (which "edirect.pl"))))
+                 `("PATH" ":" prefix (,(dirname (which "edirect.pl"))
+                                      ,(dirname (which "dirname"))
+                                      ,(dirname (which "grep"))
+                                      ,(dirname (which "sed"))))
                  `("PYTHONPATH" ":" prefix (,path))))
              #t)))))
     (inputs
