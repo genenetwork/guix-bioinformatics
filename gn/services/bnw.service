@@ -3,7 +3,7 @@ Description=BNW web server
 Wants=guix-daemon.service
 
 [Service]
-Environment="BNW_COMMAND=$(/bin/su -l bnw -c '/var/guix/profiles/per-user/bnw/current-guix/bin/guix system container /home/bnw/guix-bioinformatics/gn/services/bnw-container.scm --share=/home/bnw/server=/srv/http --share=/home/bnw/server/var-log=/var/log --network')"
+Environment="BNW_COMMAND=$(/bin/su -l bnw -c '/var/guix/profiles/per-user/bnw/current-guix/bin/guix system container /home/bnw/guix-bioinformatics/gn/services/bnw-container.scm --share=/home/bnw/server/var-log=/var/log --network')"
 ExecStart=/bin/bash -c '${BNW_COMMAND}'
 
 [Install]
