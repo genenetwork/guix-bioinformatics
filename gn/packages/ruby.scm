@@ -48,8 +48,7 @@
               (method url-fetch)
               (uri (string-append
                     "http://ftp.tudelft.nl/apache/maven/maven-3/3.3.9/source/apache-maven-" version "-src.tar.gz"))
-              (sha256
-               (base32
+              (sha256               (base32
                 "1g0iavyb34kvs3jfrx2hfnr8lr11m39sj852cy7528wva1glfl4i"))))
     (build-system gnu-build-system)
     (home-page "http://ant.apache.org")

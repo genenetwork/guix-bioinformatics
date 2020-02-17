@@ -1,8 +1,13 @@
 * guix-bioinformatics
 
 Bioinformatics packages for GNU Guix that are used in
-http://genenetwork.org/.  See [[https://github.com/pjotrp/guix-notes/blob/master/HACKING.org][Guix notes]] for installing and hacking
-GNU Guix.
+http://genenetwork.org/ and some other places.  See [[https://gitlab.com/pjotrp/guix-notes/blob/master/HACKING.org][Guix notes]] for
+installing and hacking GNU Guix. Other channels of bioinformatics
+interest can be found at
+
+1. https://github.com/BIMSBbioinfo
+2. https://github.com/UMCUGenetics/guix-additions
+3. https://github.com/ekg/guix-genomics
 
 To easily use the packages from this repo, simply add it to your
 `channels` list in ~/.config/guix/channels.scm as described
