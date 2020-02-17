@@ -30,6 +30,7 @@
        ((#:configure-flags cf)
         `(cons "--enable-docs=no" ; docs fail to build
                ,cf))
+       ((#:tests? _ #f) #f) ; tests hang
        ((#:phases phases)
         `(modify-phases ,phases
            (add-after 'unpack 'patch-configure-script
