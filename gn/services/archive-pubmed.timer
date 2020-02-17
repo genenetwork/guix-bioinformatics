@@ -1,0 +1,9 @@
+[Unit]
+Description=Daily PubMed downloads
+
+[Timer]
+OnBootSec=5h
+OnUnitInactiveSec=15h
+
+[Install]
+WantedBy=default.target
