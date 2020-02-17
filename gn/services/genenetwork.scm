@@ -46,8 +46,8 @@
                                               (file (file-append mod-python "/modules/mod_python.so")))
                                             %default-httpd-modules))
                                  (extra-config (list "\
-PythonPath \"sys.path+['" %mod-python-path "', '" (file-append genenetwork "/web/webqtl") "']\"
-<Directory " (file-append genenetwork "/web/webqtl") ">
+PythonPath \"sys.path+['" %mod-python-path "', '" (file-append genenetwork1 "/web/webqtl") "']\"
+<Directory " (file-append genenetwork1 "/web/webqtl") ">
   SetHandler python-program
   PythonHandler mod_python.publisher
   PythonAutoReload Off
