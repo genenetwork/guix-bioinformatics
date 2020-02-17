@@ -38,7 +38,7 @@
                              (config
                                (httpd-config-file
                                  (server-name "www.genenetwork.org")
-                                 (document-root (file-append genenetwork "/web"))
+                                 (document-root (file-append genenetwork1 "/web"))
                                  (listen '("8811"))
                                  (modules (cons*
                                             (httpd-module
