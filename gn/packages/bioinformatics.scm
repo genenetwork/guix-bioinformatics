@@ -426,6 +426,15 @@ reads.")
          ;     (lambda* (#:key inputs #:allow-other-keys)
          ;       (let ((go (string-append (assoc-ref inputs "go") "/bin/go")))
          ;         (invoke go "build" "xtract.go"))))
+            (add-after 'unpack 'unpack-binaries
+              (lambda* (#:key inputs #:allow-other-keys)
+                (let ((gzip (assoc-ref inputs "gzip"))
+                      (xtract (assoc-ref inputs "xtract.Linux"))
+                      (rchive (assoc-ref inputs "rchive.Linux")))
+                  (copy-file xtract "xtract.Linux.gz")
+                  (copy-file rchive "rchive.Linux.gz")
+                  (invoke (string-append gzip "/bin/gzip") "xtract.Linux.gz" "-dfv")
+                  (invoke (string-append gzip "/bin/gzip") "rchive.Linux.gz" "-dfv"))))
             (add-after 'unpack 'patch-programs
               (lambda _
                 (substitute* (find-files "." "^e")
@@ -435,10 +444,8 @@ reads.")
                   ((".*PATH.*") ""))
                 #t))
             (replace 'install
-              (lambda* (#:key inputs outputs #:allow-other-keys)
-                (let ((bin (string-append (assoc-ref outputs "out") "/bin"))
-                      (xtract.linux (assoc-ref inputs "xtract.Linux"))
-                      (rchive.linux (assoc-ref inputs "rchive.Linux")))
+              (lambda* (#:key outputs #:allow-other-keys)
+                (let ((bin (string-append (assoc-ref outputs "out") "/bin")))
                   (for-each
                     (lambda (file)
                       (install-file file bin))
@@ -446,8 +453,8 @@ reads.")
                       "edirect.pl" "efetch" "epost" "esearch" "fetch-pubmed"
                       "ftp-cp" "ftp-ls" "has-asp" "pm-prepare" "pm-refresh"
                       "pm-stash" "rchive" "xtract"))
-                  (copy-file xtract.linux (string-append bin "/xtract.Linux"))
-                  (copy-file rchive.linux (string-append bin "/rchive.Linux"))
+                  (install-file "xtract.Linux" bin)
+                  (install-file "rchive.Linux" bin)
                   (chmod (string-append bin "/xtract.Linux") #o555)
                   (chmod (string-append bin "/rchive.Linux") #o555))
                 #t))
@@ -475,19 +482,21 @@ reads.")
        ("xtract.Linux"
         ,(origin
            (method url-fetch)
-           (uri (string-append "ftp://ftp.ncbi.nlm.nih.gov/entrez/entrezdirect/"
-                               "/xtract.Linux")) ;; March 10, 2016
+           (uri (string-append "ftp://ftp.ncbi.nlm.nih.gov/entrez/entrezdirect"
+                               "/versions/" (package-version edirect)
+                               "/xtract.Linux.gz"))
            (sha256
             (base32
-             "15yhhh8kfipk12rhzabap81ys8wgj0khn0mp8p7zwqhq028fwj0l"))))
+             "1idzynn446qqjx2wv4jjgsx6cp349d4jy8g9z4gsg9l6sn5dhx53"))))
        ("rchive.Linux"
         ,(origin
            (method url-fetch)
            (uri (string-append "ftp://ftp.ncbi.nlm.nih.gov/entrez/entrezdirect/"
-                               "/rchive.Linux")) ;; November 14, 2017
+                               "/versions/" (package-version edirect)
+                               "/rchive.Linux.gz"))
            (sha256
             (base32
-             "0hl8zj1md9xbmaj0pv99rjyisw8w74rirw97xwqk47dz8v8ml338"))))))
+             "1p65hifv5d6nxg01vjwgy2nw49nssd822a8aj8jv412mhzj95ihv"))))))
     (native-search-paths
      ;; Ideally this should be set for LWP somewhere.
      (list (search-path-specification
