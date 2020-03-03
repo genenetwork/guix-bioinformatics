@@ -885,15 +885,19 @@ interest, and this app can provide values and figures for applicants to use.")
                  (app       (string-append out "/bin/" ,name))
                  (Rbin      (string-append (assoc-ref %build-inputs "r-min")
                                            "/bin/Rscript"))
+                 (top1001   (assoc-ref %build-inputs "RobTop1001.csv"))
+                 (celltypes (assoc-ref %build-inputs "CellTypes_RGC_Master_08Dec2018.csv"))
                  (source    (assoc-ref %build-inputs "source")))
             (copy-recursively source targetdir)
+            (copy-file celltypes (string-append targetdir "/CellTypes_RGC_Master_08Dec2018.csv"))
+            (copy-file top1001 (string-append targetdir "/RobTop1001.csv"))
             (substitute* (string-append targetdir "/global.R")
               (("800-H1-H20-RNA-Seq-SingleCell-Retina-OMRF-03-29-19_FPKM_v2_SiamakPlay.csv")
                "shinyRappToyDataset_SiamakPlay.csv")
               ;; Comment out the two unreferenced files for now
-              (("^rgc.*") "")
-              ;(("CellTypes_RGC_Master_08Dec2018.csv") "")
-              ;(("RobTop1001.csv") "")
+              ;(("^rgc.*") "")
+              ;(("CellTypes_RGC_Master_08Dec2018.csv") celltypes)
+              ;(("RobTop1001.csv") top1001)
               )
             (mkdir-p (string-append out "/bin"))
             (call-with-output-file app
@@ -906,7 +910,24 @@ runApp(launch.browser=0, port=4208)~%\n"
                 Rbin targetdir)))
             (chmod app #o555)
             #t))))
-     (native-inputs `(("source" ,source)))
+     (native-inputs
+      `(
+        ("source" ,source)
+        ("RobTop1001.csv"
+         ,(origin
+            (method url-fetch)
+            (uri "https://archive.org/download/celltypesrgcmaster08dec2018/RobTop1001.csv")
+            (file-name "RobTop1001.csv")
+            (sha256
+             (base32 "0pa73kc1p8417sjvvvhp9xsbh2h8g7h85pnmm16mnv4wjalhq0gn"))))
+        ("CellTypes_RGC_Master_08Dec2018.csv"
+         ,(origin
+            (method url-fetch)
+            (uri "https://archive.org/download/celltypesrgcmaster08dec2018/CellTypes_RGC_Master_08Dec2018.csv")
+            (file-name "CellTypes_RGC_Master_08Dec2018.csv")
+            (sha256
+             (base32 "0y411968np1f5g21iym9xc9yj5c1jsn94rpkwkxh9pw2z43gvghn"))))
+        ))
      (inputs
       `(("r-min" ,r-minimal)))
      (propagated-inputs
