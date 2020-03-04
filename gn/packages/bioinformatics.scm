@@ -14,6 +14,7 @@
   #:use-module (guix build-system trivial)
   #:use-module (guix build-system waf)
   #:use-module (gnu packages)
+  #:use-module (gnu packages bioconductor)
   #:use-module (gnu packages bioinformatics)
   #:use-module (gnu packages boost)
   #:use-module (gnu packages check)
@@ -861,19 +862,19 @@ interest, and this app can provide values and figures for applicants to use.")
         (license license:gpl3))))
 
 (define-public singlecellrshiny
-  (let ((commit "8061dcb477ba355de77d3e4fd3a15cf3267b56af")
-        (revision "1"))
+  (let ((commit "bdca74f4819d11e8fe7b15d9ab91b853f6542f7a")
+        (revision "2"))
     (package
      (name "singlecellrshiny")
      (version (git-version "0.0.0" revision commit))
      (source (origin
        (method git-fetch)
        (uri (git-reference
-              (url "https://github.com/syousefi/singleCellRshiny.git")
+              (url "https://github.com/genenetwork/singleCellRshiny")
               (commit commit)))
        (file-name (git-file-name name version))
        (sha256
-        (base32 "1pd8a9jx6ijjggsifvq66madx31h29rah5pmz4kdzfzb4fskpqz1"))))
+        (base32 "1rxj933s9p9r7358vnp15f7ag6c0j65r4hgr8kyirfhmp1i8xdlw"))))
      (build-system trivial-build-system)
      (arguments
       `(#:modules ((guix build utils))
@@ -891,13 +892,20 @@ interest, and this app can provide values and figures for applicants to use.")
             (copy-recursively source targetdir)
             (copy-file celltypes (string-append targetdir "/CellTypes_RGC_Master_08Dec2018.csv"))
             (copy-file top1001 (string-append targetdir "/RobTop1001.csv"))
+            (substitute* (string-append targetdir "/app.R")
+            ;  (("install.package.*") "")
+              ;; As seen in https://github.com/genenetwork/singleCellRshiny/commit/6b2a344dd0d02f65228ad8c350bac0ced5850d05.patch
+              (("library\\(DT\\)") "library(DT)\nlibrary(multtest)")
+              )
             (substitute* (string-append targetdir "/global.R")
               (("800-H1-H20-RNA-Seq-SingleCell-Retina-OMRF-03-29-19_FPKM_v2_SiamakPlay.csv")
                "shinyRappToyDataset_SiamakPlay.csv")
               ;; Comment out the two unreferenced files for now
               ;(("^rgc.*") "")
-              ;(("CellTypes_RGC_Master_08Dec2018.csv") celltypes)
-              ;(("RobTop1001.csv") top1001)
+              (("CellTypes_RGC_Master_08Dec2018.csv") celltypes)
+              (("RobTop1001.csv") top1001)
+              ;; As seen in https://github.com/genenetwork/singleCellRshiny/commit/6b2a344dd0d02f65228ad8c350bac0ced5850d05.patch
+              (("dim\\(sc.object.1") "dim(sc.object")
               )
             (mkdir-p (string-append out "/bin"))
             (call-with-output-file app
@@ -933,6 +941,7 @@ runApp(launch.browser=0, port=4208)~%\n"
      (propagated-inputs
       `(("r" ,r)
         ("r-dt" ,r-dt)
+        ("r-multtest" ,r-multtest)
         ("r-seurat" ,r-seurat)
         ("r-shiny" ,r-shiny)))
      (home-page "http://rn6err.opar.io/")
@@ -940,7 +949,7 @@ runApp(launch.browser=0, port=4208)~%\n"
      (description
       "This is the R-Shiny programs to run some basic single cell RNA sequencing
 (scRNA-seq) data analysis.")
-     (license license:gpl3))))
+     (license #f))))
 
 (define-public seqwish
   (package
