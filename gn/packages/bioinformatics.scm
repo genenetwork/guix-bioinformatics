@@ -863,7 +863,7 @@ interest, and this app can provide values and figures for applicants to use.")
 
 (define-public singlecellrshiny
   (let ((commit "bdca74f4819d11e8fe7b15d9ab91b853f6542f7a")
-        (revision "2"))
+        (revision "3"))
     (package
      (name "singlecellrshiny")
      (version (git-version "0.0.0" revision commit))
@@ -888,25 +888,18 @@ interest, and this app can provide values and figures for applicants to use.")
                                            "/bin/Rscript"))
                  (top1001   (assoc-ref %build-inputs "RobTop1001.csv"))
                  (celltypes (assoc-ref %build-inputs "CellTypes_RGC_Master_08Dec2018.csv"))
+                 (800-H1    (assoc-ref %build-inputs "800-H1-H20-RNA-Seq.csv"))
                  (source    (assoc-ref %build-inputs "source")))
             (copy-recursively source targetdir)
-            (copy-file celltypes (string-append targetdir "/CellTypes_RGC_Master_08Dec2018.csv"))
-            (copy-file top1001 (string-append targetdir "/RobTop1001.csv"))
             (substitute* (string-append targetdir "/app.R")
-            ;  (("install.package.*") "")
               ;; As seen in https://github.com/genenetwork/singleCellRshiny/commit/6b2a344dd0d02f65228ad8c350bac0ced5850d05.patch
-              (("library\\(DT\\)") "library(DT)\nlibrary(multtest)")
-              )
+              (("library\\(DT\\)") "library(DT)\nlibrary(multtest)"))
             (substitute* (string-append targetdir "/global.R")
-              (("800-H1-H20-RNA-Seq-SingleCell-Retina-OMRF-03-29-19_FPKM_v2_SiamakPlay.csv")
-               "shinyRappToyDataset_SiamakPlay.csv")
-              ;; Comment out the two unreferenced files for now
-              ;(("^rgc.*") "")
+              (("800-H1-H20-RNA-Seq-SingleCell-Retina-OMRF-03-29-19_FPKM_v2_SiamakPlay.csv") 800-H1)
               (("CellTypes_RGC_Master_08Dec2018.csv") celltypes)
               (("RobTop1001.csv") top1001)
               ;; As seen in https://github.com/genenetwork/singleCellRshiny/commit/6b2a344dd0d02f65228ad8c350bac0ced5850d05.patch
-              (("dim\\(sc.object.1") "dim(sc.object")
-              )
+              (("dim\\(sc.object.1") "dim(sc.object"))
             (mkdir-p (string-append out "/bin"))
             (call-with-output-file app
               (lambda (port)
@@ -918,9 +911,8 @@ runApp(launch.browser=0, port=4208)~%\n"
                 Rbin targetdir)))
             (chmod app #o555)
             #t))))
-     (native-inputs
-      `(
-        ("source" ,source)
+     (inputs
+      `(("r-min" ,r-minimal)
         ("RobTop1001.csv"
          ,(origin
             (method url-fetch)
@@ -935,21 +927,25 @@ runApp(launch.browser=0, port=4208)~%\n"
             (file-name "CellTypes_RGC_Master_08Dec2018.csv")
             (sha256
              (base32 "0y411968np1f5g21iym9xc9yj5c1jsn94rpkwkxh9pw2z43gvghn"))))
-        ))
-     (inputs
-      `(("r-min" ,r-minimal)))
+        ("800-H1-H20-RNA-Seq.csv"
+         ,(origin
+            (method url-fetch)
+            (uri "https://archive.org/download/celltypesrgcmaster08dec2018/800-H1-H20-RNA-Seq-SingleCell-Retina-OMRF-03-29-19_FPKM_v2_SiamakPlay.csv")
+            (file-name "800-H1-H20-RNA-Seq-SingleCell-Retina-OMRF-03-29-19_FPKM_v2_SiamakPlay.csv")
+            (sha256
+             (base32 "1b1y4lfs8drypm04i1rypbmk67rdqgs27nfh05pwnv3sja2nanam"))))))
      (propagated-inputs
       `(("r" ,r)
         ("r-dt" ,r-dt)
         ("r-multtest" ,r-multtest)
         ("r-seurat" ,r-seurat)
         ("r-shiny" ,r-shiny)))
-     (home-page "http://rn6err.opar.io/")
+     (home-page "")
      (synopsis "RNA sequencing data analysis")
      (description
       "This is the R-Shiny programs to run some basic single cell RNA sequencing
 (scRNA-seq) data analysis.")
-     (license #f))))
+     (license license:agpl3))))
 
 (define-public seqwish
   (package
