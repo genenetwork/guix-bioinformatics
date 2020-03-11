@@ -940,7 +940,7 @@ runApp(launch.browser=0, port=4208)~%\n"
         ("r-multtest" ,r-multtest)
         ("r-seurat" ,r-seurat)
         ("r-shiny" ,r-shiny)))
-     (home-page "")
+     (home-page "http://singlecell.opar.io/")
      (synopsis "RNA sequencing data analysis")
      (description
       "This is the R-Shiny programs to run some basic single cell RNA sequencing
