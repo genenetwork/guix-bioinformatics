@@ -14,6 +14,7 @@
   #:use-module (guix build-system trivial)
   #:use-module (guix build-system waf)
   #:use-module (gnu packages)
+  #:use-module (gn packages python)
   #:use-module (gnu packages bioconductor)
   #:use-module (gnu packages bioinformatics)
   #:use-module (gnu packages boost)
@@ -1224,3 +1225,42 @@ here}.")
     (synopsis "Efficient sequence alignment of full genomes")
     (description "MUMmer is a versatil alignment tool for DNA and protein sequences.")
     (license license:artistic2.0)))
+
+(define-public grocsvs
+  (let ((commit "ecd956a65093a0b2c41849050e4512d46fecea5d")
+        (revision "1"))
+    (package
+      (name "grocsvs")
+      (version (git-version "0.2.6.1" revision commit))
+      (source (origin
+                (method git-fetch)
+                (uri (git-reference
+                       (url "https://github.com/grocsvs/grocsvs")
+                       (commit commit)))
+                (file-name (git-file-name name version))
+                (sha256
+                 (base32 "14505725gr7qxc17cxxf0k6lzcwmgi64pija4mwf29aw70qn35cc"))))
+      (build-system python-build-system)
+      (arguments
+       `(#:python ,python-2))   ; Only python-2 supported.
+      (inputs
+       `(("python2-admiral" ,python2-admiral)
+         ("python2-h5py" ,python2-h5py)
+         ("python2-ipython-cluster-helper" ,python2-ipython-cluster-helper)
+         ("python2-networkx" ,python2-networkx)
+         ("python2-psutil" ,python2-psutil)
+         ("python2-pandas" ,python2-pandas)
+         ("python2-pybedtools" ,python2-pybedtools)
+         ("python2-pyfaidx" ,python2-pyfaidx)
+         ("python2-pygraphviz" ,python2-pygraphviz)
+         ("python2-pysam" ,python2-pysam)
+         ("python2-scipy" ,python2-scipy)))
+      (home-page "https://github.com/grocsvs/grocsvs")
+      (synopsis "Genome-wide reconstruction of complex structural variants")
+      (description
+       "@dfn{Genome-wide Reconstruction of Complex Structural Variants}
+(GROC-SVs), is a software pipeline for identifying large-scale structural
+variants, performing sequence assembly at the breakpoints, and reconstructing
+the complex structural variants using the long-fragment information from the
+10x Genomics platform.")
+      (license license:expat))))

@@ -3,6 +3,7 @@
   #:use-module (gnu packages)
   #:use-module (gnu packages attr)
   #:use-module (gnu packages base)
+  #:use-module (gnu packages bioinformatics)
   #:use-module (gnu packages check)
   #:use-module (gnu packages compression)
   #:use-module (gnu packages databases)
@@ -1094,3 +1095,137 @@ spreadsheets without the need for COM objects.")
     (synopsis "")
     (description "")
     (license license:bsd-4)))
+
+(define-public python-ipython-cluster-helper
+  (package
+    (name "python-ipython-cluster-helper")
+    (version "0.6.4")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "ipython-cluster-helper" version))
+        (sha256
+         (base32
+          "1l6mlwxlkxpbvawfwk6qffich7ahg9hq2bxfissgz6144p3k4arj"))
+        (modules '((guix build utils)))
+        (snippet
+         '(begin (substitute* "requirements.txt"
+                   (("ipython.*") "ipython\n"))
+                 #t))))
+    (build-system python-build-system)
+    (arguments
+     `(#:tests? #f      ; Test suite can't find IPython.
+       #:phases
+       (modify-phases %standard-phases
+         (replace 'check
+           (lambda* (#:key inputs outputs tests? #:allow-other-keys)
+             (if tests?
+               (begin
+                 (setenv "HOME" (getcwd))
+                 (add-installed-pythonpath inputs outputs)
+                 (invoke "python" "example/example.py" "--local"))
+               #t))))))
+    (propagated-inputs
+     `(("python-ipyparallel" ,python-ipyparallel)
+       ("python-ipython" ,python-ipython)
+       ("python-netifaces" ,python-netifaces)
+       ("python-pyzmq" ,python-pyzmq)
+       ("python-setuptools" ,python-setuptools)
+       ("python-six" ,python-six)))
+    (home-page "https://github.com/roryk/ipython-cluster-helper")
+    (synopsis
+     "Simplify IPython cluster start up and use for multiple schedulers")
+    (description
+     "@code{ipython-cluster-helper} creates a throwaway parallel IPython
+profile, launches a cluster and returns a view.  On program exit it shuts the
+cluster down and deletes the throwaway profile.")
+    (license license:expat)))
+
+(define-public python2-ipython-cluster-helper
+  (package-with-python2 python-ipython-cluster-helper))
+
+(define-public python-ipyparallel
+  (package
+    (name "python-ipyparallel")
+    (version "6.2.4")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "ipyparallel" version))
+        (sha256
+         (base32
+          "0rf0dbpxf5z82bw8lsjj45r3wdd4wc74anz4wiiaf2rbjqlb1ivn"))))
+    (build-system python-build-system)
+    (arguments
+     `(#:tests? #f ; RuntimeError: IO Loop failed to start
+       #:phases
+       (modify-phases %standard-phases
+         (add-before 'check 'prepare-for-tests
+           (lambda _
+             (setenv "HOME" (getcwd))
+             #t)))))
+    (propagated-inputs
+     `(("python-dateutil" ,python-dateutil)
+       ("python-decorator" ,python-decorator)
+       ("python-ipykernel" ,python-ipykernel)
+       ("python-ipython" ,python-ipython)
+       ("python-ipython-genutils" ,python-ipython-genutils)
+       ("python-jupyter-client" ,python-jupyter-client)
+       ("python-pyzmq" ,python-pyzmq)
+       ("python-tornado" ,python-tornado)
+       ("python-traitlets" ,python-traitlets)))
+    (native-inputs
+     `(("python-ipython" ,python-ipython)
+       ("python-mock" ,python-mock)
+       ("python-nose" ,python-nose)
+       ("python-pytest" ,python-pytest)
+       ("python-pytest-cov" ,python-pytest-cov)
+       ("python-testpath" ,python-testpath)))
+    (home-page "https://ipython.org/")
+    (synopsis "Interactive Parallel Computing with IPython")
+    (description
+     "@code{ipyparallel} is a Python package and collection of CLI scripts for
+controlling clusters for Jupyter.  @code{ipyparallel} contains the following
+CLI scripts:
+@enumerate
+@item ipcluster - start/stop a cluster
+@item ipcontroller - start a scheduler
+@item ipengine - start an engine
+@end enumerate")
+    (license license:bsd-3)))
+
+(define-public python2-ipyparallel
+  (let ((ipyparallel (package-with-python2 python-ipyparallel)))
+    (package
+      (inherit ipyparallel)
+      (propagated-inputs
+       `(("python2-futures" ,python2-futures)
+         ,@(package-propagated-inputs ipyparallel))))))
+
+(define-public python2-pyfaidx
+  (package-with-python2 python-pyfaidx))
+
+(define-public python-admiral
+  (package
+    (name "python-admiral")
+    (version "0.2")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "admiral" version))
+        (sha256
+         (base32
+          "1b2zjgyz94ld5wr7s4cm4x5sxijx3w0dmd7r2cq1s8iqjzz6rd1x"))))
+    (build-system python-build-system)
+    (arguments '(#:tests? #f))      ; No tests
+    (propagated-inputs
+     `(("python-humanfriendly" ,python-humanfriendly)))
+    (home-page "https://github.com/nspies/admiral")
+    (synopsis
+     "Simple python high-performance computing cluster batch submission")
+    (description
+     "Simple python high-performance computing cluster batch submission.")
+    (license #f)))      ; No license in repository.
+
+(define-public python2-admiral
+  (package-with-python2 python-admiral))
