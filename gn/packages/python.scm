@@ -1202,9 +1202,6 @@ CLI scripts:
        `(("python2-futures" ,python2-futures)
          ,@(package-propagated-inputs ipyparallel))))))
 
-(define-public python2-pyfaidx
-  (package-with-python2 python-pyfaidx))
-
 (define-public python-admiral
   (package
     (name "python-admiral")
