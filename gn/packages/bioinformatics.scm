@@ -428,45 +428,33 @@ reads.")
       (substitute-keyword-arguments (package-arguments edirect)
         ((#:phases phases)
          `(modify-phases ,phases
-         ;   (replace 'build
-         ;     (lambda* (#:key inputs #:allow-other-keys)
-         ;       (let ((go (string-append (assoc-ref inputs "go") "/bin/go")))
-         ;         (invoke go "build" "xtract.go"))))
-            (add-after 'unpack 'unpack-binaries
-              (lambda* (#:key inputs #:allow-other-keys)
-                (let ((gzip (assoc-ref inputs "gzip"))
-                      (xtract (assoc-ref inputs "xtract.Linux"))
-                      (rchive (assoc-ref inputs "rchive.Linux")))
-                  (copy-file xtract "xtract.Linux.gz")
-                  (copy-file rchive "rchive.Linux.gz")
-                  (invoke (string-append gzip "/bin/gzip") "xtract.Linux.gz" "-dfv")
-                  (invoke (string-append gzip "/bin/gzip") "rchive.Linux.gz" "-dfv"))))
             (add-after 'unpack 'patch-programs
-              (lambda _
-                (substitute* (find-files "." "^e")
-                  (("exec perl") "exec"))
-                (substitute* '("xtract" "rchive")
-                  ;; or add current directory to PATH
-                  ((".*PATH.*") ""))
+              (lambda* (#:key inputs #:allow-other-keys)
+                ;; Ignore errors about missing xtract.Linux and rchive.Linux.
+                (substitute* "pm-refresh"
+                  (("cat \\\"\\$target")
+                   "grep ^[[:digit:]] \"$target"))
                 #t))
             (replace 'install
-              (lambda* (#:key outputs #:allow-other-keys)
-                (let ((bin (string-append (assoc-ref outputs "out") "/bin")))
+              (lambda* (#:key inputs outputs #:allow-other-keys)
+                (let ((bin (string-append (assoc-ref outputs "out") "/bin"))
+                      (edirect-go (assoc-ref inputs "edirect-go-programs")))
                   (for-each
                     (lambda (file)
                       (install-file file bin))
-                    '("archive-pubmed" "asp-cp" "asp-ls" "download-pubmed"
-                      "edirect.pl" "efetch" "epost" "esearch" "fetch-pubmed"
-                      "ftp-cp" "ftp-ls" "has-asp" "pm-prepare" "pm-refresh"
-                      "pm-stash" "rchive" "xtract"))
-                  (install-file "xtract.Linux" bin)
-                  (install-file "rchive.Linux" bin)
-                  (chmod (string-append bin "/xtract.Linux") #o555)
-                  (chmod (string-append bin "/rchive.Linux") #o555))
+                    '("archive-pubmed" "asp-cp" "asp-ls" "download-ncbi-data"
+                      "download-pubmed" "edirect.pl" "efetch" "epost" "esearch"
+                      "fetch-pubmed" "ftp-cp" "ftp-ls" "has-asp" "index-pubmed"
+                      "pm-prepare" "pm-refresh" "pm-stash" "pm-collect"
+                      "pm-index" "pm-invert" "pm-merge" "pm-promote"))
+                  (symlink (string-append edirect-go "/bin/xtract.Linux")
+                           (string-append bin "/xtract"))
+                  (symlink (string-append edirect-go "/bin/rchive.Linux")
+                           (string-append bin "/rchive")))
                 #t))
             (replace 'wrap-program
               (lambda* (#:key outputs #:allow-other-keys)
-                ;; Make sure 'edirect.pl' finds all perl inputs at runtime.
+                ;; Make sure everything can run in a pure environment.
                 (let ((out (assoc-ref outputs "out"))
                       (path (getenv "PERL5LIB")))
                   (for-each
@@ -474,44 +462,24 @@ reads.")
                       (wrap-program file
                                     `("PERL5LIB" ":" prefix (,path)))
                       (wrap-program file
-                                    `("PATH" ":" prefix (,(dirname (which "sed"))
+                                    `("PATH" ":" prefix (,(string-append out "/bin")
+                                                         ,(dirname (which "sed"))
                                                          ,(dirname (which "gzip"))
+                                                         ,(dirname (which "grep"))
+                                                         ,(dirname (which "perl"))
                                                          ,(dirname (which "uname"))))))
                     (find-files out ".")))
                 #t))))))
     (inputs
-     `(("gzip" ,gzip)
+     `(("edirect-go-programs" ,edirect-go-programs)
        ,@(package-inputs edirect)))
-    (native-inputs
-     `(
-       ;("go" ,go)
-       ("xtract.Linux"
-        ,(origin
-           (method url-fetch)
-           (uri (string-append "ftp://ftp.ncbi.nlm.nih.gov/entrez/entrezdirect"
-                               "/versions/" (package-version edirect)
-                               "/xtract.Linux.gz"))
-           (sha256
-            (base32
-             "1idzynn446qqjx2wv4jjgsx6cp349d4jy8g9z4gsg9l6sn5dhx53"))))
-       ("rchive.Linux"
-        ,(origin
-           (method url-fetch)
-           (uri (string-append "ftp://ftp.ncbi.nlm.nih.gov/entrez/entrezdirect/"
-                               "/versions/" (package-version edirect)
-                               "/rchive.Linux.gz"))
-           (sha256
-            (base32
-             "1p65hifv5d6nxg01vjwgy2nw49nssd822a8aj8jv412mhzj95ihv"))))))
     (native-search-paths
      ;; Ideally this should be set for LWP somewhere.
      (list (search-path-specification
             (variable "PERL_LWP_SSL_CA_FILE")
             (file-type 'regular)
             (separator #f)
-            (files '("/etc/ssl/certs/ca-certificates.crt")))))
-    ;; Due to the precompiled binaries we download:
-    (supported-systems '("x86_64-linux"))))
+            (files '("/etc/ssl/certs/ca-certificates.crt")))))))
 
 (define-public edirect-go-programs
   (package
