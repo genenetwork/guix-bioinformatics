@@ -24,6 +24,7 @@
   #:use-module (gnu packages datastructures)
   #:use-module (gnu packages fontutils)
   #:use-module (gnu packages gcc)
+  #:use-module (gnu packages graphviz)
   #:use-module (gnu packages imagemagick)
   #:use-module (gnu packages jemalloc)
   #:use-module (gnu packages maths)
