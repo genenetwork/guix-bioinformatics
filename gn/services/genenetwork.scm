@@ -2,13 +2,13 @@
 
 (use-modules (gnu)
              (gn packages genenetwork)
-             (gn packages python)
+             (gn packages python24)
              (gn packages web))
 (use-service-modules web)
 (use-package-modules python)
 
 (define %mod-python-path
-  (file-append mod-python "/lib/python2.7/site-packages"))
+  (file-append mod-python "/lib/python2.4/site-packages"))
 
 (operating-system
   (host-name "genenetwork")
@@ -22,15 +22,15 @@
   ;; No firmware for VMs
   (firmware '())
 
-  (packages (cons* python-2
+  (packages (cons* python-2.4
                    mod-python
-                   python2-qtlreaper
-                   python2-htmlgen-gn
-                   python2-json-GN1
-                   python2-piddle
-                   python2-pyx-GN1
-                   python2-pyxlwriter
-                   python2-svg-GN1
+                   python24-qtlreaper
+                   ;python24-htmlgen-gn
+                   python24-json-GN1
+                   python24-piddle
+                   python24-pyx-GN1
+                   python24-pyxlwriter
+                   python24-svg-GN1
                    %base-packages))
 
   (services (list (service httpd-service-type
