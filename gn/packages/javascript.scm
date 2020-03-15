@@ -1121,3 +1121,27 @@ widgets, and themes built on top of the jQuery JavaScript Library.")
     (name "js-jquery-ui")
     (arguments `(#:javascript-files '("ui/jquery-ui.js")))
     (build-system minify-build-system)))
+
+(define-public js-popper
+  (package
+    (name "js-popper")
+    (version "2.0.6")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+              (url "https://github.com/popperjs/popper-core")
+              (commit (string-append "v" version))))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32
+         "0lzy981p9nja2l3xa2zvals6q31v3bzpxxa85yn9pm7wkj3vglf2"))))
+    (build-system minify-build-system)
+    (arguments
+     `(#:javascript-files '("src/popper.js")))
+    (home-page "https://popper.js.org/")
+    (synopsis "Tooltip and popover positioning engine")
+    (description
+     "Given an element, such as a button, and a tooltip element describing it,
+Popper will automatically put the tooltip in the right place near the button.")
+    (license license:expat)))
