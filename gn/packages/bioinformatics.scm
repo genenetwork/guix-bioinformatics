@@ -10,12 +10,10 @@
   #:use-module (guix build-system ant)
   #:use-module (guix build-system cmake)
   #:use-module (guix build-system gnu)
-  #:use-module (guix build-system go)
   #:use-module (guix build-system python)
   #:use-module (guix build-system trivial)
   #:use-module (guix build-system waf)
   #:use-module (gnu packages)
-  #:use-module (gn packages golang)
   #:use-module (gn packages python)
   #:use-module (gnu packages bioconductor)
   #:use-module (gnu packages bioinformatics)
@@ -26,7 +24,6 @@
   #:use-module (gnu packages datastructures)
   #:use-module (gnu packages fontutils)
   #:use-module (gnu packages gcc)
-  #:use-module (gnu packages golang)
   #:use-module (gnu packages graphviz)
   #:use-module (gnu packages imagemagick)
   #:use-module (gnu packages jemalloc)
@@ -421,118 +418,7 @@ reads.")
     (license license:non-copyleft)))
 
 (define-public edirect-gn
-  (package
-    (inherit edirect)
-    (name "edirect-gn")
-    (arguments
-      (substitute-keyword-arguments (package-arguments edirect)
-        ((#:phases phases)
-         `(modify-phases ,phases
-            (add-after 'unpack 'patch-programs
-              (lambda* (#:key inputs #:allow-other-keys)
-                ;; Ignore errors about missing xtract.Linux and rchive.Linux.
-                (substitute* "pm-refresh"
-                  (("cat \\\"\\$target")
-                   "grep ^[[:digit:]] \"$target"))
-                #t))
-            (replace 'install
-              (lambda* (#:key inputs outputs #:allow-other-keys)
-                (let ((bin (string-append (assoc-ref outputs "out") "/bin"))
-                      (edirect-go (assoc-ref inputs "edirect-go-programs")))
-                  (for-each
-                    (lambda (file)
-                      (install-file file bin))
-                    '("archive-pubmed" "asp-cp" "asp-ls" "download-ncbi-data"
-                      "download-pubmed" "edirect.pl" "efetch" "epost" "esearch"
-                      "fetch-pubmed" "ftp-cp" "ftp-ls" "has-asp" "index-pubmed"
-                      "pm-prepare" "pm-refresh" "pm-stash" "pm-collect"
-                      "pm-index" "pm-invert" "pm-merge" "pm-promote"))
-                  (symlink (string-append edirect-go "/bin/xtract.Linux")
-                           (string-append bin "/xtract"))
-                  (symlink (string-append edirect-go "/bin/rchive.Linux")
-                           (string-append bin "/rchive")))
-                #t))
-            (replace 'wrap-program
-              (lambda* (#:key outputs #:allow-other-keys)
-                ;; Make sure everything can run in a pure environment.
-                (let ((out (assoc-ref outputs "out"))
-                      (path (getenv "PERL5LIB")))
-                  (for-each
-                    (lambda (file)
-                      (wrap-program file
-                                    `("PERL5LIB" ":" prefix (,path)))
-                      (wrap-program file
-                                    `("PATH" ":" prefix (,(string-append out "/bin")
-                                                         ,(dirname (which "sed"))
-                                                         ,(dirname (which "gzip"))
-                                                         ,(dirname (which "grep"))
-                                                         ,(dirname (which "perl"))
-                                                         ,(dirname (which "uname"))))))
-                    (find-files out ".")))
-                #t))))))
-    (inputs
-     `(("edirect-go-programs" ,edirect-go-programs)
-       ,@(package-inputs edirect)))
-    (native-search-paths
-     ;; Ideally this should be set for LWP somewhere.
-     (list (search-path-specification
-            (variable "PERL_LWP_SSL_CA_FILE")
-            (file-type 'regular)
-            (separator #f)
-            (files '("/etc/ssl/certs/ca-certificates.crt")))))))
-
-(define-public edirect-go-programs
-  (package
-    (inherit edirect)
-    (name "edirect-go-programs")
-    (build-system go-build-system)
-    (arguments
-     `(#:install-source? #f
-       #:tests? #f      ; No tests.
-       #:import-path "ncbi.nlm.nih.gov/entrez/edirect"
-       #:phases
-       (modify-phases %standard-phases
-         (add-after 'unpack 'replace-go-dependency
-           ;; This go library does not have any license.
-           ;; TODO: This should move to a source snippet.
-           (lambda* (#:key import-path #:allow-other-keys)
-             (with-directory-excursion (string-append "src/" import-path)
-               (substitute* "rchive.go"
-                 (("github.com/fiam/gounidecode/unidecode")
-                  "golang.org/rainycape/unidecode"))
-               #t)))
-         (replace 'build
-           (lambda* (#:key import-path #:allow-other-keys)
-             (with-directory-excursion (string-append "src/" import-path)
-               (invoke "go" "build" "-v" "-x" "j2x.go")
-               (invoke "go" "build" "-v" "-x" "t2x.go")
-               (invoke "go" "build" "-v" "-x" "-o"
-                       "xtract.Linux" "xtract.go" "common.go")
-               (invoke "go" "build" "-v" "-x" "-o"
-                       "rchive.Linux" "rchive.go" "common.go")
-               (invoke "go" "build" "-v" "-x" "-o" "symbols.Linux" "s2p.go"))))
-         (replace 'install
-           (lambda* (#:key outputs import-path #:allow-other-keys)
-             (let ((dest    (string-append (assoc-ref outputs "out") "/bin"))
-                   (source  (string-append "src/" import-path "/")))
-               (for-each (lambda (file)
-                           (format #t "installing ~a~%" file)
-                           (install-file (string-append source file) dest))
-                         '("j2x" "t2x" "symbols.Linux" "xtract.Linux" "rchive.Linux"))
-               #t))))))
-    (native-inputs '())
-    (propagated-inputs '())
-    (inputs
-     `(("go-github-com-fatih-color" ,go-github-com-fatih-color)
-       ("go-github-com-fogleman-gg" ,go-github-com-fogleman-gg)
-       ("go-github-com-gedex-inflector" ,go-github-com-gedex-inflector)
-       ("go-github-com-golang-freetype" ,go-github-com-golang-freetype)
-       ("go-github-com-klauspost-cpuid" ,go-github-com-klauspost-cpuid)
-       ("go-github-com-pbnjay-memory" ,go-github-com-pbnjay-memory)
-       ("go-github-com-surgebase-porter2" ,go-github-com-surgebase-porter2)
-       ("go-golang-org-rainycape-unidecode" ,go-golang-org-rainycape-unidecode)
-       ("go-golang-org-x-image" ,go-golang-org-x-image)
-       ("go-golang-org-x-text" ,go-golang-org-x-text)))))
+  (deprecated-package "edirect-gn" edirect))
 
 ;; TODO: Unbundle zlib, bamtools, tclap
 (define-public sniffles
