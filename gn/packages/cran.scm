@@ -1,4 +1,4 @@
-(define-module (gnu packages cran)
+(define-module (gn packages cran)
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (guix packages)
   #:use-module (guix download)
