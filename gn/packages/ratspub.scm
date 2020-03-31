@@ -4,7 +4,7 @@
   #:use-module (guix git-download)
   #:use-module (guix build-system python)
   #:use-module (gnu packages admin)
-  #:use-module (gn packages bioinformatics)
+  #:use-module (gnu packages bioinformatics)
   #:use-module (gn packages javascript)
   #:use-module (gnu packages python-web)
   #:use-module (gnu packages python-xyz)
@@ -72,7 +72,7 @@
                  `("PYTHONPATH" ":" prefix (,path))))
              #t)))))
     (inputs
-     `(("edirect" ,edirect-gn)
+     `(("edirect" ,edirect)
        ("inetutils" ,inetutils)
        ("python-flask" ,python-flask)
        ("python-nltk" ,python-nltk)))
@@ -89,4 +89,4 @@ the question \"What do we know about these genes and addiction?\".  Data from
 @acronym{EBI GWAS, European Bioinformatics Institute Genome-Wide Association
 Studies} catalog are also included in the search to better answer this
 question.")
-    (license #f)))
+    (license license:expat)))
