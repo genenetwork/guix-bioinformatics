@@ -1175,3 +1175,54 @@ variants, performing sequence assembly at the breakpoints, and reconstructing
 the complex structural variants using the long-fragment information from the
 10x Genomics platform.")
       (license license:expat))))
+
+(define-public diagnostic-slider
+  (let ((commit "514d65d4982133e4869e578c5553fced4c6d506c")
+        (revision "1"))
+    (package
+      (name "diagnostic-slider")
+      (version (git-version "0.0.0" revision commit))
+      (source (origin
+                (method git-fetch)
+                (uri (git-reference
+                       (url "https://github.com/sens/diagnostic-slider")
+                       (commit commit)))
+                (file-name (git-file-name name version))
+                (sha256
+                 (base32 "04g8if32g8syg6v0bd3jjn05i3d394nx8i3ccl0883p8mlmdvlmx"))))
+      (build-system trivial-build-system)
+      (arguments
+       `(#:modules ((guix build utils))
+         #:builder
+         (begin
+           (use-modules (guix build utils))
+           (let* ((out       (assoc-ref %outputs "out"))
+                  (targetdir (string-append out "/share/" ,name))
+                  (app       (string-append out "/bin/" ,name))
+                  (Rbin      (string-append (assoc-ref %build-inputs "r-min")
+                                            "/bin/Rscript"))
+                  (source    (assoc-ref %build-inputs "source")))
+             (copy-recursively source targetdir)
+             (mkdir-p (string-append out "/bin"))
+             (call-with-output-file app
+               (lambda (port)
+                 (format port
+"#!~a
+library(shiny)
+setwd(\"~a\")
+runApp(launch.browser=0, port=4206)~%\n"
+                         Rbin targetdir)))
+               (chmod app #o555)
+               #t))))
+        (native-inputs
+         `(("source" ,source)))
+        (inputs
+         `(("r-min" ,r-minimal)))
+        (propagated-inputs
+         `(("r" ,r)
+           ("r-shiny" ,r-shiny)))
+        (home-page "https://github.com/sens/diagnostic-slider")
+        (synopsis "")
+        (description
+         "")
+        (license #f))))
