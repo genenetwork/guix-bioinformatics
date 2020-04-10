@@ -34,9 +34,13 @@
   #:use-module (gnu packages protobuf)
   #:use-module (gnu packages python)
   #:use-module (gnu packages python-science)
+  #:use-module (gnu packages python-web)
   #:use-module (gnu packages python-xyz)
+  #:use-module (gnu packages rdf)
   #:use-module (gnu packages readline)
-  #:use-module (gnu packages statistics))
+  #:use-module (gnu packages serialization)
+  #:use-module (gnu packages statistics)
+  #:use-module (gnu packages time))
 
 (define-public contra
   (package
@@ -1226,3 +1230,129 @@ runApp(launch.browser=0, port=4206)~%\n"
         (description
          "")
         (license #f))))
+
+(define-public bh20-seq-resource
+  (let ((commit "ddabd9390d2b221786ef58a6d85200eecf82ca2f")
+        (revision "1"))
+    (package
+      (name "bh20-seq-resource")
+      (version (git-version "1.0" revision commit))
+      (source (origin
+                (method git-fetch)
+                (uri (git-reference
+                       (url "https://github.com/arvados/bh20-seq-resource")
+                       (commit commit)))
+                (file-name (git-file-name name version))
+                (sha256
+                 (base32 "04j8b7rz1vqczm6dlyvf1gx58idjhy0swmjbz4bm5r4zgpkps6mb"))))
+      (build-system python-build-system)
+      (inputs
+       `(("python-arvados-python-client" ,python-arvados-python-client)
+         ("python-flask" ,python-flask)
+         ("python-pyyaml" ,python-pyyaml)
+         ("python-schema-salad" ,python-schema-salad)))
+      (native-inputs
+       `(("git" ,(@ (gnu packages version-control) git))
+         ("python-oauth2client" ,python-oauth2client)
+         ("python-pytest" ,python-pytest)
+         ("python-pytest-runner" ,python-pytest-runner)
+         ("python-uritemplate" ,python-uritemplate)))
+      (home-page "https://github.com/arvados/bh20-seq-resource")
+      (synopsis
+       "Tool to upload SARS-CoV-19 sequences and service to kick off analysis")
+      (description "This repository provides a sequence uploader for the
+COVID-19 Virtual Biohackathon's Public Sequence Resource project.  You can use
+it to upload the genomes of SARS-CoV-2 samples to make them publicly and freely
+available to other researchers.")
+      (license license:asl2.0))))
+
+(define-public python-arvados-python-client
+  (package
+    (name "python-arvados-python-client")
+    (version "2.0.1")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "arvados-python-client" version))
+        (sha256
+         (base32
+          "1a363kdykj5jcrvh3q8wz06g6pqfnm2z48nfy64bls25pkiac1lr"))))
+    (build-system python-build-system)
+    (arguments
+     `(#:tests? #f  ; tests not included?
+       #:phases
+       (modify-phases %standard-phases
+         (add-after 'unpack 'loosen-version-requirements
+           (lambda _
+             (substitute* "setup.py"
+               (("ruamel.yaml.*") "ruamel.yaml',\n")
+               (("pbr<1.7.0") "pbr"))
+             #t)))))
+    (propagated-inputs
+     `(("python-ciso8601" ,python-ciso8601)
+       ("python-future" ,python-future)
+       ;("python-google-api-python-client" ,python-google-api-python-client)
+       ("python-google-api-client" ,python-google-api-client)
+       ("python-httplib2" ,python-httplib2)
+       ("python-pycurl" ,python-pycurl)
+       ("python-ruamel.yaml" ,python-ruamel.yaml)
+       ("python-setuptools" ,python-setuptools)
+       ("python-ws4py" ,python-ws4py)))
+    (native-inputs
+     `(("python-mock" ,python-mock)
+       ("python-oauth2client" ,python-oauth2client)
+       ("python-pbr" ,python-pbr)
+       ("python-pyyaml" ,python-pyyaml)
+       ("python-uritemplate" ,python-uritemplate)))
+    (home-page "https://arvados.org")
+    (synopsis "Arvados client library")
+    (description "This package provides the arvados module, an API client for
+Arvados.  It also includes higher-level functions to help you write Crunch
+scripts, and command-line tools to store and retrieve data in the Keep storage
+server.")
+    (license license:asl2.0)))
+
+(define-public python-schema-salad
+  (package
+    (name "python-schema-salad")
+    (version "5.0.20200302192450")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "schema-salad" version))
+        (sha256
+         (base32
+          "14vqmfnnvpdaqpajwzi9gyjxx4y2mbgi3y5x3kwk2zqjnnadciv3"))))
+    (build-system python-build-system)
+    (arguments
+     `(#:phases
+       (modify-phases %standard-phases
+         (add-after 'unpack 'loosen-version-requirements
+           (lambda _
+             (substitute* "setup.py"
+               (("CacheControl.*") "CacheControl',\n"))
+             #t)))))
+    (propagated-inputs
+     `(("python-cachecontrol" ,python-cachecontrol)
+       ("python-lockfile" ,python-lockfile)
+       ("python-mistune" ,python-mistune)
+       ("python-rdflib" ,python-rdflib)
+       ("python-rdflib-jsonld" ,python-rdflib-jsonld)
+       ("python-requests" ,python-requests)
+       ("python-ruamel.yaml" ,python-ruamel.yaml)
+       ("python-setuptools" ,python-setuptools)
+       ("python-typing-extensions" ,python-typing-extensions)))
+    (native-inputs
+     `(("python-pytest" ,python-pytest)
+       ("python-pytest-runner" ,python-pytest-runner)))
+    (home-page "https://github.com/common-workflow-language/schema_salad")
+    (synopsis "Schema Annotations for Linked Avro Data (SALAD)")
+    (description
+     "Salad is a schema language for describing JSON or YAML structured linked
+data documents.  Salad schema describes rules for preprocessing, structural
+validation, and hyperlink checking for documents described by a Salad schema.
+Salad supports rich data modeling with inheritance, template specialization,
+object identifiers, object references, documentation generation, code
+generation, and transformation to RDF.  Salad provides a bridge between document
+and record oriented data modeling and the Semantic Web.")
+    (license license:asl2.0)))
