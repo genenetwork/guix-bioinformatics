@@ -229,25 +229,6 @@ until a value is returned.")
     "A library for W3C Provenance Data Model supporting PROV-JSON, PROV-XML and PROV-O (RDF)")
   (license license:expat)))
 
-(define-public python-typing-extensions; guix candidate
-  (package
-    (name "python-typing-extensions")
-    (version "3.6.6")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (pypi-uri "typing_extensions" version))
-        (sha256
-         (base32
-          "07vhddjnd3mhdijyc3s0mwi9jgfjp3rr056nxqiavydbvkrvgrsi"))))
-    (build-system python-build-system)
-    (home-page "https://pypi.python.org/pypi/typing_extensions")
-    (synopsis "Python typing_extensions.")
-    (description
-     "Python typing_extensions.")
-    (license license:gpl2))
-)
-
 (define-public python-subprocess32 ; guix candidate
   (package
     (name "python-subprocess32")
