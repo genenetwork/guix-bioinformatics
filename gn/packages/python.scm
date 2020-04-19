@@ -1101,3 +1101,42 @@ spreadsheets without the need for COM objects.")
 
 (define-public python2-admiral
   (package-with-python2 python-admiral))
+
+(define-public python-cachecontrol-0.11
+  (package
+    (inherit python-cachecontrol)
+    (name "python-cachecontrol")
+    (version "0.11.7")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "CacheControl" version))
+        (sha256
+         (base32
+          "07jsfhlbcwgqg6ayz8nznzaqg5rmxqblbzxz1qvg5wc44pcjjy4g"))))))
+
+(define-public python-ruamel.yaml-0.15
+  (package
+    (inherit python-ruamel.yaml)
+    (name "python-ruamel.yaml")
+    (version "0.15.77")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "ruamel.yaml" version))
+        (sha256
+         (base32
+          "1mhzxkkiv3xmr9izrgk78x7f1r5gi8kd5ac7z3vn7j00q1ydn6da"))))))
+
+(define-public python-pbr-1.6.0
+  (package
+    (inherit python-pbr)
+    (name "python-pbr")
+    (version "1.6.0")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "pbr" version))
+        (sha256
+         (base32
+          "1lg1klrczvzfan89y3bl9ykrknl3nb01vvai37fkww24apzyibjf"))))))

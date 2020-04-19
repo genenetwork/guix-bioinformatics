@@ -1232,8 +1232,8 @@ runApp(launch.browser=0, port=4206)~%\n"
         (license #f))))
 
 (define-public bh20-seq-resource
-  (let ((commit "ddabd9390d2b221786ef58a6d85200eecf82ca2f")
-        (revision "1"))
+  (let ((commit "bbca5ac9b2538e410efe3e09651f87e5573145de")
+        (revision "2"))
     (package
       (name "bh20-seq-resource")
       (version (git-version "1.0" revision commit))
@@ -1244,11 +1244,12 @@ runApp(launch.browser=0, port=4206)~%\n"
                        (commit commit)))
                 (file-name (git-file-name name version))
                 (sha256
-                 (base32 "04j8b7rz1vqczm6dlyvf1gx58idjhy0swmjbz4bm5r4zgpkps6mb"))))
+                 (base32 "1kkysjgmhp7kfb17470ik821p9djsidyqmkbjvv37jx2w9pvw31z"))))
       (build-system python-build-system)
       (inputs
        `(("python-arvados-python-client" ,python-arvados-python-client)
          ("python-flask" ,python-flask)
+         ("python-magic" ,python-magic)
          ("python-pyyaml" ,python-pyyaml)
          ("python-schema-salad" ,python-schema-salad)))
       (native-inputs
@@ -1269,25 +1270,17 @@ available to other researchers.")
 (define-public python-arvados-python-client
   (package
     (name "python-arvados-python-client")
-    (version "2.0.1")
+    (version "2.0.2")
     (source
       (origin
         (method url-fetch)
         (uri (pypi-uri "arvados-python-client" version))
         (sha256
          (base32
-          "1a363kdykj5jcrvh3q8wz06g6pqfnm2z48nfy64bls25pkiac1lr"))))
+          "19l4w6m5426x5k2kick630dh2jx26j16ycs2nhbfgr4cd43d29y4"))))
     (build-system python-build-system)
     (arguments
-     `(#:tests? #f  ; tests not included?
-       #:phases
-       (modify-phases %standard-phases
-         (add-after 'unpack 'loosen-version-requirements
-           (lambda _
-             (substitute* "setup.py"
-               (("ruamel.yaml.*") "ruamel.yaml',\n")
-               (("pbr<1.7.0") "pbr"))
-             #t)))))
+     `(#:tests? #f))    ; tests not included?
     (propagated-inputs
      `(("python-ciso8601" ,python-ciso8601)
        ("python-future" ,python-future)
@@ -1295,13 +1288,13 @@ available to other researchers.")
        ("python-google-api-client" ,python-google-api-client)
        ("python-httplib2" ,python-httplib2)
        ("python-pycurl" ,python-pycurl)
-       ("python-ruamel.yaml" ,python-ruamel.yaml)
+       ("python-ruamel.yaml" ,python-ruamel.yaml-0.15)
        ("python-setuptools" ,python-setuptools)
        ("python-ws4py" ,python-ws4py)))
     (native-inputs
      `(("python-mock" ,python-mock)
        ("python-oauth2client" ,python-oauth2client)
-       ("python-pbr" ,python-pbr)
+       ("python-pbr" ,python-pbr-1.6.0)
        ("python-pyyaml" ,python-pyyaml)
        ("python-uritemplate" ,python-uritemplate)))
     (home-page "https://arvados.org")
@@ -1315,25 +1308,17 @@ server.")
 (define-public python-schema-salad
   (package
     (name "python-schema-salad")
-    (version "5.0.20200302192450")
+    (version "5.0.20200416112825")
     (source
       (origin
         (method url-fetch)
         (uri (pypi-uri "schema-salad" version))
         (sha256
          (base32
-          "14vqmfnnvpdaqpajwzi9gyjxx4y2mbgi3y5x3kwk2zqjnnadciv3"))))
+          "1pm6q266qrw4r0w0vnzhsvqgk5j8b3q61hxg99awhgpjsmcvkmsz"))))
     (build-system python-build-system)
-    (arguments
-     `(#:phases
-       (modify-phases %standard-phases
-         (add-after 'unpack 'loosen-version-requirements
-           (lambda _
-             (substitute* "setup.py"
-               (("CacheControl.*") "CacheControl',\n"))
-             #t)))))
     (propagated-inputs
-     `(("python-cachecontrol" ,python-cachecontrol)
+     `(("python-cachecontrol" ,python-cachecontrol-0.11)
        ("python-lockfile" ,python-lockfile)
        ("python-mistune" ,python-mistune)
        ("python-rdflib" ,python-rdflib)
