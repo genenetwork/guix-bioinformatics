@@ -1134,3 +1134,78 @@ spreadsheets without the need for COM objects.")
         (sha256
          (base32
           "1lg1klrczvzfan89y3bl9ykrknl3nb01vvai37fkww24apzyibjf"))))))
+
+(define-public python-arvados-python-client
+  (package
+    (name "python-arvados-python-client")
+    (version "2.0.2")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "arvados-python-client" version))
+        (sha256
+         (base32
+          "19l4w6m5426x5k2kick630dh2jx26j16ycs2nhbfgr4cd43d29y4"))))
+    (build-system python-build-system)
+    (arguments
+     `(#:tests? #f))    ; tests not included?
+    (propagated-inputs
+     `(("python-ciso8601" ,python-ciso8601)
+       ("python-future" ,python-future)
+       ;("python-google-api-python-client" ,python-google-api-python-client)
+       ("python-google-api-client" ,python-google-api-client)
+       ("python-httplib2" ,python-httplib2)
+       ("python-pycurl" ,python-pycurl)
+       ("python-ruamel.yaml" ,python-ruamel.yaml-0.15)
+       ("python-setuptools" ,python-setuptools)
+       ("python-ws4py" ,python-ws4py)))
+    (native-inputs
+     `(("python-mock" ,python-mock)
+       ("python-oauth2client" ,python-oauth2client)
+       ("python-pbr" ,python-pbr-1.6.0)
+       ("python-pyyaml" ,python-pyyaml)
+       ("python-uritemplate" ,python-uritemplate)))
+    (home-page "https://arvados.org")
+    (synopsis "Arvados client library")
+    (description "This package provides the arvados module, an API client for
+Arvados.  It also includes higher-level functions to help you write Crunch
+scripts, and command-line tools to store and retrieve data in the Keep storage
+server.")
+    (license license:asl2.0)))
+
+(define-public python-schema-salad
+  (package
+    (name "python-schema-salad")
+    (version "5.0.20200416112825")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "schema-salad" version))
+        (sha256
+         (base32
+          "1pm6q266qrw4r0w0vnzhsvqgk5j8b3q61hxg99awhgpjsmcvkmsz"))))
+    (build-system python-build-system)
+    (propagated-inputs
+     `(("python-cachecontrol" ,python-cachecontrol-0.11)
+       ("python-lockfile" ,python-lockfile)
+       ("python-mistune" ,python-mistune)
+       ("python-rdflib" ,python-rdflib)
+       ("python-rdflib-jsonld" ,python-rdflib-jsonld)
+       ("python-requests" ,python-requests)
+       ("python-ruamel.yaml" ,python-ruamel.yaml)
+       ("python-setuptools" ,python-setuptools)
+       ("python-typing-extensions" ,python-typing-extensions)))
+    (native-inputs
+     `(("python-pytest" ,python-pytest)
+       ("python-pytest-runner" ,python-pytest-runner)))
+    (home-page "https://github.com/common-workflow-language/schema_salad")
+    (synopsis "Schema Annotations for Linked Avro Data (SALAD)")
+    (description
+     "Salad is a schema language for describing JSON or YAML structured linked
+data documents.  Salad schema describes rules for preprocessing, structural
+validation, and hyperlink checking for documents described by a Salad schema.
+Salad supports rich data modeling with inheritance, template specialization,
+object identifiers, object references, documentation generation, code
+generation, and transformation to RDF.  Salad provides a bridge between document
+and record oriented data modeling and the Semantic Web.")
+    (license license:asl2.0)))
