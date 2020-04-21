@@ -308,30 +308,23 @@ until a value is returned.")
 (define-public python-rdflib-jsonld ; guix ready
   (package
     (name "python-rdflib-jsonld")
-    (version "0.4.0")
+    (version "0.5.0")
     (source
       (origin
         (method url-fetch)
         (uri (pypi-uri "rdflib-jsonld" version))
         (sha256
           (base32
-            "0bdw2pbjmpy1l4p6slsjn54bqy6crk5hk4san84xxirgd9w78iql"))))
+            "1v85f4hdlrrk0l1najmqmm79ijrvcj259kwsrrxiq1q5chr5azag"))))
     (build-system python-build-system)
-    (inputs
-      `(("python-setuptools" ,python-setuptools)))
+    (native-inputs
+     `(("python-nose" ,python-nose)))
     (propagated-inputs
-     `(("python-rdflib" ,python-rdflib)
-       ("python-isodate" ,python-isodate)
-       ("python-pyparsing" ,python-pyparsing)
-       ("python-html5lib" ,python-html5lib)
-       ("python-nose" ,python-nose)
-))
-    (home-page
-      "https://github.com/RDFLib/rdflib-jsonld")
-    (synopsis
-      "rdflib extension adding JSON-LD parser and serializer")
+     `(("python-rdflib" ,python-rdflib)))
+    (home-page "https://github.com/RDFLib/rdflib-jsonld")
+    (synopsis "rdflib extension adding JSON-LD parser and serializer")
     (description
-      "rdflib extension adding JSON-LD parser and serializer")
+     "This package provides an rdflib extension adding JSON-LD parser and serializer.")
     (license license:bsd-3)))
 
 (define-public python2-rdflib-jsonld
