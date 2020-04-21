@@ -1,12 +1,13 @@
 (define-module (gn packages ratspub)
   #:use-module ((guix licenses) #:prefix license:)
+  #:use-module (guix utils)
   #:use-module (guix packages)
   #:use-module (guix git-download)
   #:use-module (guix build-system python)
   #:use-module (gnu packages admin)
   #:use-module (gnu packages bioinformatics)
   #:use-module (gn packages javascript)
-  #:use-module (gnu packages time)
+  #:use-module (gnu packages machine-learning)
   #:use-module (gnu packages python-crypto)
   #:use-module (gnu packages python-web)
   #:use-module (gnu packages python-xyz)
@@ -15,7 +16,7 @@
 (define-public ratspub
   (package
     (name "ratspub")
-    (version "0.2.2")
+    (version "0.3")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -24,10 +25,10 @@
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "0q111fsch69kjv96d0pld9agqpwazh9p47vsvig63hmmjp72wa84"))))
+                "08z1yr1k5wddpxwdr3caqi113jx6vy38fam7k8v40sj5chv2h3b2"))))
     (build-system python-build-system)
     (arguments
-     `(#:tests? #f ; no test suite
+     `(#:tests? #f  ; no test suite
        #:phases
        (modify-phases %standard-phases
          (delete 'configure)
@@ -106,16 +107,16 @@
      `(("edirect" ,edirect)
        ("inetutils" ,inetutils)
        ("python-bcrypt" ,python-bcrypt)
-       ("python-flask" ,python-flask)
        ("python-flask-sqlalchemy" ,python-flask-sqlalchemy)
+       ("python-keras" ,python-keras-for-ratspub)
        ("python-nltk" ,python-nltk)
-       ("python-pytz" ,python-pytz)))
+       ("tensorflow" ,tensorflow)))
     (native-inputs
      `(("bootstrap" ,web-bootstrap)
        ("cytoscape" ,javascript-cytoscape)
        ("font-awesome" ,web-font-awesome)
        ("jquery" ,web-jquery)
-       ;("js-popper" ,js-popper)
+       ;("js-popper" ,js-popper)    ; empty output
        ))
     (home-page "http://rats.pub/")
     (synopsis "Relationship with Addiction Through Searches of PubMed")
@@ -128,3 +129,14 @@ the question \"What do we know about these genes and addiction?\".  Data from
 Studies} catalog are also included in the search to better answer this
 question.")
     (license license:expat)))
+
+;; We want a copy of python-keras without tests.
+(define-public python-keras-for-ratspub
+  (hidden-package
+    (package
+      (inherit python-keras)
+      (arguments
+       (substitute-keyword-arguments (package-arguments python-keras)
+         ((#:phases phases)
+          `(modify-phases ,phases
+             (delete 'check))))))))
