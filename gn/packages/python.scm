@@ -305,32 +305,6 @@ until a value is returned.")
 (define-public python2-xlsxwriter
   (package-with-python2 python-xlsxwriter))
 
-(define-public python-rdflib-jsonld ; guix ready
-  (package
-    (name "python-rdflib-jsonld")
-    (version "0.5.0")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (pypi-uri "rdflib-jsonld" version))
-        (sha256
-          (base32
-            "1v85f4hdlrrk0l1najmqmm79ijrvcj259kwsrrxiq1q5chr5azag"))))
-    (build-system python-build-system)
-    (native-inputs
-     `(("python-nose" ,python-nose)))
-    (propagated-inputs
-     `(("python-rdflib" ,python-rdflib)))
-    (home-page "https://github.com/RDFLib/rdflib-jsonld")
-    (synopsis "rdflib extension adding JSON-LD parser and serializer")
-    (description
-     "This package provides an rdflib extension adding JSON-LD parser and serializer.")
-    (license license:bsd-3)))
-
-(define-public python2-rdflib-jsonld
-  (package-with-python2 python-rdflib-jsonld))
-
-
 (define-public python-rserve
   (package
    (name "python-rserve")
