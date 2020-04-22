@@ -16,7 +16,7 @@
 (define-public ratspub
   (package
     (name "ratspub")
-    (version "0.3")
+    (version "0.3.1")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -25,7 +25,7 @@
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "08z1yr1k5wddpxwdr3caqi113jx6vy38fam7k8v40sj5chv2h3b2"))))
+                "1ii3721mqd3dbpjkhqi7yqjd9bqcf0g19kdbb8265pmbfjjsg164"))))
     (build-system python-build-system)
     (arguments
      `(#:tests? #f  ; no test suite
