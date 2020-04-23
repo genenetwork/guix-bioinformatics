@@ -1,6 +1,7 @@
 (define-module (gn packages ratspub)
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (guix utils)
+  #:use-module (gnu packages)
   #:use-module (guix packages)
   #:use-module (guix git-download)
   #:use-module (guix build-system python)
@@ -25,7 +26,15 @@
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "1ii3721mqd3dbpjkhqi7yqjd9bqcf0g19kdbb8265pmbfjjsg164"))))
+                "1ii3721mqd3dbpjkhqi7yqjd9bqcf0g19kdbb8265pmbfjjsg164"))
+              (modules '((guix build utils)))
+              (snippet
+               '(begin (substitute* "server.py"
+                         ;; Keep the service running on port 4200
+                         (("4201") "4200")
+                         ;; Backport to python-keras-2.2.4
+                         (("learning_rate") "lr") )
+                       #t))))
     (build-system python-build-system)
     (arguments
      `(#:tests? #f  ; no test suite
@@ -130,11 +139,17 @@ Studies} catalog are also included in the search to better answer this
 question.")
     (license license:expat)))
 
-;; We want a copy of python-keras without tests.
+;; We want a copy of python-keras with the AUC optimizer backported.
+;; We skip the tests because we "test in production".
+;; That's a lie. The test suite just takes a long time to run.
 (define-public python-keras-for-ratspub
   (hidden-package
     (package
       (inherit python-keras)
+      (source
+        (origin
+          (inherit (package-source python-keras))
+          (patches (search-patches "keras-auc-optimizer.patch"))))
       (arguments
        (substitute-keyword-arguments (package-arguments python-keras)
          ((#:phases phases)
