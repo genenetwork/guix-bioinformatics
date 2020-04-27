@@ -9,6 +9,7 @@
   #:use-module (gnu packages bioinformatics)
   #:use-module (gn packages javascript)
   #:use-module (gnu packages machine-learning)
+  #:use-module (gnu packages python)
   #:use-module (gnu packages python-crypto)
   #:use-module (gnu packages python-web)
   #:use-module (gnu packages python-xyz)
@@ -155,3 +156,95 @@ question.")
          ((#:phases phases)
           `(modify-phases ,phases
              (delete 'check))))))))
+
+(define-public hrdp-project
+  (package
+    (name "hrdp-project")
+    (version "0.1")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                     (url "https://github.com/noderboarder/hrdp-project")
+                     (commit (string-append "v" version))))
+              (file-name (git-file-name name version))
+              (sha256
+               (base32
+                "1ag7jm43p35yh0cqcn53wg4iw7sgfypw10mxq5klxvhgj3r6cf7i"))))
+    (build-system python-build-system)
+    (arguments
+     `(#:tests? #f  ; no test suite
+       #:phases
+       (modify-phases %standard-phases
+         (delete 'configure)
+         (delete 'build)
+         (add-after 'unpack 'patch-sources
+           (lambda _
+             (substitute* "./app/templates/layout.html"
+               (("https://.*.bootstrapcdn.com/bootstrap/4.*/css/bootstrap.min.css.*")
+                "/static/bootstrap.min.css\">\n")
+               (("https://.*.bootstrapcdn.com/bootstrap/4.*/js/bootstrap.min.js.*")
+                "/static/bootstrap.min.js\"></script>\n")
+               (("https://code.jquery.com/jquery-3.*.slim.min.js.*")
+                "/static/jquery.slim.min.js\"></script>\n")
+               ;(("https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js.*")
+               ; "/static/popper.min.js\"></script>\n")
+               )
+             #t))
+         (replace 'install
+           (lambda* (#:key inputs outputs #:allow-other-keys)
+             (let ((out (assoc-ref outputs "out"))
+                   (python (assoc-ref inputs "python")))
+               (delete-file "main.py")
+               (with-output-to-file "main.py"
+                 (lambda ()
+                   (format #t "#!~a/bin/python
+from app import create_app
+
+app = create_app()
+
+if __name__ == '__main__':
+    app.run(debug=True, port=4222)~%"
+                   python)))
+               (chmod "main.py" #o555)
+               (copy-recursively "." out))
+             #t))
+         (add-after 'install 'install-javascript
+           (lambda* (#:key inputs outputs #:allow-other-keys)
+             (let ((out       (assoc-ref outputs "out"))
+                   (bootstrap (assoc-ref inputs "bootstrap"))
+                   (jquery    (assoc-ref inputs "jquery"))
+                   ;(js-popper (assoc-ref inputs "js-popper"))
+                   )
+               (symlink (string-append bootstrap
+                                       "/share/web/bootstrap/css/bootstrap.min.css")
+                        (string-append out "/app/static/bootstrap.min.css"))
+               (symlink (string-append bootstrap
+                                       "/share/web/bootstrap/js/bootstrap.min.js")
+                        (string-append out "/app/static/bootstrap.min.js"))
+               (symlink (string-append jquery
+                                       "/share/web/jquery/jquery.slim.min.js")
+                        (string-append out "/app/static/jquery.slim.min.js"))
+               ;(symlink (string-append js-popper
+               ;                        "/share/web/popper/popper.min.js")
+               ;         (string-append out "/static/popper.min.js"))
+               )
+             #t))
+         (add-after 'install 'wrap-executable
+           (lambda* (#:key inputs outputs #:allow-other-keys)
+             (let ((out  (assoc-ref outputs "out"))
+                   (path (getenv "PYTHONPATH")))
+               (wrap-program (string-append out "/main.py")
+                `("PYTHONPATH" ":" prefix (,path))))
+             #t)))))
+    (inputs
+     `(("python" ,python)
+       ("python-flask-sqlalchemy" ,python-flask-sqlalchemy)))
+    (native-inputs
+     `(("bootstrap" ,web-bootstrap)
+       ("jquery" ,web-jquery)
+       ;("js-popper" ,js-popper)    ; empty output
+       ))
+    (home-page "https://github.com/noderboarder/hrdp-project")
+    (synopsis "")
+    (description "")
+    (license license:expat)))
