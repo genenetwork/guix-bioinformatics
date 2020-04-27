@@ -42,6 +42,8 @@
   #:use-module (gn packages python24)
   #:use-module (gn packages statistics))
 
+
+
 (define-public my-deploy
   (package
     (name "my-deploy")
@@ -188,6 +190,49 @@ bootstrap resampling to estimate the confidence region for the
 location of a putative QTL.")
     (license license:gpl2+))))
 
+;; Reintroduced python2-gunicorn because we are running GN with python2
+;; right now. Please keep it until we migrate to Python3 fully!
+
+(define-public python-gunicorn-gn
+  (package
+    (name "python-gunicorn-gn")
+    (version "19.9.0")
+    (source 
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "gunicorn" version))
+        (sha256
+         (base32
+          "1wzlf4xmn6qjirh5w81l6i6kqjnab1n1qqkh7zsj1yb6gh4n49ps"))))
+    (build-system python-build-system)
+    (inputs
+     `(("python-mock" ,python-mock)))
+    (arguments
+     '(#:phases
+       (modify-phases %standard-phases
+         (add-after 'unpack 'loosen-verion-restrictions
+           (lambda _
+             (substitute* "requirements_test.txt"
+               (("coverage.*") "coverage\n")
+               (("pytest.*") "pytest\n")
+               (("pytest-cov.*") "pytest-cov\n"))
+             #t)))))
+    (native-inputs
+     `(("python-coverage" ,python-coverage)
+       ("python-pytest" ,python-pytest)
+       ("python-pytest-cov" ,python-pytest-cov)))
+    (home-page "https://gunicorn.org")
+    (synopsis "WSGI HTTP Server for UNIX")
+    (description "Gunicorn 'Green Unicorn' is a Python WSGI HTTP Server for
+UNIX.  It's a pre-fork worker model ported from Ruby's Unicorn project.  The
+Gunicorn server is broadly compatible with various web frameworks, simply
+implemented, light on server resource usage, and fairly speedy.")
+    (license license:expat)))
+
+
+(define-public python2-gunicorn-gn
+  (package-with-python2 python-gunicorn-gn))
+  
 
 (define-public rust-qtlreaper
   (let ((commit "2e7fed6d45b0b602d80fa2a55835f96ef1cba9e3")
@@ -271,7 +316,7 @@ location of a putative QTL.")
        ("rust-qtlreaper" ,rust-qtlreaper)
        ("nginx" ,nginx)
        ("python2-flask" ,python2-flask)
-       ("gunicorn" ,gunicorn)
+       ("python2-gunicorn-gn" ,python2-gunicorn-gn)
        ; ("python2-pillow" ,python2-pillow) - for later!
        ("python2-pil1" ,python2-pil1-gn)
        ("python2-piddle-gn" ,python2-piddle-gn)
