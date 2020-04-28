@@ -3,7 +3,6 @@
   #:use-module (guix packages)
   #:use-module (guix download)
   #:use-module (guix utils)
-  #:use-module (gn packages python24)
   #:use-module (gnu packages gl)
   #:use-module (gnu packages graphviz)
   #:use-module (gnu packages gtk)
@@ -28,18 +27,16 @@
           "18bzyg17ni0lpcd2g5dhan8fjv3vzkjym38jq8vm42did5p9j47l"))))
     ;; TODO: unbundle libraries?
     (arguments
-     `(#:configure-flags '("--enable-python24=yes")
+     `(#:configure-flags '("--enable-swig=no")
        ,@(substitute-keyword-arguments (package-arguments graphviz)
            ((#:phases phases)
             `(modify-phases ,phases
                (delete 'move-docs) ; one output
                (delete 'move-guile-bindings))))))
     (inputs
-      ;; TODO: Add(?) perl, guile@1.8, gtk@2, lua5.1, tcl8.[3-6], rsvg
+      ;; TODO(?): Add perl, guile@1.8, gtk@2, lua5.1, tcl8.[3-6], rsvg, python-2.4
      `(("gdk-pixbuf" ,gdk-pixbuf)
-       ;("ghostscript" ,ghostscript)
        ("freeglut" ,freeglut)
-       ("python2.4" ,python-2.4)
        ,@(fold alist-delete (package-inputs graphviz)
-               '("libjpeg" "guile"))))
+               '("libjpeg" "guile" "swig"))))
     (license license:cpl1.0)))
