@@ -1183,3 +1183,74 @@ object identifiers, object references, documentation generation, code
 generation, and transformation to RDF.  Salad provides a bridge between document
 and record oriented data modeling and the Semantic Web.")
     (license license:asl2.0)))
+
+(define-public python-cfgraph
+  (package
+   (name "python-cfgraph")
+   (version "0.2.1")
+   (source
+    (origin
+     (method url-fetch)
+     (uri (pypi-uri "CFGraph" version))
+     (sha256
+      (base32
+       "0x7yz0lvqb6mkhl5fbml27sppmscgpf8v2ism9jzzf0h982ffzxm"))))
+   (build-system python-build-system)
+   (propagated-inputs
+    `(("python-rdflib" ,python-rdflib)))
+   (home-page "http://github.com/hsolbrig/CFGraph")
+   (synopsis "rdflib collections flattening graph")
+   (description
+    "rdflib collections flattening graph")
+   (license license:asl2.0)))
+
+(define-public python-pbr
+  (package
+   (name "python-pbr")
+   (version "5.4.5")
+   (source
+    (origin
+     (method url-fetch)
+     (uri (pypi-uri "pbr" version))
+     (sha256
+      (base32
+       "0p7mkfgjvqmkn93qpp8kr8mmc06cvxka6x3lhnpmrc1krvz5ix87"))))
+    (arguments
+     `(#:tests? #f))    ; tests not working
+   (build-system python-build-system)
+   (home-page
+    "https://docs.openstack.org/pbr/latest/")
+   (synopsis "Python Build Reasonableness")
+   (description "Python Build Reasonableness")
+   (license #f)))
+
+
+(define-public python-pyshex
+  (package
+   (name "python-pyshex")
+   (version "0.7.14")
+   (source
+    (origin
+     (method url-fetch)
+     (uri (pypi-uri "PyShEx" version))
+     (sha256
+      (base32
+       "1fy664bh6hpmr4cf49fwwxng36kv7s6b2986hbv0cqcypc4ri2cs"))))
+    (arguments
+     `(#:tests? #f))    ; tests not working
+   (build-system python-build-system)
+   (propagated-inputs
+    `(("python-cfgraph" ,python-cfgraph)
+      ; ("python-pyshexc" ,python-pyshexc)
+      ("python-rdflib" ,python-rdflib)
+      ("python-pbr" ,python-pbr)
+      ("python-rdflib-jsonld" ,python-rdflib-jsonld)
+      ("python-requests" ,python-requests)
+      ; ("python-shexjsg" ,python-shexjsg)
+      ; ("python-sparql-slurper" ,python-sparql-slurper)
+      ; ("python-sparqlwrapper" ,python-sparqlwrapper)
+      ("python-urllib3" ,python-urllib3)))
+   (home-page "https://github.com/hsolbrig/PyShEx")
+   (synopsis "Python ShEx Implementation")
+   (description "Python ShEx Implementation")
+   (license license:asl2.0)))
