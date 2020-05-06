@@ -1,0 +1,13 @@
+[Unit]
+Description=Download PubMed Archives
+After=network-online.target
+Wants=network-online.target
+AssertPathExists=/export2/PubMed
+
+[Service]
+ExecStart=/usr/local/guix-profiles/ratspub/bin/archive-pubmed
+Environment="EDIRECT_PUBMED_MASTER=/export2/PubMed" "PERL_LWP_SSL_CA_FILE=/etc/ssl/certs/ca-certificates.crt" "PATH=/usr/local/guix-profiles/ratspub/bin:/usr/sbin:/usr/bin:/sbin:/bin:/sbin:/usr/sbin"
+User=hchen
+
+[Install]
+WantedBy=multi-user.target

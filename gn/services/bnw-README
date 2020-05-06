@@ -6,8 +6,8 @@ $ cd guix-bioinformatics && git pull
 # systemctl enable --now bnw.service
 
 for testing changes to the container, you'll want to do the following (or thereabouts):
-$ guix system container gn/services/GN1-container.scm --share=/home/bnw/server=/srv/http --network
-$ sudo -E $(guix system container gn/services/GN1-container.scm --share=/home/bnw/server=/srv/http --network)
+$ guix system container gn/servicebnwN1-container.scm --network
+$ sudo -E $(guix system container gn/services/bnw-container.scm --network)
 
 for running the service:
 see included bnw.service

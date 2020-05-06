@@ -3,6 +3,7 @@
   #:use-module (gnu packages)
   #:use-module (gnu packages attr)
   #:use-module (gnu packages base)
+  #:use-module (gnu packages bioinformatics)
   #:use-module (gnu packages check)
   #:use-module (gnu packages compression)
   #:use-module (gnu packages databases)
@@ -30,6 +31,7 @@
   #:use-module (gnu packages python-xyz)
   #:use-module (gnu packages rdf)
   #:use-module (gnu packages readline)
+  #:use-module (gnu packages serialization)
   #:use-module (gnu packages statistics)
   #:use-module (gnu packages tcl)
   #:use-module (gnu packages tex)
@@ -228,25 +230,6 @@ until a value is returned.")
     "A library for W3C Provenance Data Model supporting PROV-JSON, PROV-XML and PROV-O (RDF)")
   (license license:expat)))
 
-(define-public python-typing-extensions; guix candidate
-  (package
-    (name "python-typing-extensions")
-    (version "3.6.6")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (pypi-uri "typing_extensions" version))
-        (sha256
-         (base32
-          "07vhddjnd3mhdijyc3s0mwi9jgfjp3rr056nxqiavydbvkrvgrsi"))))
-    (build-system python-build-system)
-    (home-page "https://pypi.python.org/pypi/typing_extensions")
-    (synopsis "Python typing_extensions.")
-    (description
-     "Python typing_extensions.")
-    (license license:gpl2))
-)
-
 (define-public python-subprocess32 ; guix candidate
   (package
     (name "python-subprocess32")
@@ -321,39 +304,6 @@ until a value is returned.")
 
 (define-public python2-xlsxwriter
   (package-with-python2 python-xlsxwriter))
-
-(define-public python-rdflib-jsonld ; guix ready
-  (package
-    (name "python-rdflib-jsonld")
-    (version "0.4.0")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (pypi-uri "rdflib-jsonld" version))
-        (sha256
-          (base32
-            "0bdw2pbjmpy1l4p6slsjn54bqy6crk5hk4san84xxirgd9w78iql"))))
-    (build-system python-build-system)
-    (inputs
-      `(("python-setuptools" ,python-setuptools)))
-    (propagated-inputs
-     `(("python-rdflib" ,python-rdflib)
-       ("python-isodate" ,python-isodate)
-       ("python-pyparsing" ,python-pyparsing)
-       ("python-html5lib" ,python-html5lib)
-       ("python-nose" ,python-nose)
-))
-    (home-page
-      "https://github.com/RDFLib/rdflib-jsonld")
-    (synopsis
-      "rdflib extension adding JSON-LD parser and serializer")
-    (description
-      "rdflib extension adding JSON-LD parser and serializer")
-    (license license:bsd-3)))
-
-(define-public python2-rdflib-jsonld
-  (package-with-python2 python-rdflib-jsonld))
-
 
 (define-public python-rserve
   (package
@@ -1094,3 +1044,142 @@ spreadsheets without the need for COM objects.")
     (synopsis "")
     (description "")
     (license license:bsd-4)))
+
+(define-public python-admiral
+  (package
+    (name "python-admiral")
+    (version "0.2")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "admiral" version))
+        (sha256
+         (base32
+          "1b2zjgyz94ld5wr7s4cm4x5sxijx3w0dmd7r2cq1s8iqjzz6rd1x"))))
+    (build-system python-build-system)
+    (arguments '(#:tests? #f))      ; No tests
+    (propagated-inputs
+     `(("python-humanfriendly" ,python-humanfriendly)))
+    (home-page "https://github.com/nspies/admiral")
+    (synopsis
+     "Simple python high-performance computing cluster batch submission")
+    (description
+     "Simple python high-performance computing cluster batch submission.")
+    (license #f)))      ; No license in repository.
+
+(define-public python2-admiral
+  (package-with-python2 python-admiral))
+
+(define-public python-cachecontrol-0.11
+  (package
+    (inherit python-cachecontrol)
+    (name "python-cachecontrol")
+    (version "0.11.7")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "CacheControl" version))
+        (sha256
+         (base32
+          "07jsfhlbcwgqg6ayz8nznzaqg5rmxqblbzxz1qvg5wc44pcjjy4g"))))))
+
+(define-public python-ruamel.yaml-0.15
+  (package
+    (inherit python-ruamel.yaml)
+    (name "python-ruamel.yaml")
+    (version "0.15.77")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "ruamel.yaml" version))
+        (sha256
+         (base32
+          "1mhzxkkiv3xmr9izrgk78x7f1r5gi8kd5ac7z3vn7j00q1ydn6da"))))))
+
+(define-public python-pbr-1.6.0
+  (package
+    (inherit python-pbr)
+    (name "python-pbr")
+    (version "1.6.0")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "pbr" version))
+        (sha256
+         (base32
+          "1lg1klrczvzfan89y3bl9ykrknl3nb01vvai37fkww24apzyibjf"))))))
+
+(define-public python-arvados-python-client
+  (package
+    (name "python-arvados-python-client")
+    (version "2.0.2")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "arvados-python-client" version))
+        (sha256
+         (base32
+          "19l4w6m5426x5k2kick630dh2jx26j16ycs2nhbfgr4cd43d29y4"))))
+    (build-system python-build-system)
+    (arguments
+     `(#:tests? #f))    ; tests not included?
+    (propagated-inputs
+     `(("python-ciso8601" ,python-ciso8601)
+       ("python-future" ,python-future)
+       ;("python-google-api-python-client" ,python-google-api-python-client)
+       ("python-google-api-client" ,python-google-api-client)
+       ("python-httplib2" ,python-httplib2)
+       ("python-pycurl" ,python-pycurl)
+       ("python-ruamel.yaml" ,python-ruamel.yaml-0.15)
+       ("python-setuptools" ,python-setuptools)
+       ("python-ws4py" ,python-ws4py)))
+    (native-inputs
+     `(("python-mock" ,python-mock)
+       ("python-oauth2client" ,python-oauth2client)
+       ("python-pbr" ,python-pbr-1.6.0)
+       ("python-pyyaml" ,python-pyyaml)
+       ("python-uritemplate" ,python-uritemplate)))
+    (home-page "https://arvados.org")
+    (synopsis "Arvados client library")
+    (description "This package provides the arvados module, an API client for
+Arvados.  It also includes higher-level functions to help you write Crunch
+scripts, and command-line tools to store and retrieve data in the Keep storage
+server.")
+    (license license:asl2.0)))
+
+(define-public python-schema-salad
+  (package
+    (name "python-schema-salad")
+    (version "5.0.20200416112825")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "schema-salad" version))
+        (sha256
+         (base32
+          "1pm6q266qrw4r0w0vnzhsvqgk5j8b3q61hxg99awhgpjsmcvkmsz"))))
+    (build-system python-build-system)
+    (propagated-inputs
+     `(("python-cachecontrol" ,python-cachecontrol-0.11)
+       ("python-lockfile" ,python-lockfile)
+       ("python-mistune" ,python-mistune)
+       ("python-rdflib" ,python-rdflib)
+       ("python-rdflib-jsonld" ,python-rdflib-jsonld)
+       ("python-requests" ,python-requests)
+       ("python-ruamel.yaml" ,python-ruamel.yaml)
+       ("python-setuptools" ,python-setuptools)
+       ("python-typing-extensions" ,python-typing-extensions)))
+    (native-inputs
+     `(("python-pytest" ,python-pytest)
+       ("python-pytest-runner" ,python-pytest-runner)))
+    (home-page "https://github.com/common-workflow-language/schema_salad")
+    (synopsis "Schema Annotations for Linked Avro Data (SALAD)")
+    (description
+     "Salad is a schema language for describing JSON or YAML structured linked
+data documents.  Salad schema describes rules for preprocessing, structural
+validation, and hyperlink checking for documents described by a Salad schema.
+Salad supports rich data modeling with inheritance, template specialization,
+object identifiers, object references, documentation generation, code
+generation, and transformation to RDF.  Salad provides a bridge between document
+and record oriented data modeling and the Semantic Web.")
+    (license license:asl2.0)))

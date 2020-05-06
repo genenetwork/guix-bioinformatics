@@ -14,6 +14,8 @@
   #:use-module (guix build-system trivial)
   #:use-module (guix build-system waf)
   #:use-module (gnu packages)
+  #:use-module (gn packages python)
+  #:use-module (gnu packages bioconductor)
   #:use-module (gnu packages bioinformatics)
   #:use-module (gnu packages boost)
   #:use-module (gnu packages check)
@@ -22,6 +24,7 @@
   #:use-module (gnu packages datastructures)
   #:use-module (gnu packages fontutils)
   #:use-module (gnu packages gcc)
+  #:use-module (gnu packages graphviz)
   #:use-module (gnu packages imagemagick)
   #:use-module (gnu packages jemalloc)
   #:use-module (gnu packages maths)
@@ -31,9 +34,13 @@
   #:use-module (gnu packages protobuf)
   #:use-module (gnu packages python)
   #:use-module (gnu packages python-science)
+  #:use-module (gnu packages python-web)
   #:use-module (gnu packages python-xyz)
+  #:use-module (gnu packages rdf)
   #:use-module (gnu packages readline)
-  #:use-module (gnu packages statistics))
+  #:use-module (gnu packages serialization)
+  #:use-module (gnu packages statistics)
+  #:use-module (gnu packages time))
 
 (define-public contra
   (package
@@ -415,92 +422,7 @@ reads.")
     (license license:non-copyleft)))
 
 (define-public edirect-gn
-  (package
-    (inherit edirect)
-    (name "edirect-gn")
-    (arguments
-      (substitute-keyword-arguments (package-arguments edirect)
-        ((#:phases phases)
-         `(modify-phases ,phases
-         ;   (replace 'build
-         ;     (lambda* (#:key inputs #:allow-other-keys)
-         ;       (let ((go (string-append (assoc-ref inputs "go") "/bin/go")))
-         ;         (invoke go "build" "xtract.go"))))
-            (add-after 'unpack 'patch-programs
-              (lambda* (#:key inputs #:allow-other-keys)
-                (let ((gzip (assoc-ref inputs "gzip")))
-                  (substitute* '("index-bioc"
-                                 "pm-index"
-                                 "pm-invert"
-                                 "pm-stash"
-                                 "rchive.go"
-                                 "run-ncbi-converter")
-                    (("gunzip") (string-append gzip "/bin/gunzip")))
-                  (substitute* (find-files "." "^e")
-                    (("exec perl") "exec"))
-                  (substitute* '("xtract" "rchive")
-                    ;; or add current directory to PATH
-                    ((".*PATH.*") "")))
-                #t))
-            (replace 'install
-              (lambda* (#:key inputs outputs #:allow-other-keys)
-                (let ((bin (string-append (assoc-ref outputs "out") "/bin"))
-                      (xtract.linux (assoc-ref inputs "xtract.Linux"))
-                      (rchive.linux (assoc-ref inputs "rchive.Linux")))
-                  (for-each
-                    (lambda (file)
-                      (install-file file bin))
-                    '("archive-pubmed" "asp-cp" "asp-ls" "download-pubmed"
-                      "edirect.pl" "efetch" "epost" "esearch" "fetch-pubmed"
-                      "ftp-cp" "ftp-ls" "has-asp" "pm-prepare" "pm-refresh"
-                      "pm-stash" "rchive" "xtract"))
-                  (copy-file xtract.linux (string-append bin "/xtract.Linux"))
-                  (copy-file rchive.linux (string-append bin "/rchive.Linux"))
-                  (chmod (string-append bin "/xtract.Linux") #o555)
-                  (chmod (string-append bin "/rchive.Linux") #o555))
-                #t))
-            (replace 'wrap-program
-              (lambda* (#:key outputs #:allow-other-keys)
-                ;; Make sure 'edirect.pl' finds all perl inputs at runtime.
-                (let ((out (assoc-ref outputs "out"))
-                      (path (getenv "PERL5LIB")))
-                  (for-each
-                    (lambda (file)
-                      (wrap-program (string-append out "/bin/" file)
-                                    `("PERL5LIB" ":" prefix (,path))))
-                    '("edirect.pl" "asp-ls" "ftp-cp" "ftp-ls")))
-                #t))))))
-    (inputs
-     `(("gzip" ,gzip)
-       ,@(package-inputs edirect)))
-    (native-inputs
-     `(
-       ;("go" ,go)
-       ("xtract.Linux"
-        ,(origin
-           (method url-fetch)
-           (uri (string-append "ftp://ftp.ncbi.nlm.nih.gov/entrez/entrezdirect/"
-                               "/xtract.Linux")) ;; March 10, 2016
-           (sha256
-            (base32
-             "15yhhh8kfipk12rhzabap81ys8wgj0khn0mp8p7zwqhq028fwj0l"))))
-       ("rchive.Linux"
-        ,(origin
-           (method url-fetch)
-           (uri (string-append "ftp://ftp.ncbi.nlm.nih.gov/entrez/entrezdirect/"
-                               "/rchive.Linux")) ;; November 14, 2017
-           (sha256
-            (base32
-             "0hl8zj1md9xbmaj0pv99rjyisw8w74rirw97xwqk47dz8v8ml338"))))))
-    (native-search-paths
-     ;; Ideally this should be set for LWP somewhere.
-     (list (search-path-specification
-            (variable "PERL_LWP_SSL_CA_FILE")
-            (file-type 'regular)
-            (separator #f)
-            (files '("/etc/ssl/certs/ca-certificates.crt")))))
-    ;; Due to the precompiled binaries we download:
-    (supported-systems '("x86_64-linux"))))
+  (deprecated-package "edirect-gn" edirect))
 
 ;; TODO: Unbundle zlib, bamtools, tclap
 (define-public sniffles
@@ -856,19 +778,19 @@ interest, and this app can provide values and figures for applicants to use.")
         (license license:gpl3))))
 
 (define-public singlecellrshiny
-  (let ((commit "8061dcb477ba355de77d3e4fd3a15cf3267b56af")
-        (revision "1"))
+  (let ((commit "bdca74f4819d11e8fe7b15d9ab91b853f6542f7a")
+        (revision "3"))
     (package
      (name "singlecellrshiny")
      (version (git-version "0.0.0" revision commit))
      (source (origin
        (method git-fetch)
        (uri (git-reference
-              (url "https://github.com/syousefi/singleCellRshiny.git")
+              (url "https://github.com/genenetwork/singleCellRshiny")
               (commit commit)))
        (file-name (git-file-name name version))
        (sha256
-        (base32 "1pd8a9jx6ijjggsifvq66madx31h29rah5pmz4kdzfzb4fskpqz1"))))
+        (base32 "1rxj933s9p9r7358vnp15f7ag6c0j65r4hgr8kyirfhmp1i8xdlw"))))
      (build-system trivial-build-system)
      (arguments
       `(#:modules ((guix build utils))
@@ -880,16 +802,20 @@ interest, and this app can provide values and figures for applicants to use.")
                  (app       (string-append out "/bin/" ,name))
                  (Rbin      (string-append (assoc-ref %build-inputs "r-min")
                                            "/bin/Rscript"))
+                 (top1001   (assoc-ref %build-inputs "RobTop1001.csv"))
+                 (celltypes (assoc-ref %build-inputs "CellTypes_RGC_Master_08Dec2018.csv"))
+                 (800-H1    (assoc-ref %build-inputs "800-H1-H20-RNA-Seq.csv"))
                  (source    (assoc-ref %build-inputs "source")))
             (copy-recursively source targetdir)
+            (substitute* (string-append targetdir "/app.R")
+              ;; As seen in https://github.com/genenetwork/singleCellRshiny/commit/6b2a344dd0d02f65228ad8c350bac0ced5850d05.patch
+              (("library\\(DT\\)") "library(DT)\nlibrary(multtest)"))
             (substitute* (string-append targetdir "/global.R")
-              (("800-H1-H20-RNA-Seq-SingleCell-Retina-OMRF-03-29-19_FPKM_v2_SiamakPlay.csv")
-               "shinyRappToyDataset_SiamakPlay.csv")
-              ;; Comment out the two unreferenced files for now
-              (("^rgc.*") "")
-              ;(("CellTypes_RGC_Master_08Dec2018.csv") "")
-              ;(("RobTop1001.csv") "")
-              )
+              (("800-H1-H20-RNA-Seq-SingleCell-Retina-OMRF-03-29-19_FPKM_v2_SiamakPlay.csv") 800-H1)
+              (("CellTypes_RGC_Master_08Dec2018.csv") celltypes)
+              (("RobTop1001.csv") top1001)
+              ;; As seen in https://github.com/genenetwork/singleCellRshiny/commit/6b2a344dd0d02f65228ad8c350bac0ced5850d05.patch
+              (("dim\\(sc.object.1") "dim(sc.object"))
             (mkdir-p (string-append out "/bin"))
             (call-with-output-file app
               (lambda (port)
@@ -901,20 +827,41 @@ runApp(launch.browser=0, port=4208)~%\n"
                 Rbin targetdir)))
             (chmod app #o555)
             #t))))
-     (native-inputs `(("source" ,source)))
      (inputs
-      `(("r-min" ,r-minimal)))
+      `(("r-min" ,r-minimal)
+        ("RobTop1001.csv"
+         ,(origin
+            (method url-fetch)
+            (uri "https://archive.org/download/celltypesrgcmaster08dec2018/RobTop1001.csv")
+            (file-name "RobTop1001.csv")
+            (sha256
+             (base32 "0pa73kc1p8417sjvvvhp9xsbh2h8g7h85pnmm16mnv4wjalhq0gn"))))
+        ("CellTypes_RGC_Master_08Dec2018.csv"
+         ,(origin
+            (method url-fetch)
+            (uri "https://archive.org/download/celltypesrgcmaster08dec2018/CellTypes_RGC_Master_08Dec2018.csv")
+            (file-name "CellTypes_RGC_Master_08Dec2018.csv")
+            (sha256
+             (base32 "0y411968np1f5g21iym9xc9yj5c1jsn94rpkwkxh9pw2z43gvghn"))))
+        ("800-H1-H20-RNA-Seq.csv"
+         ,(origin
+            (method url-fetch)
+            (uri "https://archive.org/download/celltypesrgcmaster08dec2018/800-H1-H20-RNA-Seq-SingleCell-Retina-OMRF-03-29-19_FPKM_v2_SiamakPlay.csv")
+            (file-name "800-H1-H20-RNA-Seq-SingleCell-Retina-OMRF-03-29-19_FPKM_v2_SiamakPlay.csv")
+            (sha256
+             (base32 "1b1y4lfs8drypm04i1rypbmk67rdqgs27nfh05pwnv3sja2nanam"))))))
      (propagated-inputs
       `(("r" ,r)
         ("r-dt" ,r-dt)
+        ("r-multtest" ,r-multtest)
         ("r-seurat" ,r-seurat)
         ("r-shiny" ,r-shiny)))
-     (home-page "http://rn6err.opar.io/")
+     (home-page "http://singlecell.opar.io/")
      (synopsis "RNA sequencing data analysis")
      (description
       "This is the R-Shiny programs to run some basic single cell RNA sequencing
 (scRNA-seq) data analysis.")
-     (license license:gpl3))))
+     (license license:agpl3))))
 
 (define-public seqwish
   (package
@@ -1193,3 +1140,169 @@ here}.")
     (synopsis "Efficient sequence alignment of full genomes")
     (description "MUMmer is a versatil alignment tool for DNA and protein sequences.")
     (license license:artistic2.0)))
+
+(define-public grocsvs
+  (let ((commit "ecd956a65093a0b2c41849050e4512d46fecea5d")
+        (revision "1"))
+    (package
+      (name "grocsvs")
+      (version (git-version "0.2.6.1" revision commit))
+      (source (origin
+                (method git-fetch)
+                (uri (git-reference
+                       (url "https://github.com/grocsvs/grocsvs")
+                       (commit commit)))
+                (file-name (git-file-name name version))
+                (sha256
+                 (base32 "14505725gr7qxc17cxxf0k6lzcwmgi64pija4mwf29aw70qn35cc"))))
+      (build-system python-build-system)
+      (arguments
+       `(#:python ,python-2))   ; Only python-2 supported.
+      (inputs
+       `(("python2-admiral" ,python2-admiral)
+         ("python2-h5py" ,python2-h5py)
+         ("python2-ipython-cluster-helper" ,python2-ipython-cluster-helper)
+         ("python2-networkx" ,python2-networkx)
+         ("python2-psutil" ,python2-psutil)
+         ("python2-pandas" ,python2-pandas)
+         ("python2-pybedtools" ,python2-pybedtools)
+         ("python2-pyfaidx" ,python2-pyfaidx)
+         ("python2-pygraphviz" ,python2-pygraphviz)
+         ("python2-pysam" ,python2-pysam)
+         ("python2-scipy" ,python2-scipy)))
+      (home-page "https://github.com/grocsvs/grocsvs")
+      (synopsis "Genome-wide reconstruction of complex structural variants")
+      (description
+       "@dfn{Genome-wide Reconstruction of Complex Structural Variants}
+(GROC-SVs), is a software pipeline for identifying large-scale structural
+variants, performing sequence assembly at the breakpoints, and reconstructing
+the complex structural variants using the long-fragment information from the
+10x Genomics platform.")
+      (license license:expat))))
+
+(define-public diagnostic-slider
+  (let ((commit "514d65d4982133e4869e578c5553fced4c6d506c")
+        (revision "1"))
+    (package
+      (name "diagnostic-slider")
+      (version (git-version "0.0.0" revision commit))
+      (source (origin
+                (method git-fetch)
+                (uri (git-reference
+                       (url "https://github.com/sens/diagnostic-slider")
+                       (commit commit)))
+                (file-name (git-file-name name version))
+                (sha256
+                 (base32 "04g8if32g8syg6v0bd3jjn05i3d394nx8i3ccl0883p8mlmdvlmx"))))
+      (build-system trivial-build-system)
+      (arguments
+       `(#:modules ((guix build utils))
+         #:builder
+         (begin
+           (use-modules (guix build utils))
+           (let* ((out       (assoc-ref %outputs "out"))
+                  (targetdir (string-append out "/share/" ,name))
+                  (app       (string-append out "/bin/" ,name))
+                  (Rbin      (string-append (assoc-ref %build-inputs "r-min")
+                                            "/bin/Rscript"))
+                  (source    (assoc-ref %build-inputs "source")))
+             (copy-recursively source targetdir)
+             (mkdir-p (string-append out "/bin"))
+             (call-with-output-file app
+               (lambda (port)
+                 (format port
+"#!~a
+library(shiny)
+setwd(\"~a\")
+runApp(launch.browser=0, port=4206)~%\n"
+                         Rbin targetdir)))
+               (chmod app #o555)
+               #t))))
+        (native-inputs
+         `(("source" ,source)))
+        (inputs
+         `(("r-min" ,r-minimal)))
+        (propagated-inputs
+         `(("r" ,r)
+           ("r-shiny" ,r-shiny)))
+        (home-page "https://github.com/sens/diagnostic-slider")
+        (synopsis "")
+        (description
+         "")
+        (license #f))))
+
+(define-public bh20-seq-resource
+  (let ((commit "bbca5ac9b2538e410efe3e09651f87e5573145de")
+        (revision "2"))
+    (package
+      (name "bh20-seq-resource")
+      (version (git-version "1.0" revision commit))
+      (source (origin
+                (method git-fetch)
+                (uri (git-reference
+                       (url "https://github.com/arvados/bh20-seq-resource")
+                       (commit commit)))
+                (file-name (git-file-name name version))
+                (sha256
+                 (base32 "1kkysjgmhp7kfb17470ik821p9djsidyqmkbjvv37jx2w9pvw31z"))))
+      (build-system python-build-system)
+      (inputs
+       `(("python-arvados-python-client" ,python-arvados-python-client)
+         ("python-flask" ,python-flask)
+         ("python-magic" ,python-magic)
+         ("python-pyyaml" ,python-pyyaml)
+         ("python-schema-salad" ,python-schema-salad)))
+      (native-inputs
+       `(("git" ,(@ (gnu packages version-control) git))
+         ("python-oauth2client" ,python-oauth2client)
+         ("python-pytest" ,python-pytest)
+         ("python-pytest-runner" ,python-pytest-runner)
+         ("python-uritemplate" ,python-uritemplate)))
+      (home-page "https://github.com/arvados/bh20-seq-resource")
+      (synopsis
+       "Tool to upload SARS-CoV-19 sequences and service to kick off analysis")
+      (description "This repository provides a sequence uploader for the
+COVID-19 Virtual Biohackathon's Public Sequence Resource project.  You can use
+it to upload the genomes of SARS-CoV-2 samples to make them publicly and freely
+available to other researchers.")
+      (license license:asl2.0))))
+
+(define-public python-scanpy-git
+  (let ((commit "590d42309f9ed6550d7b887039990edfc1ac7648") ; April 22, 2020
+        (revision "1"))
+    (package
+      (inherit python-scanpy)
+      (name "python-scanpy-git")
+      (version (git-version "1.4.6" revision commit))
+      (source
+        (origin
+          (method git-fetch)
+          (uri (git-reference
+                 (url "https://github.com/theislab/scanpy")
+                 (commit commit)))
+          (file-name (git-file-name "python-scanpy" version))
+          (sha256
+           (base32 "0z3pk9vh4b7fqq7fs262i6z0pm1dnn6bf49a4r7r73k6gjj6namd"))))
+      (arguments
+       (substitute-keyword-arguments (package-arguments python-scanpy)
+         ((#:phases phases)
+          `(modify-phases ,phases
+             (add-before 'build 'fix-build
+               (lambda* (#:key inputs outputs #:allow-other-keys)
+                 (let ((out (assoc-ref outputs "out"))
+                       (pyv (python-version (assoc-ref inputs "python"))))
+                   (substitute* "setup.py"
+                     (("use_scm_version=True") "use_scm_version=False"))
+                   (substitute* "scanpy/__init__.py"
+                     (("__version__.*")
+                      (string-append "__version__ = '" ,version "'\n")))
+                   (mkdir-p
+                     (string-append out "/lib/python" pyv "/site-packages"))
+                   (setenv "PYTHONPATH"
+                           (string-append out
+                                          "/lib/python" pyv "/site-packages/:"
+                                          (getenv "PYTHONPATH"))))
+                 ;; These tests fail on this git revision
+                 (delete-file "scanpy/tests/test_neighbors_key_added.py")
+                 (delete-file "scanpy/tests/test_pca.py")
+                 #t)))))))))

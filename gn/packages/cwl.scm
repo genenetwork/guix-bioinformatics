@@ -61,7 +61,7 @@
        ("python-mock" ,python-mock)
        ("python-subprocess32" ,python-subprocess32)
        ("python-ruamel.yaml" ,python-ruamel.yaml)
-       ("python-cachecontrol" ,python-cachecontrol)
+       ("python-cachecontrol" ,python-cachecontrol-0.11)
        ("python-lxml" ,python-lxml)
        ("python-mypy-extensions" ,python-mypy-extensions)
        ("python-mistune" ,python-mistune)
@@ -89,78 +89,3 @@
     (description
       "Common workflow language reference implementation")
     (license license:asl2.0))))
-
-(define-public python-cachecontrol
-  (package
-    (name "python-cachecontrol")
-    (version "0.11.7")
-    (source
-     (origin
-       (method url-fetch)
-       ;; Pypi does not have tests.
-       (uri (string-append
-             "https://github.com/ionrock/cachecontrol/archive/v"
-             version ".tar.gz"))
-       (file-name (string-append name "-" version ".tar.gz"))
-       (sha256
-        (base32
-         "1yfhwihx1b1xjsx0r19va2m0r2s91im03x4d7pwzp87368f2lkkp"))))
-    (build-system python-build-system)
-    (arguments
-     `(#:tests? #f)) ;; Recent version breaks on cherrypy
-    (native-inputs
-     `(("python-pytest" ,python-pytest)
-       ("python-redis" ,python-redis)
-       ("python-webtest" ,python-webtest)
-       ("python-mock" ,python-mock)))
-    (propagated-inputs
-     `(("python-requests" ,python-requests)
-       ("python-lockfile" ,python-lockfile)))
-    (home-page "https://github.com/ionrock/cachecontrol")
-    (synopsis "The httplib2 caching algorithms for use with requests")
-    (description "CacheControl is a port of the caching algorithms in
-@code{httplib2} for use with @code{requests} session objects.")
-    (license license:asl2.0)))
-
-
-(define-public python-schema-salad
-  (let ((commit "eb85c3d49b99b7643e8a12248e2dc05504910c1e"))
-  (package
-    (name "python-schema-salad")
-    (version "3.0.20181129082112")
-    (source
-      (origin
-        ; (method url-fetch)
-        ; (uri (pypi-uri "schema-salad" version))
-       (method git-fetch)
-       (uri (git-reference
-             (url "https://github.com/genenetwork/schema_salad.git") ;; my repo for Python3.7
-             (commit commit)))
-       (file-name (git-file-name name (string-append version "-" (string-take commit 7))))
-       (sha256
-        (base32
-         "174f224zzjr0nbjlq3ypciyfijnibasysrgjswvx8yhan2dizlhr"))))
-    (build-system python-build-system)
-    (arguments `(#:tests? #f)) ;; CWL includes no tests.
-    (inputs
-      `(("python-cython" ,python-cython)
-       ("python-setuptools" ,python-setuptools)
-       ("python-rdflib-jsonld" ,python-rdflib-jsonld)
-       ("python-mistune" ,python-mistune)))
-    (propagated-inputs
-     `(("python-rdflib" ,python-rdflib)
-       ("python-avro" ,python-avro)
-       ("python-pyyaml" ,python-pyyaml)
-       ("python-requests" ,python-requests)
-       ("python-shellescape" ,python-shellescape)
-       ))
-    (home-page
-      "https://github.com/common-workflow-language/common-workflow-language")
-    (synopsis
-      "Schema Annotations for Linked Avro Data (SALAD)")
-    (description
-      "Schema Annotations for Linked Avro Data (SALAD)")
-    (license license:asl2.0))))
-
-; (define-public python2-schema-salad
-;  (package-with-python2 python-schema-salad))

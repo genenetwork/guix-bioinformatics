@@ -21,10 +21,6 @@
   (match-lambda
     (($ <bnw-configuration> package deploy-directory port)
      #~(begin
-         (use-modules (guix build utils))
-         (when (directory-exists? #$deploy-directory)
-           ;; Not 'delete-file-recursively' because the directory might be empty.
-           (system* "rm" "-r" #$(string-append deploy-directory "/*")))
          (mkdir-p #$deploy-directory)
          (copy-recursively #$package #$deploy-directory)
          (invoke #$(file-append coreutils "/bin/chmod") "a+w"
