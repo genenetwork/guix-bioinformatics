@@ -27,6 +27,7 @@
   #:use-module (gnu packages perl)
   #:use-module (gnu packages pkg-config)
   #:use-module (gnu packages python)
+  #:use-module (gnu packages python-crypto)
   #:use-module (gnu packages python-web)
   #:use-module (gnu packages python-xyz)
   #:use-module (gnu packages rdf)
@@ -1182,4 +1183,228 @@ Salad supports rich data modeling with inheritance, template specialization,
 object identifiers, object references, documentation generation, code
 generation, and transformation to RDF.  Salad provides a bridge between document
 and record oriented data modeling and the Semantic Web.")
+    (license license:asl2.0)))
+
+(define-public python-pyshexc
+  (package
+    (name "python-pyshexc")
+    (version "0.3.4")
+    (source
+      (origin
+        ;; Release doesn't include the test suite.
+        (method git-fetch)
+        (uri (git-reference
+               (url "https://github.com/shexSpec/grammar")
+               ;; Releases aren't tagged.
+               (commit "033f1a60954d39c88ac516179dbaa780d6db585d")))
+        (file-name (git-file-name name version))
+        (sha256
+         (base32
+          "07zjizq5lcgx581cznl9mzfmbyxr9h93r9sy23f1xifsafr3s2xh"))))
+    (build-system python-build-system)
+    (arguments
+     '(#:tests? #f  ; Test suite isn't well supported :/
+       #:phases
+       (modify-phases %standard-phases
+         (add-after 'unpack 'patch-source
+           (lambda* (#:key inputs #:allow-other-keys)
+             (chdir "parsers/python")
+             (substitute* "tests/test_basic_parser.py"
+               (("BasicParserTestCase.repo_url.*")
+                (string-append "BasicParserTestCase.repo_url = \""
+                               (assoc-ref inputs "test-suite")
+                               "/shemas\"\n")))
+             #t))
+         (replace 'check
+           (lambda* (#:key inputs outputs tests? #:allow-other-keys)
+             (if tests?
+               (begin (add-installed-pythonpath inputs outputs)
+                      (with-directory-excursion "tests"
+                        (invoke "python" "build_test_harness.py")
+                        (invoke "python" "test_basic_parser.py")
+                        (invoke "python" "test_issue_2.py")
+                        (invoke "python" "test_shexr.py")))
+               #t))))))
+    (propagated-inputs
+     `(("python-antlr4-python3-runtime" ,python-antlr4-python3-runtime)
+       ("python-jsonasobj" ,python-jsonasobj)
+       ("python-pyjsg" ,python-pyjsg)
+       ("python-rdflib" ,python-rdflib)
+       ("python-rdflib-jsonld" ,python-rdflib-jsonld)
+       ("python-requests" ,python-requests)
+       ("python-shexjsg" ,python-shexjsg)))
+    (native-inputs
+     `(("python-yadict-compare" ,python-yadict-compare)
+       ("test-suite"
+        ,(origin
+           (method git-fetch)
+           (uri (git-reference
+                  (url "https://github.com/shexSpec/shexTest")
+                  (commit "v2.0.2")))
+           (file-name (git-file-name name version))
+           (sha256
+            (base32
+             "1x788nyrwycfr55wbg0ay6mc8mi6wwsg81h614rx9pw6rvrsppps"))))))
+    (home-page "https://github.com/shexSpec/grammar/tree/master/parsers/python")
+    (synopsis "Python ShExC Parser")
+    (description "This package converts the @dfn{Shape Expression Compact}
+(ShExC) into @dfn{Python JSON Schema Binding} (pyjsg) objects.")
+    (license license:asl2.0)))
+
+(define-public python-antlr4-python3-runtime
+  (package
+    (name "python-antlr4-python3-runtime")
+    (version "4.8")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "antlr4-python3-runtime" version))
+        (sha256
+         (base32
+          "0cyv8l216i921gxhbc96f797vkijmmc40a6jwys758qj0mfkyy8m"))))
+    (build-system python-build-system)
+    (home-page "https://www.antlr.org/")
+    (synopsis "ANTLR runtime for Python")
+    (description "This package provides the ANTLR runtime for Python.")
+    (license license:bsd-3)))
+
+(define-public python-jsonasobj
+  (package
+    (name "python-jsonasobj")
+    (version "1.2.1")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "jsonasobj" version))
+        (sha256
+         (base32
+          "1yj8y3k3fb7lk043f1zhmhb2lzjlfpnxajb92rpxmjzja93yxx0y"))))
+    (build-system python-build-system)
+    (arguments
+     '(#:phases
+       (modify-phases %standard-phases
+         (add-after 'unpack 'patch-source
+           (lambda _
+             (substitute* "setup.py"
+               (("yadict_compare") "['dict_compare"))
+             #t)))))
+    (native-inputs
+     `(("python-yadict-compare" ,python-yadict-compare)))
+    (home-page "https://github.com/hsolbrig/jsonasobj")
+    (synopsis "JSON as python objects")
+    (description
+     "This package provides an extension to the core python json library that
+treats name/value pairs as first class attributes whenever possible.")
+    (license license:asl2.0)))
+
+(define-public python-shexjsg
+  (package
+    (name "python-shexjsg")
+    (version "0.6.3")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "ShExJSG" version))
+        (sha256
+         (base32
+          "04pb32g1y024rdyp5h7kq3pkgyp7jadwa737y6zfpdvqf25d3jvi"))))
+    (build-system python-build-system)
+    (arguments
+     '(#:tests? #f  ; Skip tests, they fail due to pyshexc missing.
+       #:phases
+       (modify-phases %standard-phases
+         (add-after 'unpack 'patch-source
+           (lambda _
+             (substitute* '("requirements.txt"
+                            "requirements-dev.txt")
+              (("pyshexc.*") "") ; no loops
+               (("==.*") "\n"))
+             #t)))))
+    (propagated-inputs
+     `(("python-antlr4-python3-runtime" ,python-antlr4-python3-runtime)
+       ("python-certifi" ,python-certifi)
+       ("python-chardet" ,python-chardet)
+       ("python-idna" ,python-idna)
+       ("python-isodate" ,python-isodate)
+       ("python-requests" ,python-requests)
+       ("python-urllib3" ,python-urllib3)))
+    (native-inputs
+     `(("python-jsonasobj" ,python-jsonasobj)
+       ("python-pbr" ,python-pbr)
+       ("python-pyjsg" ,python-pyjsg)
+       ("python-pyparsing" ,python-pyparsing)
+       ;("python-pyshexc" ,python-pyshexc) ; yay loops!
+       ("python-rdflib" ,python-rdflib)
+       ("python-rdflib-jsonld" ,python-rdflib-jsonld)
+       ("python-six" ,python-six)
+       ("python-yadict-compare" ,python-yadict-compare)))
+    (home-page "https://github.com/hsolbrig/ShExJSG")
+    (synopsis "Astract Syntax Tree for the ShEx 2.0 language")
+    (description "This package provides an astract syntax tree for the
+ShEx 2.0 language.")
+    (license license:cc0)))
+
+(define-public python-yadict-compare
+  (package
+    (name "python-yadict-compare")
+    (version "1.2.0")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "yadict_compare" version))
+        (sha256
+         (base32
+          "1kkcw82cp6mf3jailckd9gya4r7wjyz4gc5azsj2njj4wqn081rw"))))
+    (build-system python-build-system)
+    (arguments '(#:tests? #f))
+    (home-page "https://github.com/hsolbrig/dict_compare")
+    (synopsis "Dictionary comparison tool with filtering and reporting")
+    (description
+     "A dictionary comparison tool that allows the injection of filters and
+handles recursion and lists.")
+    (license license:bsd-3)))
+
+(define-public python-pyjsg
+  (package
+    (name "python-pyjsg")
+    (version "0.9.0")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "PyJSG" version))
+        (sha256
+         (base32
+          "1zpd34svis4pc2hdry02mavz699i2dmaxir9q59ldxdy40jfrhq0"))))
+    (build-system python-build-system)
+    (arguments
+     '(#:tests? #f      ; tests not included
+       #:phases
+       (modify-phases %standard-phases
+         ;; From tox.ini
+         (replace 'check
+           (lambda* (#:key tests? #:allow-other-keys)
+             (when tests?
+               (for-each
+                 (lambda (dir)
+                   (invoke "python" "-m" "unittest" "discover" "-s" dir))
+                 '("tests/test_issues"
+                   "tests/test_basics"
+                   "tests/test_jsglib"
+                   "tests/test_parser_impl"
+                   "tests/test_python_generator"
+                   "tests_standalone"
+                   "tests_standalone_2"))
+               #t))))))
+    (propagated-inputs
+     `(("python-antlr4-python3-runtime" ,python-antlr4-python3-runtime)
+       ("python-jsonasobj" ,python-jsonasobj)
+       ("python-requests" ,python-requests)))
+    (native-inputs
+     `(("python-unittest2" ,python-unittest2)
+       ("python-yadict-compare" ,python-yadict-compare)))
+    (home-page "https://github.com/hsolbrig/pyjsg")
+    (synopsis
+     "Python JSON Schema Grammar bindings")
+    (description
+     "A tool to create Python classes that represent JSON objects defined in JSG.")
     (license license:asl2.0)))
