@@ -1187,109 +1187,103 @@ and record oriented data modeling and the Semantic Web.")
 
 (define-public python-cfgraph
   (package
-   (name "python-cfgraph")
-   (version "0.2.1")
-   (source
-    (origin
-     (method url-fetch)
-     (uri (pypi-uri "CFGraph" version))
-     (sha256
-      (base32
-       "0x7yz0lvqb6mkhl5fbml27sppmscgpf8v2ism9jzzf0h982ffzxm"))))
-   (build-system python-build-system)
-   (propagated-inputs
-    `(("python-rdflib" ,python-rdflib)))
-   (home-page "http://github.com/hsolbrig/CFGraph")
-   (synopsis "rdflib collections flattening graph")
-   (description
-    "rdflib collections flattening graph")
-   (license license:asl2.0)))
-
-(define-public python-pbr
-  (package
-   (name "python-pbr")
-   (version "5.4.5")
-   (source
-    (origin
-     (method url-fetch)
-     (uri (pypi-uri "pbr" version))
-     (sha256
-      (base32
-       "0p7mkfgjvqmkn93qpp8kr8mmc06cvxka6x3lhnpmrc1krvz5ix87"))))
-    (arguments
-     `(#:tests? #f))    ; tests not working
-   (build-system python-build-system)
-   (home-page
-    "https://docs.openstack.org/pbr/latest/")
-   (synopsis "Python Build Reasonableness")
-   (description "Python Build Reasonableness")
-   (license #f)))
-
+    (name "python-cfgraph")
+    (version "0.2.1")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "CFGraph" version))
+        (sha256
+         (base32
+          "0x7yz0lvqb6mkhl5fbml27sppmscgpf8v2ism9jzzf0h982ffzxm"))))
+    (build-system python-build-system)
+    (propagated-inputs
+     `(("python-rdflib" ,python-rdflib)))
+    (home-page "https://github.com/hsolbrig/CFGraph")
+    (synopsis "Rdflib collections flattening graph")
+    (description
+     "Rdflib collections flattening graph.")
+    (license license:asl2.0)))
 
 (define-public python-pyshex
   (package
-   (name "python-pyshex")
-   (version "0.7.14")
-   (source
-    (origin
-     (method url-fetch)
-     (uri (pypi-uri "PyShEx" version))
-     (sha256
-      (base32
-       "1fy664bh6hpmr4cf49fwwxng36kv7s6b2986hbv0cqcypc4ri2cs"))))
-    (arguments
-     `(#:tests? #f))    ; tests not working
-   (build-system python-build-system)
-   (propagated-inputs
-    `(("python-cfgraph" ,python-cfgraph)
-      ; ("python-pyshexc" ,python-pyshexc)
-      ("python-rdflib" ,python-rdflib)
-      ("python-pbr" ,python-pbr)
-      ("python-rdflib-jsonld" ,python-rdflib-jsonld)
-      ("python-requests" ,python-requests)
-      ; ("python-shexjsg" ,python-shexjsg)
-      ; ("python-sparql-slurper" ,python-sparql-slurper)
-      ; ("python-sparqlwrapper" ,python-sparqlwrapper)
-      ("python-urllib3" ,python-urllib3)))
-   (home-page "https://github.com/hsolbrig/PyShEx")
-   (synopsis "Python ShEx Implementation")
-   (description "Python ShEx Implementation")
-   (license license:asl2.0)))
-
-(define-public python-pyshexc
-  (package
-    (name "python-pyshexc")
-    (version "0.3.4")
+    (name "python-pyshex")
+    (version "0.7.14")
     (source
       (origin
-        ;; Release doesn't include the test suite.
-        (method git-fetch)
-        (uri (git-reference
-               (url "https://github.com/shexSpec/grammar")
-               ;; Releases aren't tagged.
-               (commit "033f1a60954d39c88ac516179dbaa780d6db585d")))
-        (file-name (git-file-name name version))
+        (method url-fetch)
+        (uri (pypi-uri "PyShEx" version))
         (sha256
          (base32
-          "07zjizq5lcgx581cznl9mzfmbyxr9h93r9sy23f1xifsafr3s2xh"))))
-    (build-system python-build-system)
+          "1fy664bh6hpmr4cf49fwwxng36kv7s6b2986hbv0cqcypc4ri2cs"))))
     (arguments
-     '(#:tests? #f  ; Test suite isn't well supported :/
-       #:phases
+     '(#:phases
        (modify-phases %standard-phases
          (add-after 'unpack 'patch-source
-           (lambda* (#:key inputs #:allow-other-keys)
-             (chdir "parsers/python")
-             (substitute* "tests/test_basic_parser.py"
-               (("BasicParserTestCase.repo_url.*")
-                (string-append "BasicParserTestCase.repo_url = \""
-                               (assoc-ref inputs "test-suite")
-                               "/shemas\"\n")))
+           (lambda _
+             (substitute* "requirements.txt"
+               ((">=.*") "\n"))
              #t))
          (replace 'check
            (lambda* (#:key inputs outputs tests? #:allow-other-keys)
              (if tests?
+               (begin
+                 (delete-file "tests/test_cli/test_evaluate.py")
+                 (delete-file "tests/test_cli/test_sparql_options.py")
+                 (delete-file "tests/test_issues/test_fhir.py")
+                 (delete-file "tests/test_issues/test_issue_30.py")
+                 (delete-file "tests/test_pyshex_utils/test_schema_loader.py")
+                 (delete-file "tests/test_shex_manifest/test_basics.py")
+                 (delete-file "tests/test_shextest_validation/test_manifest_shex_json.py")
+                 (delete-file "tests/test_shextest_validation/test_manifest_shex_shexc.py")
+                 (delete-file "tests/test_support_libraries/test_prefixlib.py")
+                 (delete-file "tests/test_utils/test_manifest.py")
+                 (delete-file "tests/test_utils/test_sparql_query.py")
+                 (delete-file "tests/test_utils/test_n3_mapper.py")
+                 (invoke "python" "-m" "unittest"))
+               #t))))))
+    (build-system python-build-system)
+    (propagated-inputs
+     `(("python-cfgraph" ,python-cfgraph)
+       ("python-pyshexc" ,python-pyshexc)
+       ("python-rdflib" ,python-rdflib)
+       ("python-pbr" ,python-pbr)
+       ("python-rdflib-jsonld" ,python-rdflib-jsonld)
+       ("python-requests" ,python-requests)
+       ("python-shexjsg" ,python-shexjsg)
+       ("python-sparql-slurper" ,python-sparql-slurper)
+       ("python-sparqlwrapper" ,python-sparqlwrapper)
+       ("python-urllib3" ,python-urllib3)))
+    (home-page "https://github.com/hsolbrig/PyShEx")
+    (synopsis "Python ShEx Implementation")
+    (description "This package provides a python ShEx Implementation.")
+    (license license:asl2.0)))
+
+(define-public python-pyshexc
+  (package
+    (name "python-pyshexc")
+    (version "0.5.4")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "PyShExC" version))
+        (sha256
+         (base32
+          "0hyhmc971gh25ja34j9hbkr7dg9n3jfin8668cqzjmcpjvb1jnil"))))
+    (build-system python-build-system)
+    (arguments
+     '(#:tests? #f  ; Tests aren't included in release tarball.
+       #:phases
+       (modify-phases %standard-phases
+         (replace 'check
+           (lambda* (#:key inputs outputs tests? #:allow-other-keys)
+             (if tests?
                (begin (add-installed-pythonpath inputs outputs)
+                      (substitute* "tests/test_basic_parser.py"
+                        (("BasicParserTestCase.repo_url.*")
+                         (string-append "BasicParserTestCase.repo_url = \""
+                                        (assoc-ref inputs "test-suite")
+                                        "/schemas\"\n")))
                       (with-directory-excursion "tests"
                         (invoke "python" "build_test_harness.py")
                         (invoke "python" "test_basic_parser.py")
@@ -1302,10 +1296,10 @@ and record oriented data modeling and the Semantic Web.")
        ("python-pyjsg" ,python-pyjsg)
        ("python-rdflib" ,python-rdflib)
        ("python-rdflib-jsonld" ,python-rdflib-jsonld)
-       ("python-requests" ,python-requests)
-       ("python-shexjsg" ,python-shexjsg)))
+       ("python-requests" ,python-requests)))
     (native-inputs
      `(("python-yadict-compare" ,python-yadict-compare)
+       ("python-shexjsg" ,python-shexjsg-min)
        ("test-suite"
         ,(origin
            (method git-fetch)
@@ -1325,14 +1319,14 @@ and record oriented data modeling and the Semantic Web.")
 (define-public python-antlr4-python3-runtime
   (package
     (name "python-antlr4-python3-runtime")
-    (version "4.8")
+    (version "4.7.1")
     (source
       (origin
         (method url-fetch)
         (uri (pypi-uri "antlr4-python3-runtime" version))
         (sha256
          (base32
-          "0cyv8l216i921gxhbc96f797vkijmmc40a6jwys758qj0mfkyy8m"))))
+          "1lrzmagawmavyw1n1z0qarvs2jmbnbv0p89dah8g7klj8hnbf9hv"))))
     (build-system python-build-system)
     (home-page "https://www.antlr.org/")
     (synopsis "ANTLR runtime for Python")
@@ -1352,7 +1346,8 @@ and record oriented data modeling and the Semantic Web.")
           "1yj8y3k3fb7lk043f1zhmhb2lzjlfpnxajb92rpxmjzja93yxx0y"))))
     (build-system python-build-system)
     (arguments
-     '(#:phases
+     '(#:tests? #f   ; Tests not included in release tarball.
+       #:phases
        (modify-phases %standard-phases
          (add-after 'unpack 'patch-source
            (lambda _
@@ -1371,18 +1366,17 @@ treats name/value pairs as first class attributes whenever possible.")
 (define-public python-shexjsg
   (package
     (name "python-shexjsg")
-    (version "0.6.3")
+    (version "0.6.5")
     (source
       (origin
         (method url-fetch)
         (uri (pypi-uri "ShExJSG" version))
         (sha256
          (base32
-          "04pb32g1y024rdyp5h7kq3pkgyp7jadwa737y6zfpdvqf25d3jvi"))))
+          "1nn69sl5j949qy21nl5gr56cxfhmml1vng08hayxqfj6vn3ay3gg"))))
     (build-system python-build-system)
     (arguments
-     '(#:tests? #f  ; Skip tests, they fail due to pyshexc missing.
-       #:phases
+     '(#:phases
        (modify-phases %standard-phases
          (add-after 'unpack 'patch-source
            (lambda _
@@ -1390,30 +1384,65 @@ treats name/value pairs as first class attributes whenever possible.")
                             "requirements-dev.txt")
               (("pyshexc.*") "") ; no loops
                (("==.*") "\n"))
-             #t)))))
+             #t))
+         (replace 'check
+           (lambda* (#:key inputs outputs tests? #:allow-other-keys)
+             (if tests?
+               (begin (add-installed-pythonpath inputs outputs)
+                      (substitute* '("tests/test_shexc.py"
+                                     "tests/test_shexj.py")
+                        (("shexTestRepository =.*")
+                         (string-append "shexTestRepository = \""
+                                        (assoc-ref inputs "test-suite")
+                                        "/schemas\"\n")))
+                      (invoke "python" "-m" "unittest"))
+               #t))))))
     (propagated-inputs
      `(("python-antlr4-python3-runtime" ,python-antlr4-python3-runtime)
        ("python-certifi" ,python-certifi)
        ("python-chardet" ,python-chardet)
        ("python-idna" ,python-idna)
        ("python-isodate" ,python-isodate)
+       ("python-pyjsg" ,python-pyjsg)
        ("python-requests" ,python-requests)
        ("python-urllib3" ,python-urllib3)))
     (native-inputs
      `(("python-jsonasobj" ,python-jsonasobj)
        ("python-pbr" ,python-pbr)
-       ("python-pyjsg" ,python-pyjsg)
        ("python-pyparsing" ,python-pyparsing)
-       ;("python-pyshexc" ,python-pyshexc) ; yay loops!
+       ("python-pyshexc" ,python-pyshexc)
        ("python-rdflib" ,python-rdflib)
        ("python-rdflib-jsonld" ,python-rdflib-jsonld)
        ("python-six" ,python-six)
-       ("python-yadict-compare" ,python-yadict-compare)))
+       ("python-yadict-compare" ,python-yadict-compare)
+       ("test-suite"
+        ,(origin
+           (method git-fetch)
+           (uri (git-reference
+                  (url "https://github.com/shexSpec/shexTest")
+                  (commit "v2.0.2")))
+           (file-name (git-file-name name version))
+           (sha256
+            (base32
+             "1x788nyrwycfr55wbg0ay6mc8mi6wwsg81h614rx9pw6rvrsppps"))))))
     (home-page "https://github.com/hsolbrig/ShExJSG")
     (synopsis "Astract Syntax Tree for the ShEx 2.0 language")
     (description "This package provides an astract syntax tree for the
 ShEx 2.0 language.")
     (license license:cc0)))
+
+;; Lets use this one for tests.
+(define python-shexjsg-min
+  (package
+    (inherit python-shexjsg)
+    (name "python-shexjsg")
+    (arguments
+     (substitute-keyword-arguments (package-arguments python-shexjsg)
+       ((#:tests? _ #t) #f)))
+    (native-inputs
+     `(,@(alist-delete "python-pyshexc"
+                       (package-native-inputs python-shexjsg))))
+    (properties `((hidden? . #t)))))
 
 (define-public python-yadict-compare
   (package
@@ -1427,7 +1456,15 @@ ShEx 2.0 language.")
          (base32
           "1kkcw82cp6mf3jailckd9gya4r7wjyz4gc5azsj2njj4wqn081rw"))))
     (build-system python-build-system)
-    (arguments '(#:tests? #f))
+    (arguments
+     '(#:phases
+       (modify-phases %standard-phases
+         (replace 'check
+           (lambda _
+             (with-directory-excursion "test"
+               (invoke "python" "-m" "unittest" "discover" "-s" "test")))))))
+    (native-inputs
+     `(("python-unittest2" ,python-unittest2)))
     (home-page "https://github.com/hsolbrig/dict_compare")
     (synopsis "Dictionary comparison tool with filtering and reporting")
     (description
@@ -1438,19 +1475,31 @@ handles recursion and lists.")
 (define-public python-pyjsg
   (package
     (name "python-pyjsg")
-    (version "0.9.0")
+    (version "0.9.2")
     (source
       (origin
-        (method url-fetch)
-        (uri (pypi-uri "PyJSG" version))
+        (method git-fetch)
+        (uri (git-reference
+               ;; Releases aren't tagged in the repository.
+               (url "https://github.com/hsolbrig/pyjsg")
+               (commit "9b2b8fa8e3b8448abe70b09f804a79f0f31b32b7")))
+        (file-name (git-file-name name version))
         (sha256
          (base32
-          "1zpd34svis4pc2hdry02mavz699i2dmaxir9q59ldxdy40jfrhq0"))))
+          "0fhpvb6i6xhyd6hnwknw0y2k33cb7iwj07g009lw96r580vprxs4"))))
     (build-system python-build-system)
     (arguments
-     '(#:tests? #f      ; tests not included
-       #:phases
+     '(#:phases
        (modify-phases %standard-phases
+         (add-after 'unpack 'patch-source
+           (lambda* (#:key inputs #:allow-other-keys)
+             (for-each (lambda (file)
+                         (make-file-writable file))
+                       (find-files "." "."))
+             (substitute* "tests_standalone_2/test_xsfacet.py"
+               (("\\.\\.', '\\.\\.', '\\.\\.', 'shexSpec', 'shexTest")
+                (assoc-ref inputs "test-suite")))
+             #t))
          ;; From tox.ini
          (replace 'check
            (lambda* (#:key tests? #:allow-other-keys)
@@ -1472,10 +1521,79 @@ handles recursion and lists.")
        ("python-requests" ,python-requests)))
     (native-inputs
      `(("python-unittest2" ,python-unittest2)
-       ("python-yadict-compare" ,python-yadict-compare)))
+       ("python-yadict-compare" ,python-yadict-compare)
+       ("test-suite"
+        ,(origin
+           (method git-fetch)
+           (uri (git-reference
+                  (url "https://github.com/shexSpec/shexTest")
+                  (commit "v2.0.2")))
+           (file-name (git-file-name name version))
+           (sha256
+            (base32
+             "1x788nyrwycfr55wbg0ay6mc8mi6wwsg81h614rx9pw6rvrsppps"))))))
     (home-page "https://github.com/hsolbrig/pyjsg")
-    (synopsis
-     "Python JSON Schema Grammar bindings")
+    (synopsis "Python JSON Schema Grammar bindings")
     (description
      "A tool to create Python classes that represent JSON objects defined in JSG.")
+    (license license:asl2.0)))
+
+(define-public python-sparqlwrapper
+  (package
+    (name "python-sparqlwrapper")
+    (version "1.8.5")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "SPARQLWrapper" version))
+        (sha256
+         (base32
+          "0g7va1l37iq96abqqn6b4a6sjxxh5m3h1svsw1h1c56siidnp9nn"))))
+    (build-system python-build-system)
+    (arguments
+     '(#:tests? #f  ; 2to3 doesn't quite do it for the test suite.
+       #:phases
+       (modify-phases %standard-phases
+         (replace 'check
+           (lambda* (#:key tests? #:allow-other-keys)
+             (if tests?
+               (begin ;; from run_tests_py3.sh
+                      (invoke "2to3" "-wn" "--no-diffs" "test")
+                      (substitute* "test/wrapper_test.py"
+                        (("urllib2._opener") "urllib.request._opener"))
+                      (setenv "PYTHONPATH"
+                              (string-append "SPARQLWrapper:"
+                                             (getenv "PYTHONPATH")))
+                      (invoke "nosetests"))
+               #t))))))
+    (propagated-inputs
+     `(("python-rdflib" ,python-rdflib)))
+    (native-inputs
+     `(("python-nose" ,python-nose)))
+    (home-page "https://rdflib.dev/sparqlwrapper/")
+    (synopsis "SPARQL Endpoint interface to Python")
+    (description
+     "THis package provides a SPARQL Endpoint interface to Python.")
+    (license license:w3c)))
+
+(define-public python-sparql-slurper
+  (package
+    (name "python-sparql-slurper")
+    (version "0.3.4")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "sparql_slurper" version))
+        (sha256
+         (base32
+          "1m9jlck7ny5dyr762l4xrsn7ll4v48fccjkm062ihhvhbsjf0iil"))))
+    (build-system python-build-system)
+    (arguments '(#:tests? #f))  ; Tests require network access.
+    (propagated-inputs
+     `(("python-pbr" ,python-pbr)
+       ("python-rdflib" ,python-rdflib)
+       ("python-sparqlwrapper" ,python-sparqlwrapper)))
+    (home-page "https://github.com/hsolbrig/sparql_slurper")
+    (synopsis "SPARQL Slurper for rdflib")
+    (description "This package provides a SPARQL Slurper for rdflib.")
     (license license:asl2.0)))
