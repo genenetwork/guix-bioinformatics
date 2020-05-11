@@ -75,7 +75,7 @@
                ("glew" ,glew)
                ("hwloc" ,hwloc)
                ("libcap" ,libcap)
-               ("libjpeg" ,libjpeg)
+               ("libjpeg" ,libjpeg-turbo)
                ("libltdl" ,libltdl)
                ("libtiff" ,libtiff)
                ("llvm" ,llvm)

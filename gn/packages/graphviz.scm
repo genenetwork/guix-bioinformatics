@@ -38,5 +38,5 @@
      `(("gdk-pixbuf" ,gdk-pixbuf)
        ("freeglut" ,freeglut)
        ,@(fold alist-delete (package-inputs graphviz)
-               '("libjpeg" "guile" "swig"))))
+               '("libjpeg-turbo" "guile" "swig"))))
     (license license:cpl1.0)))

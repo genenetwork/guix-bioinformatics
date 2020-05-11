@@ -570,7 +570,7 @@ Python 3 support.")
     (build-system python-build-system)
     (inputs
       `(("freetype" ,freetype)
-        ("libjpeg" ,libjpeg)
+        ("libjpeg" ,libjpeg-turbo)
         ("libtiff" ,libtiff)
         ("python2-setuptools" ,python2-setuptools)
         ("zlib" ,zlib)))
@@ -667,7 +667,7 @@ capabilities to the Python interpreter.")
     (inputs
      `(("freetype" ,freetype)
        ("lcms" ,lcms) ; not fully supported
-       ("libjpeg" ,libjpeg)
+       ("libjpeg" ,libjpeg-turbo)
        ("libtiff" ,libtiff)
        ("tcl" ,tcl)
        ("zlib" ,zlib)))
