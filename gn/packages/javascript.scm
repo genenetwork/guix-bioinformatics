@@ -333,6 +333,151 @@ Javascript library, adding sorting, paging and filtering abilities to plain HTML
 tables with minimal effort.")
     (license license:expat)))
 
+(define-public javascript-datatables-scroller
+  (package
+    (name "javascript-datatables-scroller")
+    (version "2.0.1") ; Oct 1, 2019
+    (source
+      (origin
+        (method git-fetch)
+        (uri (git-reference
+              (url "https://github.com/DataTables/Dist-DataTables-Scroller-DataTables.git")
+               (commit version)))
+        (file-name (git-file-name name version))
+        (sha256
+         (base32 "1rw7ab72nfqvj6vl854kad72gkf5c0zi03mm4arcfvzn1b0x76n8"))))
+    (build-system trivial-build-system)
+    (arguments
+     `(#:modules ((guix build utils))
+       #:builder
+       (begin
+         (use-modules (guix build utils))
+         (let* ((out (assoc-ref %outputs "out"))
+                (targetdir (string-append out "/share/genenetwork2/javascript/DataTablesExtensions/scroller"))
+                (source (assoc-ref %build-inputs "source")))
+           (copy-recursively source targetdir)))))
+    (propagated-inputs `(("javascript-datatables" ,javascript-datatables)))
+    (home-page "https://datatables.net/extensions/scroller/")
+    (synopsis "This package contains distribution files required to style Scroller extension for DataTables.")
+    (description "Scroller is a virtual rendering plug-in for DataTables which allows large datasets to be drawn on screen very quickly. Virtual rendering means is that only the visible portion of the table is drawn, while the scrolling container gives the visual impression that the whole table is visible, allowing excellent browser performance.")
+    (license license:expat)))
+
+(define-public javascript-datatables-buttons
+  (package
+    (name "javascript-datatables-buttons")
+    (version "1.6.1") ; Oct 18, 2019
+    (source
+      (origin
+        (method git-fetch)
+        (uri (git-reference
+              (url "https://github.com/DataTables/Dist-DataTables-Buttons-DataTables.git")
+               (commit version)))
+        (file-name (git-file-name name version))
+        (sha256
+         (base32 "070xc2vgmb8zarhjjsxg4gsknrpxw81dwhbj2qjnbzpf5s2hxhkf"))))
+    (build-system trivial-build-system)
+    (arguments
+     `(#:modules ((guix build utils))
+       #:builder
+       (begin
+         (use-modules (guix build utils))
+         (let* ((out (assoc-ref %outputs "out"))
+                (targetdir (string-append out "/share/genenetwork2/javascript/DataTablesExtensions/buttons"))
+                (source (assoc-ref %build-inputs "source")))
+           (copy-recursively source targetdir)))))
+    (propagated-inputs `(("javascript-datatables" ,javascript-datatables)))
+    (home-page "https://datatables.net/extensions/buttons/")
+    (synopsis "This package contains distribution files required to style Buttons extension for DataTables.")
+    (description "The Buttons extension for DataTables provides a common set of options, API methods and styling to display buttons on a page that will interact with a DataTable. It also provides plug-ins for file export (HTML5 and Flash), print view and column visibility. Other libraries, such as Editor and Select also provide buttons specific to their use cases.")
+    (license license:expat)))
+
+(define-public javascript-datatables-plugins
+  (package
+    (name "javascript-datatables-plugins")
+    (version "1.10.20") ; Oct 1, 2019
+    (source
+      (origin
+        (method git-fetch)
+        (uri (git-reference
+              (url "https://github.com/DataTables/Plugins.git")
+               (commit version)))
+        (file-name (git-file-name name version))
+        (sha256
+         (base32 "05zni20863ml1711lfllljdfkb3k05h0kpqhkijkbp0bp7q0ak94"))))
+    (build-system trivial-build-system)
+    (arguments
+     `(#:modules ((guix build utils))
+       #:builder
+       (begin
+         (use-modules (guix build utils))
+         (let* ((out (assoc-ref %outputs "out"))
+                (targetdir (string-append out "/share/genenetwork2/javascript/DataTablesExtensions/plugins"))
+                (source (assoc-ref %build-inputs "source")))
+           (copy-recursively source targetdir)))))
+    (propagated-inputs `(("javascript-datatables" ,javascript-datatables)))
+    (home-page "https://datatables.net/plug-ins/")
+    (synopsis "This package contains a collection of plug-ins for the jQuery DataTables table enhancer")
+    (description "These plug-ins are feature enhancing for the DataTables library, adding extra options to core functionality such as additional sort algorithms, API methods and pagination controls. The plug-ins should not be confused with DataTables 'extensions' which are more significant software libraries which add additional features to DataTables.")
+    (license license:expat)))
+
+(define-public javascript-datatables-col-reorder
+  (package
+   (name "javascript-datatables-col-reorder")
+    (version "1.5.2") ; Oct 1, 2019
+    (source
+      (origin
+        (method git-fetch)
+        (uri (git-reference
+              (url "https://github.com/DataTables/Dist-DataTables-ColReorder.git")
+               (commit version)))
+        (file-name (git-file-name name version))
+        (sha256
+         (base32 "0y5d6wpk0qbgng66a3w63c994wxyawx62wswflf166a89vmaf1gj"))))
+    (build-system trivial-build-system)
+    (arguments
+     `(#:modules ((guix build utils))
+       #:builder
+       (begin
+         (use-modules (guix build utils))
+         (let* ((out (assoc-ref %outputs "out"))
+                (targetdir (string-append out "/share/genenetwork2/javascript/DataTablesExtensions/colReorder"))
+                (source (assoc-ref %build-inputs "source")))
+           (copy-recursively source targetdir)))))
+    (propagated-inputs `(("javascript-datatables" ,javascript-datatables)))
+    (home-page "https://datatables.net/extensions/colreorder/")
+    (synopsis "This package contains distribution files for the ColReorder extension for DataTables.")
+    (description "ColReorder adds the ability for the end user to be able to reorder columns in a DataTable through a click and drag operation. This can be useful when presenting data in a table, letting the user move columns that they wish to compare next to each other for easier comparison")
+    (license license:expat)))
+
+(define-public javascript-datatables-col-resize
+  (package
+   (name "javascript-datatables-col-resize")
+    (version "0.0.10") ; June 26, 2015
+    (source
+      (origin
+        (method git-fetch)
+        (uri (git-reference
+              (url "https://github.com/Silvacom/colResize.git")
+               (commit version)))
+        (file-name (git-file-name name version))
+        (sha256
+         (base32 "0s04r8jj88zfi1qj97afan3jygpwfm2m7lyazdkxm9adwsd52g8m"))))
+    (build-system trivial-build-system)
+    (arguments
+     `(#:modules ((guix build utils))
+       #:builder
+       (begin
+         (use-modules (guix build utils))
+         (let* ((out (assoc-ref %outputs "out"))
+                (targetdir (string-append out "/share/genenetwork2/javascript/DataTablesExtensions/colResize"))
+                (source (assoc-ref %build-inputs "source")))
+           (copy-recursively source targetdir)))))
+    (propagated-inputs `(("javascript-datatables" ,javascript-datatables)))
+    (home-page "https://github.com/Silvacom/colResize")
+    (synopsis "A DataTables plugin for dynamic resizing of columns")
+    (description "A DataTables plugin for dynamic resizing of columns")
+    (license license:expat)))
+
 (define-public javascript-lodash
   (package
     (name "javascript-lodash")
@@ -1145,3 +1290,5 @@ widgets, and themes built on top of the jQuery JavaScript Library.")
      "Given an element, such as a button, and a tooltip element describing it,
 Popper will automatically put the tooltip in the right place near the button.")
     (license license:expat)))
+
+javascript-datatables-col-resize
