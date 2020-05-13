@@ -365,6 +365,35 @@ tables with minimal effort.")
 (define-public javascript-datatables-buttons
   (package
     (name "javascript-datatables-buttons")
+    (version "1.6.2") ; May 11, 2020
+    (source
+      (origin
+        (method git-fetch)
+        (uri (git-reference
+              (url "https://github.com/DataTables/Dist-DataTables-Buttons.git")
+               (commit version)))
+        (file-name (git-file-name name version))
+        (sha256
+         (base32 "1iny8bsm4xx2w7psj7kf140bvkznlw5jvpdi2r7h6fzyrr5hd60x"))))
+    (build-system trivial-build-system)
+    (arguments
+     `(#:modules ((guix build utils))
+       #:builder
+       (begin
+         (use-modules (guix build utils))
+         (let* ((out (assoc-ref %outputs "out"))
+                (targetdir (string-append out "/share/genenetwork2/javascript/DataTablesExtensions/buttons"))
+                (source (assoc-ref %build-inputs "source")))
+           (copy-recursively source targetdir)))))
+    (propagated-inputs `(("javascript-datatables" ,javascript-datatables)))
+    (home-page "https://datatables.net/extensions/buttons/")
+    (synopsis "This package contains distribution files for the Buttons extension for DataTables.")
+    (description "The Buttons extension for DataTables provides a common set of options, API methods and styling to display buttons on a page that will interact with a DataTable. It also provides plug-ins for file export (HTML5 and Flash), print view and column visibility. Other libraries, such as Editor and Select also provide buttons specific to their use cases.")
+    (license license:expat)))
+
+(define-public javascript-datatables-buttons-styles
+  (package
+    (name "javascript-datatables-buttons-styles")
     (version "1.6.1") ; Oct 18, 2019
     (source
       (origin
@@ -382,12 +411,41 @@ tables with minimal effort.")
        (begin
          (use-modules (guix build utils))
          (let* ((out (assoc-ref %outputs "out"))
-                (targetdir (string-append out "/share/genenetwork2/javascript/DataTablesExtensions/buttons"))
+                (targetdir (string-append out "/share/genenetwork2/javascript/DataTablesExtensions/buttonStyles"))
                 (source (assoc-ref %build-inputs "source")))
            (copy-recursively source targetdir)))))
     (propagated-inputs `(("javascript-datatables" ,javascript-datatables)))
     (home-page "https://datatables.net/extensions/buttons/")
     (synopsis "This package contains distribution files required to style Buttons extension for DataTables.")
+    (description "The Buttons extension for DataTables provides a common set of options, API methods and styling to display buttons on a page that will interact with a DataTable. It also provides plug-ins for file export (HTML5 and Flash), print view and column visibility. Other libraries, such as Editor and Select also provide buttons specific to their use cases.")
+    (license license:expat)))
+
+(define-public javascript-datatables-buttons-bootstrap
+  (package
+    (name "javascript-datatables-buttons-bootstrap")
+    (version "1.6.2") ; May 11, 2020
+    (source
+      (origin
+        (method git-fetch)
+        (uri (git-reference
+              (url "https://github.com/DataTables/Dist-DataTables-Buttons-Bootstrap.git")
+               (commit version)))
+        (file-name (git-file-name name version))
+        (sha256
+         (base32 "090a9xrfsk40fqk1s1rjkm4j3nx08wz0lxvnqidd013ff7awaqxa"))))
+    (build-system trivial-build-system)
+    (arguments
+     `(#:modules ((guix build utils))
+       #:builder
+       (begin
+         (use-modules (guix build utils))
+         (let* ((out (assoc-ref %outputs "out"))
+                (targetdir (string-append out "/share/genenetwork2/javascript/DataTablesExtensions/buttonsBootstrap"))
+                (source (assoc-ref %build-inputs "source")))
+           (copy-recursively source targetdir)))))
+    (propagated-inputs `(("javascript-datatables" ,javascript-datatables)))
+    (home-page "https://datatables.net/extensions/buttons/")
+    (synopsis "This package contains distribution files required to style Buttons extension for DataTables with styling for Bootstrap.")
     (description "The Buttons extension for DataTables provides a common set of options, API methods and styling to display buttons on a page that will interact with a DataTable. It also provides plug-ins for file export (HTML5 and Flash), print view and column visibility. Other libraries, such as Editor and Select also provide buttons specific to their use cases.")
     (license license:expat)))
 
@@ -1290,5 +1348,3 @@ widgets, and themes built on top of the jQuery JavaScript Library.")
      "Given an element, such as a button, and a tooltip element describing it,
 Popper will automatically put the tooltip in the right place near the button.")
     (license license:expat)))
-
-javascript-datatables-col-resize
