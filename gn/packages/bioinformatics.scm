@@ -1192,6 +1192,33 @@ runApp(launch.browser=0, port=4206)~%\n"
          "")
         (license #f))))
 
+(define-public clustalw
+  (package
+   (name "clustalw")
+   (version "2.1")
+   (source (origin
+     (method url-fetch)
+     (uri "http://www.clustal.org/download/current/clustalw-2.1.tar.gz")
+     (file-name (string-append name "-" version ".tar.gz"))
+     (sha256
+      (base32 "11llyj08liq0bg6vqan8728qjrbam3xhna2wd6g8rzdbhydhalp0"))))
+   (arguments
+    `(#:phases
+      (modify-phases %standard-phases
+       (add-after
+        'install 'post-install
+        (lambda* (#:key inputs outputs #:allow-other-keys)
+          (let* ((out     (assoc-ref outputs "out")))
+            (rename-file (string-append out "/bin/clustalw2")
+                         (string-append out "/bin/clustalw"))
+                 ))))))
+   (build-system gnu-build-system)
+   (home-page "http://www.clustal.org/")
+   (synopsis "")
+   (description
+    "")
+   (license #f)))
+
 (define-public bh20-seq-resource
   (let ((commit "bbca5ac9b2538e410efe3e09651f87e5573145de")
         (revision "2"))
