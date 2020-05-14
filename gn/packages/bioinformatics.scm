@@ -1240,6 +1240,9 @@ runApp(launch.browser=0, port=4206)~%\n"
          ("python-flask" ,python-flask)
          ("python-magic" ,python-magic)
          ("python-pyyaml" ,python-pyyaml)
+         ("python-pycurl" ,python-pycurl)
+         ("python-pyshex" ,python-pyshex)
+         ("clustalw" ,clustalw)
          ("python-schema-salad" ,python-schema-salad)))
       (native-inputs
        `(("git" ,(@ (gnu packages version-control) git))
