@@ -1220,6 +1220,7 @@ runApp(launch.browser=0, port=4206)~%\n"
    (license #f)))
 
 (define-public bh20-seq-resource
+  %% Note this package is incomplete. Needs more to run properly.
   (let ((commit "bbca5ac9b2538e410efe3e09651f87e5573145de")
         (revision "2"))
     (package
