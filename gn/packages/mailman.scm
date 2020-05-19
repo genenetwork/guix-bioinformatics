@@ -1156,14 +1156,14 @@ service processes for your tests with pytest.")
 (define-public python-hyperkitty
   (package
     (name "python-hyperkitty")
-    (version "1.3.0")
+    (version "1.3.2")
     (source
       (origin
         (method url-fetch)
         (uri (pypi-uri "HyperKitty" version))
         (sha256
          (base32
-          "1h39l5r3ml0687nwc9qpajvis5dqpdbrcklxwrshvk1d1y8dlc5b"))))
+          "092fkv0xyf5vgj33xwq0mh9h5c5d56ifwimaqbfpx5cwc6yivb88"))))
     (build-system python-build-system)
     (arguments
      '(#:phases
@@ -1190,6 +1190,7 @@ service processes for your tests with pytest.")
        ("python-robot-detection" ,python-robot-detection)))
     (native-inputs
      `(("python-beautifulsoup4" ,python-beautifulsoup4)
+       ("python-elasticsearch" ,python-elasticsearch)
        ("python-isort" ,python-isort)
        ("python-mock" ,python-mock)
        ("python-whoosh" ,python-whoosh)))
