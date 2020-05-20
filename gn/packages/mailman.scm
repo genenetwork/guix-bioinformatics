@@ -579,25 +579,6 @@ modules that will be imported from somewhere else when used.  You can also cause
 deprecation warnings to be issued when a variable is used.")
     (license license:zpl2.1)))
 
-(define-public python-zope-deprecation
-  (package
-    (name "python-zope-deprecation")
-    (version "4.4.0")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (pypi-uri "zope.deprecation" version))
-        (sha256
-         (base32
-          "1pz2cv7gv9y1r3m0bdv7ks1alagmrn5msm5spwdzkb2by0w36i8d"))))
-    (build-system python-build-system)
-    (native-inputs
-     `(("python-zope-testrunner" ,python-zope-testrunner)))
-    (home-page "https://github.com/zopefoundation/zope.deprecation")
-    (synopsis "Zope Deprecation Infrastructure")
-    (description "Zope Deprecation Infrastructure")
-    (license license:zpl2.1)))
-
 (define-public python-zope-hookable
   (package
     (name "python-zope-hookable")
