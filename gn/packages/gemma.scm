@@ -166,6 +166,7 @@
     (native-inputs ; for running tests
      `(("perl" ,perl)
        ("which" ,which)
+       ; ("gcc@8" ,gcc-8)
        ))
 
     (build-system gnu-build-system)
