@@ -141,10 +141,10 @@
 
 
 (define-public gemma-gn2 ; guix candidate - generic openblas version
-  (let ((commit "6b1e007ea9ead6123e9d7f078f3e59054047521d"))
+  (let ((commit "b309569fe9497befa008ac2d2cbc04f2e861ce76"))
   (package
     (name "gemma-gn2")
-    (version (string-append "0.98-" (string-take commit 7)))
+    (version (string-append "0.98.2-" (string-take commit 7)))
     (source (origin
              (method git-fetch)
              (uri (git-reference
@@ -153,32 +153,21 @@
              (file-name (string-append name "-" version "-checkout"))
              (sha256
               (base32
-               "0gg4rrxcjbhfqfdaljnn86yffaa0n2d2j67j2gv47wvgrnn8fvwz"))))
+               "0bmwp2g7xm1zpixlljpf7zzsgj8f34pyxra7by30yxl1r52kfjdd"))))
     (inputs `(
-              ; ("gfortran:lib" ,gfortran "lib")
               ("gsl" ,gsl)
-              ("eigen" ,eigen)
               ("shunit2" ,shunit2)
-              ; ("lapack" ,lapack)
               ("openblas" ,openblas)
               ("zlib" ,zlib)
               ))
     (native-inputs ; for running tests
      `(("perl" ,perl)
        ("which" ,which)
-       ; ("gcc@8" ,gcc-8)
        ))
 
     (build-system gnu-build-system)
     (arguments
-     `(#:make-flags
-       (list
-        (string-append "EIGEN_INCLUDE_PATH="
-                       (assoc-ref %build-inputs "eigen")
-                       "/include/eigen3/")
-        )
-       #:phases
-        ; "/include/eigen3/"
+     `(#:phases
         (modify-phases %standard-phases
          (delete 'configure)
          (add-before 'build 'bin-mkdir
@@ -204,22 +193,14 @@ genome-wide association studies (GWAS).")
    (inherit gemma-gn2)
    (name "gemma-gn2-git")
    (inputs `(
-             ; ("gfortran:lib" ,gfortran "lib")
              ("gsl" ,gsl)
-             ("eigen" ,eigen)
              ("shunit2" ,shunit2)
              ("openblas" ,openblas-git)
              ("zlib" ,zlib)
              ))
     (arguments
-     `(#:make-flags
-       (list
-        (string-append "EIGEN_INCLUDE_PATH="
-                       (assoc-ref %build-inputs "eigen")
-                       "/include/eigen3/")
-        )
+     `(
        #:phases
-        ; "/include/eigen3/"
         (modify-phases %standard-phases
          (delete 'configure)
          (add-before 'build 'bin-mkdir
