@@ -1155,6 +1155,68 @@ your forms' modifications and adapts its validation accordingly.")
      "JSZip is a javascript library for creating, reading and editing .zip files, with a lovely and simple API.")
     (license license:expat)))
 
+(define-public javascript-shapiro-wilk
+  (package
+    (name "javascript-shapiro-wilk")
+    (version "1.0.0") ; Sept 27, 2012
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url "https://github.com/rniwa/js-shapiro-wilk")
+             (commit "451e6341832dc42de026b1d18ac0282da7f72a1e")))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32
+         "1azy5h30m7j86bq2zvwpkm5l4jgypbrp3bjlwa4z6la2h0c4l2nz"))))
+    (build-system trivial-build-system)
+    (arguments
+     `(#:modules ((guix build utils))
+       #:builder
+       (begin
+         (use-modules (guix build utils))
+         (let* ((out (assoc-ref %outputs "out"))
+                (targetdir (string-append out "/share/genenetwork2/javascript/shapiro-wilk"))
+                (source (assoc-ref %build-inputs "source")))
+           (install-file (string-append source "/shapiro-wilk.js") targetdir)))))
+    (native-inputs `(("source" ,source)))
+    (home-page "https://stuk.github.io/jszip/")
+    (synopsis "Shapiro-Wilk Test in JavaScript (ported from R)")
+    (description
+     "Shapiro-Wilk Test in JavaScript (ported from R)")
+    (license license:expat)))
+
+(define-public javascript-underscore-string
+  (package
+    (name "javascript-shapiro-wilk")
+    (version "3.2.2") ; July 4, 2019
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url "https://github.com/rniwa/js-shapiro-wilk")
+             (commit "451e6341832dc42de026b1d18ac0282da7f72a1e")))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32
+         "1azy5h30m7j86bq2zvwpkm5l4jgypbrp3bjlwa4z6la2h0c4l2nz"))))
+    (build-system trivial-build-system)
+    (arguments
+     `(#:modules ((guix build utils))
+       #:builder
+       (begin
+         (use-modules (guix build utils))
+         (let* ((out (assoc-ref %outputs "out"))
+                (targetdir (string-append out "/share/genenetwork2/javascript/shapiro-wilk"))
+                (source (assoc-ref %build-inputs "source")))
+           (install-file (string-append source "/shapiro-wilk.js") targetdir)))))
+    (native-inputs `(("source" ,source)))
+    (home-page "https://stuk.github.io/jszip/")
+    (synopsis "Shapiro-Wilk Test in JavaScript (ported from R)")
+    (description
+     "Shapiro-Wilk Test in JavaScript (ported from R)")
+    (license license:expat)))
+
 (define-public js-parsley
   (package
     (inherit javascript-parsley)
