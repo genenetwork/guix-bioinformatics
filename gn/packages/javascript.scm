@@ -1132,7 +1132,7 @@ your forms' modifications and adapts its validation accordingly.")
 (define-public javascript-plotly
   (package
     (name "javascript-plotly")
-    (version "1.49.5") ; Sept 18, 2019
+    (version "1.53.0") ; Mar 31, 2020
     (source
      (origin
        (method git-fetch)
@@ -1142,7 +1142,7 @@ your forms' modifications and adapts its validation accordingly.")
        (file-name (git-file-name name version))
        (sha256
         (base32
-         "0l090qlslswgqv0yfnkyvswrv5qx2dcjagcvmr7h1fh11dl6d6zd"))))
+         "0m8bfj8dxxmxa30z14w7r9ij5r2050zybkf6r85kkzbjyabgpfb4"))))
     (build-system trivial-build-system)
     (arguments
      `(#:modules ((guix build utils))
