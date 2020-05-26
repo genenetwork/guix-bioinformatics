@@ -1188,18 +1188,18 @@ your forms' modifications and adapts its validation accordingly.")
 
 (define-public javascript-underscore-string
   (package
-    (name "javascript-shapiro-wilk")
-    (version "3.2.2") ; July 4, 2019
+    (name "javascript-underscore-string")
+    (version "3.2.1") ; Oct 4, 2018
     (source
      (origin
        (method git-fetch)
        (uri (git-reference
-             (url "https://github.com/rniwa/js-shapiro-wilk")
-             (commit "451e6341832dc42de026b1d18ac0282da7f72a1e")))
+             (url "https://github.com/esamattis/underscore.string")
+             (commit version)))
        (file-name (git-file-name name version))
        (sha256
         (base32
-         "1azy5h30m7j86bq2zvwpkm5l4jgypbrp3bjlwa4z6la2h0c4l2nz"))))
+         "1cqfpbjfb33h60yd4rp09024ckbq1mbd4njlh7pxbhrrzwyv2kmk"))))
     (build-system trivial-build-system)
     (arguments
      `(#:modules ((guix build utils))
@@ -1207,14 +1207,16 @@ your forms' modifications and adapts its validation accordingly.")
        (begin
          (use-modules (guix build utils))
          (let* ((out (assoc-ref %outputs "out"))
-                (targetdir (string-append out "/share/genenetwork2/javascript/shapiro-wilk"))
-                (source (assoc-ref %build-inputs "source")))
-           (install-file (string-append source "/shapiro-wilk.js") targetdir)))))
+                (targetdir (string-append out "/share/genenetwork2/javascript/underscore-string"))
+                (source (assoc-ref %build-inputs "source"))
+                (dist (string-append source "/dist")))
+           (install-file (string-append dist "/underscore.string.js") targetdir)
+           (install-file (string-append dist "/underscore.string.min.js") targetdir)))))
     (native-inputs `(("source" ,source)))
-    (home-page "https://stuk.github.io/jszip/")
-    (synopsis "Shapiro-Wilk Test in JavaScript (ported from R)")
+    (home-page "http://esamattis.github.com/underscore.string/")
+    (synopsis "String manipulation helpers for javascript")
     (description
-     "Shapiro-Wilk Test in JavaScript (ported from R)")
+     "Javascript lacks complete string manipulation operations. This is an attempt to fill that gap. List of build-in methods can be found for example from Dive Into JavaScript. Originally started as an Underscore.js extension but is a full standalone library nowadays.")
     (license license:expat)))
 
 (define-public js-parsley
