@@ -1122,6 +1122,39 @@ requirements inside your form HTML tags.  It can also automatically detects
 your forms' modifications and adapts its validation accordingly.")
     (license license:expat)))
 
+(define-public javascript-jszip
+  (package
+    (name "javascript-jszip")
+    (version "3.2.2") ; July 4, 2019
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url "https://github.com/Stuk/jszip")
+             (commit (string-append "v" version))))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32
+         "185n341knjqmmpzs7gjv9xd2id2vy85l9in2q058hsz36lz3rpjz"))))
+    (build-system trivial-build-system)
+    (arguments
+     `(#:modules ((guix build utils))
+       #:builder
+       (begin
+         (use-modules (guix build utils))
+         (let* ((out (assoc-ref %outputs "out"))
+                (targetdir (string-append out "/share/genenetwork2/javascript/jszip"))
+                (source (assoc-ref %build-inputs "source"))
+                (dist (string-append source "/dist")))
+           (install-file (string-append dist "/jszip.js") targetdir)
+           (install-file (string-append dist "/jszip.min.js") targetdir)))))
+    (native-inputs `(("source" ,source)))
+    (home-page "https://stuk.github.io/jszip/")
+    (synopsis "JSZip is a javascript library for creating, reading and editing .zip files, with a lovely and simple API.")
+    (description
+     "JSZip is a javascript library for creating, reading and editing .zip files, with a lovely and simple API.")
+    (license license:expat)))
+
 (define-public js-parsley
   (package
     (inherit javascript-parsley)
