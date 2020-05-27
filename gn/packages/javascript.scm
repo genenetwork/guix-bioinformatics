@@ -1380,6 +1380,36 @@ experience.")
      "Tooltips for d3.js visualizations.")
     (license license:expat)))
 
+(define-public javascript-purescript-genome-browser
+  (package
+    (name "javascript-purescript-genome-browser")
+    (version "0.0.0")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url "https://github.com/BonfaceKilz/Dist-Purestript-Genome-Browser")
+             (commit "93d45a55ca5053bb87b6d4627ae5c7d973c046ea")))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32
+         "0mp47ms696pijd95agvfg32anyrg6rx0gxkhzm8423pqcfqfad5s"))))
+    (build-system trivial-build-system)
+    (arguments
+     `(#:modules ((guix build utils))
+       #:builder
+       (begin
+         (use-modules (guix build utils))
+         (let* ((out (assoc-ref %outputs "out"))
+                (targetdir (string-append out "/share/genenetwork2/javascript/purescript-genome-browser"))
+                (source (assoc-ref %build-inputs "source")))
+           (copy-recursively source targetdir)))))
+    (native-inputs `(("source" ,source)))
+    (home-page "https://github.com/chfi/purescript-genetics-browser")
+    (synopsis "Dist files for the purescript genetics browser")
+    (description
+     "Dist files for the purescript genetics browser")
+    (license license:expat)))
 
 (define-public javascript-jquery-ui
   (package
