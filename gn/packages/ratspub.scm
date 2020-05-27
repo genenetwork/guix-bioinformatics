@@ -18,7 +18,7 @@
 (define-public ratspub
   (package
     (name "ratspub")
-    (version "0.3.1")
+    (version "0.3.2")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -27,14 +27,12 @@
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "1ii3721mqd3dbpjkhqi7yqjd9bqcf0g19kdbb8265pmbfjjsg164"))
+                "17phk83n0p21b90c7saqgmclw71ydmq62da33iq67rzv9psxvs2s"))
               (modules '((guix build utils)))
               (snippet
                '(begin (substitute* "server.py"
                          ;; Keep the service running on port 4200
-                         (("4201") "4200")
-                         ;; Backport to python-keras-2.2.4
-                         (("learning_rate") "lr") )
+                         (("4201") "4200"))
                        #t))))
     (build-system python-build-system)
     (arguments
