@@ -1084,19 +1084,6 @@ spreadsheets without the need for COM objects.")
          (base32
           "07jsfhlbcwgqg6ayz8nznzaqg5rmxqblbzxz1qvg5wc44pcjjy4g"))))))
 
-(define-public python-ruamel.yaml-0.15
-  (package
-    (inherit python-ruamel.yaml)
-    (name "python-ruamel.yaml")
-    (version "0.15.77")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (pypi-uri "ruamel.yaml" version))
-        (sha256
-         (base32
-          "1mhzxkkiv3xmr9izrgk78x7f1r5gi8kd5ac7z3vn7j00q1ydn6da"))))))
-
 (define-public python-pbr-1.6.0
   (package
     (inherit python-pbr)
@@ -1131,7 +1118,7 @@ spreadsheets without the need for COM objects.")
        ("python-google-api-client" ,python-google-api-client)
        ("python-httplib2" ,python-httplib2)
        ("python-pycurl" ,python-pycurl)
-       ("python-ruamel.yaml" ,python-ruamel.yaml-0.15)
+       ("python-ruamel.yaml" ,python-ruamel.yaml)
        ("python-setuptools" ,python-setuptools)
        ("python-oauth2client" ,python-oauth2client)
        ("python-uritemplate" ,python-uritemplate)
@@ -1174,6 +1161,9 @@ server.")
     (native-inputs
      `(("python-pytest" ,python-pytest)
        ("python-pytest-runner" ,python-pytest-runner)))
+    (arguments
+     `(
+       #:tests? #f)) ; no tests
     (home-page "https://github.com/common-workflow-language/schema_salad")
     (synopsis "Schema Annotations for Linked Avro Data (SALAD)")
     (description
