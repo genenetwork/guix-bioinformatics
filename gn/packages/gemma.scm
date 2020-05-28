@@ -141,7 +141,7 @@
 
 
 (define-public gemma-gn2 ; guix candidate - generic openblas version
-  (let ((commit "dfd0066a1e483ce807efc019f0b2de8decd9e33c"))
+  (let ((commit "e302123d531331507b96f89715846a0b6cab3ec4"))
   (package
     (name "gemma-gn2")
     (version (string-append "0.98.2-" (string-take commit 7)))
@@ -153,7 +153,7 @@
              (file-name (string-append name "-" version "-checkout"))
              (sha256
               (base32
-               "0bdi4rgg5k6n060lvp2mvrwawmqnwmdn8gd2rdbmgbgzgs88dsml"))))
+               "0ij423cm302xbd4hp8qb7lxmjdxp333js3q2rv5ymyvwvd1pm5nw"))))
     (inputs `(
               ("gsl" ,gsl)
               ("shunit2" ,shunit2)
