@@ -141,7 +141,7 @@
 
 
 (define-public gemma-gn2 ; guix candidate - generic openblas version
-  (let ((commit "b309569fe9497befa008ac2d2cbc04f2e861ce76"))
+  (let ((commit "dfd0066a1e483ce807efc019f0b2de8decd9e33c"))
   (package
     (name "gemma-gn2")
     (version (string-append "0.98.2-" (string-take commit 7)))
@@ -153,7 +153,7 @@
              (file-name (string-append name "-" version "-checkout"))
              (sha256
               (base32
-               "0bmwp2g7xm1zpixlljpf7zzsgj8f34pyxra7by30yxl1r52kfjdd"))))
+               "0bdi4rgg5k6n060lvp2mvrwawmqnwmdn8gd2rdbmgbgzgs88dsml"))))
     (inputs `(
               ("gsl" ,gsl)
               ("shunit2" ,shunit2)
@@ -211,7 +211,7 @@ genome-wide association studies (GWAS).")
                   (lambda* (#:key outputs #:allow-other-keys)
                            (let ((out (assoc-ref outputs "out")))
                              (install-file "bin/gemma" (string-append out "/bin"))))))
-       #:tests? #f
+       ; #:tests? #f
        #:parallel-tests? #f))
    ))
 
