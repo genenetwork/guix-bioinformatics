@@ -8,6 +8,7 @@
   #:use-module (gnu packages admin)
   #:use-module (gnu packages bioinformatics)
   #:use-module (gn packages javascript)
+  #:use-module (gn packages machine-learning)
   #:use-module (gnu packages machine-learning)
   #:use-module (gnu packages python)
   #:use-module (gnu packages python-crypto)
@@ -137,6 +138,12 @@ the question \"What do we know about these genes and addiction?\".  Data from
 Studies} catalog are also included in the search to better answer this
 question.")
     (license license:expat)))
+
+(define-public ratspub-with-tensorflow-native
+  (package
+    (inherit
+      (tensowflow-native-instead-of-tensorflow ratspub))
+    (name "ratspub-with-tensorflow-native")))
 
 ;; We want a copy of python-keras with the AUC optimizer backported.
 ;; We skip the tests because we "test in production".
