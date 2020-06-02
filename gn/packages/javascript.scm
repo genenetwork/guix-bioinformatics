@@ -573,17 +573,47 @@ are great for:
 @end enumerate")
     (license license:expat)))
 
+(define-public javascript-nvd3
+  (package
+    (name "javascript-nvd3")
+    (version "1.8.5")
+    (source
+      (origin
+        (method git-fetch)
+        (uri (git-reference
+              (url "https://github.com/novus/nvd3")
+              (commit (string-append "v" version))))
+        (sha256
+         (base32 "1fcqsac233616h52fm1xmj9z9glbi3hfxr6z617kix8p1vcp6g3g"))))
+    (build-system trivial-build-system)
+    (arguments
+     `(#:modules ((guix build utils))
+       #:builder
+       (begin
+         (use-modules (guix build utils))
+         (let* ((out (assoc-ref %outputs "out"))
+                (targetdir (string-append out "/share/genenetwork2/javascript/nvd3"))
+                (source (assoc-ref %build-inputs "source"))
+                (dist (string-append source "/build")))
+           (copy-recursively dist targetdir)))))
+    (native-inputs
+     `(("source" ,source)))
+    (home-page "https://nvd3.org/")
+    (synopsis "A reusable charting library written in d3.js")
+    (description "This project is an attempt to build re-usable charts and chart components for d3.js without taking away the power that d3.js gives you. This is a very young collection of components, with the goal of keeping these components very customizable, staying away from your standard cookie cutter solutions.")
+    (license license:asl2.0)))
+
 (define-public javascript-d3js
   (package
     (name "javascript-d3js")
-    (version "5.9.7")
+    (version "3.5.17")
     (source
       (origin
         (method url-fetch)
         (uri (string-append "https://github.com/d3/d3/releases/download/v"
                             version "/d3.zip"))
         (sha256
-         (base32 "0vg1cfgg7p897bg0nhaprgr77kgvi8k38h5w6sl54nxvibvynkhc"))))
+         (base32 "1adxr5q90k0x6ndknjayq718wmqirc7j4hpfqw38wmcknmag429q"))))
     (build-system trivial-build-system)
     (arguments
      `(#:modules ((guix build utils))
@@ -594,7 +624,7 @@ are great for:
                 (name "d3js")
                 (unzip (string-append (assoc-ref %build-inputs "unzip")
                                       "/bin/unzip"))
-                (targetdir (string-append out "/share/genenetwork/javascript/" name))
+                (targetdir (string-append out "/share/genenetwork2/javascript/" name))
                 (source (assoc-ref %build-inputs "source")))
            (invoke unzip source)
            (install-file "d3.js" targetdir)
@@ -611,6 +641,32 @@ emphasis on web standards gives you the full capabilities of modern browsers
 without tying yourself to a proprietary framework, combining powerful
 visualization components and a data-driven approach to DOM manipulation.")
     (license license:bsd-3)))
+
+(define-public javascript-jquery
+  (package
+   (inherit web-jquery)
+   (name "javascript-jquery")
+   (version "1.10.2")
+   (source
+    (origin
+     (method git-fetch)
+     (uri (git-reference
+           (url "https://github.com/jquery/jquery.git")
+           (commit version)))
+     (file-name (git-file-name name version))
+     (sha256
+      (base32 "1k4prjchm9iyvnzcfdsrm12sp8vggjgl8kdvjzfc8a5w97wzbbpr"))))
+   (build-system trivial-build-system)
+   (arguments
+    `(#:modules ((guix build utils))
+      #:builder
+      (begin
+        (use-modules (guix build utils))
+        (let* ((out (assoc-ref %outputs "out"))
+               (targetdir (string-append out "/share/genenetwork2/javascript/jquery"))
+               (source (assoc-ref %build-inputs "source"))
+               (dist (string-append source "/dist")))
+          (copy-recursively dist targetdir)))))))
 
 (define-public javascript-d3js-4
   (package
@@ -861,6 +917,35 @@ timestamps in your document intelligently.  (e.g \"3 hours ago\").")
     (description
      "Colorbox is a lightweight customizable lightbox plugin for jQuery.")
     (license license:expat)))
+
+(define-public javascript-bootstrap
+  (package
+   (inherit web-bootstrap-3)
+   (name "javascript-bootstrap")
+   (version "3.3.0")
+   (source
+    (origin
+     (method git-fetch)
+     (uri (git-reference
+           (url "https://github.com/twbs/bootstrap.git")
+           (commit (string-append "v" version))))
+     (file-name (git-file-name name version))
+     (sha256
+      (base32 "1d70mhxx2pwp0hghjynz17a2s3vj6wj1mdg0sg9dgwkmlnbxv7jy"))))
+   (arguments
+    `(#:modules ((guix build utils))
+      #:builder
+      (begin
+        (use-modules (guix build utils))
+        (let* ((out (assoc-ref %outputs "out"))
+               (targetdir (string-append out "/share/genenetwork2/javascript/bootstrap"))
+               (source (assoc-ref %build-inputs "source"))
+               (docs (string-append source "/docs/assets/css/src"))
+               (dist (string-append source "/dist")))
+          (copy-recursively dist targetdir)
+          (install-file (string-append docs "/docs.css")
+                        (string-append targetdir "/css"))))))
+   (native-inputs `(("source" ,source)))))
 
 (define-public js-colorbox
   (package
@@ -1475,3 +1560,69 @@ widgets, and themes built on top of the jQuery JavaScript Library.")
      "Given an element, such as a button, and a tooltip element describing it,
 Popper will automatically put the tooltip in the right place near the button.")
     (license license:expat)))
+
+(define-public javascript-zxcvbn-async
+  (package
+   (name "javascript-zxcvbn-async")
+   (version "1.1.0")
+   (source
+    (origin
+     (method url-fetch)
+     (uri (string-append
+           "https://cdnjs.cloudflare.com/ajax/libs/zxcvbn/"
+           version
+           "/zxcvbn-async.min.js"))
+     (file-name (string-append name ".js"))
+     (sha256
+      (base32 "1igmapz0gb458mdf634ywmfg8m5xixsx6qc38hqw90alk30lsmk2"))))
+   (build-system trivial-build-system)
+   (arguments
+    `(#:modules ((guix build utils))
+      #:builder
+      (begin
+        (use-modules (guix build utils))
+        (let* ((source (assoc-ref %build-inputs "source"))
+               (out (assoc-ref %outputs "out"))
+               (targetdir (string-append out "/share/genenetwork2/javascript/zxcvbn-async")))
+          (mkdir-p targetdir)
+          (copy-file source (string-append targetdir "/zxcvbn-async.min.js"))
+          ))))
+   (native-inputs `(("source" ,source)))
+   (home-page "https://www.usenix.org/conference/usenixsecurity16/technical-sessions/presentation/wheeler")
+   (synopsis "Low-Budget Password Strength Estimation")
+   (description
+    "zxcvbn is a password strength estimator inspired by password crackers. Through pattern matching and conservative estimation, it recognizes and weighs 30k common passwords, common names and surnames according to US census data, popular English words from Wikipedia and US television and movies, and other common patterns like dates, repeats (aaa), sequences (abcd), keyboard patterns (qwertyuiop), and l33t speak.")
+   (license license:expat)))
+
+(define-public javascript-jquery-ui
+  (package
+   (name "javascript-jquery-ui")
+   (version "1.9.1")
+   (source
+    (origin
+     (method url-fetch)
+     (uri (string-append
+           "https://ajax.googleapis.com/ajax/libs/jqueryui/"
+           version
+           "/jquery-ui.min.js"))
+     (file-name (string-append name ".js"))
+     (sha256
+      (base32 "1pza57zy8qp76g0j90zrjvr2pj7b127syp44cazs2rabn1scvv2i"))))
+   (build-system trivial-build-system)
+   (arguments
+    `(#:modules ((guix build utils))
+      #:builder
+      (begin
+        (use-modules (guix build utils))
+        (let* ((source (assoc-ref %build-inputs "source"))
+               (out (assoc-ref %outputs "out"))
+               (targetdir (string-append out "/share/genenetwork2/javascript/jquery-ui")))
+          (mkdir-p targetdir)
+          (copy-file source (string-append targetdir "/jquery-ui.min.js"))
+          ))))
+   (native-inputs `(("source" ,source)))
+   (home-page "https://jqueryui.com/")
+   (synopsis "jQuery UI is a curated set of user interface interactions, effects, widgets, and themes built on top of the jQuery JavaScript Library.")
+   (description
+    "jQuery UI is a curated set of user interface interactions, effects, widgets, and themes built on top of the jQuery JavaScript Library. Whether you're building highly interactive web applications or you just need to add a date picker to a form control, jQuery UI is the perfect choice.")
+   (license license:expat)))
