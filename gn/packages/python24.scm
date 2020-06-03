@@ -14,6 +14,7 @@
   #:use-module (gnu packages onc-rpc)
   #:use-module (gnu packages python)
   #:use-module (gnu packages python-xyz)
+  #:use-module (gnu packages readline)
   #:use-module (gnu packages tcl)
   #:use-module (gnu packages tls)
   #:use-module (srfi srfi-1))
@@ -97,6 +98,8 @@ read read ssl ssl tcl tcl tk tk ,(version-major+minor (package-version tcl)) ,(v
       (list (search-path-specification
               (variable "PYTHONPATH")
               (files '("lib/python2.4/site-packages")))))
+    (propagated-inputs
+     `(("readline" ,readline)))
     (inputs
      `(("libnsl" ,libnsl)
        ("libtirpc" ,libtirpc)

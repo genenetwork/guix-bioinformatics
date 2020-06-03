@@ -7,6 +7,7 @@
   #:use-module (gnu packages onc-rpc)
   #:use-module (gn packages python24)
   #:use-module (gnu packages python)
+  #:use-module (gnu packages readline)
   #:use-module (gnu packages web)
   #:use-module (guix packages)
   #:use-module (guix download)
@@ -203,6 +204,7 @@ extensive prebuilt components, and powerful plugins built on jQuery.")
                #t)))))
       (inputs
        `(("httpd" ,httpd)
+         ("readline" ,readline)
          ("python" ,python-2))) ; does not seem to build with python3.7+
       (native-inputs `(("flex" ,(@ (gnu packages flex) flex))))
       (home-page "http://modpython.org/")
@@ -283,11 +285,16 @@ connections and other data between hits and access to Apache internals.")
      `(("autoconf" ,autoconf)
        ("automake" ,automake)
        ("flex" ,(@ (gnu packages flex) flex))))
+    (propagated-inputs 
+     `(
+       ("readline" ,readline)
+       ))
     (inputs
      `(("httpd" ,httpd)
        ("libnsl" ,libnsl)
        ("libtirpc" ,libtirpc)
        ("python" ,python-2.4)))))
+
 
 (define-public web-font-awesome
   (package
