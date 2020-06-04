@@ -1431,6 +1431,19 @@ experience.")
     (arguments `(#:javascript-files '("src/md5.js")))
     (build-system minify-build-system)))
 
+(define d3-tip-js
+  (let ((version "0.9.1"))
+    (origin
+      (method url-fetch)
+      (uri (string-append
+            "https://cdnjs.cloudflare.com/ajax/libs/d3-tip/"
+            version
+            "/d3-tip.js"))
+      (file-name "d3-tip.js")
+      (sha256
+       (base32
+        "1y6vq5vs46k806cj1d6nr8z220ndl9bsycd01d8xfmhkwn3rn0x2")))))
+
 (define-public javascript-d3-tip
   (package
     (name "javascript-d3-tip")
@@ -1453,12 +1466,15 @@ experience.")
          (use-modules (guix build utils))
          (let* ((out (assoc-ref %outputs "out"))
                 (targetdir (string-append out "/share/genenetwork2/javascript/d3-tip"))
-                (source (assoc-ref %build-inputs "source")))
+                (source (assoc-ref %build-inputs "source"))
+                (distfile (assoc-ref %build-inputs "distfile")))
            (mkdir-p targetdir)
-           (copy-file (string-append source "/index.js") (string-append targetdir "/d3-tip.js"))
+           (copy-file distfile (string-append targetdir "/d3-tip.js"))
            (copy-file (string-append source "/examples/example-styles.css")
                       (string-append targetdir "/d3-tip.css"))))))
-    (native-inputs `(("source" ,source)))
+    (native-inputs `(("source" ,source)
+                     ("distfile" ,d3-tip-js)
+                     ))
     (home-page "http://labratrevenge.com/d3-tip")
     (synopsis "Tooltips for d3.js visualizations")
     (description
