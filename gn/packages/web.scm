@@ -253,8 +253,7 @@ connections and other data between hits and access to Apache internals.")
                (base32
                 "1bmcx7ki7y486x6490yppssr7dh3a0qyki6gjf2lj83gyh68c0r0")))))))
     (arguments
-     `(#:tests? #f
-       #:imported-modules ((guix build python-build-system)
+     `(#:imported-modules ((guix build python-build-system)
                            ,@%gnu-build-system-modules)
        #:modules ((guix build gnu-build-system)
                   (guix build utils)
@@ -278,6 +277,11 @@ connections and other data between hits and access to Apache internals.")
                  (("PY_INCLUDES=.*")
                   (string-append "PY_INCLUDES=-I" python "/include/python" py-version "\n")))
                (invoke "autoreconf" "-vfi"))))
+         (add-after 'unpack 'patch-sources
+           (lambda _
+             (substitute* "test/test.py"
+               (("2\\.2") "2.4"))
+             #t))
          (replace 'install
            (lambda* (#:key outputs #:allow-other-keys)
              (let ((out (assoc-ref outputs "out")))
@@ -294,6 +298,78 @@ connections and other data between hits and access to Apache internals.")
      `(("httpd" ,httpd)
        ("python" ,python-2.4)
        ,@(package-inputs python-2.4)))))
+
+(define-public httpd-mod-python-24
+  (package
+    (inherit httpd)
+    (name "httpd-mod-python-24")
+    (arguments
+     `(#:imported-modules ((guix build python-build-system)
+                           ,@%gnu-build-system-modules)
+       #:modules (((guix build gnu-build-system) #:prefix gnu:)
+                  (guix build utils)
+                  ,@%gnu-build-system-modules
+                  ((guix build python-build-system) #:prefix python:))
+       ,@(substitute-keyword-arguments (package-arguments httpd)
+          ((#:phases phases '%standard-phases)
+           `(modify-phases ,phases
+              (add-after 'install 'unpack-mod-python
+                (lambda* args
+                  ((assoc-ref gnu:%standard-phases 'unpack)
+                   #:source (assoc-ref %build-inputs "mod-python"))))
+              (add-after 'unpack-mod-python 'change-directory
+                (lambda _
+                  ;; Make sure we're in the correct folder
+                  (chdir "../mod_python-3.3.1") #t))
+              (add-after 'change-directory 'bootstrap-mod-python
+                (lambda* (#:key inputs #:allow-other-keys)
+                  (let* ((python (assoc-ref inputs "python"))
+                         (tcl (assoc-ref inputs "tcl"))
+                         (py-version (python:python-version python))
+                         (tcl-version ,(version-major+minor (package-version tcl))))
+                    (substitute* "configure.in"
+                      (("PY_LIBS=.*")
+                       (string-append "PY_LIBS=-L" python "/lib/python" py-version "\n"))
+                      (("PY_LDFLAGS=.*")
+                       (string-append "PY_LDFLAGS=\"-lpython" py-version
+                                      " -lreadline -lssl -lcrypto"
+                                      " -ltk" tcl-version " -ltcl" tcl-version
+                                      " -lgdbm -ltirpc -lnsl -lz\"\n"))
+                      (("PY_INCLUDES=.*")
+                       (string-append "PY_INCLUDES=-I" python "/include/python" py-version "\n")))
+                    (invoke "autoreconf" "-vfi"))))
+              (add-after 'bootstrap-mod-python 'patch-bin-file-mod-python
+                (assoc-ref gnu:%standard-phases 'patch-usr-bin-file))
+              (add-after 'patch-bin-file-mod-python 'patch-source-shebangs-mod-python
+                (assoc-ref gnu:%standard-phases 'patch-source-shebangs))
+              (add-after 'patch-source-shebangs-mod-python 'configure-mod-python
+                (lambda* args
+                  ((assoc-ref gnu:%standard-phases 'configure)
+                   #:outputs %outputs
+                   #:inputs %build-inputs
+                   #:configure-flags (list (string-append "--with-apxs="
+                                                          (assoc-ref %outputs "out")
+                                                          "/bin/apxs")))))
+              (add-after 'configure-mod-python 'patch-more-shebangs-mod-python
+                (assoc-ref gnu:%standard-phases 'patch-generated-file-shebangs))
+              (add-after 'patch-more-shebangs-mod-python 'make-mod-python
+                (assoc-ref gnu:%standard-phases 'build))
+              (add-after 'make-mod-python 'install-mod-python
+                (lambda* (#:key outputs #:allow-other-keys)
+                  (let ((out (assoc-ref outputs "out")))
+                    (install-file "src/mod_python.so" (string-append out "/modules"))
+                    (with-directory-excursion "dist"
+                      (invoke "python" "setup.py" "install" "--root=/"
+                              (string-append "--prefix=" out)))
+                    #t))))))))
+    (native-inputs
+     `(,@(package-native-inputs httpd)
+       ,@(package-native-inputs mod-python-24)
+       ("mod-python" ,(package-source mod-python-24))))
+    (inputs
+     `(,@(alist-delete "openssl" (package-inputs httpd))
+       ,@(package-inputs python-2.4)
+       ("python" ,python-2.4)))))
 
 (define-public web-font-awesome
   (package
