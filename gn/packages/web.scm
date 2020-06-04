@@ -4,10 +4,10 @@
   #:use-module (gnu packages autotools)
   #:use-module (gnu packages compression)
   #:use-module (gnu packages fonts)
-  #:use-module (gnu packages onc-rpc)
   #:use-module (gn packages python24)
   #:use-module (gnu packages python)
   #:use-module (gnu packages readline)
+  #:use-module (gnu packages tcl)
   #:use-module (gnu packages web)
   #:use-module (guix packages)
   #:use-module (guix download)
@@ -264,12 +264,17 @@ connections and other data between hits and access to Apache internals.")
          (replace 'bootstrap
            (lambda* (#:key inputs #:allow-other-keys)
              (let* ((python (assoc-ref inputs "python"))
-                    (py-version (python:python-version python)))
+                    (tcl (assoc-ref inputs "tcl"))
+                    (py-version (python:python-version python))
+                    (tcl-version ,(version-major+minor (package-version tcl))))
                (substitute* "configure.in"
                  (("PY_LIBS=.*")
                   (string-append "PY_LIBS=-L" python "/lib/python" py-version "\n"))
                  (("PY_LDFLAGS=.*")
-                  (string-append "PY_LDFLAGS=-lpython" py-version "\n"))
+                  (string-append "PY_LDFLAGS=\"-lpython" py-version
+                                 " -lreadline -lssl -lcrypto"
+                                 " -ltk" tcl-version " -ltcl" tcl-version
+                                 " -lgdbm -ltirpc -lnsl -lz\"\n"))
                  (("PY_INCLUDES=.*")
                   (string-append "PY_INCLUDES=-I" python "/include/python" py-version "\n")))
                (invoke "autoreconf" "-vfi"))))
@@ -285,16 +290,10 @@ connections and other data between hits and access to Apache internals.")
      `(("autoconf" ,autoconf)
        ("automake" ,automake)
        ("flex" ,(@ (gnu packages flex) flex))))
-    (propagated-inputs 
-     `(
-       ("readline" ,readline)
-       ))
     (inputs
      `(("httpd" ,httpd)
-       ("libnsl" ,libnsl)
-       ("libtirpc" ,libtirpc)
-       ("python" ,python-2.4)))))
-
+       ("python" ,python-2.4)
+       ,@(package-inputs python-2.4)))))
 
 (define-public web-font-awesome
   (package

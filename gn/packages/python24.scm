@@ -98,8 +98,6 @@ read read ssl ssl tcl tcl tk tk ,(version-major+minor (package-version tcl)) ,(v
       (list (search-path-specification
               (variable "PYTHONPATH")
               (files '("lib/python2.4/site-packages")))))
-    (propagated-inputs
-     `(("readline" ,readline)))
     (inputs
      `(("libnsl" ,libnsl)
        ("libtirpc" ,libtirpc)
