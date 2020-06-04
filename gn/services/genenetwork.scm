@@ -8,7 +8,7 @@
 (use-package-modules python)
 
 (define %mod-python-path
-  (file-append mod-python "/lib/python2.4/site-packages"))
+  (file-append mod-python-24 "/lib/python2.4/site-packages"))
 
 (operating-system
   (host-name "genenetwork")
@@ -23,7 +23,7 @@
   (firmware '())
 
   (packages (cons* python-2.4
-                   mod-python
+                   mod-python-24
                    python24-qtlreaper
                    ;python24-htmlgen-gn
                    python24-json-GN1
@@ -43,7 +43,7 @@
                                  (modules (cons*
                                             (httpd-module
                                               (name "python_module")
-                                              (file (file-append mod-python "/modules/mod_python.so")))
+                                              (file (file-append mod-python-24 "/modules/mod_python.so")))
                                             %default-httpd-modules))
                                  (extra-config (list "\
 PythonPath \"sys.path+['" %mod-python-path "', '" (file-append genenetwork1 "/web/webqtl") "']\"

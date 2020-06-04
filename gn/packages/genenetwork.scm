@@ -29,8 +29,8 @@
   #:use-module (gnu packages version-control)
   #:use-module (gnu packages vim)
   #:use-module (gnu packages web)
-  #:use-module (gnu packages xml)
   #:use-module (gnu packages wget)
+  #:use-module (gnu packages xml)
   #:use-module (gn packages bioinformatics)
   #:use-module (gn packages crates-io)
   #:use-module (gn packages elixir)
@@ -40,7 +40,8 @@
   #:use-module (gn packages phewas)
   #:use-module (gn packages python)
   #:use-module (gn packages python24)
-  #:use-module (gn packages statistics))
+  #:use-module (gn packages statistics)
+  #:use-module (gn packages web))
 
 
 
@@ -687,6 +688,14 @@ written in C")
          (base32
           "1s735dj8kf98gf5w58p10zzyc5766gn27j4j5yh07ksadg7h1kdi"))))
       (build-system gnu-build-system)
+      (propagated-inputs
+       `(("ghostscript" ,ghostscript)
+         ("graphviz" ,graphviz-2.26)
+         ("httpd" ,httpd)
+         ("python24" ,python-2.4)
+         ("mod-python-24" ,mod-python-24)
+         ("python-piddle" ,python24-piddle)
+         ("wget" ,wget)))
       (arguments
        `(#:tests? #f ; no tests
          #:phases
@@ -729,12 +738,6 @@ written in C")
              (lambda* (#:key outputs #:allow-other-keys)
                (copy-recursively "." (assoc-ref outputs "out"))
                #t)))))
-      (inputs
-       `(("ghostscript" ,ghostscript)
-         ("graphviz" ,graphviz-2.26)
-         ("python24" ,python-2.4)
-         ("python-piddle" ,python24-piddle)
-         ("wget" ,wget)))
       (home-page "http://www.genenetwork.org/webqtl/main.py")
       (synopsis
        "Combined database and data analysis software resource for systems genetics")

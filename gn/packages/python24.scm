@@ -14,6 +14,7 @@
   #:use-module (gnu packages onc-rpc)
   #:use-module (gnu packages python)
   #:use-module (gnu packages python-xyz)
+  #:use-module (gnu packages readline)
   #:use-module (gnu packages tcl)
   #:use-module (gnu packages tls)
   #:use-module (srfi srfi-1))

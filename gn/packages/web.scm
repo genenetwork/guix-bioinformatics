@@ -1,9 +1,13 @@
 (define-module (gn packages web)
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (gnu packages)
+  #:use-module (gnu packages autotools)
   #:use-module (gnu packages compression)
   #:use-module (gnu packages fonts)
+  #:use-module (gn packages python24)
   #:use-module (gnu packages python)
+  #:use-module (gnu packages readline)
+  #:use-module (gnu packages tcl)
   #:use-module (gnu packages web)
   #:use-module (guix packages)
   #:use-module (guix download)
@@ -200,6 +204,7 @@ extensive prebuilt components, and powerful plugins built on jQuery.")
                #t)))))
       (inputs
        `(("httpd" ,httpd)
+         ("readline" ,readline)
          ("python" ,python-2))) ; does not seem to build with python3.7+
       (native-inputs `(("flex" ,(@ (gnu packages flex) flex))))
       (home-page "http://modpython.org/")
@@ -210,6 +215,85 @@ applications in Python that will run many times faster than traditional CGI and
 will have access to advanced features such as ability to retain database
 connections and other data between hits and access to Apache internals.")
       (license license:asl2.0))))
+
+(define-public mod-python-24
+  (package
+    (inherit mod-python)
+    (name "mod-python-24")
+    (version "3.3.1")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (string-append "https://archive.apache.org/dist/httpd/"
+                            "modpython/mod_python-" version ".tgz"))
+        (sha256
+         (base32
+          "0sss2xi6l1a2z8y6ji0cp8vgyvnhq8zrg0ilkvpj1mygbzyk28xd"))
+        (patches
+          (list
+            (origin
+              (method url-fetch)
+              (uri "https://sources.debian.org/data/main/liba/libapache2-mod-python/3.3.1-11/debian/patches/04_autoconf_python_multiarch.patch")
+              (file-name "mod-python-24-python-discovery.patch")
+              (sha256
+               (base32
+                "0n3zp8j6q0mp0scry7d2hi0baqkim42bqq2c81p4l6mizsy8ry4h")))
+            (origin
+              (method url-fetch)
+              (uri "https://sources.debian.org/data/main/liba/libapache2-mod-python/3.3.1-11/debian/patches/10_bts521965.patch")
+              (file-name "mod-python-24-apr13-compat.patch")
+              (sha256
+               (base32
+                "1k2cd2r13938fbm473sn0ivicaylkcqigyqn2wjir9ppch98kybg")))
+            (origin
+              (method url-fetch)
+              (uri "https://sources.debian.org/data/main/liba/libapache2-mod-python/3.3.1-11/debian/patches/20_apache24.patch")
+              (file-name "mod-python-24-apache24-compat.patch")
+              (sha256
+               (base32
+                "1bmcx7ki7y486x6490yppssr7dh3a0qyki6gjf2lj83gyh68c0r0")))))))
+    (arguments
+     `(#:tests? #f
+       #:imported-modules ((guix build python-build-system)
+                           ,@%gnu-build-system-modules)
+       #:modules ((guix build gnu-build-system)
+                  (guix build utils)
+                  ((guix build python-build-system) #:prefix python:))
+       #:phases
+       (modify-phases %standard-phases
+         (replace 'bootstrap
+           (lambda* (#:key inputs #:allow-other-keys)
+             (let* ((python (assoc-ref inputs "python"))
+                    (tcl (assoc-ref inputs "tcl"))
+                    (py-version (python:python-version python))
+                    (tcl-version ,(version-major+minor (package-version tcl))))
+               (substitute* "configure.in"
+                 (("PY_LIBS=.*")
+                  (string-append "PY_LIBS=-L" python "/lib/python" py-version "\n"))
+                 (("PY_LDFLAGS=.*")
+                  (string-append "PY_LDFLAGS=\"-lpython" py-version
+                                 " -lreadline -lssl -lcrypto"
+                                 " -ltk" tcl-version " -ltcl" tcl-version
+                                 " -lgdbm -ltirpc -lnsl -lz\"\n"))
+                 (("PY_INCLUDES=.*")
+                  (string-append "PY_INCLUDES=-I" python "/include/python" py-version "\n")))
+               (invoke "autoreconf" "-vfi"))))
+         (replace 'install
+           (lambda* (#:key outputs #:allow-other-keys)
+             (let ((out (assoc-ref outputs "out")))
+               (install-file "src/mod_python.so" (string-append out "/modules"))
+               (with-directory-excursion "dist"
+                 (invoke "python" "setup.py" "install" "--root=/"
+                         (string-append "--prefix=" out)))
+               #t))))))
+    (native-inputs
+     `(("autoconf" ,autoconf)
+       ("automake" ,automake)
+       ("flex" ,(@ (gnu packages flex) flex))))
+    (inputs
+     `(("httpd" ,httpd)
+       ("python" ,python-2.4)
+       ,@(package-inputs python-2.4)))))
 
 (define-public web-font-awesome
   (package
