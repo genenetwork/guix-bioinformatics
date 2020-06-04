@@ -1274,7 +1274,7 @@ your forms' modifications and adapts its validation accordingly.")
 (define-public javascript-underscore-string
   (package
     (name "javascript-underscore-string")
-    (version "3.2.1") ; Oct 4, 2018
+    (version "2.4.0")
     (source
      (origin
        (method git-fetch)
@@ -1284,7 +1284,7 @@ your forms' modifications and adapts its validation accordingly.")
        (file-name (git-file-name name version))
        (sha256
         (base32
-         "1cqfpbjfb33h60yd4rp09024ckbq1mbd4njlh7pxbhrrzwyv2kmk"))))
+         "0dzqcq4hb8wvhmaqh8bxmjgj3hh22hgjdvcrw9ipxsm1v74bl78i"))))
     (build-system trivial-build-system)
     (arguments
      `(#:modules ((guix build utils))
@@ -1295,7 +1295,6 @@ your forms' modifications and adapts its validation accordingly.")
                 (targetdir (string-append out "/share/genenetwork2/javascript/underscore-string"))
                 (source (assoc-ref %build-inputs "source"))
                 (dist (string-append source "/dist")))
-           (install-file (string-append dist "/underscore.string.js") targetdir)
            (install-file (string-append dist "/underscore.string.min.js") targetdir)))))
     (native-inputs `(("source" ,source)))
     (home-page "http://esamattis.github.com/underscore.string/")
