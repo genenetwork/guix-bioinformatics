@@ -1626,3 +1626,33 @@ Popper will automatically put the tooltip in the right place near the button.")
    (description
     "jQuery UI is a curated set of user interface interactions, effects, widgets, and themes built on top of the jQuery JavaScript Library. Whether you're building highly interactive web applications or you just need to add a date picker to a form control, jQuery UI is the perfect choice.")
    (license license:expat)))
+
+(define-public javascript-jquery-cookie
+  (package
+   (name "javascript-jquery-cookie")
+   (version "1.3.1")
+   (source (origin
+            (method git-fetch)
+            (uri (git-reference
+                  (url "https://github.com/carhartl/jquery-cookie.git")
+                  (commit (string-append "v" version))))
+            (file-name (git-file-name name version))
+            (sha256
+             (base32
+              "0a94jzk83pbsw3wd8pfa3g61yx2najhik0dzqr4nf1rsgmqbqhgc"))))
+   (build-system trivial-build-system)
+   (arguments
+    `(#:modules ((guix build utils))
+      #:builder
+      (let* ((out (assoc-ref %outputs "out"))
+             (targetdir (string-append out "/share/genenetwork2/javascript/jquery-cookie"))
+             (source (assoc-ref %build-inputs "source")))
+        (begin
+          (use-modules (guix build utils))
+          (install-file (string-append source "/jquery.cookie.js")
+                        targetdir)))))
+   (native-inputs `(("source" ,source)))
+   (home-page "http://jasonmayes.com/projects/twitterApi/")
+   (synopsis "A simple, lightweight jQuery plugin for reading, writing and deleting cookies.")
+   (description "A simple, lightweight jQuery plugin for reading, writing and deleting cookies. No longer maintained, superseded by JS Cookie: https://github.com/js-cookie/js-cookie")
+   (license license:expat)))

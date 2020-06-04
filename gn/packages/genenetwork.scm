@@ -384,6 +384,7 @@ implemented, light on server resource usage, and fairly speedy.")
        ("javascript-jquery" ,javascript-jquery)
        ("javascript-zxcvbn-async" ,javascript-zxcvbn-async)
        ("javascript-jquery-ui" ,javascript-jquery-ui)
+       ("javascript-jquery-cookie" ,javascript-jquery-cookie)
        ))
     (inputs
      `(("javascript-colorbox" ,(package-source javascript-colorbox))))
