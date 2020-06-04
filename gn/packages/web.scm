@@ -253,8 +253,7 @@ connections and other data between hits and access to Apache internals.")
                (base32
                 "1bmcx7ki7y486x6490yppssr7dh3a0qyki6gjf2lj83gyh68c0r0")))))))
     (arguments
-     `(#:tests? #f
-       #:imported-modules ((guix build python-build-system)
+     `(#:imported-modules ((guix build python-build-system)
                            ,@%gnu-build-system-modules)
        #:modules ((guix build gnu-build-system)
                   (guix build utils)
@@ -278,6 +277,11 @@ connections and other data between hits and access to Apache internals.")
                  (("PY_INCLUDES=.*")
                   (string-append "PY_INCLUDES=-I" python "/include/python" py-version "\n")))
                (invoke "autoreconf" "-vfi"))))
+         (add-after 'unpack 'patch-sources
+           (lambda _
+             (substitute* "test/test.py"
+               (("2\\.2") "2.4"))
+             #t))
          (replace 'install
            (lambda* (#:key outputs #:allow-other-keys)
              (let ((out (assoc-ref outputs "out")))
@@ -363,7 +367,7 @@ connections and other data between hits and access to Apache internals.")
        ,@(package-native-inputs mod-python-24)
        ("mod-python" ,(package-source mod-python-24))))
     (inputs
-     `(,@(package-inputs httpd)
+     `(,@(alist-delete "openssl" (package-inputs httpd))
        ,@(package-inputs python-2.4)
        ("python" ,python-2.4)))))
 
