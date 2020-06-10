@@ -8,6 +8,7 @@
   #:use-module (gnu packages python)
   #:use-module (gnu packages readline)
   #:use-module (gnu packages tcl)
+  #:use-module (gnu packages tls)
   #:use-module (gnu packages web)
   #:use-module (guix packages)
   #:use-module (guix download)
@@ -163,6 +164,25 @@ extensive prebuilt components, and powerful plugins built on jQuery.")
       (synopsis "Bootstrap minimal")
       (description "Bootstrap native does not use jquery.")
       (license license:expat))))
+
+(define-public httpd-2.2
+  (package
+    (inherit httpd)
+    (version "2.2.34")
+    (source (origin
+             (method url-fetch)
+             (uri (string-append "mirror://apache/httpd/httpd-"
+                                 version ".tar.bz2"))
+             (sha256
+              (base32
+               "0q4196krxbyaswl5yzmm0r5ry2dijfhvxjdld3bl0mxcvzaq6cg5"))))
+    (inputs
+     `(("openssl" ,openssl-1.0)
+       ,@(alist-delete "openssl" (package-inputs httpd))))
+    (arguments
+     (substitute-keyword-arguments (package-arguments httpd)
+       ((#:configure-flags flags)
+        `(cons "--enable-mods-shared=most" ,flags))))))
 
 (define-public mod-python
   (let ((commit "902bb8700e2c45ffd96b78e2f1146a3c101be7f5")
