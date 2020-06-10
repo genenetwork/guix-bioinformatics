@@ -236,10 +236,10 @@ will have access to advanced features such as ability to retain database
 connections and other data between hits and access to Apache internals.")
       (license license:asl2.0))))
 
-(define-public mod-python-24
+(define-public mod-python-24-httpd22
   (package
     (inherit mod-python)
-    (name "mod-python-24")
+    (name "mod-python-24-httpd22")
     (version "3.3.1")
     (source
       (origin
@@ -264,14 +264,7 @@ connections and other data between hits and access to Apache internals.")
               (file-name "mod-python-24-apr13-compat.patch")
               (sha256
                (base32
-                "1k2cd2r13938fbm473sn0ivicaylkcqigyqn2wjir9ppch98kybg")))
-            (origin
-              (method url-fetch)
-              (uri "https://sources.debian.org/data/main/liba/libapache2-mod-python/3.3.1-11/debian/patches/20_apache24.patch")
-              (file-name "mod-python-24-apache24-compat.patch")
-              (sha256
-               (base32
-                "1bmcx7ki7y486x6490yppssr7dh3a0qyki6gjf2lj83gyh68c0r0")))))))
+                "1k2cd2r13938fbm473sn0ivicaylkcqigyqn2wjir9ppch98kybg")))))))
     (arguments
      `(#:imported-modules ((guix build python-build-system)
                            ,@%gnu-build-system-modules)
@@ -314,6 +307,29 @@ connections and other data between hits and access to Apache internals.")
      `(("autoconf" ,autoconf)
        ("automake" ,automake)
        ("flex" ,(@ (gnu packages flex) flex))))
+    (inputs
+     `(("httpd" ,httpd-2.2)
+       ("python" ,python-2.4)
+       ,@(package-inputs python-2.4)))))
+
+(define-public mod-python-24
+  (package
+    (inherit mod-python-24-httpd22)
+    (name "mod-python-24")
+    (source
+      (origin
+        (inherit (package-source mod-python-24-httpd22))
+        (patches
+          (append
+            (origin-patches (package-source mod-python-24-httpd22))
+            (list
+              (origin
+                (method url-fetch)
+                (uri "https://sources.debian.org/data/main/liba/libapache2-mod-python/3.3.1-11/debian/patches/20_apache24.patch")
+                (file-name "mod-python-24-apache24-compat.patch")
+                (sha256
+                 (base32
+                  "1bmcx7ki7y486x6490yppssr7dh3a0qyki6gjf2lj83gyh68c0r0"))))))))
     (inputs
      `(("httpd" ,httpd)
        ("python" ,python-2.4)
@@ -388,6 +404,27 @@ connections and other data between hits and access to Apache internals.")
        ("mod-python" ,(package-source mod-python-24))))
     (inputs
      `(,@(alist-delete "openssl" (package-inputs httpd))
+       ,@(package-inputs python-2.4)
+       ("python" ,python-2.4)))))
+
+(define-public httpd22-mod-python-24
+  (package
+    (inherit httpd-mod-python-24)
+    (name "httpd22-mod-python-24")
+    (version (package-version httpd-2.2))
+    (source
+      (origin
+        (inherit (package-source httpd-2.2))))
+    (arguments
+     (substitute-keyword-arguments (package-arguments httpd-mod-python-24)
+       ((#:configure-flags flags)
+        `(cons "--enable-mods-shared=most" ,flags))))
+    (native-inputs
+     `(,@(package-native-inputs httpd-2.2)
+        ,@(package-native-inputs mod-python-24-httpd22)
+       ("mod-python" ,(package-source mod-python-24-httpd22))))
+    (inputs
+     `(,@(package-inputs httpd-2.2)
        ,@(package-inputs python-2.4)
        ("python" ,python-2.4)))))
 
