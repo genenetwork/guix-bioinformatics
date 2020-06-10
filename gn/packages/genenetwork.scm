@@ -691,9 +691,8 @@ written in C")
       (propagated-inputs
        `(("ghostscript" ,ghostscript)
          ("graphviz" ,graphviz-2.26)
-         ("httpd" ,httpd)
+         ("httpd" ,httpd-mod-python-24)
          ("python24" ,python-2.4)
-         ("mod-python-24" ,mod-python-24)
          ("python-piddle" ,python24-piddle)
          ("wget" ,wget)))
       (arguments
