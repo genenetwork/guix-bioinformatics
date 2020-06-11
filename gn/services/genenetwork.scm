@@ -12,7 +12,7 @@
   "/lib/python2.4/site-packages")
 
 (define %mod-python-path
-  (file-append httpd-mod-python-24 %python-path))
+  (file-append httpd22-mod-python-24 %python-path))
 
 (define %default-httpd22-modules
   (map (match-lambda
@@ -93,19 +93,27 @@
 
   (services (list (service httpd-service-type
                            (httpd-configuration
-                             (package httpd-mod-python-24) ; Must be this package!
+                             (package httpd22-mod-python-24)    ; Must be httpd-2.2?
                              (config
                                (httpd-config-file
                                  (server-name "www.genenetwork.org")
+                                 (server-root httpd22-mod-python-24)    ; Defaults to httpd, must be combo package.
+                                 (user "nobody")
+                                 (group "root")
+                                 (pid-file "/tmp/httpd-genenetwork1")
+                                 (error-log "/tmp/httpd-genenetwork1-error-log")
                                  (document-root (file-append genenetwork1 "/web"))
                                  (listen '("8042"))
                                  (modules (cons*
                                             (httpd-module
                                               (name "python_module")
                                               (file "modules/mod_python.so"))
-                                            %default-httpd-modules))
+                                            %default-httpd22-modules))
                                  (extra-config (list "\
 TypesConfig etc/httpd/mime.types
+#for apache-2.2, ignored by apache-2.4
+DefaultType application/octet-stream
+# Should PythonPath just be genenetwork1/web/webqtl?
 PythonPath \"sys.path+['" (file-append python-2.4 "/lib/python2.4") "', '" %mod-python-path "', '" (file-append genenetwork1 "/web/webqtl") "']\"
 <Directory " (file-append genenetwork1 "/web/webqtl") ">
   AddHandler mod_python .py
