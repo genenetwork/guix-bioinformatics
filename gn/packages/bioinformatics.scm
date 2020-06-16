@@ -15,6 +15,7 @@
   #:use-module (guix build-system waf)
   #:use-module (gnu packages)
   #:use-module (gn packages python)
+  #:use-module (gnu packages base)
   #:use-module (gnu packages bioconductor)
   #:use-module (gnu packages bioinformatics)
   #:use-module (gnu packages boost)
@@ -672,13 +673,16 @@ different datasets.
                                          "/bin/Rscript"))
                (convert   (string-append (assoc-ref %build-inputs "imagemagick")
                                          "/bin/convert"))
+               (cp        (string-append (assoc-ref %build-inputs "coreutils")
+                                         "/bin/cp"))
                (source    (assoc-ref %build-inputs "source")))
           (copy-recursively source targetdir)
           (substitute* (string-append targetdir "/server.r")
             ;; This version is ideal for deploying with the included PNGs.
-            ;; But we want all of them, so we use a local copy in gn-rshiny's $HOME.
+            ;; But we want all of them, so we use a local copy in shepherd's $HOME.
             ;;(("./pngs") (string-append targetdir "/pngs"))
-            (("./pngs") "/home/gn-rshiny/hchen/rn6app/pngs")
+            (("./pngs") "/home/shepherd/rn6app/pngs")
+            (("cp") cp)
             (("convert") convert))
           (mkdir-p (string-append out "/bin"))
           (call-with-output-file app
@@ -693,7 +697,8 @@ runApp(launch.browser=0, port=4202)~%\n"
           #t))))
    (native-inputs `(("source" ,source)))
    (inputs
-    `(("imagemagick" ,imagemagick)
+    `(("coreutils" ,coreutils-minimal)
+      ("imagemagick" ,imagemagick)
       ("r-min" ,r-minimal)))
    (propagated-inputs
     `(("freetype" ,freetype)
