@@ -10,7 +10,7 @@
     (name "tensorflow-native")
     (arguments
      (substitute-keyword-arguments (package-arguments tensorflow)
-       ;((#:substitutable? _ #f) #f)
+       ((#:substitutable? _ #f) #f)
        ;((#:phases phases)
        ; `(modify-phases ,phases
        ;    (add-after 'unpack 'hardcode-multicore-usage
