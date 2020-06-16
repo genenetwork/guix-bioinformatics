@@ -8,6 +8,7 @@
   #:use-module (gnu packages check)
   #:use-module (gnu packages sphinx)
   #:use-module (gnu packages time)
+  #:use-module (gnu packages python)
   #:use-module (gnu packages python-web)
   #:use-module (gnu packages python-science)
   #:use-module (gnu packages python-xyz))
@@ -175,6 +176,7 @@
      `(#:tests? #f))
     (propagated-inputs
       `(("python-aiodns" ,python-aiodns)
+        ("python-pycares" ,python-pycares)
         ("python-aiohttp" ,python-aiohttp)
         ("python-aiohttp-socks" ,python-aiohttp-socks)
         ("python-beautifulsoup4" ,python-beautifulsoup4)
