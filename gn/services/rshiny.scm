@@ -31,16 +31,42 @@
          (provision (list (symbol-append 'rshiny- (string->symbol
                                                     (string-take binary 9)))))
          (requirement '(networking))
-         ;; This one works:
          (start
-           #~(lambda _
-               (setenv "R_LIBS_USER" "/run/current-system/profile/site-library/")
-               (invoke #$(string-append "/run/current-system/profile/bin/" binary))))
-         ;; Let's try in a container:
-         ;(start #~(make-forkexec-constructor/container
-         ;           (list #$(file-append package "/bin/" binary))
-         ;           #:environment-variables
-         ;           (list "R_LIBS_USER=/run/current-system/profile/site-library/")))
+           #~(exec-command
+               (list
+                 #$(string-append "/run/current-system/profile/bin/" binary))
+               ;#:log-file #$(string-append "/var/log/" binary ".log") ; kills shepherd
+               #:environment-variables
+               (list "R_LIBS_USER=/run/current-system/profile/site-library/")))
+         ;; Now lets try it with fork+exec
+         ;; Outcome: shepherd says failed, runs in the background.
+         ;(start
+         ;  #~(fork+exec-command
+         ;      (list
+         ;        #$(string-append "/run/current-system/profile/bin/" binary))
+         ;      #:environment-variables
+         ;      (list "R_LIBS_USER=/run/current-system/profile/site-library/")))
+         ;; More fork+exec trials, this time with a log file:
+         ;; Outcome: shepherd says failed, runs in the background, log populated.
+         ;(start
+         ;  #~(fork+exec-command
+         ;      (list
+         ;        "/run/current-system/profile/bin/nohup"
+         ;        #$(string-append "/run/current-system/profile/bin/" binary) "&")
+         ;      #:log-file #$(string-append "/var/log/" binary ".log")
+         ;      #:environment-variables
+         ;      (list "R_LIBS_USER=/run/current-system/profile/site-library/")))
+         ;; Now lets try it with make-forkexec:
+         ;; Outcome: Kills shepherd, does not run in the background.
+         ;(start
+         ;  #~(make-forkexec-command
+         ;      (list
+         ;        "/run/current-system/profile/bin/nohup"
+         ;        #$(string-append "/run/current-system/profile/bin/" binary) "&")
+         ;        "/run/current-system/profile/bin/bash" "-c"
+         ;        #$(string-append "/run/current-system/profile/bin/" binary))
+         ;      #:environment-variables
+         ;      (list "R_LIBS_USER=/run/current-system/profile/site-library/")))
          (stop #~(make-kill-destructor)))))))
 
 (define rshiny-service-type
@@ -57,6 +83,4 @@
                              (list
                                (rshiny-configuration-package config))))))
     (description
-;     (string-append "Run " (rshiny-configuration-package config) ", an R-Shiny
-;webapp, as a Guix Service.")
      "Run an R-Shiny webapp as a Guix Service.")))
