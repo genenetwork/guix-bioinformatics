@@ -257,7 +257,7 @@ implemented, light on server resource usage, and fairly speedy.")
        `(#:cargo-inputs
          (("rust-rand" ,rust-rand-0.6)
           ("rust-structopt" ,rust-structopt-0.2)
-          ("rust-rayon" ,rust-rayon-1.3)
+          ("rust-rayon" ,rust-rayon-1)
           ("rust-serde" ,rust-serde-1.0)
           ("rust-serde-json" ,rust-serde-json-1.0)
           ("rust-ndarray" ,rust-ndarray-0.12))
