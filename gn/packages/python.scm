@@ -1588,3 +1588,76 @@ handles recursion and lists.")
     (synopsis "SPARQL Slurper for rdflib")
     (description "This package provides a SPARQL Slurper for rdflib.")
     (license license:asl2.0)))
+
+(define-public python38-ruaml.yaml-0.15.76
+  (package
+    (inherit python-ruamel.yaml)
+    (name "python-ruamel.yaml")
+    (version "0.15.76")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "ruamel.yaml" "0.15.78"))
+        (sha256
+         (base32
+          "0pwxgrma6k47kvsphqz5yrhwnfrhwsrhn6sjp8p21s91wdgkqyc5"))))
+    (arguments
+     `(#:tests? #f  ; suprise test failures
+       #:phases
+       (modify-phases %standard-phases
+         ;; For some unknown reason we need: ruamel.yaml<=0.15.77,>=0.15.54
+         ;; But 0.15.78 is the first which builds with python-3.8.
+         (add-after 'unpack 'patch-source
+           (lambda _
+             (substitute* "__init__.py"
+               (("0\\.15\\.78") "0.15.76")
+               (("15, 78") "15, 76"))
+             #t)))))))
+
+(define-public python2-ruamel.ordereddict
+  (package
+    (name "python2-ruamel.ordereddict")
+    (version "0.4.14")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "ruamel.ordereddict" version))
+        (sha256
+         (base32
+          "0jldrcanmz0284r2y6kbi82vslkaf5hf5q90v7rqxcdjdv952418"))))
+    (build-system python-build-system)
+    (arguments
+     `(#:python ,python-2
+       #:phases
+       (modify-phases %standard-phases
+         (replace 'check
+           (lambda* (#:key inputs outputs tests? #:allow-other-keys)
+             (if tests?
+               (begin (add-installed-pythonpath inputs outputs)
+                      (invoke "python" "test/testordereddict.py"))
+               #t))))))
+    (home-page "https://sourceforge.net/projects/ruamel-ordereddict/")
+    (synopsis "Version of dict that keeps keys in insertion resp. sorted order")
+    (description
+     "This package provides a version of dict that keeps keys in insertion resp.
+sorted order.")
+    (license license:expat)))
+
+(define-public python-pytest-4
+  (package
+    (inherit python-pytest)
+    (version "4.6.11")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "pytest" version))
+        (sha256
+         (base32
+          "0ls3pqr86xgif6bphsb6wrww9r2vc7p7a2naq8zcq8115wwq5yjh"))))
+    (arguments
+     (substitute-keyword-arguments (package-arguments python-pytest)
+       ((#:tests? _ #f) #f)))
+    (native-inputs
+     `(("python-argcomplete" ,python-argcomplete)
+       ("python-requests" ,python-requests)
+       ,@(package-native-inputs python-pytest)))))

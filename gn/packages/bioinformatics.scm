@@ -1226,10 +1226,9 @@ runApp(launch.browser=0, port=4206)~%\n"
     "")
    (license #f)))
 
-;; Note this package is incomplete. Needs more to run properly.
 (define-public bh20-seq-resource
-  (let ((commit "bbca5ac9b2538e410efe3e09651f87e5573145de")
-        (revision "2"))
+  (let ((commit "ae4cb3c2cf7103bbc84f52618bb755d7ce25775b")
+        (revision "3"))
     (package
       (name "bh20-seq-resource")
       (version (git-version "1.0" revision commit))
@@ -1240,22 +1239,30 @@ runApp(launch.browser=0, port=4206)~%\n"
                        (commit commit)))
                 (file-name (git-file-name name version))
                 (sha256
-                 (base32 "1kkysjgmhp7kfb17470ik821p9djsidyqmkbjvv37jx2w9pvw31z"))))
+                 (base32 "1k0gsz4yc8l5znanzd094g2jp40ksbpa9667zr31ayrjx6labz02"))
+                (modules '((guix build utils)))
+                (snippet
+                 '(begin
+                    (substitute* "setup.py"
+                      (("py-dateutil") "python-dateutil"))
+                    #t))))
       (build-system python-build-system)
-      (inputs
+      (propagated-inputs
        `(("python-arvados-python-client" ,python-arvados-python-client)
+         ("python-dateutil" ,python-dateutil)
          ("python-flask" ,python-flask)
          ("python-magic" ,python-magic)
          ("python-pyyaml" ,python-pyyaml)
          ("python-pycurl" ,python-pycurl)
          ("python-pyshex" ,python-pyshex)
+         ("python-ruaml.yaml" ,python38-ruaml.yaml-0.15.76)
          ("clustalw" ,clustalw)
          ("python-schema-salad" ,python-schema-salad)))
       (native-inputs
        `(("git" ,(@ (gnu packages version-control) git))
          ("python-oauth2client" ,python-oauth2client)
-         ("python-pytest" ,python-pytest)
-         ("python-pytest-runner" ,python-pytest-runner)
+         ("python-pytest" ,python-pytest-4)
+         ("python-pytest-runner" ,python-pytest-runner-2)
          ("python-uritemplate" ,python-uritemplate)))
       (home-page "https://github.com/arvados/bh20-seq-resource")
       (synopsis
