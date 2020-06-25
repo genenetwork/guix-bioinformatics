@@ -1309,7 +1309,7 @@ available to other researchers.")
 (define-public rust-gfa
   (package
     (name "rust-gfa")
-    (version "0.2.1")
+    (version "0.2.2")
     (source
       (origin
         (method url-fetch)
@@ -1318,15 +1318,14 @@ available to other researchers.")
          (string-append name "-" version ".tar.gz"))
         (sha256
          (base32
-          "06j22lmlxrcyc1lzpjyls3sa9v75wx5a604856lybmsswikihh0s"))))
+          "1w9rybwyfx6gnp1nr8yc18sif3ynankx2r5qnbjfy8bxw1mcslg0"))))
     (build-system cargo-build-system)
     (arguments
      `(#:cargo-inputs
        (("rust-lazy-static" ,rust-lazy-static-1)
         ("rust-nom" ,rust-nom-5))))
     (home-page "https://github.com/chfi/rs-gfa")
-    (synopsis
-     "Library for working with graphs in the GFA (Graphical Fragment Assembly) format")
+    (synopsis "Library for working with graphs in the GFA format")
     (description
      "This package provides a Rust library for working with graphs in the
 @dfn{Graphical Fragment Assembly} (GFA) format.")
