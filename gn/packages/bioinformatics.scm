@@ -1257,7 +1257,10 @@ runApp(launch.browser=0, port=4206)~%\n"
          ("python-pyshex" ,python-pyshex)
          ("python-ruaml.yaml" ,python38-ruaml.yaml-0.15.76)
          ("clustalw" ,clustalw)
-         ("python-schema-salad" ,python-schema-salad)))
+         ("python-schema-salad" ,python-schema-salad)
+         ;; and for the service
+         ("python" ,python)
+         ("gunicorn" ,gunicorn)))
       (native-inputs
        `(("git" ,(@ (gnu packages version-control) git))
          ("python-oauth2client" ,python-oauth2client)
