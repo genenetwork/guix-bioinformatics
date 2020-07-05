@@ -12,7 +12,6 @@
   #:use-module (guix build-system ruby)
   #:use-module (guix build-system r)
   #:use-module (guix build-system trivial)
-  #:use-module (gn packages statistics)
   #:use-module (gnu packages autotools)
   #:use-module (gnu packages algebra)
   #:use-module (gnu packages base)
