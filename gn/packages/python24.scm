@@ -3,111 +3,18 @@
   #:use-module (guix utils)
   #:use-module (guix packages)
   #:use-module (guix download)
-  #:use-module (guix git-download)
   #:use-module (guix build-system python)
   #:use-module (gn packages python)
+  #:use-module (past packages python)
   #:use-module (gnu packages compression)
-  #:use-module (gnu packages fontutils)
-  #:use-module (gnu packages ghostscript)
-  #:use-module (gnu packages image)
   #:use-module (gnu packages maths)
-  #:use-module (gnu packages onc-rpc)
-  #:use-module (gnu packages python)
   #:use-module (gnu packages python-xyz)
-  #:use-module (gnu packages readline)
-  #:use-module (gnu packages tcl)
-  #:use-module (gnu packages tls)
   #:use-module (srfi srfi-1))
-
-;; TODO: Check against 'guix lint -c cve python2.4' list:
-;; CVE-2019-9740, CVE-2019-9947, CVE-2019-9948, CVE-2018-1060, CVE-2018-1061,
-;; CVE-2014-9365, CVE-2012-0845, CVE-2012-1150, CVE-2011-1521, CVE-2011-4940,
-;; CVE-2010-3492, CVE-2008-5031, CVE-2008-5983
-(define-public python-2.4
-  (package
-    (inherit python-2)
-    (name "python2.4")
-    (version "2.4.6")
-    (source
-     (origin
-      (method url-fetch)
-      (uri (string-append "https://www.python.org/ftp/python/"
-                          version "/Python-" version ".tar.bz2"))
-      (sha256
-       (base32
-        "021y88a4ki07dgq19yhg6zfvmncfiz7h5b2255438i9zmlwl246s"))))
-    (outputs '("out"))
-    (arguments
-      (substitute-keyword-arguments (package-arguments python-2)
-        ((#:phases phases)
-         `(modify-phases ,phases
-            (add-after 'unpack 'create-setup-local
-              (lambda* (#:key inputs #:allow-other-keys)
-                (let ((zlib (assoc-ref inputs "zlib"))
-                      (tcl  (assoc-ref inputs "tcl"))
-                      (tk   (assoc-ref inputs "tk"))
-                      (gdbm (assoc-ref inputs "gdbm"))
-                      (read (assoc-ref inputs "readline"))
-                      (rpc  (assoc-ref inputs "libtirpc"))
-                      (nsl  (assoc-ref inputs "libnsl"))
-                      (ssl  (assoc-ref inputs "openssl")))
-                  (with-output-to-file "Modules/Setup.local"
-                    (lambda _
-                      (format #t "readline readline.c -I~a/include -L~a/lib -lreadline~@
-                              _ssl _ssl.c -DUSE_SSL -I$~a/include/openssl -L~a/lib -lssl -lcrypto~@
-                              _tkinter _tkinter.c tkappinit.c -DWITH_APPINIT -L~a/lib -I~a/include -L~a/lib -I~a/include -ltk~a -ltcl~a~@
-                              gdbm gdbmmodule.c -I~a/include -L~a/lib -lgdbm~@
-                              nis nismodule.c -I~a/include/tirpc -I~a/include -ltirpc -lnsl~@
-                              zlib zlibmodule.c -I~a/include -L~a/lib -lz~%"
-read read ssl ssl tcl tcl tk tk ,(version-major+minor (package-version tcl)) ,(version-major+minor (package-version tcl)) gdbm gdbm rpc nsl zlib zlib))))
-                  #t))
-              (add-after 'unpack 'patch-rpc-location
-                (lambda _
-                  (substitute* "Modules/nismodule.c"
-                    (("<rpc/") "<tirpc/rpc/"))
-                  (substitute* "setup.py"
-                    (("\\['nsl'") "['nsl', 'tirpc'"))
-                  #t))
-              (add-after 'unpack 'skip-crypt-module
-                (lambda _
-                  (substitute* "setup.py"
-                    ((".*cryptmodule.c.*") "\n"))
-                  #t))
-            (add-before 'check 'delete-failing-tests
-              (lambda _
-                (for-each
-                  (lambda (file)
-                    (delete-file (string-append "Lib/test/" file)))
-                  '("test_anydbm.py" "test_array.py" "test_decimal.py"
-                    "test_getargs2.py" "test_long.py" "test_math.py"
-                    "test_mhlib.py" "test_random.py" "test_socket.py"
-                    "test_str.py" "test_userstring.py" "test_whichdb.py"
-                    "test_zlib.py"))
-                #t))
-            (add-after 'check 'find-netinet-in-h
-              (lambda* (#:key inputs #:allow-other-keys)
-                (let ((glibc (assoc-ref inputs "libc")))
-                  (substitute* (find-files "Lib/plat-generic" ".*")
-                    (("/usr/include/netinet/in.h")
-                     (string-append glibc "/include/netinet/in.h")))
-                  #t)))
-            (delete 'move-tk-inter)))
-         ;; Python-2.4 does not support '-j'.
-         ((#:make-flags _) ''())))
-    (native-search-paths
-      (list (search-path-specification
-              (variable "PYTHONPATH")
-              (files '("lib/python2.4/site-packages")))))
-    (inputs
-     `(("libnsl" ,libnsl)
-       ("libtirpc" ,libtirpc)
-       ("openssl" ,openssl-1.0)
-       ,@(alist-delete "openssl" (package-inputs python-2))))))
 
 (define (default-python2.4)
     "Return the default Python-2.4 package."
       ;; Lazily resolve the binding.
-        (let ((python (resolve-interface '(gn packages python24))))
+        (let ((python (resolve-interface '(past packages python))))
               (module-ref python 'python-2.4)))
 
 ;; We borrow this from (guix build-system python) since we cannot refer to it

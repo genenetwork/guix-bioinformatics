@@ -2,6 +2,7 @@
 
 (use-modules (gnu)
              (ice-9 match)
+             (past packages python)
              (gn packages genenetwork)
              (gn packages python24)
              (gn packages web))

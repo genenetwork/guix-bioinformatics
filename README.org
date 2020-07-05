@@ -19,7 +19,7 @@ To easily use the packages from this repo, simply add it to your
     (cons*
       (channel
         (name 'gn-bioinformatics)
-        (url "https://git.genenetwork.org/pjotrp/guix-bioinformatics.git")
+        (url "https://git.genenetwork.org/guix-bioinformatics/guix-bioinformatics.git")
         (branch "master"))
       %default-channels)
 #+END_SRC
@@ -33,8 +33,9 @@ the GUIX_PACKAGE_PATH to point to the root of this directory
 before running Guix. E.g.
 
 #+BEGIN_SRC bash
-    git clone https://git.genenetwork.org/pjotrp/guix-bioinformatics.git
-    export GUIX_PACKAGE_PATH=$PWD/guix-bioinformatics/
+    git clone https://git.genenetwork.org/guix-bioinformatics/guix-bioinformatics.git
+    git clone https://gitlab.inria.fr/guix-hpc/guix-past.git
+    export GUIX_PACKAGE_PATH=$PWD/guix-bioinformatics/:$PWD/guix-past/modules
     guix package -A cwl
 #+END_SRC
 

@@ -4,7 +4,7 @@
   #:use-module (gnu packages autotools)
   #:use-module (gnu packages compression)
   #:use-module (gnu packages fonts)
-  #:use-module (gn packages python24)
+  #:use-module (past packages python)
   #:use-module (gnu packages python)
   #:use-module (gnu packages readline)
   #:use-module (gnu packages tcl)

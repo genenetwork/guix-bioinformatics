@@ -31,6 +31,7 @@
   #:use-module (gnu packages web)
   #:use-module (gnu packages wget)
   #:use-module (gnu packages xml)
+  #:use-module (past packages python)
   #:use-module (gn packages bioinformatics)
   #:use-module (gn packages twint)
   #:use-module (gn packages crates-io)
