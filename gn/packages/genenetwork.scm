@@ -444,6 +444,164 @@ implemented, light on server resource usage, and fairly speedy.")
     (description "Genenetwork installation sumo.")
     (license license:agpl3+))))
 
+(define-public python3-genenetwork2
+  (let ((commit "1538ffd33af19e6ac922b4ee85fe701408968dfd")
+        (S specification->package))
+  (package
+    (name "python3-genenetwork2")
+    (version (string-append "2.11-guix-" (string-take commit 7) ))
+    (source (origin
+             (method git-fetch)
+             (uri (git-reference
+                   (url "https://pjotrp@gitlab.com/genenetwork/gn2_diet.git")
+                   ;; (url "https://github.com/genenetwork/genenetwork2_diet.git")
+                   (commit commit)))
+             (file-name (string-append name "-" version))
+             (sha256
+              (base32
+               "0ji929xgzypyhchcfy9xa1sz04w322ibs2khc8s3qiddxjqdglrz"))))
+    (propagated-inputs
+     `(;; propagated for development purposes
+       ("python" ,python) ;; probably superfluous
+       ("coreutils" ,coreutils)
+       ("git" ,git)
+       ("vim" ,vim)
+       ("which" ,which)
+       ("grep" ,grep)
+       ("r" ,r)
+       ("r-ctl" ,r-ctl)
+       ; ("r-phewas" ,r-phewas)
+       ("r-qtl" ,r-qtl)
+       ("r-wgcna" ,r-wgcna)
+       ("redis" ,redis)
+       ("mariadb" ,mariadb)
+       ("gemma" ,gemma-gn2)
+       ("gemma-wrapper" ,gemma-wrapper)
+       ("plink-ng-gn" ,plink-ng-gn)
+       ("rust-qtlreaper" ,rust-qtlreaper)
+       ("nginx" ,nginx)
+       ("python-twint" ,python-twint)
+       ("python-flask" ,python-flask)
+       ("gunicorn" ,gunicorn)
+       ("python-pillow" ,python-pillow)
+       ;; ("python2-pil1" ,python2-pil1-gn)
+       ("python2-piddle-gn" ,python2-piddle-gn) ; DEPRECATED
+       ("python-cssselect" ,python-cssselect)
+       ("python-elasticsearch" ,python-elasticsearch)
+       ("python-htmlgen" ,python-htmlgen)
+       ("python-jinja2" ,python-jinja2)
+       ("python-sqlalchemy" ,python-sqlalchemy)
+       ("python-flask-sqlalchemy" ,python-flask-sqlalchemy)
+       ("python-setuptools" ,python-setuptools)
+       ("python-scipy" ,python-scipy)
+       ("python-lxml" ,python-lxml)
+       ("python-mechanize" ,python-mechanize)
+       ("python-mysqlclient" ,python-mysqlclient)
+       ("python2-numarray" ,python2-numarray) ; DEPRECATED
+       ("python-numpy" ,python-numpy)
+       ("python-pandas" ,python-pandas)
+       ("python2-parallel" ,python2-parallel) ; TODO
+       ("python-parameterized" ,python-parameterized)
+       ("python-passlib" ,python-passlib)
+       ("python-redis" ,python-redis)
+       ("python-requests" ,python-requests)
+       ("python2-rpy2" ,python2-rpy2) ; TODO
+       ("python-simplejson" ,python-simplejson)
+       ("python-pyyaml" ,python-pyyaml)
+       ("python-unittest2" ,python-unittest2)
+       ("python-xlsxwriter" ,python-xlsxwriter)
+       ("python2-qtlreaper" ,python2-qtlreaper) ; Deprecated
+       ;; All the external js dependencies
+       ("javascript-cytoscape" ,javascript-cytoscape)
+       ("javascript-panzoom" ,javascript-cytoscape-panzoom)
+       ("javascript-qtip" ,javascript-cytoscape-qtip)
+       ("javascript-chroma" ,javascript-chroma)
+       ("javascript-d3-tip" ,javascript-d3-tip)
+       ("javascript-jscolor" ,javascript-jscolor)
+       ("javascript-colorbox" ,javascript-colorbox)
+       ("javascript-jszip" ,javascript-jszip)
+       ("js-jstat" ,js-jstat)
+       ("js-md5" ,js-md5)
+       ("js-parsley" ,js-parsley)
+       ("javascript-plotly" ,javascript-plotly)
+       ("javascript-typeahead" ,javascript-typeahead)
+       ("js-underscore" ,js-underscore)
+       ("js-smart-time-ago" ,js-smart-time-ago)
+       ("javascript-nouislider" ,javascript-nouislider)
+       ("javascript-purescript-genome-browser" ,javascript-purescript-genome-browser)
+       ("javascript-datatables" ,javascript-datatables)
+       ("javascript-datatables-scroller" ,javascript-datatables-scroller)
+       ("javascript-datatables-buttons" ,javascript-datatables-buttons)
+       ("javascript-datatables-buttons-bootstrap" ,javascript-datatables-buttons-bootstrap)
+       ("javascript-datatables-plugins" ,javascript-datatables-plugins)
+       ("javascript-datatables-col-reorder" ,javascript-datatables-col-reorder)
+       ("javascript-datatables-col-resize" ,javascript-datatables-col-resize)
+       ("javascript-datatables-buttons-styles" ,javascript-datatables-buttons-styles)
+       ("javascript-shapiro-wilk" ,javascript-shapiro-wilk)
+       ("javascript-underscore-string" ,javascript-underscore-string)
+       ("javascript-qtip2" ,javascript-qtip2)
+       ("javascript-d3js" ,javascript-d3js)
+       ("javascript-nvd3" ,javascript-nvd3)
+       ("javascript-bootstrap" ,javascript-bootstrap)
+       ("javascript-jquery" ,javascript-jquery)
+       ("javascript-zxcvbn-async" ,javascript-zxcvbn-async)
+       ("javascript-jquery-ui" ,javascript-jquery-ui)
+       ("javascript-jquery-cookie" ,javascript-jquery-cookie)
+       ))
+    (inputs
+     `(("javascript-colorbox" ,(package-source javascript-colorbox))))
+    (build-system python-build-system)
+    (arguments
+     `(#:python ,python-2
+       #:phases
+         (modify-phases %standard-phases
+           (delete 'reset-gzip-timestamps)
+           (add-after 'unpack 'fix-paths-scripts
+             (lambda _
+               (substitute* "bin/genenetwork2"
+                 (("/usr/bin/env") (which "env"))
+                 (("python ") (string-append (which "python2") " "))
+                 (("readlink") (which "readlink"))
+                 (("dirname") (which "dirname"))
+                 (("basename") (which "basename"))
+                 (("cat") (which "cat"))
+                 (("echo") (which "echo"))
+                 (("redis-server") (which "redis-server"))
+                 (("git") (which "git"))
+                 (("grep") (which "grep"))
+                 (("rm") (which "rm"))
+                 (("which") (which "which")) ; three whiches in a row!
+                 )
+               #t))
+           (add-after 'unpack 'patch-javascript
+             (lambda* (#:key inputs #:allow-other-keys)
+               (let ((colorbox (assoc-ref inputs "javascript-colorbox"))
+                     (gn2 "/share/genenetwork2/javascript/"))
+                 (delete-file-recursively "wqflask/wqflask/static/packages/colorbox")
+                 (copy-recursively colorbox "wqflask/wqflask/static/packages/colorbox")
+                 #t)))
+           (add-before 'install 'fix-paths
+             (lambda* (#:key inputs #:allow-other-keys)
+               (let* (
+                      ; (datafiles (string-append (assoc-ref inputs "genenetwork2-files-small") "/share/genenetwork2"))
+                      ; (pylmmcmd (string-append (assoc-ref inputs "pylmm-gn2") "/bin/pylmm_redis"))
+                      (plink2cmd (string-append (assoc-ref inputs "plink-ng-gn") "/bin/plink2"))
+                      (gemmacmd (string-append (assoc-ref inputs "gemma") "/bin/gemma"))
+                      )
+
+                 (substitute* '("etc/default_settings.py")
+                   ; (("^GENENETWORK_FILES +=.*") (string-append "GENENETWORK_FILES = \"" datafiles "\"\n" ))
+                   ; (("^PYLMM_COMMAND =.*") (string-append "PYLMM_COMMAND = \"" pylmmcmd "\"\n" ))
+                   (("^PLINK_COMMAND =.*") (string-append "PLINK_COMMAND = \"" plink2cmd "\"\n" ))
+                   (("^GEMMA_COMMAND =.*") (string-append "GEMMA_COMMAND = \"" gemmacmd "\"\n" ))
+                   )
+                 ))))
+       #:tests? #f))   ; no 'setup.py test'
+    (home-page "http://genenetwork.org/")
+    (synopsis "Full genenetwork services")
+    (description "Genenetwork installation sumo.")
+    (license license:agpl3+))))
+
 ;; ./pre-inst-env guix download http://files.genenetwork.org/raw_database/db_webqtl_s.zip
 ;; 0sscjh0wml2lx0mb43vf4chg9gpbfi7abpjxb34n3kyny9ll557x
 
