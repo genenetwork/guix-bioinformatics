@@ -105,22 +105,6 @@ pre-defined variants."
     (description "Python-htmlgen is a library to generate HTML from classes.")
     (license license:expat)))
 
-(define-public python24-setuptools
-  (package
-    (inherit python-setuptools)
-    (name "python24-setuptools")
-    (version "1.4.2")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (pypi-uri "setuptools" version))
-        (sha256
-         (base32
-          "1gfvalhvzcskwj85r3lh9sx190f8k807vz5zln8agaw31ak8cf96"))))
-    (arguments
-     `(#:python ,python-2.4
-       #:tests? #f)))) ; skip the tests
-
 (define-public python24-asserts
   (package
     (name "python24-asserts")
