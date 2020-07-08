@@ -139,12 +139,13 @@ pre-defined variants."
           "13kyhqx19rw7dlv2xapdb68j8l9laq6nrpgkyd6549qwidmb4dz8"))))
     (build-system python-build-system)
     (arguments
-     `(#:python ,python-2.4))
-    (native-inputs
-     `(("python24-setuptools" ,python24-setuptools)))
-    (home-page "http://pyx.sourceforge.net/")
+     `(#:python ,python-2.4
+       #:use-setuptools? #f
+       #:tests? #f))    ; tests not included
+    (properties '((release-date "2012-10-26")))
+    (home-page "https://pyx-project.org/")
     (synopsis "Python package for the generation of PostScript, PDF, and SVG files")
-    (description "Python package for the generation of PostScript, PDF, and SVG files")
+    (description "Python package for the generation of PostScript, PDF, and SVG files.")
     (license license:gpl2+)))
 
 (define-public python24-pyxlwriter
