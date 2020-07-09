@@ -500,7 +500,6 @@ implemented, light on server resource usage, and fairly speedy.")
        ("python2-numarray" ,python2-numarray) ; DEPRECATED
        ("python-numpy" ,python-numpy)
        ("python-pandas" ,python-pandas)
-       ("python2-parallel" ,python2-parallel) ; TODO
        ("python-parameterized" ,python-parameterized)
        ("python-passlib" ,python-passlib)
        ("python-redis" ,python-redis)
