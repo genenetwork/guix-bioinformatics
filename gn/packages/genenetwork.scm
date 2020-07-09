@@ -510,7 +510,6 @@ implemented, light on server resource usage, and fairly speedy.")
        ("python-pyyaml" ,python-pyyaml)
        ("python-unittest2" ,python-unittest2)
        ("python-xlsxwriter" ,python-xlsxwriter)
-       ("python2-qtlreaper" ,python2-qtlreaper) ; Deprecated
        ;; All the external js dependencies
        ("javascript-cytoscape" ,javascript-cytoscape)
        ("javascript-panzoom" ,javascript-cytoscape-panzoom)
