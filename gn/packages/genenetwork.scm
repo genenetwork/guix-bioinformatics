@@ -290,7 +290,6 @@ implemented, light on server resource usage, and fairly speedy.")
              (method git-fetch)
              (uri (git-reference
                    (url "https://pjotrp@gitlab.com/genenetwork/gn2_diet.git")
-                   ;; (url "https://github.com/genenetwork/genenetwork2_diet.git")
                    (commit commit)))
              (file-name (string-append name "-" version))
              (sha256
@@ -580,16 +579,9 @@ implemented, light on server resource usage, and fairly speedy.")
                  #t)))
            (add-before 'install 'fix-paths
              (lambda* (#:key inputs #:allow-other-keys)
-               (let* (
-                      ; (datafiles (string-append (assoc-ref inputs "genenetwork2-files-small") "/share/genenetwork2"))
-                      ; (pylmmcmd (string-append (assoc-ref inputs "pylmm-gn2") "/bin/pylmm_redis"))
-                      (plink2cmd (string-append (assoc-ref inputs "plink-ng-gn") "/bin/plink2"))
-                      (gemmacmd (string-append (assoc-ref inputs "gemma") "/bin/gemma"))
-                      )
-
+               (let* ((plink2cmd (string-append (assoc-ref inputs "plink-ng-gn") "/bin/plink2"))
+                      (gemmacmd (string-append (assoc-ref inputs "gemma") "/bin/gemma")))
                  (substitute* '("etc/default_settings.py")
-                   ; (("^GENENETWORK_FILES +=.*") (string-append "GENENETWORK_FILES = \"" datafiles "\"\n" ))
-                   ; (("^PYLMM_COMMAND =.*") (string-append "PYLMM_COMMAND = \"" pylmmcmd "\"\n" ))
                    (("^PLINK_COMMAND =.*") (string-append "PLINK_COMMAND = \"" plink2cmd "\"\n" ))
                    (("^GEMMA_COMMAND =.*") (string-append "GEMMA_COMMAND = \"" gemmacmd "\"\n" ))
                    )
