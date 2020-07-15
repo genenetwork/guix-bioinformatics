@@ -236,6 +236,7 @@ will have access to advanced features such as ability to retain database
 connections and other data between hits and access to Apache internals.")
       (license license:asl2.0))))
 
+;; mod-python, built with python@2.4 and httpd@2.2
 (define-public mod-python-24-httpd22
   (package
     (inherit mod-python)
@@ -292,8 +293,10 @@ connections and other data between hits and access to Apache internals.")
                (invoke "autoreconf" "-vfi"))))
          (add-after 'unpack 'patch-sources
            (lambda _
-             (substitute* "test/test.py"
-               (("2\\.2") "2.4"))
+             ;; We can't import cPickle because we don't wrap with Python.
+             (substitute* (find-files "." "\\.py$")
+               (("import cPickle")
+                "try:\n    import cPickle\nexcept:\n    import pickle as cPickle"))
              #t))
          (replace 'install
            (lambda* (#:key outputs #:allow-other-keys)
@@ -330,11 +333,21 @@ connections and other data between hits and access to Apache internals.")
                 (sha256
                  (base32
                   "1bmcx7ki7y486x6490yppssr7dh3a0qyki6gjf2lj83gyh68c0r0"))))))))
+    (arguments
+     (substitute-keyword-arguments (package-arguments mod-python-24-httpd22)
+       ((#:phases phases)
+        `(modify-phases ,phases
+           (add-after 'patch-sources 'patch-more-sources
+             (lambda _
+               (substitute* "test/test.py"
+                 (("2\\.2") "2.4"))
+               #t))))))
     (inputs
      `(("httpd" ,httpd)
        ("python" ,python-2.4)
        ,@(package-inputs python-2.4)))))
 
+;; httpd and mod-python, built with python@2.4, in the same prefix
 (define-public httpd-mod-python-24
   (package
     (inherit httpd)
@@ -356,7 +369,12 @@ connections and other data between hits and access to Apache internals.")
               (add-after 'unpack-mod-python 'change-directory
                 (lambda _
                   ;; Make sure we're in the correct folder
-                  (chdir "../mod_python-3.3.1") #t))
+                  (chdir "../mod_python-3.3.1")
+                  ;; We can't import cPickle because we don't wrap with Python.
+                  (substitute* (find-files "." "\\.py$")
+                    (("import cPickle")
+                     "try:\n    import cPickle\nexcept:\n    import pickle as cPickle"))
+                  #t))
               (add-after 'change-directory 'bootstrap-mod-python
                 (lambda* (#:key inputs #:allow-other-keys)
                   (let* ((python (assoc-ref inputs "python"))
@@ -397,6 +415,16 @@ connections and other data between hits and access to Apache internals.")
                     (with-directory-excursion "dist"
                       (invoke "python" "setup.py" "install" "--root=/"
                               (string-append "--prefix=" out)))
+                    #t)))
+              (add-after 'install-mod-python 'wrap-programs
+                (lambda* (#:key inputs outputs #:allow-other-keys)
+                  (let* ((out (assoc-ref outputs "out"))
+                         (python (assoc-ref inputs "python"))
+                         (py-version (python:python-version python)))
+                    ;; httpd needs to be able to find mod_python
+                    (wrap-program (string-append out "/bin/httpd")
+                      `("PYTHONPATH" ":" prefix
+                        (,(string-append out "/lib/python" py-version "/site-packages"))))
                     #t))))))))
     (native-inputs
      `(,@(package-native-inputs httpd)
@@ -407,6 +435,7 @@ connections and other data between hits and access to Apache internals.")
        ,@(package-inputs python-2.4)
        ("python" ,python-2.4)))))
 
+;; httpd@2.2 and mod-python, built with python@2.4, in the same prefix
 (define-public httpd22-mod-python-24
   (package
     (inherit httpd-mod-python-24)
@@ -421,7 +450,7 @@ connections and other data between hits and access to Apache internals.")
         `(cons "--enable-mods-shared=most" ,flags))))
     (native-inputs
      `(,@(package-native-inputs httpd-2.2)
-        ,@(package-native-inputs mod-python-24-httpd22)
+       ,@(package-native-inputs mod-python-24-httpd22)
        ("mod-python" ,(package-source mod-python-24-httpd22))))
     (inputs
      `(,@(package-inputs httpd-2.2)
