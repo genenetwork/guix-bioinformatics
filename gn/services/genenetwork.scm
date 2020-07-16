@@ -82,23 +82,23 @@
   (firmware '())
 
   (packages (cons* python-2.4
-                   ;httpd-mod-python-24
-                   ;python24-qtlreaper
-                   ;python24-htmlgen-GN1
-                   ;python24-json-GN1
-                   ;python24-piddle
-                   ;python24-pyx-GN1
-                   ;python24-pyxlwriter
-                   ;python24-svg-GN1
+                   python24-qtlreaper
+                   python24-htmlgen-GN1
+                   python24-json-GN1
+                   python24-piddle
+                   python24-pyx-GN1
+                   python24-pyxlwriter
+                   python24-svg-GN1
                    %base-packages))
 
   (services (list (service httpd-service-type
                            (httpd-configuration
-                             (package httpd22-mod-python-24)    ; Must be httpd-2.2?
+                             (package httpd22-mod-python-24)    ; Must be httpd-2.2
                              (config
                                (httpd-config-file
                                  (server-name "www.genenetwork.org")
-                                 (server-root httpd22-mod-python-24)    ; Defaults to httpd, must be combo package.
+                                 ;; Defaults to httpd, largely irrelevant.
+                                 (server-root httpd22-mod-python-24)
                                  (user "nobody")
                                  (group "root")
                                  (pid-file "/tmp/httpd-genenetwork1")
@@ -112,20 +112,19 @@
                                             %default-httpd22-modules))
                                  (extra-config (list "\
 TypesConfig etc/httpd/mime.types
-#for apache-2.2, ignored by apache-2.4
 DefaultType application/octet-stream
-# Should PythonPath just be genenetwork1/web/webqtl?
-PythonPath \"sys.path+['" (file-append python-2.4 "/lib/python2.4") "', '" %mod-python-path "', '" (file-append genenetwork1 "/web/webqtl") "']\"
-<Directory " (file-append genenetwork1 "/web/webqtl") ">
-  AddHandler mod_python .py
-  PythonHandler mod_python.publisher
-  PythonAutoReload Off
+#DocumentRoot MUST NOT be in the PythonPath
+PythonPath \"['/run/current-system/profile/lib/python2.4', '" httpd22-mod-python-24 "/lib/python2.4/site-packages']\"
+<Directory " genenetwork1 "/web/webqtl>
+  #AddHandler mod_python .py
+  SetHandler python-program
+  #PythonHandler mod_python.publisher
+  PythonHandler mod_python.cgihandler
+  #PythonAutoReload Off
+  # only while debugging:
   PythonDebug On
 </Directory>
 <Location /mpinfo>
   SetHandler python-program
   PythonHandler mod_python.testhandler
 </Location>")))))))))
-
-;PythonPath \"sys.path+['" (file-append python-2.4 "/lib/python2.4") "', '" %mod-python-path "', '" (file-append python24-qtlreaper %python-path) "', '" (file-append python24-json-GN1 %python-path) "', '" (file-append python24-piddle %python-path) "', '" (file-append python24-pyx-GN1 %python-path) "', '" (file-append python24-pyxlwriter-GN1 %python-path) "', '" (file-append python24-svg-GN1 %python-path) "', '" (file-append python24-htmlgen-GN1) "', '" (file-append genenetwork1 "/web/webqtl") "']\"
-;PythonPath \"sys.path+['" (file-append python-2.4 "/lib/python2.4") "', '" %mod-python-path "', '" (file-append genenetwork1 "/web/webqtl") "']\"
