@@ -1,91 +1,89 @@
-;; Experimental packaging for the Common Workflow Language (started by Bruno)
-
 (define-module (gn packages cwl)
   #:use-module ((guix licenses) #:prefix license:)
+  #:use-module (gn packages python)
+  #:use-module (guix download)
+  #:use-module (guix packages)
+  #:use-module (guix build-system python)
   #:use-module (gnu packages)
   #:use-module (gnu packages check)
-  #:use-module (gnu packages databases)
-  #:use-module (gnu packages python)
   #:use-module (gnu packages python-web)
   #:use-module (gnu packages python-xyz)
   #:use-module (gnu packages node)
   #:use-module (gnu packages rdf)
   #:use-module (gnu packages serialization)
   #:use-module (gnu packages time)
-  #:use-module (gnu packages version-control)
-  #:use-module (gnu packages xml)
-  #:use-module (gn packages python)
-  #:use-module (guix download)
-  #:use-module (guix packages)
-  #:use-module (guix git-download)
-  #:use-module (guix utils)
-  ; #:use-module (guix build-system gnu)
-  #:use-module (guix build-system python)
-  ; #:use-module (guix build-system trivial)
-  #:use-module (srfi srfi-1))
+  #:use-module (gnu packages xml))
 
-(define-public cwltool ; guix: needs work
-  (let ((commit "15539fba76993f951af9eba913bea6d677c74005"))
+(define-public cwltool
   (package
     (name "cwltool")
-    (version "1.0.20181012180214")
+    (version "3.0.20200710214758")
     (source
       (origin
-        ; (method url-fetch)
-        ; (uri (string-append
-        ;        "https://pypi.python.org/packages/source/c/cwltool/cwltool-"
-        ;        version
-        ;       ".tar.gz"))
-         (method git-fetch)
-         (uri (git-reference
-               (url "https://github.com/genenetwork/cwltool.git") ;; my repo for Python 3.7
-               (commit commit)))
-         (file-name (git-file-name name (string-append version "-" (string-take commit 7))))
+        (method url-fetch)
+        (uri (pypi-uri "cwltool" version))
         (sha256
-          (base32
-            "1qwfa82car7477sy0cb5bj4964w7zq7dcw2bdcls6c2i9qdp0586"))))
+         (base32
+          "1qbqkhinkhzg98jf24d5gnafsw23kng76rbi2hfvzl18bdsp1zz5"))))
     (build-system python-build-system)
-    (propagated-inputs ; a lot of these are used for testing
-     `(("git" ,git)
-       ("node" ,node)
-       ("python-bagit" ,python-bagit)
-       ("python-arcp" ,python-arcp)
-       ("python-setuptools" ,python-setuptools)
-       ("python-dateutil" ,python-dateutil)
-       ("python-pytest-cov" ,python-pytest-cov)
-       ("python-prov" ,python-prov)
-       ("python-pytest-runner" ,python-pytest-runner)
-       ("python-rdflib" ,python-rdflib)
-       ("python-pyparsing" ,python-pyparsing)
-       ("python-pytest-mock" ,python-pytest-mock)
-       ("python-mock" ,python-mock)
-       ("python-subprocess32" ,python-subprocess32)
-       ("python-ruamel.yaml" ,python-ruamel.yaml)
-       ("python-cachecontrol" ,python-cachecontrol-0.11)
-       ("python-lxml" ,python-lxml)
-       ("python-mypy-extensions" ,python-mypy-extensions)
-       ("python-mistune" ,python-mistune)
-       ("python-networkx" ,python-networkx)
-       ("python-schema-salad" ,python-schema-salad)
-       ("python-html5lib" ,python-html5lib)
-       ("python-rdflib-jsonld" ,python-rdflib-jsonld)
-       ("python-scandir" ,python-scandir)
-       ("python-psutil" ,python-psutil)
-       ))
-    ; (arguments `(#:tests? #f)) ;; CWL includes no tests.
     (arguments
-     `(;#:phases
-       ; (modify-phases %standard-phases
-       ;   (replace 'check
-       ;     (lambda* (#:key inputs outputs #:allow-other-keys)
-       ;       (invoke "python" "-m" "pytest")
-       ;       )))
-       #:tests? #f))   ; Disable for now
+     `(#:phases
+       (modify-phases %standard-phases
+         (add-after 'unpack 'loosen-version-restrictions
+           (lambda _
+             (substitute* "setup.py"
+               (("== 1.5.1") ">=1.5.1"))
+             #t))
+         (add-after 'unpack 'modify-tests
+           (lambda _
+             ;; Tries to connect to the internet.
+             (delete-file "tests/test_udocker.py")
+             (substitute* "tests/test_http_input.py"
+               (("https://raw.githubusercontent.com/common-workflow-language/cwltool/main")
+                "."))
+             (substitute* "tests/test_load_tool.py"
+               (("def test_load_graph_fragment_from_packed")
+                "@pytest.mark.skip(reason=\"Disabled by Guix\")\ndef test_load_graph_fragment_from_packed"))
+             (substitute* "tests/test_examples.py"
+               (("def test_env_filtering")
+                "@pytest.mark.skip(reason=\"Disabled by Guix\")\ndef test_env_filtering"))
+             ;; Tries to use cwl-runners.
+             (substitute* "tests/test_examples.py"
+               (("def test_v1_0_arg_empty_prefix_separate_false")
+                "@pytest.mark.skip(reason=\"Disabled by Guix\")\ndef test_v1_0_arg_empty_prefix_separate_false"))
+             #t)))))
+    (propagated-inputs
+     `(;; does this need to be proagated?
+       ("node" ,node)
 
+       ("python-bagit" ,python-bagit)
+       ("python-coloredlogs" ,python-coloredlogs)
+       ("python-mypy-extensions" ,python-mypy-extensions)
+       ("python-prov" ,python-prov)
+       ("python-psutil" ,python-psutil)
+       ("python-rdflib" ,python-rdflib)
+       ("python-requests" ,python-requests)
+       ("python-ruamel.yaml" ,python-ruamel.yaml)
+       ("python-schema-salad" ,python-schema-salad-7)
+       ("python-setuptools" ,python-setuptools)
+       ("python-shellescape" ,python-shellescape)
+       ("python-typing-extensions" ,python-typing-extensions)))
+    (native-inputs
+     `(("python-arcp" ,python-arcp)
+       ("python-cachecontrol" ,python-cachecontrol-0.11)
+       ("python-dateutil" ,python-dateutil)
+       ("python-humanfriendly" ,python-humanfriendly)
+       ("python-lxml" ,python-lxml)
+       ("python-mock" ,python-mock)
+       ("python-networkx" ,python-networkx)
+       ("python-pytest" ,python-pytest)
+       ("python-pytest-cov" ,python-pytest-cov)
+       ("python-pytest-mock" ,python-pytest-mock)
+       ("python-pytest-runner" ,python-pytest-runner)
+       ("python-rdflib-jsonld" ,python-rdflib-jsonld)))
     (home-page
-      "https://github.com/common-workflow-language/common-workflow-language")
-    (synopsis
-      "Common workflow language reference implementation")
+     "https://github.com/common-workflow-language/common-workflow-language")
+    (synopsis "Common workflow language reference implementation")
     (description
-      "Common workflow language reference implementation")
-    (license license:asl2.0))))
+     "Common workflow language reference implementation.")
+    (license license:asl2.0)))

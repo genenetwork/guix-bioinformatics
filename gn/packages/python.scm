@@ -1176,6 +1176,29 @@ generation, and transformation to RDF.  Salad provides a bridge between document
 and record oriented data modeling and the Semantic Web.")
     (license license:asl2.0)))
 
+(define-public python-schema-salad-7
+  (package
+    (inherit python-schema-salad)
+    (name "python-schema-salad")
+    (version "7.0.20200612160654")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "schema-salad" version))
+        (sha256
+          (base32
+            "15ma3lb6fkfc6sj75hnmmg0jj8q3pc5yrlyx15lpdd4dcp2jc39s"))))
+    (propagated-inputs
+     `(("python-cachecontrol" ,python-cachecontrol)
+       ("python-lockfile" ,python-lockfile)
+       ("python-mistune" ,python-mistune)
+       ("python-rdflib" ,python-rdflib)
+       ("python-rdflib-jsonld" ,python-rdflib-jsonld)
+       ("python-requests" ,python-requests)
+       ("python-ruamel.yaml" ,python-ruamel.yaml)
+       ("python-setuptools" ,python-setuptools)
+       ("python-typing-extensions" ,python-typing-extensions)))))
+
 (define-public python-cfgraph
   (package
     (name "python-cfgraph")
