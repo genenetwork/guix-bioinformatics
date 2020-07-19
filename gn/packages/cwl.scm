@@ -53,10 +53,7 @@
                 "@pytest.mark.skip(reason=\"Disabled by Guix\")\ndef test_v1_0_arg_empty_prefix_separate_false"))
              #t)))))
     (propagated-inputs
-     `(;; does this need to be proagated?
-       ("node" ,node)
-
-       ("python-bagit" ,python-bagit)
+     `(("python-bagit" ,python-bagit)
        ("python-coloredlogs" ,python-coloredlogs)
        ("python-mypy-extensions" ,python-mypy-extensions)
        ("python-prov" ,python-prov)
@@ -67,20 +64,43 @@
        ("python-schema-salad" ,python-schema-salad-7)
        ("python-setuptools" ,python-setuptools)
        ("python-shellescape" ,python-shellescape)
-       ("python-typing-extensions" ,python-typing-extensions)))
-    (native-inputs
-     `(("python-arcp" ,python-arcp)
+       ("python-typing-extensions" ,python-typing-extensions)
+       ;; Not listed as needed but seems to be necessary:
+       ("node" ,node)
        ("python-cachecontrol" ,python-cachecontrol-0.11)
        ("python-dateutil" ,python-dateutil)
-       ("python-humanfriendly" ,python-humanfriendly)
        ("python-lxml" ,python-lxml)
+       ("python-networkx" ,python-networkx)))
+    (native-inputs
+     `(("python-arcp" ,python-arcp)
+       ("python-humanfriendly" ,python-humanfriendly)
        ("python-mock" ,python-mock)
-       ("python-networkx" ,python-networkx)
        ("python-pytest" ,python-pytest)
        ("python-pytest-cov" ,python-pytest-cov)
        ("python-pytest-mock" ,python-pytest-mock)
        ("python-pytest-runner" ,python-pytest-runner)
        ("python-rdflib-jsonld" ,python-rdflib-jsonld)))
+    (home-page
+     "https://github.com/common-workflow-language/common-workflow-language")
+    (synopsis "Common workflow language reference implementation")
+    (description
+     "Common workflow language reference implementation.")
+    (license license:asl2.0)))
+
+(define-public cwl-runner
+  (package
+    (name "cwl-runner")
+    (version "1.0")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "cwl_runner" version))
+        (sha256
+         (base32
+          "0011am2xqwchysdznayrmwhg4bfjl4wlq6m4k20z1m7gccyzjgw0"))))
+    (build-system python-build-system)
+    (propagated-inputs
+     `(("cwltool" ,cwltool)))
     (home-page
      "https://github.com/common-workflow-language/common-workflow-language")
     (synopsis "Common workflow language reference implementation")
