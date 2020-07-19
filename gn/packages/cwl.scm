@@ -61,7 +61,7 @@
        ("python-rdflib" ,python-rdflib)
        ("python-requests" ,python-requests)
        ("python-ruamel.yaml" ,python-ruamel.yaml)
-       ("python-schema-salad" ,python-schema-salad-7)
+       ("python-schema-salad" ,python-schema-salad)
        ("python-setuptools" ,python-setuptools)
        ("python-shellescape" ,python-shellescape)
        ("python-typing-extensions" ,python-typing-extensions)

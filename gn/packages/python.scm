@@ -1139,47 +1139,6 @@ server.")
 (define-public python-schema-salad
   (package
     (name "python-schema-salad")
-    (version "5.0.20200416112825")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (pypi-uri "schema-salad" version))
-        (sha256
-         (base32
-          "1pm6q266qrw4r0w0vnzhsvqgk5j8b3q61hxg99awhgpjsmcvkmsz"))))
-    (build-system python-build-system)
-    (propagated-inputs
-     `(("python-cachecontrol" ,python-cachecontrol-0.11)
-       ("python-lockfile" ,python-lockfile)
-       ("python-mistune" ,python-mistune)
-       ("python-rdflib" ,python-rdflib)
-       ("python-rdflib-jsonld" ,python-rdflib-jsonld)
-       ("python-requests" ,python-requests)
-       ("python-ruaml.yaml" ,python38-ruaml.yaml-0.15.76)
-       ("python-setuptools" ,python-setuptools)
-       ("python-typing-extensions" ,python-typing-extensions)))
-    (native-inputs
-     `(("python-pytest" ,python-pytest)
-       ("python-pytest-runner" ,python-pytest-runner)))
-    (arguments
-     `(
-       #:tests? #f)) ; no tests
-    (home-page "https://github.com/common-workflow-language/schema_salad")
-    (synopsis "Schema Annotations for Linked Avro Data (SALAD)")
-    (description
-     "Salad is a schema language for describing JSON or YAML structured linked
-data documents.  Salad schema describes rules for preprocessing, structural
-validation, and hyperlink checking for documents described by a Salad schema.
-Salad supports rich data modeling with inheritance, template specialization,
-object identifiers, object references, documentation generation, code
-generation, and transformation to RDF.  Salad provides a bridge between document
-and record oriented data modeling and the Semantic Web.")
-    (license license:asl2.0)))
-
-(define-public python-schema-salad-7
-  (package
-    (inherit python-schema-salad)
-    (name "python-schema-salad")
     (version "7.0.20200612160654")
     (source
       (origin
@@ -1188,6 +1147,7 @@ and record oriented data modeling and the Semantic Web.")
         (sha256
          (base32
           "15ma3lb6fkfc6sj75hnmmg0jj8q3pc5yrlyx15lpdd4dcp2jc39s"))))
+    (build-system python-build-system)
     (propagated-inputs
      `(("python-cachecontrol" ,python-cachecontrol-0.11)
        ("python-lockfile" ,python-lockfile)
@@ -1201,7 +1161,17 @@ and record oriented data modeling and the Semantic Web.")
     (native-inputs
      `(("python-pytest" ,python-pytest-4)
        ("python-pytest-runner" ,python-pytest-runner)))
-    (arguments `())))
+    (home-page "https://github.com/common-workflow-language/schema_salad")
+    (synopsis "Schema Annotations for Linked Avro Data (SALAD)")
+    (description
+     "Salad is a schema language for describing JSON or YAML structured linked
+data documents.  Salad schema describes rules for preprocessing, structural
+validation, and hyperlink checking for documents described by a Salad schema.
+Salad supports rich data modeling with inheritance, template specialization,
+object identifiers, object references, documentation generation, code
+generation, and transformation to RDF.  Salad provides a bridge between document
+and record oriented data modeling and the Semantic Web.")
+    (license license:asl2.0)))
 
 (define-public python-cfgraph
   (package
