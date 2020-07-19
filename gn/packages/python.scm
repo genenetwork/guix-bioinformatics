@@ -1186,10 +1186,10 @@ and record oriented data modeling and the Semantic Web.")
         (method url-fetch)
         (uri (pypi-uri "schema-salad" version))
         (sha256
-          (base32
-            "15ma3lb6fkfc6sj75hnmmg0jj8q3pc5yrlyx15lpdd4dcp2jc39s"))))
+         (base32
+          "15ma3lb6fkfc6sj75hnmmg0jj8q3pc5yrlyx15lpdd4dcp2jc39s"))))
     (propagated-inputs
-     `(("python-cachecontrol" ,python-cachecontrol)
+     `(("python-cachecontrol" ,python-cachecontrol-0.11)
        ("python-lockfile" ,python-lockfile)
        ("python-mistune" ,python-mistune)
        ("python-rdflib" ,python-rdflib)
@@ -1197,7 +1197,11 @@ and record oriented data modeling and the Semantic Web.")
        ("python-requests" ,python-requests)
        ("python-ruamel.yaml" ,python-ruamel.yaml)
        ("python-setuptools" ,python-setuptools)
-       ("python-typing-extensions" ,python-typing-extensions)))))
+       ("python-typing-extensions" ,python-typing-extensions)))
+    (native-inputs
+     `(("python-pytest" ,python-pytest-4)
+       ("python-pytest-runner" ,python-pytest-runner)))
+    (arguments `())))
 
 (define-public python-cfgraph
   (package
