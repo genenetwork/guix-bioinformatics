@@ -4,14 +4,14 @@
   #:use-module (guix build-system python)
   #:use-module (guix packages)
   #:use-module (guix download)
-  #:use-module (gn packages mailman)
   #:use-module (gnu packages check)
-  #:use-module (gnu packages sphinx)
-  #:use-module (gnu packages time)
+  #:use-module (gnu packages geo)
   #:use-module (gnu packages python)
   #:use-module (gnu packages python-web)
   #:use-module (gnu packages python-science)
-  #:use-module (gnu packages python-xyz))
+  #:use-module (gnu packages python-xyz)
+  #:use-module (gnu packages sphinx)
+  #:use-module (gnu packages time))
 
 (define-public python-googletransx
   (package
@@ -60,41 +60,6 @@
      "A Python 2.* port of 3.4 Statistics Module")
     (license #f)))
 
-(define-public python-geopy
-  (package
-  (name "python-geopy")
-  (version "1.22.0")
-  (source
-    (origin
-      (method url-fetch)
-      (uri (pypi-uri "geopy" version))
-      (sha256
-        (base32
-          "0jypkaqlbyr8icqypwm23lzsvq7flakp3a3nqr8ib5fmd0fzsq7q"))))
-  (build-system python-build-system)
-  (arguments
-   `(#:tests? #f))
-  (propagated-inputs
-    `(("python-geographiclib" ,python-geographiclib)))
-  (native-inputs
-    `(("python-contextlib2" ,python-contextlib2)
-      ("python-coverage" ,python-coverage)
-      ("python-flake8" ,python-flake8)
-      ("python-isort" ,python-isort)
-      ("python-mock" ,python-mock)
-      ("python-pytest" ,python-pytest)
-      ("python-readme-renderer"
-       ,python-readme-renderer)
-      ("python-six" ,python-six)
-      ("python-sphinx" ,python-sphinx)
-      ("python-sphinx-rtd-theme"
-       ,python-sphinx-rtd-theme)
-      ("python-statistics" ,python-statistics)))
-  (home-page "https://github.com/geopy/geopy")
-  (synopsis "Python Geocoding Toolbox")
-  (description "Python Geocoding Toolbox")
-  (license license:expat)))
-
 (define-public python-fake-useragent
   (package
     (name "python-fake-useragent")
@@ -137,28 +102,6 @@
     (description
       "cChardet is high speed universal character encoding detector.")
     (license #f)))
-
-(define-public python-geographiclib
-  (package
-  (name "python-geographiclib")
-  (version "1.50")
-  (source
-   (origin
-     (method url-fetch)
-     (uri (pypi-uri "geographiclib" version))
-     (sha256
-      (base32
-       "0cn6ap5fkh3mkfa57l5b44z3gvz7j6lpmc9rl4g2jny2gvp4dg8j"))))
-  (build-system python-build-system)
-  (arguments
-   `(#:tests? #f))
-  (home-page
-   "https://geographiclib.sourceforge.io/1.50/python")
-  (synopsis
-   "The geodesic routines from GeographicLib")
-  (description
-   "The geodesic routines from GeographicLib")
-  (license license:expat)))
 
 (define-public python-twint
   (package

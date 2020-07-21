@@ -7,6 +7,7 @@
   #:use-module (gnu packages web)
   #:use-module (gnu packages base)
   #:use-module (gnu packages python)
+  #:use-module (gnu packages python-check)
   #:use-module (gnu packages python-web)
   #:use-module (gnu packages python-xyz)
   #:use-module (gnu packages python-crypto)
@@ -225,28 +226,6 @@ necessary.")
     (description
      "A collection of helpers and mock objects for unit tests and doc tests.")
     (license license:expat)))
-
-(define-public python-pytest-aiohttp
-  (package
-    (name "python-pytest-aiohttp")
-    (version "0.3.0")
-    (source
-     (origin
-       (method url-fetch)
-       (uri (pypi-uri "pytest-aiohttp" version))
-       (sha256
-        (base32
-         "0kx4mbs9bflycd8x9af0idcjhdgnzri3nw1qb0vpfyb3751qaaf9"))))
-    (build-system python-build-system)
-    (propagated-inputs
-     `(("python-pytest" ,python-pytest)
-       ("python-aiohttp" ,python-aiohttp)
-       ("python-pytest-timeout" ,python-pytest-timeout)))
-    (home-page
-     "https://github.com/aio-libs/pytest-aiohttp/")
-    (synopsis "pytest plugin for aiohttp support")
-    (description "pytest plugin for aiohttp support")
-    (license license:asl2.0)))
 
 (define-public python-aiohttp-jinja2
   (package
