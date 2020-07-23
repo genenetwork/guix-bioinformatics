@@ -347,7 +347,7 @@ implemented, light on server resource usage, and fairly speedy.")
        ("python2-scipy" ,python2-scipy)
        ("python2-simplejson" ,python2-simplejson)
        ("python2-pyyaml" ,python2-pyyaml)
-       ("python2-unittest2" ,python2-unittest2)
+       ("python-unittest2" ,python-unittest2)
        ("python2-xlsxwriter" ,python2-xlsxwriter)
        ("python2-qtlreaper" ,python2-qtlreaper)
        ;; All the external js dependencies
