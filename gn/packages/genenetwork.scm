@@ -319,6 +319,7 @@ implemented, light on server resource usage, and fairly speedy.")
        ("rust-qtlreaper" ,rust-qtlreaper)
        ("nginx" ,nginx)
        ("python-twint" ,python-twint)
+       ("python2-coverage" ,python2-coverage)
        ("python2-flask" ,python2-flask)
        ("python2-gunicorn-gn" ,python2-gunicorn-gn)
        ; ("python2-pillow" ,python2-pillow) - for later!
