@@ -48,85 +48,6 @@
   #:use-module (srfi srfi-1))
 
 
-
-(define-public my-deploy
-  (package
-    (name "my-deploy")
-    (version "0.0.1")
-    (source #f)
-    (build-system trivial-build-system)
-    (arguments
-     `(#:guile ,%bootstrap-guile
-       #:modules ((guix build utils))
-       #:builder
-       (let* ((out  (assoc-ref %outputs "out"))
-              (bash (assoc-ref %build-inputs "bash"))
-              (foo  (string-append out "/foo")))
-         (begin
-           (use-modules (guix build utils))
-           (mkdir out)
-           (call-with-output-file foo
-             (lambda (p)
-               (format p
-                       "#!~a~%echo \"${GUIX_FOO} ${GUIX_BAR}\"~%"
-                       bash)))
-           (chmod foo #o777)
-           ;; wrap-program uses `which' to find bash for the wrapper
-           ;; shebang, but it can't know about the bootstrap bash in
-           ;; the store, since it's not named "bash".  Help it out a
-           ;; bit by providing a symlink to this package's output.
-           (symlink bash (string-append out "/bash"))
-           (setenv "PATH" out)
-           (wrap-program foo `("GUIX_FOO" prefix ("hello")))
-           (wrap-program foo `("GUIX_BAR" prefix ("world")))
-           #t))))
-    (inputs `(("bash" ,(bootstrap-executable "bash"
-                                             (%current-system)))))
-
-    (home-page #f)
-    (synopsis #f)
-    (description #f)
-    (license #f)))
-
-(define-public gn-server
-  (let ((md5 "93e745e9c"))
-    (package
-    (name "gn-server")
-    (version "0.0.1")
-    (source
-     (origin
-       (method url-fetch)
-       (uri "http://files.genenetwork.org/raw_database/md5sum.txt") ; any old file
-       (file-name (string-append name "-" md5))
-       (sha256
-        (base32 "1cnkiwid4h0nnf93rm647ji9vhfzjl23arp1xj374la7mmic9jqs"))))
-    (build-system trivial-build-system)
-    (native-inputs `(("unzip" ,unzip)
-                     ("source" ,source)))
-    (inputs `(("sassc" ,sassc)))
-    (propagated-inputs
-     `(("python" ,python)
-       ("elixir" ,elixir)
-       ("mariadb" ,mariadb)
-       ("gnu-make" ,gnu-make) ; needed for mysqlex
-       ))
-    (arguments
-     `(#:modules ((guix build utils))
-       #:builder
-       (begin
-         (use-modules (guix build utils))
-         (let ((target (string-append (assoc-ref %outputs "out")
-                                      "/share")))
-             (write target)
-             (mkdir-p target)
-             ; (copy-recursively (assoc-ref %build-inputs "source") target)
-             #t))))
-
-    (home-page "http://github.com/genenetwork/gn_server/")
-    (synopsis "GN REST server API")
-    (description "REST Server")
-    (license license:agpl3+))))
-
 (define-public python2-qtlreaper
   (let ((commit "442c217b90393380a8634ff8636b44992f5c53dd"))
   (package
@@ -202,7 +123,7 @@ location of a putative QTL.")
   (package
     (name "python-gunicorn-gn")
     (version "19.9.0")
-    (source 
+    (source
       (origin
         (method url-fetch)
         (uri (pypi-uri "gunicorn" version))
@@ -237,7 +158,7 @@ implemented, light on server resource usage, and fairly speedy.")
 
 (define-public python2-gunicorn-gn
   (package-with-python2 python-gunicorn-gn))
-  
+
 
 (define-public rust-qtlreaper
   (let ((commit "2e7fed6d45b0b602d80fa2a55835f96ef1cba9e3")
