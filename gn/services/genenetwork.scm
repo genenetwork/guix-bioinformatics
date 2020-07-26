@@ -9,12 +9,6 @@
 (use-service-modules web)
 (use-package-modules python)
 
-(define %python-path
-  "/lib/python2.4/site-packages")
-
-(define %mod-python-path
-  (file-append httpd22-mod-python-24 %python-path))
-
 (define %default-httpd22-modules
   (map (match-lambda
          ((name file)
@@ -85,7 +79,10 @@
                    python24-qtlreaper
                    python24-htmlgen-GN1
                    python24-json-GN1
+                   python24-mysqlclient ; MySQLdb
+                   python24-numarray
                    python24-piddle
+                   python24-pp-GN1
                    python24-pyx-GN1
                    python24-pyxlwriter
                    python24-svg-GN1
@@ -97,13 +94,13 @@
                              (config
                                (httpd-config-file
                                  (server-name "www.genenetwork.org")
-                                 ;; Defaults to httpd, largely irrelevant.
+                                 ;; Defaults to httpd, should be same as 'package' above.
                                  (server-root httpd22-mod-python-24)
                                  (user "nobody")
                                  (group "root")
+                                 ;; Only while debugging
                                  (pid-file "/tmp/httpd-genenetwork1")
                                  (error-log "/tmp/httpd-genenetwork1-error-log")
-                                 (document-root (file-append genenetwork1 "/web"))
                                  (listen '("8042"))
                                  (modules (cons*
                                             (httpd-module
@@ -111,20 +108,32 @@
                                               (file "modules/mod_python.so"))
                                             %default-httpd22-modules))
                                  (extra-config (list "\
-TypesConfig etc/httpd/mime.types
+TypesConfig " httpd22-mod-python-24 "/etc/httpd/mime.types
 DefaultType application/octet-stream
-#DocumentRoot MUST NOT be in the PythonPath
-PythonPath \"['/run/current-system/profile/lib/python2.4', '" httpd22-mod-python-24 "/lib/python2.4/site-packages']\"
+# DocumentRoot MUST NOT be in the PythonPath. Because genenetwork1 must be in PythonPath we leave the document-root keyword above unset.
+PythonPath \"['/run/current-system/profile/lib/python2.4', '/run/current-system/profile/lib/python2.4/site-packages', '" httpd22-mod-python-24 "/lib/python2.4/site-packages', '" genenetwork1 "/web/webqtl']\"
+# same as 'listen' above
+NameVirtualHost *:8042
+<VirtualHost *:8042>
+  DocumentRoot "genenetwork1 "/web
+</VirtualHost>
 <Directory " genenetwork1 "/web/webqtl>
+  PythonOption session FileSession
+  #what is the difference between these two?
   #AddHandler mod_python .py
   SetHandler python-program
+  #publisher has more debug information
+  PythonHandler " genenetwork1 "/web/webqtl/main.py
   #PythonHandler mod_python.publisher
-  PythonHandler mod_python.cgihandler
-  #PythonAutoReload Off
+  #PythonHandler mod_python.cgihandler
   # only while debugging:
   PythonDebug On
 </Directory>
+# only while debugging:
 <Location /mpinfo>
   SetHandler python-program
   PythonHandler mod_python.testhandler
 </Location>")))))))))
+
+;; guix system container -L /path/to/guix-past/modules/ -L /path/to/guix-bioinformatics/ /path/to/guix-bioinformatics/gn/services/genenetwork.scm --network
+;; xdg-open http://localhost:8042

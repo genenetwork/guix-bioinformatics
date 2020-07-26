@@ -370,10 +370,6 @@ connections and other data between hits and access to Apache internals.")
                 (lambda _
                   ;; Make sure we're in the correct folder
                   (chdir "../mod_python-3.3.1")
-                  ;; We can't import cPickle because we don't wrap with Python.
-                  (substitute* (find-files "." "\\.py$")
-                    (("import cPickle")
-                     "try:\n    import cPickle\nexcept:\n    import pickle as cPickle"))
                   #t))
               (add-after 'change-directory 'bootstrap-mod-python
                 (lambda* (#:key inputs #:allow-other-keys)
@@ -383,12 +379,15 @@ connections and other data between hits and access to Apache internals.")
                          (tcl-version ,(version-major+minor (package-version tcl))))
                     (substitute* "configure.in"
                       (("PY_LIBS=.*")
-                       (string-append "PY_LIBS=-L" python "/lib/python" py-version "\n"))
-                      (("PY_LDFLAGS=.*")
-                       (string-append "PY_LDFLAGS=\"-lpython" py-version
+                       (string-append "PY_LIBS=\"" python
+                                      "/lib/libpython" py-version ".so "
+                                      " -lpthread -ldl  -lutil -lm" ; LIB[SMC]
+                                      " -lpython" py-version
                                       " -lreadline -lssl -lcrypto"
                                       " -ltk" tcl-version " -ltcl" tcl-version
                                       " -lgdbm -ltirpc -lnsl -lz\"\n"))
+                      (("PY_LDFLAGS=.*")
+                       (string-append "PY_LDFLAGS=\"-Wl,-rpath=" python "/lib -Wl,-rpath=" python "/lib/python" py-version "/lib-dynload\"\n"))
                       (("PY_INCLUDES=.*")
                        (string-append "PY_INCLUDES=-I" python "/include/python" py-version "\n")))
                     (invoke "autoreconf" "-vfi"))))

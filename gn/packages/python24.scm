@@ -3,10 +3,12 @@
   #:use-module (guix utils)
   #:use-module (guix packages)
   #:use-module (guix download)
+  #:use-module (guix git-download)
   #:use-module (guix build-system python)
   #:use-module (gn packages python)
   #:use-module (past packages python)
   #:use-module (gnu packages compression)
+  #:use-module (gnu packages databases)
   #:use-module (gnu packages maths)
   #:use-module (gnu packages python-xyz)
   #:use-module (srfi srfi-1))
@@ -435,3 +437,60 @@ clusters (computers connected via network).")
     (synopsis "")
     (description "")
     (license license:bsd-3)))
+
+(define-public python24-mysqlclient
+  (package
+    (name "python24-mysqlclient")
+    (version "1.2.5")
+    (source
+      (origin
+        (method git-fetch)
+        (uri (git-reference
+               (url "https://github.com/PyMySQL/mysqlclient-python")
+               (commit "MySQLdb-1.2.5")))
+        (file-name (git-file-name name version))
+        (sha256
+         (base32
+          "193h09afkmz9nw2jlwfdikx1xj9sybswd2705k8jy48h1ks6fnbj"))))
+    (build-system python-build-system)
+    (arguments
+     `(#:python ,python-2.4
+       #:phases
+       (modify-phases %standard-phases
+         (add-after 'unpack 'dont-create-release-file
+           (lambda _
+             (substitute* "setup_common.py"
+               (("MySQLdb/release.py")
+                (string-append (getcwd) "/release.py")))
+             #t))
+         (add-before 'check 'pre-check
+           (lambda _
+             (call-with-output-file "/tmp/my.cnf"
+               (lambda (p)
+                 (format p
+                         "[mysqld]~@
+                         datadir=/tmp~@
+                         socket=/tmp/mysql.sock~%")))
+             (system* "mysqld" "--defaults-file=/tmp/my.cnf" "--bootstrap")
+             ;(invoke "mysql" "-S" "/tmp/mysql.sock"
+             ;        "-e" "'create database mysqldb_test charset utf8;'")
+             #t)))
+       #:tests? #f))    ; TODO: Run the test suite
+    (native-inputs
+     `(("mariadb" ,mariadb "dev")
+       ("mariadb:bin" ,mariadb)
+       ("python-nose" ,python24-nose)
+       ("python-setuptools" ,python24-setuptools)))
+    (inputs
+     `(("zlib" ,zlib)))
+    (home-page "http://mysql-python.sourceforge.net/")
+    (synopsis "Python interface to MySQL")
+    (description "MySQLdb is an interface to the popular MySQL database server
+for Python.  The design goals are:
+@itemize
+@item with Python database API version 2.0
+@item Thread-safety
+@item Thread-friendliness (threads will not block each other)
+@item Compatibility with MySQL-3.23 and later
+@end itemize")
+    (license license:gpl2+)))

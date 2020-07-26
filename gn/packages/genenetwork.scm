@@ -694,10 +694,9 @@ written in C")
          (base32
           "1s735dj8kf98gf5w58p10zzyc5766gn27j4j5yh07ksadg7h1kdi"))))
       (build-system gnu-build-system)
-      (propagated-inputs
+      (native-inputs
        `(("ghostscript" ,ghostscript)
          ("graphviz" ,graphviz-2.26)
-         ("httpd" ,httpd22-mod-python-24)
          ("python24" ,python-2.4)
          ("python-piddle" ,python24-piddle)
          ("wget" ,wget)))
@@ -708,8 +707,9 @@ written in C")
            (delete 'configure)
            (delete 'build)
            (add-after 'patch-generated-file-shebangs 'patch-more-files
-             (lambda* (#:key inputs #:allow-other-keys)
-               (let ((piddle (assoc-ref inputs "python-piddle")))
+             (lambda* (#:key inputs outputs #:allow-other-keys)
+               (let ((piddle (assoc-ref inputs "python-piddle"))
+                     (out    (assoc-ref outputs "out")))
                  (substitute* "web/webqtl/networkGraph/networkGraphUtils.py"
                    (("/usr/local/bin/neato") (which "neato"))
                    (("/usr/local/bin/circo") (which "circo"))
@@ -730,6 +730,7 @@ written in C")
                    (("/usr/bin/python") (which "python"))
                    (("/usr/bin/env python") (which "python")))
                  (substitute* "web/webqtl/base/webqtlConfigLocal.py"
+                   (("/gnshare/gn") out)
                    (("PythonPath.*")
                     (string-append "PythonPath = '" (which "python") "'\n"))
                    (("PIDDLE_FONT_PATH.*/lib")
