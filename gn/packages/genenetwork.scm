@@ -679,8 +679,8 @@ written in C")
      (license license:agpl3+))))
 
 (define-public genenetwork1
-  (let ((commit "19791ce6b3c38be8cbf9bc9cd3e95dbee14116c2") ; Aug 23, 2018
-        (revision "1"))
+  (let ((commit "acf65ac9ae4be395c07c1629758f7408bf4eab5f") ; June 3, 2020
+        (revision "2"))
     (package
       (name "genenetwork1")
       (version (git-version "0.0.0" revision commit))
@@ -692,7 +692,7 @@ written in C")
         (file-name (git-file-name name version))
         (sha256
          (base32
-          "1s735dj8kf98gf5w58p10zzyc5766gn27j4j5yh07ksadg7h1kdi"))))
+          "0xmmmjyvh80yd8b0cjrwpdmxl8k9zj5ly65r2g9aygx74njsp4fi"))))
       (build-system gnu-build-system)
       (native-inputs
        `(("ghostscript" ,ghostscript)
@@ -707,9 +707,8 @@ written in C")
            (delete 'configure)
            (delete 'build)
            (add-after 'patch-generated-file-shebangs 'patch-more-files
-             (lambda* (#:key inputs outputs #:allow-other-keys)
-               (let ((piddle (assoc-ref inputs "python-piddle"))
-                     (out    (assoc-ref outputs "out")))
+             (lambda* (#:key inputs #:allow-other-keys)
+               (let ((piddle (assoc-ref inputs "python-piddle")))
                  (substitute* "web/webqtl/networkGraph/networkGraphUtils.py"
                    (("/usr/local/bin/neato") (which "neato"))
                    (("/usr/local/bin/circo") (which "circo"))
@@ -730,12 +729,22 @@ written in C")
                    (("/usr/bin/python") (which "python"))
                    (("/usr/bin/env python") (which "python")))
                  (substitute* "web/webqtl/base/webqtlConfigLocal.py"
-                   (("/gnshare/gn") out)
                    (("PythonPath.*")
                     (string-append "PythonPath = '" (which "python") "'\n"))
                    (("PIDDLE_FONT_PATH.*/lib")
                     (string-append "PIDDLE_FONT_PATH = '" piddle "/lib"))))
                #t))
+           (add-after 'patch-generated-file-shebangs 'changes-for-deployed-service
+             (lambda* (#:key outputs #:allow-other-keys)
+               (let ((out    (assoc-ref outputs "out")))
+                 (substitute* "web/webqtl/base/webqtlConfigLocal.py"
+                   ;; Where GN1 is located:
+                   (("/gnshare/gn") out)
+                   ;; Where the database is located:
+                   (("tux01") "localhost"))
+                 ;; This directory is expected to be writable
+                 (symlink "/tmp" "web/tmp")
+                 #t)))
            (add-before 'install 'replace-htaccess-file
              (lambda _
                (delete-file "web/webqtl/.htaccess")
