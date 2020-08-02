@@ -76,15 +76,15 @@
   (firmware '())
 
   (packages (cons* python-2.4
-                   python24-qtlreaper
                    python24-htmlgen-GN1
                    python24-json-GN1
                    python24-mysqlclient ; MySQLdb
                    python24-numarray
                    python24-piddle
-                   python24-pp-GN1
-                   python24-pyx-GN1
+                   python24-pp
+                   python24-pyx
                    python24-pyxlwriter
+                   python24-qtlreaper
                    python24-svg-GN1
                    %base-packages))
 
