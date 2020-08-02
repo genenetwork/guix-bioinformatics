@@ -31,7 +31,7 @@
         ;("rust-blas-src" ,rust-blas-src-0.2)
         ("rust-cblas-sys" ,rust-cblas-sys-0.1)
         ("rust-rustc-serialize" ,rust-rustc-serialize-0.3)
-        ("rust-serde" ,rust-serde-1.0))
+        ("rust-serde" ,rust-serde-1))
        #:cargo-development-inputs
        (("rust-defmac" ,rust-defmac-0.1)
         ("rust-quickcheck" ,rust-quickcheck-0.7)

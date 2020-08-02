@@ -259,8 +259,8 @@ implemented, light on server resource usage, and fairly speedy.")
          (("rust-rand" ,rust-rand-0.6)
           ("rust-structopt" ,rust-structopt-0.2)
           ("rust-rayon" ,rust-rayon-1)
-          ("rust-serde" ,rust-serde-1.0)
-          ("rust-serde-json" ,rust-serde-json-1.0)
+          ("rust-serde" ,rust-serde-1)
+          ("rust-serde-json" ,rust-serde-json-1)
           ("rust-ndarray" ,rust-ndarray-0.12))
          #:phases
          (modify-phases %standard-phases
