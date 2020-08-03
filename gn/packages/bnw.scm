@@ -6,7 +6,7 @@
   #:use-module (gnu packages gcc)
   #:use-module (gnu packages python)
   #:use-module (gnu packages statistics)
-  #:use-module (gn packages graphviz)
+  #:use-module (past packages graphviz)
   #:use-module (gn packages javascript)
   #:use-module (gn packages maths)
   #:use-module (gn packages python)
