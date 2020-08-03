@@ -3,11 +3,10 @@
 (use-modules (gnu)
              (ice-9 match)
              (past packages python)
+             (past packages web)
              (gn packages genenetwork)
-             (gn packages python24)
-             (gn packages web))
+             (gn packages python24))
 (use-service-modules web)
-(use-package-modules python)
 
 (define %default-httpd22-modules
   (map (match-lambda
@@ -90,12 +89,13 @@
 
   (services (list (service httpd-service-type
                            (httpd-configuration
-                             (package httpd22-mod-python-24)    ; Must be httpd-2.2
+                             ;; Must be a httpd-2.2 variant.
+                             (package httpd22-with-mod-python)
                              (config
                                (httpd-config-file
                                  (server-name "www.genenetwork.org")
                                  ;; Defaults to httpd, should be same as 'package' above.
-                                 (server-root httpd22-mod-python-24)
+                                 (server-root httpd22-with-mod-python)
                                  (user "nobody")
                                  (group "root")
                                  ;; Only while debugging
@@ -108,10 +108,10 @@
                                               (file "modules/mod_python.so"))
                                             %default-httpd22-modules))
                                  (extra-config (list "\
-TypesConfig " httpd22-mod-python-24 "/etc/httpd/mime.types
+TypesConfig " httpd22-with-mod-python "/etc/httpd/mime.types
 DefaultType application/octet-stream
 # DocumentRoot MUST NOT be in the PythonPath. Because genenetwork1 must be in PythonPath we leave the document-root keyword above unset.
-PythonPath \"['/run/current-system/profile/lib/python2.4', '/run/current-system/profile/lib/python2.4/site-packages', '" httpd22-mod-python-24 "/lib/python2.4/site-packages', '" genenetwork1 "/web/webqtl']\"
+PythonPath \"['/run/current-system/profile/lib/python2.4', '/run/current-system/profile/lib/python2.4/site-packages', '" httpd22-with-mod-python "/lib/python2.4/site-packages', '" genenetwork1 "/web/webqtl']\"
 # same as 'listen' above
 NameVirtualHost *:8042
 <VirtualHost *:8042>
