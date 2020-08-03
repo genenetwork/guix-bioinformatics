@@ -128,55 +128,6 @@ pre-defined variants."
     (description "Stand-alone Assertions for Python")
     (license license:expat)))
 
-(define-public python24-pyx
-  (package
-    (name "python24-pyx")
-    (version "0.12.1")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (pypi-uri "pyx" version))
-        (sha256
-         (base32
-          "13kyhqx19rw7dlv2xapdb68j8l9laq6nrpgkyd6549qwidmb4dz8"))))
-    (build-system python-build-system)
-    (arguments
-     `(#:python ,python-2.4
-       #:use-setuptools? #f
-       #:tests? #f))    ; tests not included
-    (properties '((release-date "2012-10-26")))
-    (home-page "https://pyx-project.org/")
-    (synopsis "Python package for the generation of PostScript, PDF, and SVG files")
-    (description "Python package for the generation of PostScript, PDF, and SVG files.")
-    (license license:gpl2+)))
-
-(define-public python24-pyxlwriter
-  (package
-    (name "python24-pyxlwriter")
-    (version "0.4a3")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (string-append "mirror://sourceforge/pyxlwriter/pyxlwriter/"
-                            version "/pyXLWriter-" version ".zip"))
-        (sha256
-         (base32
-          "1kfsi6la9y53rwayszgayfmkjfknpp650v69a0hwd1fcfk1df735"))))
-    (build-system python-build-system)
-    (arguments
-     `(#:python ,python-2.4
-       #:use-setuptools? #f
-       #:tests? #f)) ; no tests
-    (native-inputs
-     `(("unzip" ,unzip)))
-    (home-page "https://sourceforge.net/projects/pyxlwriter/")
-    (synopsis "Python library for generating Excel compatible spreadsheets")
-    (description "PyXLWriter is a Python library for generating Excel compatible
-spreadsheets.  It's a port of John McNamara's Perl @code{Spreadsheet::WriteExcel}
-module version 1.01 to Python.  It allows writing of Excel compatible
-spreadsheets without the need for COM objects.")
-    (license license:lgpl2.1+)))
-
 (define-public python24-pil
   (package
     (inherit python2-pil1)
@@ -221,7 +172,7 @@ spreadsheets without the need for COM objects.")
       (origin
         (method url-fetch)
         (uri (string-append
-             "http://www.parallelpython.com/downloads/pp/pp-" version ".zip"))
+               "https://www.parallelpython.com/downloads/pp/pp-" version ".zip"))
         (sha256
          (base32
           "0qkxcyclz3vgwpl6xvsrg76q59dj0wwy8qx15567bafv659ypyb1"))))
@@ -232,7 +183,7 @@ spreadsheets without the need for COM objects.")
        #:tests? #f)) ; no tests
     (native-inputs
      `(("unzip" ,unzip)))
-    (home-page "http://www.parallelpython.com")
+    (home-page "https://www.parallelpython.com/")
     (synopsis "Parallel and distributed programming for Python")
     (description "PP is a python module which provides mechanism for parallel
 execution of python code on SMP (systems with multiple processors or cores) and
