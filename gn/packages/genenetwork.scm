@@ -452,65 +452,43 @@ implemented, light on server resource usage, and fairly speedy.")
       (name "python3-genenetwork2")
       (version (string-append "3.11-guix-" (string-take commit 7) ))
       (propagated-inputs
-       `(,@(fold alist-delete (package-propagated-inputs genenetwork2)
-                 '("python-2"
-                   "python2-coverage"
-                   "python2-flask"
-                   "python2-gunicorn-gn"
-                   "python2-cssselect"
-                   "python2-elasticsearch"
-                   "python2-htmlgen-gn"
-                   "python2-jinja2"
-                   "python2-sqlalchemy"
-                   "python2-flask-sqlalchemy"
-                   "python2-setuptools"
-                   "python2-scipy"
-                   "python2-lxml"
-                   "python2-mechanize"
-                   "python2-mock"
-                   "python2-mysqlclient"
-                   "python2-nose"
-                   "python2-numarray"
-                   "python2-numpy"
-                   "python2-pandas"
-                   "python2-parallel"
-                   "python2-parameterized"
-                   "python2-passlib"
-                   "python2-redis"
-                   "python2-requests"
-                   "python2-simplejson"
-                   "python2-pyyaml"
-                   "python-unittest2"
-                   "python2-xlsxwriter"
-                   "python2-qtlreaper"))
-         ("python-pillow" ,python-pillow)
-         ("python-coverage" ,python-coverage)
-         ("python-flask" ,python-flask)
-         ("gunicorn" ,gunicorn)
-         ("python-cssselect" ,python-cssselect)
-         ("python-elasticsearch" ,python-elasticsearch)
-         ("python-htmlgen" ,python-htmlgen)
-         ("python-jinja2" ,python-jinja2)
-         ("python-sqlalchemy" ,python-sqlalchemy)
-         ("python-flask-sqlalchemy" ,python-flask-sqlalchemy)
-         ("python-setuptools" ,python-setuptools)
-         ("python-scipy" ,python-scipy)
-         ("python-lxml" ,python-lxml)
-         ("python-mechanize" ,python-mechanize)
-         ("python-mysqlclient" ,python-mysqlclient)
-         ("python-numpy" ,python-numpy)
-         ("python-pandas" ,python-pandas)
-         ("python-mock" ,python-mock)
-         ("python-parameterized" ,python-parameterized)
-         ("python-passlib" ,python-passlib)
-         ("python-redis" ,python-redis)
-         ("python-requests" ,python-requests)
-         ("python-simplejson" ,python-simplejson)
-         ("python-pyyaml" ,python-pyyaml)
-         ("python-unittest2" ,python-unittest2)
-         ("python-xlsxwriter" ,python-xlsxwriter)))
+       (let ((inputs (package-propagated-inputs genenetwork2)))
+         `(,@(fold
+              alist-delete inputs
+              (map car
+                   (filter (lambda (x)
+                             (let ((name (car x)))
+                               (or (string-prefix? "python2" name)
+                                   (string-prefix? "python-2" name))))
+                           inputs)))
+           ("python-pillow" ,python-pillow)
+           ("python-coverage" ,python-coverage)
+           ("python-flask" ,python-flask)
+           ("gunicorn" ,gunicorn)
+           ("python-cssselect" ,python-cssselect)
+           ("python-elasticsearch" ,python-elasticsearch)
+           ("python-htmlgen" ,python-htmlgen)
+           ("python-jinja2" ,python-jinja2)
+           ("python-sqlalchemy" ,python-sqlalchemy)
+           ("python-flask-sqlalchemy" ,python-flask-sqlalchemy)
+           ("python-setuptools" ,python-setuptools)
+           ("python-scipy" ,python-scipy)
+           ("python-lxml" ,python-lxml)
+           ("python-mechanize" ,python-mechanize)
+           ("python-mysqlclient" ,python-mysqlclient)
+           ("python-numpy" ,python-numpy)
+           ("python-pandas" ,python-pandas)
+           ("python-mock" ,python-mock)
+           ("python-parameterized" ,python-parameterized)
+           ("python-passlib" ,python-passlib)
+           ("python-redis" ,python-redis)
+           ("python-requests" ,python-requests)
+           ("python-simplejson" ,python-simplejson)
+           ("python-pyyaml" ,python-pyyaml)
+           ("python-unittest2" ,python-unittest2)
+           ("python-xlsxwriter" ,python-xlsxwriter))))
       (arguments
-       `(#:python ,python-3
+       `(#:python ,python
          #:phases
          (modify-phases %standard-phases
            (delete 'reset-gzip-timestamps)
@@ -518,7 +496,7 @@ implemented, light on server resource usage, and fairly speedy.")
              (lambda _
                (substitute* "bin/genenetwork2"
                  (("/usr/bin/env") (which "env"))
-                 (("python ") (string-append (which "python") " "))
+                 (("python ") (string-append (which "python3") " "))
                  (("readlink") (which "readlink"))
                  (("dirname") (which "dirname"))
                  (("basename") (which "basename"))
