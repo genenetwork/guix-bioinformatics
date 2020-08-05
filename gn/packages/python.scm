@@ -817,7 +817,7 @@ the older versions.")
 (define-public python-htmlgen
   (package
     (name "python-htmlgen")
-    (version "1.2.2")
+    (version "2.0.0")
     (source
      (origin
        (method url-fetch)
@@ -826,10 +826,8 @@ the older versions.")
 	     version ".tar.gz"))
        (sha256
 	(base32
-	 "0w3pcvm68jfdhnsxwwwifwhqqj9kqg3195b52hqd23qza480xilx"))))
+	 "0qx8dsh0kb79qk2a9gdxdjij21ja3hzya277sjk5imk60aiwa6l9"))))
     (build-system python-build-system)
-    (propagated-inputs
-     `(("python-typing" ,python-typing)))
     (arguments
      `(#:tests? #f))
     (synopsis "Python HTML 5 Generator")
