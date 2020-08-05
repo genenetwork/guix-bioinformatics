@@ -446,11 +446,20 @@ implemented, light on server resource usage, and fairly speedy.")
     (license license:agpl3+))))
 
 (define-public python3-genenetwork2
-  (let ((commit "1538ffd33af19e6ac922b4ee85fe701408968dfd"))
+  (let ((commit "84cbf35adbb15c79638372d108308edb05f12683"))
     (package
       (inherit genenetwork2)
       (name "python3-genenetwork2")
       (version (string-append "3.11-guix-" (string-take commit 7) ))
+      (source (origin
+                (method git-fetch)
+                (uri (git-reference
+                      (url "https://github.com/genenetwork/genenetwork2.git")
+                      (commit commit)))
+                (file-name (string-append name "-" version))
+                (sha256
+                 (base32
+                  "1402g129ghfh0xwfxjj1i7gbib2yl9rahf55caj7b1psy24ys87x"))))
       (propagated-inputs
        (let ((inputs (package-propagated-inputs genenetwork2)))
          `(,@(fold
@@ -459,8 +468,10 @@ implemented, light on server resource usage, and fairly speedy.")
                    (filter (lambda (x)
                              (let ((name (car x)))
                                (or (string-prefix? "python2" name)
-                                   (string-prefix? "python-2" name))))
+                                   (string-prefix? "python-2" name)
+                                   (string=? "python" name))))
                            inputs)))
+           ("python" ,python-wrapper)
            ("python-pillow" ,python-pillow)
            ("python-coverage" ,python-coverage)
            ("python-flask" ,python-flask)
@@ -478,57 +489,38 @@ implemented, light on server resource usage, and fairly speedy.")
            ("python-mysqlclient" ,python-mysqlclient)
            ("python-numpy" ,python-numpy)
            ("python-pandas" ,python-pandas)
-           ("python-mock" ,python-mock)
            ("python-parameterized" ,python-parameterized)
            ("python-passlib" ,python-passlib)
            ("python-redis" ,python-redis)
            ("python-requests" ,python-requests)
            ("python-simplejson" ,python-simplejson)
            ("python-pyyaml" ,python-pyyaml)
-           ("python-unittest2" ,python-unittest2)
            ("python-xlsxwriter" ,python-xlsxwriter))))
       (arguments
-       `(#:python ,python
-         #:phases
-         (modify-phases %standard-phases
-           (delete 'reset-gzip-timestamps)
-           (add-after 'unpack 'fix-paths-scripts
-             (lambda _
-               (substitute* "bin/genenetwork2"
-                 (("/usr/bin/env") (which "env"))
-                 (("python ") (string-append (which "python3") " "))
-                 (("readlink") (which "readlink"))
-                 (("dirname") (which "dirname"))
-                 (("basename") (which "basename"))
-                 (("cat") (which "cat"))
-                 (("echo") (which "echo"))
-                 (("redis-server") (which "redis-server"))
-                 (("git") (which "git"))
-                 (("grep") (which "grep"))
-                 (("rm") (which "rm"))
-                 (("which") (which "which")) ; three whiches in a row!
-                 )
-               #t))
-           (add-after 'unpack 'patch-javascript
-             (lambda* (#:key inputs #:allow-other-keys)
-               (let ((colorbox (assoc-ref inputs "javascript-colorbox"))
-                     (gn2 "/share/genenetwork2/javascript/"))
-                 (delete-file-recursively "wqflask/wqflask/static/packages/colorbox")
-                 (copy-recursively colorbox "wqflask/wqflask/static/packages/colorbox")
-                 #t)))
-           (add-before 'install 'fix-paths
-             (lambda* (#:key inputs #:allow-other-keys)
-               (let* (
-                      (plink2cmd (string-append (assoc-ref inputs "plink-ng-gn") "/bin/plink2"))
-                      (gemmacmd (string-append (assoc-ref inputs "gemma") "/bin/gemma"))
-                      )
-                 (substitute* '("etc/default_settings.py")
-                   (("^PLINK_COMMAND =.*") (string-append "PLINK_COMMAND = \"" plink2cmd "\"\n" ))
-                   (("^GEMMA_COMMAND =.*") (string-append "GEMMA_COMMAND = \"" gemmacmd "\"\n" ))
-                   )
-                 ))))
-         #:tests? #f)) ; no 'setup.py test'
-      )))
+       (let ((python (specification->package "python-wrapper"))
+             (args (package-arguments genenetwork2)))
+         (substitute-keyword-arguments args
+           ((#:python _) python)
+           ((#:phases phases)
+            `(modify-phases ,phases
+               (add-after 'unpack 'fix-paths-scripts
+                 (lambda _
+                   (substitute* "bin/genenetwork2"
+                     (("/usr/bin/env") (which "env"))
+                     (("python ") (string-append (which "python3") " "))
+                     (("readlink") (which "readlink"))
+                     (("dirname") (which "dirname"))
+                     (("basename") (which "basename"))
+                     (("cat") (which "cat"))
+                     (("echo") (which "echo"))
+                     (("redis-server") (which "redis-server"))
+                     (("git") (which "git"))
+                     (("grep") (which "grep"))
+                     (("rm") (which "rm"))
+                     (("which") (which "which")))
+                   #t))))
+           ))
+       ))))
 
 ;; ./pre-inst-env guix download http://files.genenetwork.org/raw_database/db_webqtl_s.zip
 ;; 0sscjh0wml2lx0mb43vf4chg9gpbfi7abpjxb34n3kyny9ll557x
