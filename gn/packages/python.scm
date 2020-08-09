@@ -155,32 +155,6 @@ functions.")
 (define-public python2-plotly-3.2.1
   (package-with-python2 python-plotly-3.2.1))
 
-(define-public python-retrying
-  (package
-    (name "python-retrying")
-    (version "1.3.3")
-    (source
-      (origin
-        ;; pypi release doesn't have test library
-        (method git-fetch)
-        (uri (git-reference
-               (url "https://github.com/rholder/retrying")
-               (commit (string-append "v" version))))
-        (file-name (git-file-name name version))
-        (sha256
-         (base32
-          "1kqipkbdaw5s1xg0gi29awm03vp1x8dz24pjidgxagvkvrjpzhi7"))))
-    (build-system python-build-system)
-    (propagated-inputs
-     `(("python-six" ,python-six)))
-    (home-page "https://github.com/rholder/retrying")
-    (synopsis "General-purpose retrying library")
-    (description "Retrying is a general-purpose retrying library, written in
-Python, to simplify the task of adding retry behavior to just about anything.
-The simplest use case is retrying a flaky function whenever an Exception occurs
-until a value is returned.")
-    (license license:asl2.0)))
-
 (define-public python-bagit; guix candidate
   (package
     (name "python-bagit")
@@ -1170,26 +1144,6 @@ Salad supports rich data modeling with inheritance, template specialization,
 object identifiers, object references, documentation generation, code
 generation, and transformation to RDF.  Salad provides a bridge between document
 and record oriented data modeling and the Semantic Web.")
-    (license license:asl2.0)))
-
-(define-public python-cfgraph
-  (package
-    (name "python-cfgraph")
-    (version "0.2.1")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (pypi-uri "CFGraph" version))
-        (sha256
-         (base32
-          "0x7yz0lvqb6mkhl5fbml27sppmscgpf8v2ism9jzzf0h982ffzxm"))))
-    (build-system python-build-system)
-    (propagated-inputs
-     `(("python-rdflib" ,python-rdflib)))
-    (home-page "https://github.com/hsolbrig/CFGraph")
-    (synopsis "Rdflib collections flattening graph")
-    (description
-     "Rdflib collections flattening graph.")
     (license license:asl2.0)))
 
 (define-public python-pyshex

@@ -266,72 +266,8 @@ balancing and can configure itself automatically and dynamically.")
      "Simple, generic API for escaping strings.")
     (license license:expat)))
 
-(define-public python-certipy
-  (package
-    (name "python-certipy")
-    (version "0.1.3")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (pypi-uri "certipy" version))
-        (sha256
-         (base32
-          "0n980gqpzh0fm58h3i4mi2i10wgj606lscm1r5sk60vbf6vh8mv9"))))
-    (build-system python-build-system)
-    (propagated-inputs
-     `(("python-pyopenssl" ,python-pyopenssl)))
-    (native-inputs
-     `(("python-pytest" ,python-pytest)))
-    (home-page "https://github.com/LLNL/certipy")
-    (synopsis "Utility to create and sign CAs and certificates")
-    (description
-     "Utility to create and sign CAs and certificates")
-    (license license:bsd-3)))
-
-(define-public python-pamela
-  (package
-    (name "python-pamela")
-    (version "1.0.0")
-    (source
-      (origin
-        ;; Tests not distributed in pypi release.
-        (method git-fetch)
-        (uri (git-reference
-               (url "https://github.com/minrk/pamela.git")
-               (commit version)))
-        (file-name (git-file-name name version))
-        (sha256
-         (base32
-          "0cg3w6np1fbjpvzhv54xg567hpf38szwp2d4gvzb9r736nxbv0vr"))))
-    (build-system python-build-system)
-    (arguments
-     '(#:tests? #f ; Tests aren't designed to be run inside a container.
-       #:phases
-       (modify-phases %standard-phases
-         (add-after 'unpack 'hardcode-pam.so
-           (lambda* (#:key inputs #:allow-other-keys)
-             (let ((pam (assoc-ref inputs "linux-pam")))
-               (substitute* "pamela.py"
-               ;  (("\"pam\"") (string-append "\"" pam "/lib/libpam.so\"")))
-                 (("find_library\\(\"pam\")") (string-append "'" pam "/lib/libpam.so'")))
-               ;  (("LIBPAM =.*") (string-append "LIBPAM = \"" pam "/lib\"\n")))
-               #t)))
-         (replace 'check
-           (lambda* (#:key tests? #:allow-other-keys)
-             (if tests?
-               (if (file-exists? "test_pamela.py")
-                 (invoke "py.test" "--assert=plain" "test_pamela.py")
-                 (invoke "python" "-m" "pamela" "-a" "`whoami`"))
-               #t))))))
-    (inputs
-     `(("linux-pam" ,linux-pam)))
-    (native-inputs
-     `(("python-pytest" ,python-pytest)))
-    (home-page "https://github.com/minrk/pamela")
-    (synopsis "PAM interface using ctypes")
-    (description "PAM interface using ctypes")
-    (license license:expat)))
-
+;; This package is deprecated upstream.
+;; Author suggests using python-toml
 (define-public python-pytoml
   (package
     (name "python-pytoml")
