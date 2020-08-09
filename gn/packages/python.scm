@@ -1153,7 +1153,8 @@ server.")
        ("python-rdflib" ,python-rdflib)
        ("python-rdflib-jsonld" ,python-rdflib-jsonld)
        ("python-requests" ,python-requests)
-       ("python-ruamel.yaml" ,python-ruamel.yaml)
+       ;; This needs to be fixed before upstreaming
+       ("python-ruamel.yaml" ,python38-ruaml.yaml-0.15.76)
        ("python-setuptools" ,python-setuptools)
        ("python-typing-extensions" ,python-typing-extensions)))
     (native-inputs
