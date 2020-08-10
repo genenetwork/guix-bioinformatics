@@ -322,7 +322,7 @@ implemented, light on server resource usage, and fairly speedy.")
        ("python2-coverage" ,python2-coverage)
        ("python2-flask" ,python2-flask)
        ("python2-gunicorn-gn" ,python2-gunicorn-gn)
-       ; ("python2-pillow" ,python2-pillow) - for later!
+       ("python2-pillow" ,python2-pillow) ;;  - for later!
        ("python2-pil1" ,python2-pil1-gn)
        ("python2-piddle-gn" ,python2-piddle-gn)
        ("python2-cssselect" ,python2-cssselect)
