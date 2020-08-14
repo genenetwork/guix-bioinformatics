@@ -19,16 +19,16 @@
 (define-public ratspub
   (package
     (name "ratspub")
-    (version "0.3.2")
+    (version "0.4.0")
     (source (origin
               (method git-fetch)
               (uri (git-reference
-                     (url "https://github.com/chen42/ratspub.git")
+                     (url "https://github.com/chen42/ratspub")
                      (commit (string-append "v" version))))
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "17phk83n0p21b90c7saqgmclw71ydmq62da33iq67rzv9psxvs2s"))
+                "0hasm6xncqkan9s4sw89s1x9gcybw59fzvpmr7fk1camvij7mywh"))
               (modules '((guix build utils)))
               (snippet
                '(begin (substitute* "server.py"
@@ -130,13 +130,14 @@
     (home-page "http://rats.pub/")
     (synopsis "Relationship with Addiction Through Searches of PubMed")
     (description
-     "RatsPub searches PubMed to find sentences that contain the query terms
-(i.e., gene symbols) and drug addiction-related keywords.  These gene-keyword
-relationships are presented as an interactive graph that can efficiently answer
-the question \"What do we know about these genes and addiction?\".  Data from
-@acronym{EBI GWAS, European Bioinformatics Institute Genome-Wide Association
-Studies} catalog are also included in the search to better answer this
-question.")
+     "RatsPub is a tool to efficiently and comprehensively answer the question
+\"What do we know about these genes and addiction?\".  RatsPub answers this
+question by searching PubMed to find sentences containing the query terms (i.e.,
+gene symbols) and over 300 drug addiction-related keywords that are organized
+into six categories.  Data from @url{https://www.ebi.ac.uk/gwas/,
+@acronym{NHGRI-EBI GWAS, European Bioinformatics Institute Genome-Wide
+Association Studies}} catalog are also included in the search.  These
+gene-keyword relationships are presented as an interactive graph and a table.")
     (license license:expat)))
 
 (define-public ratspub-with-tensorflow-native
