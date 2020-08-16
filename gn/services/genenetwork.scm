@@ -111,7 +111,7 @@
 TypesConfig " httpd22-with-mod-python "/etc/httpd/mime.types
 DefaultType application/octet-stream
 # DocumentRoot MUST NOT be in the PythonPath. Because genenetwork1 must be in PythonPath we leave the document-root keyword above unset.
-PythonPath \"['/run/current-system/profile/lib/python2.4', '/run/current-system/profile/lib/python2.4/site-packages', '" httpd22-with-mod-python "/lib/python2.4/site-packages', '" genenetwork1 "/web/webqtl']\"
+PythonPath \"sys.path+['/run/current-system/profile/lib/python2.4', '/run/current-system/profile/lib/python2.4/site-packages', '" genenetwork1 "/web/webqtl']\"
 # same as 'listen' above
 NameVirtualHost *:8042
 <VirtualHost *:8042>
