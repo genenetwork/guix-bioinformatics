@@ -822,24 +822,31 @@ written in C")
                  #t)))
            (add-after 'unpack 'use-local-links
              (lambda _
-               (substitute* "web/webqtl/base/webqtlConfig.py"
-                 (("http://www.genenetwork.org") ""))
+               (substitute* '("web/javascript/menu_items.js"
+                              "web/webqtl/base/webqtlConfig.py"
+                              "web/webqtl/maintainance/updateMenuJS.py")
+                 (("http://(www|gn1).genenetwork.org") ""))
 
                ;; Move this file out of the way while patching files.
                (rename-file "web/infoshare/manager/MDB-Free/index.html"
                             "web/infoshare/manager/MDB-Free/index.htm")
-               (substitute* (cons 
+               (substitute* (cons*
                               "web/webqtl/base/indexBody.py"
+                              "web/webqtl/submitTrait/BatchSubmitPage.py"
                               (find-files "web" "\\.html"))
                  ((".*base href.*") "")
                  (("(HREF|href)=\\\"http://(www.)?genenetwork.org")
                   "href=\""))
-               (substitute* "web/webqtl/base/indexBody.py"
-                 (("src=\\\"http://www.genenetwork.org") "src=\""))
-
                ;; Move this file back to its original location.
                (rename-file "web/infoshare/manager/MDB-Free/index.htm"
                             "web/infoshare/manager/MDB-Free/index.html")
+
+               (substitute* (cons*
+                              "web/humanCross.html"
+                              "web/webqtl/base/indexBody.py"
+                              "web/whats_new.html"
+                              (find-files "web/dbdoc" "\\.html"))
+                 (("src=\\\"http://www.genenetwork.org") "src=\""))
                #t))
            (add-before 'install 'replace-htaccess-file
              (lambda _
