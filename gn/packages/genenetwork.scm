@@ -820,6 +820,27 @@ written in C")
                  ;; This directory is expected to be writable
                  (symlink "/tmp" "web/tmp")
                  #t)))
+           (add-after 'unpack 'use-local-links
+             (lambda _
+               (substitute* "web/webqtl/base/webqtlConfig.py"
+                 (("http://www.genenetwork.org") ""))
+
+               ;; Move this file out of the way while patching files.
+               (rename-file "web/infoshare/manager/MDB-Free/index.html"
+                            "web/infoshare/manager/MDB-Free/index.htm")
+               (substitute* (cons 
+                              "web/webqtl/base/indexBody.py"
+                              (find-files "web" "\\.html"))
+                 ((".*base href.*") "")
+                 (("(HREF|href)=\\\"http://(www.)?genenetwork.org")
+                  "href=\""))
+               (substitute* "web/webqtl/base/indexBody.py"
+                 (("src=\\\"http://www.genenetwork.org") "src=\""))
+
+               ;; Move this file back to its original location.
+               (rename-file "web/infoshare/manager/MDB-Free/index.htm"
+                            "web/infoshare/manager/MDB-Free/index.html")
+               #t))
            (add-before 'install 'replace-htaccess-file
              (lambda _
                (delete-file "web/webqtl/.htaccess")
