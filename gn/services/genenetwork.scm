@@ -84,6 +84,7 @@
                    python24-pyx
                    python24-pyxlwriter
                    python24-qtlreaper
+                   python24-rpy2
                    python24-svg-GN1
                    %base-packages))
 
