@@ -527,6 +527,7 @@ Graphical Fragment Assembly} files and related formats.")
            ("python-requests" ,python-requests)
            ("python-simplejson" ,python-simplejson)
            ("python-pyyaml" ,python-pyyaml)
+           ("python-rpy2" ,python-rpy2)
            ("python-xlsxwriter" ,python-xlsxwriter))))
       (arguments
        (let ((python (specification->package "python-wrapper"))
