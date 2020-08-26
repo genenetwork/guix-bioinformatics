@@ -165,7 +165,12 @@ interaction networks.")
                             "/R-" version ".tar.gz"))
         (sha256
          (base32
-          "1mjmq95s5nrwppbzic6lzanjq65j3sxg85l1q09c0fxdin7s70y5"))))
+          "1mjmq95s5nrwppbzic6lzanjq65j3sxg85l1q09c0fxdin7s70y5"))
+        (modules '((guix build utils)))
+        (snippet
+         '(begin
+            (delete-file "NEWS.pdf")
+            #t))))
     (arguments
      (substitute-keyword-arguments (package-arguments r-minimal)
        ((#:tests? _ #t) #t)
