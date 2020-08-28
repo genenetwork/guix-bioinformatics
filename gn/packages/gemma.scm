@@ -23,10 +23,10 @@
 
 
 (define-public openblas-git
-  (let ((commit "2263d3906c23bd7341ebe714ef7c44fc84b0d1d0"))
+  (let ((commit "63b03efc2af332c88b86d4fd8079d00f4b439adf"))
     (package
     (name "openblas-git")
-    (version (string-append "0.3.3-git-" (string-take commit 7)))
+    (version (string-append "0.3.10-git-" (string-take commit 7)))
     (source (origin
              (method git-fetch)
              (uri (git-reference
@@ -35,7 +35,7 @@
              (file-name (string-append name "-" version "-checkout"))
              (sha256
               (base32
-               "1x2axq36szcz1gc77vcf3ypm0g1r3jwj03vq6rr94h098rcdv4s9"))))
+               "174id98ga82bhz2v7sy9yj6pqy0h0088p3mkdikip69p9rh3d17b"))))
     (build-system gnu-build-system)
     (arguments
 
@@ -101,7 +101,7 @@
 
 
 (define-public gemma-gn2 ; guix candidate - generic openblas version
-  (let ((commit "e302123d531331507b96f89715846a0b6cab3ec4"))
+  (let ((commit "97547ee82e0bd1cc2210612415b0ceb135dbba6d"))
   (package
     (name "gemma-gn2")
     (version (string-append "0.98.2-" (string-take commit 7)))
@@ -113,7 +113,8 @@
              (file-name (string-append name "-" version "-checkout"))
              (sha256
               (base32
-               "0ij423cm302xbd4hp8qb7lxmjdxp333js3q2rv5ymyvwvd1pm5nw"))))
+               "0p6pw4gm5fqr4yb9vklgj5abvqazmp1kk9cg3l2n8qsrj1p7j657"))))
+    ; guix environment -C guix --ad-hoc gcc-toolchain gdb gsl openblas zlib bash ld-wrapper perl vim which
     (inputs `(
               ("gsl" ,gsl)
               ("shunit2" ,shunit2)
