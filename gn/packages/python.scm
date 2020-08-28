@@ -27,7 +27,9 @@
   #:use-module (gnu packages perl)
   #:use-module (gnu packages pkg-config)
   #:use-module (gnu packages python)
+  #:use-module (gnu packages python-compression)
   #:use-module (gnu packages python-crypto)
+  #:use-module (gnu packages python-science)
   #:use-module (gnu packages python-web)
   #:use-module (gnu packages python-xyz)
   #:use-module (gnu packages rdf)
@@ -1611,3 +1613,37 @@ sorted order.")
      `(("python-argcomplete" ,python-argcomplete)
        ("python-requests" ,python-requests)
        ,@(package-native-inputs python-pytest)))))
+
+(define-public python-pandas-plink
+  (package
+    (name "python-pandas-plink")
+    (version "2.0.5")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (string-append
+              "https://files.pythonhosted.org/packages/6f/de/48ccae952383ff3c9d227e06d6968bbf9923d509e40490f734baf2efb8b5/pandas_plink-" version ".tar.gz"))
+        (sha256
+         (base32
+          "08wgrlv38nvsjcaw806fwy6bfl0h9swvr5x8nqx5xcsn8r04lsjq"))))
+    (build-system python-build-system)
+    (arguments
+     '(#:tests? #f))
+    (propagated-inputs
+     `(("python-cffi" ,python-cffi)
+       ("python-dask" ,python-dask)
+       ("python-deprecated" ,python-deprecated)
+       ("python-numpy" ,python-numpy)
+       ("python-pandas" ,python-pandas)
+       ("python-pytest" ,python-pytest)
+       ("python-pytest-runner" ,python-pytest-runner)
+       ("python-tqdm" ,python-tqdm)
+       ("python-xarray" ,python-xarray)
+       ("python-zstandard" ,python-zstandard)))
+    (home-page
+     "https://github.com/limix/pandas-plink")
+    (synopsis
+     "Read PLINK files into Pandas data frames")
+    (description
+     "Read PLINK files into Pandas data frames")
+    (license license:expat)))
