@@ -10,21 +10,6 @@
 
 ;; Please keep these packages sorted alphabetically
 
-(define-public rust-bytemuck-1.3
-  (package
-    (inherit rust-bytemuck-1)
-    (name "rust-bytemuck")
-    (version "1.3.1")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (crate-uri "bytemuck" version))
-        (file-name
-         (string-append name "-" version ".tar.gz"))
-        (sha256
-         (base32
-          "1scaac5xbfynzbpvz9yjbmg9ag2jalxfijapwlqh7xldf4li0ynv"))))))
-
 (define-public rust-handlegraph-0.3
   (package
     (name "rust-handlegraph")
@@ -67,7 +52,7 @@
     (arguments
      `(#:cargo-inputs
        (("rust-bstr" ,rust-bstr-0.2)
-        ("rust-bytemuck" ,rust-bytemuck-1.3)
+        ("rust-bytemuck" ,rust-bytemuck-1)
         ("rust-lazy-static" ,rust-lazy-static-1)
         ("rust-nom" ,rust-nom-5)
         ("rust-regex" ,rust-regex-1)
