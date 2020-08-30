@@ -8,7 +8,6 @@
   #:use-module (guix git-download)
   #:use-module (guix hg-download)
   #:use-module (guix build-system ant)
-  #:use-module (guix build-system cargo)
   #:use-module (guix build-system cmake)
   #:use-module (guix build-system gnu)
   #:use-module (guix build-system python)
@@ -27,7 +26,6 @@
   #:use-module (gnu packages cmake)
   #:use-module (gnu packages compression)
   #:use-module (gnu packages cran)
-  #:use-module (gnu packages crates-io)
   #:use-module (gnu packages databases)
   #:use-module (gnu packages datastructures)
   #:use-module (gnu packages elf)
@@ -1327,31 +1325,6 @@ available to other researchers.")
                  (delete-file "scanpy/tests/test_neighbors_key_added.py")
                  (delete-file "scanpy/tests/test_pca.py")
                  #t)))))))))
-
-(define-public rust-gfa
-  (package
-    (name "rust-gfa")
-    (version "0.2.2")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (crate-uri "gfa" version))
-        (file-name
-         (string-append name "-" version ".tar.gz"))
-        (sha256
-         (base32
-          "1w9rybwyfx6gnp1nr8yc18sif3ynankx2r5qnbjfy8bxw1mcslg0"))))
-    (build-system cargo-build-system)
-    (arguments
-     `(#:cargo-inputs
-       (("rust-lazy-static" ,rust-lazy-static-1)
-        ("rust-nom" ,rust-nom-5))))
-    (home-page "https://github.com/chfi/rs-gfa")
-    (synopsis "Library for working with graphs in the GFA format")
-    (description
-     "This package provides a Rust library for working with graphs in the
-@dfn{Graphical Fragment Assembly} (GFA) format.")
-    (license license:expat)))
 
 (define-public vg
   (package
