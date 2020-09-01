@@ -1356,6 +1356,8 @@ available to other researchers.")
             (delete-file-recursively "deps/vcflib")
             (delete-file-recursively "deps/vowpal_wabbit")
             (delete-file-recursively "deps/sublinear-Li-Stephens/deps")
+            (delete-file-recursively "deps/gbwt/deps")
+            (delete-file-recursively "deps/gbwtgraph/deps")
             #t))))
     (build-system gnu-build-system)
     (arguments
