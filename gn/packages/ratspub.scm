@@ -7,19 +7,20 @@
   #:use-module (guix build-system python)
   #:use-module (gnu packages admin)
   #:use-module (gnu packages bioinformatics)
-  #:use-module (gn packages javascript)
-  #:use-module (gn packages machine-learning)
+  #:use-module (gnu packages javascript)
   #:use-module (gnu packages machine-learning)
   #:use-module (gnu packages python)
   #:use-module (gnu packages python-crypto)
   #:use-module (gnu packages python-web)
   #:use-module (gnu packages python-xyz)
+  #:use-module (gn packages javascript)
+  #:use-module (gn packages machine-learning)
   #:use-module (gn packages web))
 
 (define-public ratspub
   (package
     (name "ratspub")
-    (version "0.4.0")
+    (version "0.4.1")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -28,13 +29,14 @@
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "0hasm6xncqkan9s4sw89s1x9gcybw59fzvpmr7fk1camvij7mywh"))
-              (modules '((guix build utils)))
-              (snippet
-               '(begin (substitute* "server.py"
-                         ;; Keep the service running on port 4200
-                         (("4201") "4200"))
-                       #t))))
+                "1daf0qd0lyvfp9ab1qvhj37xvrrzkwvsfnickls5i9lbpgisizm4"))
+              ;(modules '((guix build utils)))
+              ;(snippet
+              ; '(begin (substitute* "server.py"
+              ;           ;; Keep the service running on port 4200
+              ;           (("4200") "4201"))
+              ;         #t))
+              ))
     (build-system python-build-system)
     (arguments
      `(#:tests? #f  ; no test suite
@@ -50,8 +52,9 @@
                               "templates/tableview.html"
                               "templates/tableview0.html"
                               "templates/userarchive.html")
-                 (("script src=.*")
-                  "script src=\"/static/cytoscape.min.js\"></script>\n"))
+                 ;(("https.*FileSaver.js.*>") "/static/FileSaver.js\">")            ; We have 1.3.8, origin is 1.3.2.
+                 ;(("https.*cytoscape-svg.js.*>") "/static/cytoscape-svg.js\">")    ; TODO
+                 (("https.*cytoscape.min.js.*>") "/static/cytoscape.min.js\">"))
                (substitute* "templates/layout.html"
                  (("https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css.*")
                   "/static/bootstrap.min.css\">\n")
@@ -79,6 +82,7 @@
                    (bootstrap (assoc-ref inputs "bootstrap"))
                    (cytoscape (assoc-ref inputs "cytoscape"))
                    (jquery    (assoc-ref inputs "jquery"))
+                   (js-filesaver (assoc-ref inputs "js-filesaver"))
                    ;(js-popper (assoc-ref inputs "js-popper"))
                    )
                (symlink (string-append awesome
@@ -96,6 +100,9 @@
                (symlink (string-append jquery
                                        "/share/web/jquery/jquery.slim.min.js")
                         (string-append out "/static/jquery.slim.min.js"))
+               (symlink (string-append js-filesaver
+                                       "/share/javascript/FileSaver.js")
+                        (string-append out "/static/FileSaver.js"))
                ;(symlink (string-append js-popper
                ;                        "/share/web/popper/popper.min.js")
                ;         (string-append out "/static/popper.min.js"))
@@ -125,6 +132,7 @@
        ("cytoscape" ,javascript-cytoscape)
        ("font-awesome" ,web-font-awesome)
        ("jquery" ,web-jquery)
+       ("js-filesaver" ,js-filesaver)
        ;("js-popper" ,js-popper)    ; empty output
        ))
     (home-page "http://rats.pub/")
