@@ -393,85 +393,53 @@ clusters (computers connected via network).")
     (description "")
     (license license:bsd-3)))
 
+;; 1.2.3 exactly. There was an API change between 1.2.3 and 1.2.5.
+;; https://stackoverflow.com/questions/21740359/python-mysqldb-typeerror-not-all-arguments-converted-during-string-formatting/53563287#53563287
 (define-public python24-mysqlclient
   (package
     (name "python24-mysqlclient")
-    (version "1.2.5")
+    (version "1.2.3")
     (source
       (origin
         (method url-fetch)
-        (uri (pypi-uri "MySQL-python" version ".zip"))
+        (uri (pypi-uri "MySQL-python" version))
         (sha256
          (base32
-          "0x0c2jg0bb3pp84njaqiic050qkyd7ymwhfvhipnimg58yv40441"))
-        ;(patches
-        ;  (list
-        ;    (origin
-        ;      (method url-fetch)
-        ;      (uri "https://sources.debian.org/data/main/p/python-mysqldb/1.2.3-2.1/debian/patches/03_converters_set2str.patch")
-        ;      (file-name "mysqlclient-converters_set2str.patch")
-        ;      (sha256
-        ;       (base32
-        ;        "0xkbfscy6kqc84lij1ml7d8vxf5xqi99vx5ha75cg8yyx6cvv34i")))
-        ;    (origin
-        ;      (method url-fetch)
-        ;      (uri "https://github.com/PyMySQL/mysqlclient-python/commit/d663649f851794dffa84010db6290e693d4baab8.patch")
-        ;      (file-name "mysqlclient-mariadb-10.2-compat.patch")
-        ;      (sha256
-        ;       (base32
-        ;        "0pz2r8l7299yhl58w0zp0kplg1h9zi3qv9ynpcidxm8mf8884284")))
-        ;    ))
-        ))
+          "0vkyg9dmj29hzk7fy77f42p7bfj28skyzsjsjry4wqr3z6xnzrkx"))))
     (build-system python-build-system)
     (arguments
      `(#:python ,python-2.4
        #:phases
        (modify-phases %standard-phases
-         ;(add-after 'unpack 'work-with-newer-mysql
-         ;  (lambda _
-         ;    (substitute* '("_mysql.c"
-         ;                   "MySQLdb/connections.py")
-         ;      (("unix_socket") "socket"))
-             ;; ProgrammingError: (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '%s' at line 1")
-             ;(substitute* "MySQLdb/cursors.py"
-             ;  (("query % tuple.*")
-             ;   "query = query.encode(db.unicode_literal.charset)\n"))
-         ;    #t))
          (add-before 'check 'pre-check
-           (lambda _
-             ;; All of these tests require a running mysql server.
-             ;; When they are all deleted there are no tests.
-             (delete-file "tests/test_MySQLdb_dbapi20.py") ; 35 tests, 54 errors
-             (delete-file "tests/test_MySQLdb_capabilities.py") ; 20 tests, 20 errors
-             (delete-file "tests/test_MySQLdb_nonstandard.py") ; 14 tests, 6 errors
-             (mkdir-p "/tmp/mysqld")
-             (call-with-output-file "/tmp/my.cnf"
-               (lambda (p)
-                 (format p
-                         "[mysqld]~@
-                         datadir = /tmp/mysqld~@
-                         port = 3306~@
-                         user = nixbld~@
-                         #character-set-server = utf8mb4~@
-                         socket = /tmp/mysqld/mysql.sock~%")))
-             (setenv "TESTDB" "/tmp/my.cnf")
-             ;(system "mysqld --defaults-file=/tmp/my.cnf --initialize &") ; mariadb
-             ;(system (string-append (assoc-ref %build-inputs "mysql") "/libexec/mysqld --defaults-file=/tmp/my.cnf &")) ; mysql-5.0
-             (system "mysqld --defaults-file=/tmp/my.cnf &") ; mysql-5.5
-             (sleep 5)
-             (system "mysqladmin -S /tmp/mysqld/mysql.sock variables")
-             ;(invoke "mysqladmin" "-S" "/tmp/mysqld/mysql.sock" "variables")
-             (system "mysql -S /tmp/mysqld/mysql.sock -e 'create database mysqldb_test charset utf8;'")
-             ;(invoke "mysql" "-S" "/tmp/mysqld/mysql.sock"
-             ;        "-e" "'create database mysqldb_test charset utf8;'")
-             #t))
-         )
-       #:tests? #t))    ; TODO: Run the test suite
+           (lambda* (#:key inputs tests? #:allow-other-keys)
+             (if tests?
+               (begin
+                 (mkdir-p "/tmp/mysqld")
+                 (call-with-output-file "/tmp/my.cnf"
+                   (lambda (p)
+                     (format p
+                             "[mysqld]~@
+                             datadir = /tmp/mysqld~@
+                             port = 3306~@
+                             user = nixbld~@
+                             #character-set-server = utf8mb4~@
+                             socket = /tmp/mysqld/mysql.sock~%")))
+                 (setenv "TESTDB" "/tmp/my.cnf")
+                 ;; mysql-5.0 puts mysqld in libexec
+                 (setenv "PATH" (string-append (getenv "PATH") ":"
+                                               (assoc-ref inputs "mysql") "/libexec"))
+                 (system "mysqld --defaults-file=/tmp/my.cnf &")
+                 (sleep 5)
+                 (invoke "mysqladmin" "-S" "/tmp/mysqld/mysql.sock" "variables")
+                 (invoke "mysql" "-S" "/tmp/mysqld/mysql.sock"
+                         "-e" "'create database mysqldb_test charset utf8;'"))
+               #t))))
+       #:tests? #f))    ; TODO: Run the test suite
     (native-inputs
-     `(("mysql" ,mysql-5.5)
+     `(("mysql" ,mysql-5.0) ; Best supported version according to the README.
        ("python-nose" ,python24-nose)
-       ("python-setuptools" ,python24-setuptools)
-       ("unzip" ,unzip)))
+       ("python-setuptools" ,python24-setuptools)))
     (inputs
      `(("openssl" ,openssl-1.0)
        ("zlib" ,zlib)))

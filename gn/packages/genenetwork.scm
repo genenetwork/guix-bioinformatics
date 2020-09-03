@@ -774,7 +774,7 @@ written in C")
                    ;; Where GN1 is located:
                    (("/gnshare/gn") out)
                    ;; Where the database is located:
-                   (("tux01.uthsc.edu") "localhost"))
+                   (("tux01") "localhost"))
                    ;(("tux01.uthsc.edu") "lily.uthsc.edu"))
                  ;; This directory is expected to be writable
                  (symlink "/tmp" "web/tmp")
