@@ -1391,20 +1391,20 @@ experience.")
     (arguments `())
     (build-system minify-build-system)))
 
-(define-public javascript-md5
+(define-public js-md5
   (package
-    (name "javascript-md5")
-    (version "0.7.3") ; Dec. 18, 2017
+    (name "js-md5")
+    (version "2.10.0") ; Dec. 28, 2017
     (source
      (origin
        (method git-fetch)
        (uri (git-reference
-              (url "https://github.com/emn178/js-md5")
-              (commit (string-append "v" version))))
+             (url "https://github.com/blueimp/JavaScript-MD5")
+             (commit (string-append "v" version))))
        (file-name (git-file-name name version))
        (sha256
         (base32
-         "01pz0lz8wkikarj1gn8h40hljipxlk3wmc4algbidwp5rs8qv4gf"))))
+         "017y9gkhzdj7qa5fw8r4kkp9kf5s9cnz4y17dskkrwd2dnwwxg3z"))))
     (build-system trivial-build-system)
     (arguments
      `(#:modules ((guix build utils))
@@ -1412,23 +1412,15 @@ experience.")
        (begin
          (use-modules (guix build utils))
          (let* ((out (assoc-ref %outputs "out"))
-                (targetdir (string-append out "/share/genenetwork2/javascript/md5"))
+                (targetdir (string-append out "/share/javascript/"))
                 (source (assoc-ref %build-inputs "source")))
-           (install-file (string-append source "/src/md5.js") targetdir)
-           (install-file (string-append source "/build/md5.min.js") targetdir)))))
+           (install-file (string-append source "/js/md5.min.js") targetdir)))))
     (native-inputs `(("source" ,source)))
-    (home-page "https://github.com/emn178/js-md5")
-    (synopsis "MD5 hash function for JavaScript supports UTF-8 encoding")
+    (home-page "https://github.com/blueimp/JavaScript-MD5")
+    (synopsis "JavaScript MD5 implementation")
     (description
-     "js-md5 is a simple MD5 hash function for JavaScript supports UTF-8 encoding.")
+     "JavaScript MD5 implementation. Compatible with server-side environments like Node.js, module loaders like RequireJS, Browserify or webpack and all web browsers.")
     (license license:expat)))
-
-(define-public js-md5
-  (package
-    (inherit javascript-md5)
-    (name "js-md5")
-    (arguments `(#:javascript-files '("src/md5.js")))
-    (build-system minify-build-system)))
 
 (define d3-tip-js
   (let ((version "0.9.1"))
