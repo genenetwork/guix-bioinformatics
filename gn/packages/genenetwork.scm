@@ -84,30 +84,40 @@ location of a putative QTL.")
     (license license:gpl2+))))
 
 (define-public python24-qtlreaper
-  (let ((commit "dd9c7fb2a9d5fa40b4054e1bcb7c57905d98d5f8"))
-  (package
-    (name "python24-qtlreaper")
-    (version (string-append "1.1-gn2-" (string-take commit 7) ))
-    (source (origin
-             (method git-fetch)
-             (uri (git-reference
-                   ;; (url "https://github.com/genenetwork/genenetwork2.git")
-                   (url "https://github.com/pjotrp/QTLreaper.git")
-                   (commit commit)))
-             (file-name (string-append name "-" (string-take commit 7)))
-             (sha256
-              (base32
-               "1ldcvyk8y8w6f4ci04hzx85sknd5a3h424p5bfi4fz32sm2p7fja"))))
-    (build-system python-build-system)
-    (arguments
-     `(#:python ,python-2.4
-       #:tests? #f))   ; no 'setup.py test' really!
-    (native-inputs
-     `(("python24-setuptools" ,python24-setuptools)))
-    (home-page "http://qtlreaper.sourceforge.net/")
-    (synopsis "Scan expression data for QTLs")
-    (description
-     "Batch-oriented version of WebQTL. It requires, as input,
+  (let ((commit "442c217b90393380a8634ff8636b44992f5c53dd"))
+    (package
+      (name "python24-qtlreaper")
+      (version (git-version "1.11" "gn1" commit))
+      (source (origin
+                (method git-fetch)
+                (uri (git-reference
+                       ;; (url "https://github.com/genenetwork/genenetwork2.git")
+                       (url "https://github.com/pjotrp/QTLreaper.git")
+                       (commit commit)))
+                (file-name (git-file-name name version))
+                (sha256
+                 (base32
+                  "1rrbm1ap2zzyjxmrs9aa1d18sgiba5dhj1fmkl7wmab06jv3j1hm"))))
+      (build-system python-build-system)
+      (arguments
+       `(#:python ,python-2.4
+         #:phases
+         (modify-phases %standard-phases
+           (add-after 'unpack 'make-max-markername-size-larger
+             (lambda _
+               (substitute* "Src/dataset.c"
+                 (("512") "2048"))
+               #t))
+           (replace 'check
+             (lambda* (#:key inputs outputs #:allow-other-keys)
+               (add-installed-pythonpath inputs outputs)
+               (invoke "python" "test/runtest.py"))))))
+      (native-inputs
+       `(("python24-setuptools" ,python24-setuptools)))
+      (home-page "http://qtlreaper.sourceforge.net/")
+      (synopsis "Scan expression data for QTLs")
+      (description
+       "Batch-oriented version of WebQTL. It requires, as input,
 expression data from members of a set of recombinant inbred lines and
 genotype information for the same lines.  It searches for an
 association between each expression trait and all genotypes and
@@ -116,7 +126,7 @@ test, it performs only as many permutations as are necessary to define
 the empirical P-value to a reasonable precision. It also performs
 bootstrap resampling to estimate the confidence region for the
 location of a putative QTL.")
-    (license license:gpl2+))))
+      (license license:gpl2+))))
 
 ;; Reintroduced python2-gunicorn because we are running GN with python2
 ;; right now. Please keep it until we migrate to Python3 fully!
