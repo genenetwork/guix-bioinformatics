@@ -786,8 +786,13 @@ written in C")
                    ;; Where the database is located:
                    (("tux01") "localhost"))
                    ;(("tux01.uthsc.edu") "lily.uthsc.edu"))
-                 ;; This directory is expected to be writable
+                 ;; This directory is expected to be writable.
+                 ;; /tmp is private inside the container.
                  (symlink "/tmp" "web/tmp")
+                 ;; We mount the genotypes folder in the OS-config and
+                 ;; provide the symlink to that point in the package.
+                 ;; And now the directory is magically available!
+                 (symlink "/gnshare/gn/web/genotypes" "web/genotypes")
                  #t)))
            (add-after 'unpack 'use-local-links
              (lambda _

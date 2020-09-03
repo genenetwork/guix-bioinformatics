@@ -136,5 +136,5 @@ NameVirtualHost *:8042
   PythonHandler mod_python.testhandler
 </Location>")))))))))
 
-;; guix system container -L /path/to/guix-past/modules/ -L /path/to/guix-bioinformatics/ /path/to/guix-bioinformatics/gn/services/genenetwork.scm --network
+;; guix system container -L /path/to/guix-past/modules/ -L /path/to/guix-bioinformatics/ /path/to/guix-bioinformatics/gn/services/genenetwork.scm --network --expose=/gnshare/gn/web/genotypes
 ;; xdg-open http://localhost:8042
