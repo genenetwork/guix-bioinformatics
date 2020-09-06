@@ -298,7 +298,7 @@ balancing and can configure itself automatically and dynamically.")
           "0nn0vcm3pmsrb0hhjwkqy80kgyab7mgny0f8ch7fcsxy2cljcrbr"))))
     (build-system python-build-system)
     (propagated-inputs
-     `(("python-docker-py" ,python-docker-py)
+     `(("python-docker" ,python-docker)
        ("python-escapism" ,python-escapism)
        ("python-jinja2" ,python-jinja2)
        ("python-json-logger" ,python-json-logger)
