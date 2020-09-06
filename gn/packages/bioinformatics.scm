@@ -1329,7 +1329,7 @@ available to other researchers.")
 (define-public vg
   (package
     (name "vg")
-    (version "1.26.0")
+    (version "1.26.1")
     (source
       (origin
         (method url-fetch)
@@ -1337,7 +1337,7 @@ available to other researchers.")
                             version "/vg-v" version ".tar.gz"))
         (sha256
          (base32
-          "1f1c30bhqh2561i9dvbfzdhl9w956yxc1gddvasj1v9jwap6i4y1"))
+          "1a14kv8ph98n4x9mxbnk0yfamzhm1r8l3b5nnip7csr92nq7wqc5"))
         (patches (search-patches "vg-use-packaged-deps.patch"))
         (modules '((guix build utils)))
         (snippet
