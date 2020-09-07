@@ -52,7 +52,7 @@
                               "templates/tableview.html"
                               "templates/tableview0.html"
                               "templates/userarchive.html")
-                 ;(("https.*FileSaver.js.*>") "/static/FileSaver.js\">")            ; We have 1.3.8, origin is 1.3.2.
+                 ;(("https.*FileSaver.js.*>") "/static/FileSaver.js\">")    ; Something about our copy is different
                  ;(("https.*cytoscape-svg.js.*>") "/static/cytoscape-svg.js\">")    ; TODO
                  (("https.*cytoscape.min.js.*>") "/static/cytoscape.min.js\">"))
                (substitute* "templates/layout.html"
@@ -132,7 +132,7 @@
        ("cytoscape" ,javascript-cytoscape)
        ("font-awesome" ,web-font-awesome)
        ("jquery" ,web-jquery)
-       ("js-filesaver" ,js-filesaver)
+       ("js-filesaver" ,js-filesaver-1.3.2)
        ;("js-popper" ,js-popper)    ; empty output
        ))
     (home-page "http://rats.pub/")

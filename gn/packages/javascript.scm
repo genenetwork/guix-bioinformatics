@@ -1,6 +1,7 @@
 (define-module (gn packages javascript)
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (gnu packages compression)
+  #:use-module (gnu packages javascript)
   #:use-module (gn packages web)
   #:use-module (guix packages)
   #:use-module (guix utils)
@@ -800,6 +801,31 @@ not natively support it.")
     (description "FileSaver.js is the solution to saving files on the
 client-side, and is perfect for web apps that generates files on the client.")
     (license license:expat)))
+
+(define-public js-filesaver-1.3.2
+  (package
+    (inherit js-filesaver)
+    (name "js-filesaver")
+    (version "1.3.2")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                     (url "https://github.com/eligrey/FileSaver.js")
+                     (commit version)))
+              (file-name (git-file-name name version))
+              (sha256
+               (base32
+                "02f34yr56i5fyppna52bhn6i9wj0zhvj4vp9vkg9v74yls1hdczz"))))
+    (arguments
+     `(#:javascript-files '("FileSaver.js")
+       #:phases
+       (modify-phases %standard-phases
+         (add-after 'install 'install-unminified-version
+           (lambda* (#:key outputs #:allow-other-keys)
+             (install-file "FileSaver.js"
+                           (string-append (assoc-ref outputs "out")
+                                          "/share/javascript"))
+             #t)))))))
 
 (define-public javascript-underscore
   (package
