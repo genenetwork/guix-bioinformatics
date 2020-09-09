@@ -270,6 +270,37 @@ positioned on or around Cytoscape elements.  It is useful for tooltips and
 overlays, for example.")
     (license license:expat)))
 
+(define-public js-cytoscape-svg-vendor-0.3.1
+  (package
+    (name "js-cytoscape-svg-vendor")
+    (version "0.3.1")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (string-append "https://unpkg.com/cytoscape-svg@" version
+                            "/cytoscape-svg.js"))
+        (sha256
+         (base32
+          "0ic0m91a4a4517c6f8nwf649yyq6xma57rxp8cyk4261qhk70494"))))
+    (build-system trivial-build-system)
+    (arguments
+     `(#:modules ((guix build utils))
+       #:builder
+       (begin
+         (use-modules (guix build utils))
+         (let* ((out  (assoc-ref %outputs "out"))
+                (dest (string-append out "//share/javascript")))
+           (mkdir-p dest)
+           (copy-file (assoc-ref %build-inputs "source")
+                      (string-append dest "/cytoscape-svg.js"))
+           #t))))
+    (home-page "https://kinimesi.github.io/cytoscape-svg")
+    (synopsis "Cytoscape.js extension to export the current graph view as an SVG")
+    (description
+     "A Cytoscape.js extension to export the current graph view as an SVG.")
+    (license license:gpl3)
+    (properties `((hidden? . #t)))))
+
 (define-public javascript-qtip2
   (package
     (name "javascript-qtip2")
@@ -1587,6 +1618,30 @@ widgets, and themes built on top of the jQuery JavaScript Library.")
     (build-system minify-build-system)
     (arguments
      `(#:javascript-files '("src/popper.js")))
+    (home-page "https://popper.js.org/")
+    (synopsis "Tooltip and popover positioning engine")
+    (description
+     "Given an element, such as a button, and a tooltip element describing it,
+Popper will automatically put the tooltip in the right place near the button.")
+    (license license:expat)))
+
+(define-public js-popper-1.12.9
+  (package
+    (name "js-popper")
+    (version "1.12.9")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+              (url "https://github.com/popperjs/popper-core")
+              (commit (string-append "v" version))))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32
+         "0j7gfb7agvvzxv09vq8yr5h04pls5a8md2qw62qyn20112p0hdzs"))))
+    (build-system minify-build-system)
+    (arguments
+     `(#:javascript-files '("dist/umd/popper.js")))
     (home-page "https://popper.js.org/")
     (synopsis "Tooltip and popover positioning engine")
     (description

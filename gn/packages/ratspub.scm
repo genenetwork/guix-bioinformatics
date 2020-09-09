@@ -20,23 +20,22 @@
 (define-public ratspub
   (package
     (name "ratspub")
-    (version "0.4.1")
+    (version "0.4.2")
     (source (origin
               (method git-fetch)
               (uri (git-reference
                      (url "https://github.com/chen42/ratspub")
                      (commit (string-append "v" version))))
               (file-name (git-file-name name version))
+              ;; Keep the service running on port 4200.
+              (modules '((guix build utils)))
+              (snippet
+               '(begin (substitute* "server.py"
+                         (("4201") "4200"))
+                       #t))
               (sha256
                (base32
-                "1daf0qd0lyvfp9ab1qvhj37xvrrzkwvsfnickls5i9lbpgisizm4"))
-              ;(modules '((guix build utils)))
-              ;(snippet
-              ; '(begin (substitute* "server.py"
-              ;           ;; Keep the service running on port 4200
-              ;           (("4200") "4201"))
-              ;         #t))
-              ))
+                "1b3ddr4wzs7cz826dfl618rqrnfbvihd4fwhjlsj7n92r6n4bpjl"))))
     (build-system python-build-system)
     (arguments
      `(#:tests? #f  ; no test suite
@@ -44,6 +43,11 @@
        (modify-phases %standard-phases
          (delete 'configure)
          (delete 'build)
+         (add-after 'unpack 'patch-datadir
+           (lambda _
+             (substitute* "server.py"
+               (("^datadir.*") "datadir = \"/export/ratspub/\"\n"))
+             #t))
          (add-after 'unpack 'patch-sources
            (lambda* (#:key inputs outputs #:allow-other-keys)
              (let ((out       (assoc-ref outputs "out"))
@@ -52,21 +56,15 @@
                               "templates/tableview.html"
                               "templates/tableview0.html"
                               "templates/userarchive.html")
-                 ;(("https.*FileSaver.js.*>") "/static/FileSaver.js\">")    ; Something about our copy is different
-                 ;(("https.*cytoscape-svg.js.*>") "/static/cytoscape-svg.js\">")    ; TODO
-                 (("https.*cytoscape.min.js.*>") "/static/cytoscape.min.js\">"))
+                 (("https.*FileSaver.js.*\\\">") "/static/FileSaver.js\">")
+                 (("https.*cytoscape-svg.js.*\\\">") "/static/cytoscape-svg.js\">")
+                 (("https.*cytoscape.min.js.*\\\">") "/static/cytoscape.min.js\">"))
                (substitute* "templates/layout.html"
-                 (("https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css.*")
-                  "/static/bootstrap.min.css\">\n")
-                 (("https://.*.bootstrapcdn.com/bootstrap/4.*/js/bootstrap.min.js.*")
-                  "/static/bootstrap.min.js\"></script>\n")
-                 (("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css")
-                  "/static/font-awesome.min.css")
-                 (("https://code.jquery.com/jquery-3.2.1.slim.min.js.*")
-                  "/static/jquery.slim.min.js\"></script>\n")
-                 ;(("https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js.*")
-                 ; "/static/popper.min.js\"></script>\n")
-                 )
+                 (("https.*bootstrap.min.css.*\\\">") "/static/bootstrap.min.css\">")
+                 (("https.*4.*bootstrap.min.js.*\\\">") "/static/bootstrap.min.js\">")
+                 (("https.*4.7.0/css/font-awesome.min.css") "/static/font-awesome.min.css")
+                 (("https.*jquery-3.2.1.slim.min.js.*\\\">") "/static/jquery.slim.min.js\">")
+                 (("https.*1.12.9/umd/popper.min.js.*\\\">") "/static/popper.min.js\">"))
                (substitute* "ratspub.py"
                  (("hostname") (string-append inetutils "/bin/hostname"))))
              #t))
@@ -81,10 +79,10 @@
                    (awesome   (assoc-ref inputs "font-awesome"))
                    (bootstrap (assoc-ref inputs "bootstrap"))
                    (cytoscape (assoc-ref inputs "cytoscape"))
+                   (cytoscape-svg (assoc-ref inputs "cytoscape-svg"))
                    (jquery    (assoc-ref inputs "jquery"))
                    (js-filesaver (assoc-ref inputs "js-filesaver"))
-                   ;(js-popper (assoc-ref inputs "js-popper"))
-                   )
+                   (js-popper (assoc-ref inputs "js-popper")))
                (symlink (string-append awesome
                                        "/share/web/font-awesomecss/font-awesome.min.css")
                         (string-append out "/static/font-awesome.min.css"))
@@ -97,16 +95,18 @@
                (symlink (string-append cytoscape
                                        "/share/genenetwork2/javascript/cytoscape/cytoscape.min.js")
                         (string-append out "/static/cytoscape.min.js"))
+               (symlink (string-append cytoscape-svg
+                                       "/share/javascript/cytoscape-svg.js")
+                        (string-append out "/static/cytoscape-svg.js"))
                (symlink (string-append jquery
                                        "/share/web/jquery/jquery.slim.min.js")
                         (string-append out "/static/jquery.slim.min.js"))
                (symlink (string-append js-filesaver
                                        "/share/javascript/FileSaver.js")
                         (string-append out "/static/FileSaver.js"))
-               ;(symlink (string-append js-popper
-               ;                        "/share/web/popper/popper.min.js")
-               ;         (string-append out "/static/popper.min.js"))
-               )
+               (symlink (string-append js-popper
+                                       "/share/javascript/popper.min.js")
+                        (string-append out "/static/popper.min.js")))
              #t))
          (add-after 'install 'wrap-executable
            (lambda* (#:key inputs outputs #:allow-other-keys)
@@ -130,11 +130,12 @@
     (native-inputs
      `(("bootstrap" ,web-bootstrap)
        ("cytoscape" ,javascript-cytoscape)
+       ;("cytoscape-svg" ,js-cytoscape-svg-0.3.1)   ; TODO
+       ("cytoscape-svg" ,js-cytoscape-svg-vendor-0.3.1)
        ("font-awesome" ,web-font-awesome)
        ("jquery" ,web-jquery)
        ("js-filesaver" ,js-filesaver-1.3.2)
-       ;("js-popper" ,js-popper)    ; empty output
-       ))
+       ("js-popper" ,js-popper-1.12.9)))
     (home-page "http://rats.pub/")
     (synopsis "Relationship with Addiction Through Searches of PubMed")
     (description
