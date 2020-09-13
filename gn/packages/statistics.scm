@@ -8,6 +8,7 @@
   #:use-module (guix build-system r)
   #:use-module (gnu packages)
   #:use-module (gnu packages bioinformatics)
+  #:use-module (gnu packages cran)
   #:use-module (gnu packages gcc)
   #:use-module (gnu packages python)
   #:use-module (gnu packages python-science)
