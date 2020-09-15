@@ -24,15 +24,25 @@
     (sha256
      (base32 "0i01c5qzn1p8dxyrpx4hry2n6x6b8rgcq1sck091n0jp036f6x4s"))))
 
-;; The correct way would be to use python-nltk to download the data
-;; python3 -m nltk.downloader -d /var/cache/ratspub punkt
 (define ratspub-activation
-  (lambda _
-    #~(begin
-        (let ((nltk_data "/var/cache/ratspub/tokenizers"))
-          (mkdir-p nltk_data)
-          (chdir nltk_data)
-          (invoke #$(file-append unzip "/bin/unzip") "-q" #$%punkt.zip)))))
+  (match-lambda
+    (($ <ratspub-configuration> package)
+     #~(begin
+         (let ((nltk_data "/var/cache/nltk_data/tokenizers")
+               (data_dir "/export/ratspub"))
+           (unless (file-exists? "/export2/PubMed")
+             (mkdir-p "/export2/PubMed"))
+           (unless (file-exists? nltk_data)
+             (begin
+               ;; The correct way would be to use python-nltk to download the data
+               ;; python3 -m nltk.downloader -d /var/cache/nltk_data punkt
+               (mkdir-p nltk_data)
+               (chdir nltk_data)
+               (invoke #$(file-append unzip "/bin/unzip") "-q" #$%punkt.zip)))
+           (unless (file-exists? (string-append data_dir "/userspub.sqlite"))
+             (begin
+               (install-file #$(file-append package "/userspub.sqlite") data_dir)
+               (chmod (string-append data_dir "/userspub.sqlite") #o554))))))))
 
 (define ratspub-shepherd-service
   (match-lambda
@@ -50,9 +60,10 @@
                           ;; Needs to run from the directory it is located in.
                           #:directory #$package
                           #:log-file "/var/log/ratspub.log"
+                          ;; We don't need to set TMPDIR because we're inside a container.
                           #:environment-variables
                           '("EDIRECT_PUBMED_MASTER=/export2/PubMed"
-                            "NLTK_DATA=/var/cache/ratspub"
+                            "NLTK_DATA=/var/cache/nltk_data"
                             "PERL_LWP_SSL_CA_FILE=/etc/ssl/certs/ca-certificates.crt")
                           #:mappings (list (file-system-mapping
                                              (source "/export2/PubMed")
@@ -63,7 +74,7 @@
                                              (target source)
                                              (writable? #t))
                                            (file-system-mapping
-                                             (source "/var/cache/ratspub")
+                                             (source "/var/cache/nltk_data")
                                              (target source))
                                            (file-system-mapping
                                              (source "/etc/ssl/certs")
@@ -77,7 +88,6 @@
       (list
         (service-extension shepherd-root-service-type
                            ratspub-shepherd-service)
-        ;; Setup the NLTK_DATA data.
         (service-extension activation-service-type
                            ratspub-activation)
         ;; Make sure we get all the dependencies of RatsPub.
@@ -95,14 +105,25 @@
   (bootloader (bootloader-configuration
                (bootloader grub-bootloader)
                (target "does-not-matter")))
-  (file-systems %base-file-systems)
+  (file-systems (list (file-system
+                        (device "does-not-matter")
+                        (mount-point "/")
+                        (type "does-not-matter"))))
+  ;; TODO: A more minimal kernel for use in a docker image
+  ;; (kernel linux-libre-vm)
   ;; No firmware for VMs.
   (firmware '())
   (packages (list nss-certs))
 
   (services (list (service ratspub-service-type
                            (ratspub-configuration
-                             ;(package ratspub)
+                             ;; ratspub for docker, ratspub-with-tensorflow-native for architecture specific speed optimizations.
+                             ;(package ratspub))))))
                              (package ratspub-with-tensorflow-native))))))
 
 ;; guix system container -L /path/to/guix-bioinformatics/ -L /path/to/guix-past/modules/ /path/to/guix-bioinformatics/gn/services/ratspub-container.scm --network --share=/export2/PubMed=/export2/PubMed --share=/export/ratspub=/export/ratspub
+;; For docker it isn't necessary to list the shared folders at build time.
+;; guix system docker-image -L /path/to/guix-bioinformatics/ -L /path/to/guix-past/modules/ /path/to/guix-bioinformatics/gn/services/ratspub-container.scm --network
+;; Docker instructions:
+;; docker load --input ratspub-docker-image.tar.gz
+;; docker run -d --privileged --net=host --name ratspub --volume /path/to/PubMed:/export2/PubMed guix
