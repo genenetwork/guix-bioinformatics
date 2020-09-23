@@ -21,6 +21,7 @@
   #:use-module (gnu packages compression)
   #:use-module (gnu packages databases)
   #:use-module (gnu packages ghostscript)
+  #:use-module (gnu packages graphviz)
   #:use-module (gnu packages python)
   #:use-module (gnu packages python-check)
   #:use-module (gnu packages python-crypto)
@@ -35,7 +36,6 @@
   #:use-module (gnu packages web)
   #:use-module (gnu packages wget)
   #:use-module (gnu packages xml)
-  #:use-module (past packages graphviz)
   #:use-module (past packages python)
   #:use-module (gn packages bioinformatics)
   #:use-module (gn packages twint)
@@ -740,7 +740,7 @@ written in C")
       (build-system gnu-build-system)
       (native-inputs
        `(("ghostscript" ,ghostscript)
-         ("graphviz" ,graphviz-2.26)
+         ("graphviz" ,graphviz)
          ("python24" ,python-2.4)
          ("python-piddle" ,python24-piddle)
          ("wget" ,wget)))
@@ -770,8 +770,7 @@ written in C")
                  (substitute* '("web/webqtl/maintainance/addRif.py"
                                 "web/webqtl/networkGraph/networkGraphPage.py"
                                 "web/webqtl/utility/svg.py")
-                   (("/usr/bin/python") (which "python"))
-                   (("/usr/bin/env python") (which "python")))
+                   (("/usr/bin/(env )?python") (which "python")))
                  (substitute* "web/webqtl/base/webqtlConfigLocal.py"
                    (("PythonPath.*")
                     (string-append "PythonPath = '" (which "python") "'\n"))
@@ -782,23 +781,34 @@ written in C")
              (lambda* (#:key outputs #:allow-other-keys)
                (let ((out    (assoc-ref outputs "out")))
                  (substitute* "web/webqtl/base/webqtlConfigLocal.py"
-                   ;; Where GN1 is located:
+                   ;; Where GN1 is located: (GNROOT)
                    (("/gnshare/gn") out)
-                   ;; Where the database is located:
+                   ;; Where the database is located: (sql_host)
                    (("tux01") "localhost"))
-                   ;(("tux01.uthsc.edu") "lily.uthsc.edu"))
-                 ;; This directory is expected to be writable.
+                   (substitute* '("web/webqtl/maintainance/QTL_Reaper_cal_lrs.py")
+                     (("128\\.169\\.5\\.59") "localhost"))
+                 ;; This directory (TMPDIR) is expected to be writable by apache.
                  ;; /tmp is private inside the container.
                  (symlink "/tmp" "web/tmp")
-                 ;; We mount the genotypes folder in the OS-config and
-                 ;; provide the symlink to that point in the package.
+                 ;; IMGDIR is expected to be writable.
+                 (symlink "/tmp" "web/image")
+                 (system "chmod 0777 web/tmp")
+                 ;; More writable locations:
+                 (substitute* (list "web/webqtl/collection/ExportSelectionDetailInfoPage.py"
+                                    "web/webqtl/pairScan/DirectPlotPage.py"
+                                    "web/webqtl/updateTrait/DataUpdatePage.py"
+                                    "web/webqtl/utility/Plot.py")
+                   (("/gnshare/gn/web/debug_file.txt") "/tmp/debug_file.txt"))
+                 ;; We mount the genotypes folder (GENODIR) in the OS-config and
+                 ;; provide the symlink to that location from the package.
                  ;; And now the directory is magically available!
                  (symlink "/gnshare/gn/web/genotypes" "web/genotypes")
+                 (substitute* "web/webqtl/base/webqtlConfig.py"
+                   (("http://www.genenetwork.org") "http://gn1-test.genenetwork.org"))
                  #t)))
            (add-after 'unpack 'use-local-links
              (lambda _
                (substitute* '("web/javascript/menu_items.js"
-                              "web/webqtl/base/webqtlConfig.py"
                               "web/webqtl/maintainance/updateMenuJS.py")
                  (("http://(www|gn1).genenetwork.org") ""))
 
@@ -822,10 +832,6 @@ written in C")
                               "web/whats_new.html"
                               (find-files "web/dbdoc" "\\.html"))
                  (("src=\\\"http://www.genenetwork.org") "src=\""))
-               #t))
-           (add-before 'install 'replace-htaccess-file
-             (lambda _
-               (delete-file "web/webqtl/.htaccess")
                #t))
            (replace 'install
              (lambda* (#:key outputs #:allow-other-keys)

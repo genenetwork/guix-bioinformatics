@@ -88,13 +88,16 @@
                    python24-svg-GN1
                    %base-packages))
 
-  (services (list (service httpd-service-type
+  (services (list (service special-files-service-type
+                           ;; The genotypes folder doesn't have it's shebangs patched.
+                           `(("/usr/bin/python" ,(file-append python-2.4 "/bin/python"))))
+                  (service httpd-service-type
                            (httpd-configuration
                              ;; Must be a httpd-2.2 variant.
                              (package httpd22-with-mod-python)
                              (config
                                (httpd-config-file
-                                 (server-name "www.genenetwork.org")
+                                 (server-name "gn1-test.genenetwork.org")
                                  ;; Defaults to httpd, should be same as 'package' above.
                                  (server-root httpd22-with-mod-python)
                                  (user "nobody")
