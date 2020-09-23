@@ -4,6 +4,7 @@
   #:use-module (guix download)
   #:use-module (guix utils)
   #:use-module (guix build-system gnu)
+  #:use-module (guix build-system python)
   #:use-module (gnu packages compression)
   #:use-module (gnu packages databases)
   #:use-module (gnu packages linux)
@@ -117,3 +118,19 @@
        ("openssl" ,openssl-1.0)
        ("readline" ,readline)
        ("zlib" ,zlib)))))
+
+(define-public python2-mysqlclient
+  (let ((base (package-with-python2 python-mysqlclient)))
+    (package
+      (inherit base)
+      (version "1.4.6")
+      (source
+        (origin
+          (method url-fetch)
+          (uri (pypi-uri "mysqlclient" version))
+          (sha256
+           (base32
+            "05ifrfz7rrl7j4gq4xz5acd76lrnmry9vrvg98hknakm72damzgk"))))
+      (inputs
+       `(("zlib" ,zlib)
+         ,@(package-inputs base))))))

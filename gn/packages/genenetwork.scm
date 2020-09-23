@@ -40,6 +40,7 @@
   #:use-module (gn packages bioinformatics)
   #:use-module (gn packages twint)
   #:use-module (gn packages crates-io)
+  #:use-module (gn packages databases)
   #:use-module (gn packages elixir)
   #:use-module (gn packages gemma)
   #:use-module (gn packages javascript)
