@@ -7,13 +7,11 @@
   #:use-module (guix build-system python)
   #:use-module (gn packages databases)
   #:use-module (gn packages python)
-  #:use-module (gn packages statistics)
   #:use-module (past packages python)
   #:use-module (gnu packages compression)
   #:use-module (gnu packages databases)
   #:use-module (gnu packages maths)
   #:use-module (gnu packages python-xyz)
-  #:use-module (gnu packages statistics)
   #:use-module (gnu packages tls)
   #:use-module (srfi srfi-1))
 
@@ -454,33 +452,3 @@ for Python.  The design goals are:
 @item Compatibility with MySQL-3.23 and later
 @end itemize")
     (license license:gpl2+)))
-
-(define-public python24-rpy2
-  (package
-    (inherit python-rpy2)
-    (name "python24-rpy2")
-    (version "2.0.8")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (pypi-uri "rpy2" version))
-        (sha256
-         (base32
-          "0g6vmv4pxc9bwb756z1vfdlzviib84afjmp4l5cw22x8qqvw1s9s"))))
-    (build-system python-build-system)
-    (arguments
-     `(#:python ,python-2.4
-       #:use-setuptools? #f
-       #:phases
-       (modify-phases %standard-phases
-         (replace 'check
-           (lambda* (#:key inputs outputs #:allow-other-keys)
-             (add-installed-pythonpath inputs outputs)
-             (with-directory-excursion "rpy"
-               ;(invoke "python" "tests.py")
-               (invoke "python" "tests_rpy_classic.py")))))))
-    (inputs `())
-    (propagated-inputs
-     `(("python-numpy" ,python24-numpy-1.2)
-       ("r-minimal" ,r-minimal-2)
-       ("r-survival" ,r-2-survival)))))
