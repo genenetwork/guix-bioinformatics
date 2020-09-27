@@ -1647,3 +1647,98 @@ sorted order.")
     (description
      "Read PLINK files into Pandas data frames")
     (license license:expat)))
+
+(define-public python-pytest-regressions
+  (package
+   (name "python-pytest-regressions")
+   (version "2.0.1")
+   (source
+    (origin
+     (method url-fetch)
+     (uri (pypi-uri "pytest-regressions" version))
+     (sha256
+      (base32
+       "0227957vmy93pdaayakwwc2zawndbh203d2yc9nbss36i3s8xs3f"))))
+   (build-system python-build-system)
+   (propagated-inputs
+    `(("python-pytest" ,python-pytest)
+      ("python-pytest-datadir" ,python-pytest-datadir)
+      ("python-pyyaml" ,python-pyyaml)))
+   (native-inputs
+    `(("python-matplotlib" ,python-matplotlib)
+      ("python-numpy" ,python-numpy)
+      ("python-pandas" ,python-pandas)
+      ("python-pillow" ,python-pillow)
+      ("python-pre-commit" ,python-pre-commit)
+      ("python-restructuredtext-lint"
+       ,python-restructuredtext-lint)
+      ("python-tox" ,python-tox)))
+   (inputs
+    `(("python-setuptools-scm" ,python-setuptools-scm)))
+   (home-page
+    "https://github.com/ESSS/pytest-regressions")
+   (synopsis
+    "Easy to use fixtures to write regression tests.")
+   (description
+    "Easy to use fixtures to write regression tests.")
+   (license license:expat)))
+
+(define-public python-pytest-datadir
+  (package
+   (name "python-pytest-datadir")
+   (version "1.3.1")
+   (source
+    (origin
+     (method url-fetch)
+     (uri (pypi-uri "pytest-datadir" version))
+     (sha256
+      (base32
+       "066bg6wlzgq2pqnjp73dfrcmk8951xw3aqcxa3p1axgqimrixbyk"))))
+   (build-system python-build-system)
+   (propagated-inputs
+    `(("python-pathlib2" ,python-pathlib2)
+      ("python-pytest" ,python-pytest)))
+   (inputs
+    `(("python-setuptools-scm" ,python-setuptools-scm)))
+   (home-page
+    "http://github.com/gabrielcnr/pytest-datadir")
+   (synopsis
+    "pytest plugin for test data directories and files")
+   (description
+    "pytest plugin for test data directories and files")
+   (license license:expat)))
+
+(define-public python-pre-commit
+  (package
+   (name "python-pre-commit")
+   (version "2.7.1")
+   (source
+    (origin
+     (method url-fetch)
+     (uri
+     "https://files.pythonhosted.org/packages/bd/b4/e5d78c83533dd116596d05bdc8a82372b44ce7e7bef0ba7f0c6b33307613/pre_commit-2.7.1.tar.gz")
+     (sha256
+      (base32
+       "0w2a104yhbw1z92rcwpq0gdjsxvr2bwx5ry5xhlf2psnfkjx6ky5"))))
+   (build-system python-build-system)
+   (propagated-inputs
+    `(("python-cfgv" ,python-cfgv)
+      ("python-identify" ,python-identify)
+      ("python-importlib-metadata"
+       ,python-importlib-metadata)
+      ("python-importlib-resources"
+       ,python-importlib-resources)
+      ("python-nodeenv" ,python-nodeenv)
+      ("python-pyyaml" ,python-pyyaml)
+      ("python-toml" ,python-toml)
+      ("python-virtualenv" ,python-virtualenv)))
+    (arguments
+     `(#:tests? #f  ; suprise test failures
+       ))
+   (home-page
+    "https://github.com/pre-commit/pre-commit")
+   (synopsis
+    "A framework for managing and maintaining multi-language pre-commit hooks.")
+   (description
+    "A framework for managing and maintaining multi-language pre-commit hooks.")
+   (license license:expat)))
